@@ -1,0 +1,334 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Sucursal Venta | Costabella
+{% endblock %}
+
+{% block estilos %}
+<style>
+    @media screen and (max-width: 320px) {
+        table {
+          display: block!important;
+          overflow-x: auto!important;
+        }
+   }
+</style>
+{% endblock %}
+
+{% block contenido%}
+{% for dato in datosView %}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        
+        <div class="nk-block-head nk-block-head-lg wide-xs mx-auto">
+            <div class="nk-block-head-content text-center">
+                <h2 class="nk-block-title fw-normal fuenteTitulo">HISTORIAL DE PROMOCIÓN/PAQUETE TRATAMIENTO</h2>
+                <h3 class="nk-block-title fw-normal fuenteTitulo">{{dato.0}}</h3>
+                {% if dato.11 == "noEfectuada" %}
+                <p class="fw-bold text-warning lead">Activa</p>
+                {% else %}
+                <p class="fw-bold text-teal lead">Efectuada</p>
+                {% endif %}
+                <div class="nk-block-des">
+                    <p class="lead">{{dato.1}} sesiones X $<span class="fw-bold text-teal">{{dato.2}}</span> MXN.</p>
+                    <p class="lead">Atendiendo a: <span class="fw-bold text-dark">{{dato.3}}</span></p>
+                    <p class="lead">Abonado: $<span class="fw-bold text-teal">{{dato.13}}</span>MXN. - Restante:<span class="fw-bold text-warning">{{dato.14}}</span> $ MXN.</p>
+                    <p class="lead">Estado: <span class="fw-bold text-danger">{{dato.15}}</span></p>
+                </div>
+                
+            </div>
+        </div><!-- .nk-block-head -->
+        <div class="row gy-4">
+            <div class="col-sm-1">
+
+            </div>
+            <div class="col-sm-10">
+                <center>
+                    <div class="nk-block">
+                        <div class="row g-gs justify-content-center">
+                            <div class="col-xxl-3 col-md-6">
+                                <div class="card h-100">
+                                    <div class="card-inner">
+                                        <div class="card-title-group mb-2">
+                                            <div class="card-title">
+                                                <h6 class="title">Sesiones paquete</h6>
+                                            </div>
+                                        </div>
+                                        <ul class="nk-store-statistics">
+                                            <li class="item">
+                                                <div class="info">
+                                                    <div class="title">Sesiones totales</div>
+                                                    <div class="count">{{dato.1}}</div>
+                                                </div>
+                                                <em class="icon bg-pink-dim ni ni-bag"></em>
+                                            </li>
+                                            <li class="item">
+                                                <div class="info">
+                                                    <div class="title">Sesiones Efectuadas</div>
+                                                    <div class="count">{{dato.5}}</div>
+                                                </div>
+                                                <em class="icon bg-teal-dim ni ni-check-thick"></em>
+                                            </li>
+                                            <li class="item">
+                                                <div class="info">
+                                                    <div class="title">Sesiones Pendientes</div>
+                                                    <div class="count">{{dato.4}}</div>
+                                                </div>
+                                                <em class="icon bg-danger-dim ni ni-cross-round"></em>
+                                            </li>
+                                            
+                                        </ul>
+                                    </div><!-- .card-inner -->
+                                </div><!-- .card -->
+                            </div><!-- .col -->
+                            <div class="col-xxl-3">
+                                <div class="card card-full">
+                                    <div class="nk-ecwg nk-ecwg8 h-100">
+                                        <div class="card-inner">
+                                            <div class="card-title-group mb-3">
+                                                <div class="card-title">
+                                                    <h6 class="title">Datos del tratamiento</h6>
+                                                </div>
+                                                
+                                            </div>
+                                            <div class="row gy-4">
+                                                <div class="col-sm-6">
+                                                    <center>
+                                                        <p class="fw-bol text-dark">Código</p>
+                                                        <span class="badge badge-secondary">{{dato.6}}</span>
+                                                    </center>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <center>
+                                                        <p class="fw-bol text-dark">Nombre</p>
+                                                        <span class="fw-bold text-dark">{{dato.7}}</span>
+                                                    </center>
+                                                </div>
+                                                
+                                            </div>
+                                            <div class="row gy-4">
+                                                <div class="col-sm-6">
+                                                    <center>
+                                                        <p class="fw-bol text-dark">Costo Venta</p>
+                                                        <span class="fw-bold text-dark">$<span class="text-teal">{{dato.8}}</span> MXN.</span>
+                                                    </center>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <center>
+                                                        <p class="fw-bol text-dark">Tiempo Aprox.</p>
+                                                        <span class="fw-bold text-dark"><span class="text-danger">{{dato.9}}</span> min.</span>
+                                                    </center>
+                                                </div>
+                                            </div>
+                                            <br>
+                                            {% if dato.11 == "noEfectuada" %}
+                                            <button type="button" class="btn btn-dim btn-sm btn-warning" data-toggle="modal" data-target="#modalCita">Agendar sesión</a>
+                                            {% endif %}
+                                            
+                                        </div><!-- .card-inner -->
+                                    </div>
+                                </div><!-- .card -->
+                            </div><!-- .col -->
+                            <div class="col-xxl-6 col-md-6">
+                                <div class="card card-full overflow-hidden">
+                                    <div class="nk-ecwg nk-ecwg7 h-100">
+                                        <div class="card-inner flex-grow-1">
+                                            <div class="card-title-group mb-4">
+                                                <div class="card-title">
+                                                    <h6 class="title">Hisotial de cliente</h6>
+                                                </div>
+                                            </div>
+                                            <table class="table">
+                                                <thead class="thead-dark">
+                                                  <tr>
+                                                    <th scope="col"># historial</th>
+                                                    <th scope="col">Sesion Efectuada</th>
+                                                    <th scope="col">Fecha</th>
+                                                  </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for hist in dato.10 %}
+                                                  <tr>
+                                                    <th>
+                                                        <span class="badge badge-info">{{hist.0}}</span>
+                                                    </th>
+                                                    <td>
+                                                        <span class="fw-bold text-dark"># {{hist.1}}</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="fw-bold text-azure">{{hist.2}}</span>
+                                                    </td>
+                                                  </tr>
+                                                {% endfor %}
+                                                  
+                                                </tbody>
+                                              </table>
+                                              
+                                            
+                                        </div><!-- .card-inner -->
+                                    </div>
+                                </div><!-- .card -->
+                            </div><!-- .col -->
+                            
+                            
+                            
+                            
+                            
+            
+                            
+                            
+                            
+                           
+                            
+                            
+                            
+                            
+                            
+                            
+            
+                            
+                        </div>
+                    </div>
+                </center>
+                
+                
+            </div>
+            <div class="col-sm-1">
+                
+            </div>
+        </div>
+        
+       
+
+        
+       
+
+
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="modalCita">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                <em class="icon ni ni-cross"></em>
+            </a>
+            <div class="modal-header">
+                <h5 class="modal-title">Agendar próxima cita</h5>
+            </div>
+            <div class="modal-body">
+                <p>Seleccionar la fecha y hora de la próxima sesión.</p>
+                <form action="/guardarCitaSesion/" enctype="multipart/form-data" method="POST">{% csrf_token %}
+                <div class="row gy-4">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span> Fecha a agendar:</label>
+                            <div class="form-control-wrap">
+                                <input type="date" class="form-control" data-date-format="yyyy-mm-dd" placeholder="Elegir fecha a agendar" id="date_picker" name="fechaAgendar" onchange="cambioFecha(this);" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="form-label" for="default-03"><span style="color: #dd2e2e;">* </span> Hora de cita:</label>
+                            <div id="opcionesSelect">
+                                <div class="form-control-wrap">
+                                    <div class="form-control-select">
+                                        <select class="form-control"  name="horarioCita">
+                                                {% if sinCitasPendientes %}
+                                                <option value="09:00 AM">09:00 AM</option>
+                                                <option value="10:00 AM">09:00 AM</option>
+                                                <option value="11:00 AM">11:00 AM</option>
+                                                <option value="12:00 PM">12:00 PM</option>
+                                                <option value="01:00 PM">01:00 PM</option>
+                                                <option value="02:00 PM">02:00 PM</option>
+                                                <option value="03:00 PM">03:00 PM</option>
+                                                <option value="04:00 PM">04:00 PM</option>
+                                                <option value="05:00 PM">05:00 PM</option>
+                                                <option value="06:00 PM">06:00 PM</option>
+                                                {% else %}
+                                                    {% for hora in arregloHoras2 %}
+                                                    <option value="{{hora}}">{{hora}}</option>
+                                                    {% endfor %}
+                                                {% endif %}
+                                            
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                           
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <br>
+                    
+                        <input type="hidden" value="{{dato.12}}" name="idTratamientoCliente" readonly>
+                        <button href="submit" class="btn btn-primary">Agendar sesión</a>
+                    
+                </div>
+                </form>
+            </div>
+            <div class="modal-footer bg-light">
+                <span class="sub-text">Costabella</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endfor %}
+
+{% block relojJS %}
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+
+        window.onload= mueveReloj ();
+
+        
+    };
+</script>
+{% endblock %}
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<script language="javascript">
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0');
+    var yyyy = today.getFullYear();
+
+    today = yyyy + '-' + mm + '-' + dd;
+    $('#date_picker').attr('value',today);
+    $('#date_picker').attr('min',today);
+    $('#date_picker').attr('max',"{{fechaLimite}}");
+
+    function cambioFecha(valorInput) {
+        var value = valorInput.value;  
+        {% for fecha, listaHoras in listaZipFechaHora %}
+            var fecha = "{{fecha}}";
+            var horasCompletas = "";
+
+            if (value == fecha){
+                {% for lista in listaHoras %}
+                var horita = "{{lista}}";
+                horasCompletas = horasCompletas + "<option value='"+horita.toString()+"'>"+horita.toString()+"</option>"
+                
+                {% endfor %}
+                console.log(horasCompletas);
+                var codigoHtmlAgregar = "<div class='form-control-wrap'><div class='form-control-select'><select class='form-control'  name='horarioCita'>"+horasCompletas.toString()+"</select></div></div>"
+
+                document.getElementById("opcionesSelect").innerHTML = "";
+                document.getElementById("opcionesSelect").innerHTML = codigoHtmlAgregar.toString();
+            }
+            
+        {% endfor %}
+    }
+
+
+</script>
+
+
+
+{% endblock %}

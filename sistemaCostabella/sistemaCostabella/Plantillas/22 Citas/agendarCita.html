@@ -1,0 +1,841 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Agendar Cita | Costabella
+{% endblock %}
+
+{% block estilos %}
+
+{% endblock %}
+
+{% block contenido %}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    {% for permiso in consultaPermisos %}
+                    {% if permiso.tabla_modulo == "Certificado" %}
+                    {% if permiso.ver == "Si" %}
+    
+                    <div class="nk-block-head-sub"><a class="back-to" href="/citas/"><em class="icon ni ni-arrow-left"></em><span>Ver citas.</span></a></div>
+
+                    {% endif %}
+                    {% endif %}
+                    {% endfor %}
+                        <h2 class="overline-title text-purple fs-20px ">AGENDAR CITA.</h2>
+                        <div class="nk-block-des">
+                            <p class="fs-15px">En este módulo se agendarán las citas de los clientes en cuanto a los servicios y tratamientos que necesite. Es necesario contar con la información necesaria.</p>
+                        </div>
+                </div><!-- .nk-block-head-content -->
+             
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        <div class="nk-block nk-block-lg">
+            <div class="card card-preview">
+                <div class="card-inner">
+                    <div class="preview-block">
+                        <form action="/guardarCita/" enctype="multipart/form-data" method="POST">{% csrf_token %}
+                            <span class="preview-title-lg overline-title text-pink">Información de la cita.</span>
+                            <div class="row gy-4">
+                                
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class="form-label" for="selectTipoProducto"><span style="color: #dd2e2e;">* </span> Selección del cliente: </label>
+                                        <div class="form-control-wrap ">
+                                            <div class="form-control-select">
+                                                <select class="form-control"  name="clienteCita">
+                                                    {% for cliente in clientes %}
+                                                    <option value="{{cliente.id_cliente}}">{{cliente.nombre_cliente}}</option>
+                                                    {% endfor %}
+                                                    
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span> Fecha a agendar:</label>
+                                        <div class="form-control-wrap">
+                                            <input type="date" class="form-control" data-date-format="yyyy-mm-dd" placeholder="Elegir fecha a agendar" id="date_picker" name="fechaAgendar" onchange="cambioFecha(this);" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-03">Hora de cita:</label>
+                                        <div id="opcionesSelect">
+                                            <div class="form-control-wrap">
+                                                <div class="form-control-select">
+                                                    <select class="form-control"  name="horarioCita">
+                                                        {% for hora in arregloHoras2 %}
+                                                        <option value="{{hora}}">{{hora}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                       
+                                    </div>
+                                </div>
+                                <div class="col-sm-5">
+                                    <h2 class="fw-bold text-dark">Sucursal: <span class="text-pink">{{nombreSucursal}}</span></h2>
+                                </div>
+                                
+                            </div>
+                            <hr class="preview-hr">
+                            <div id="accordion" class="accordion">
+                                <div class="accordion-item">
+                                    <a href="#" class="accordion-head" data-toggle="collapse" data-target="#accordion-item-1" id="acordionServicios">
+                                        <h6 class="title">Servicios</h6>
+                                        <span class="accordion-icon"></span>
+                                    </a>
+                                    <div class="accordion-body collapse" id="accordion-item-1" data-parent="#accordion">
+                                        <div class="accordion-inner">
+                                            <div class="card-inner table-responsive">
+                                                <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                                                    <thead>
+                                                        <tr class="nk-tb-item nk-tb-head" style="background-color: #6ECB63 !important; color:white !important">
+                                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                                            
+                                                            <th class="nk-tb-col" ><span class="sub-text textoBlanco" >Nombre</span></th>
+                                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Descripción</span></th>
+                                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Costo venta</span></th>
+                                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Tiempo mínimo de duración</span></th>
+                                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Tiempo máximo de duración</span></th>
+                                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Complementos</span></th>
+                                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Seleccionar</span></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for servicio in serviciosSucursal %}
+                                                        <tr class="nk-tb-item">
+                                                            <td class="nk-tb-col">
+                                                                <span class="badge badge-info">{{servicio.id_servicio}}</span>
+                                                            </td>
+                                                           
+                                                            <td class="nk-tb-col" >
+                                                                <span class="badge badge-dark">{{servicio.nombre_servicio}}</span>
+                                                            </td>
+                                                            <td class="nk-tb-col">
+                                                                <center>
+                                                                    
+                                                                <span><button type="button" class="btn btn-sm btn-primary" data-toggle="popover" data-placement="right" title="Descripción de tratamiento"
+                                                                    data-content="{{servicio.descripcion_servicio}}"><em class="icon ni ni-notice"></em></button></span>
+                                                                </center>
+                                                            </td>
+                                                            <td class="nk-tb-col" >
+                                                                <span class="fw-bold text-dark"><span class="text-teal">$ {{servicio.precio_venta}}</span> MXN</span>
+                                                            </td>
+                                                            <td class="nk-tb-col">
+                                                                <center>
+                                                                    <span class="badge badge-dim badge-pill badge-outline-success" style="color: black !important;"><em class="icon ni ni-clock"></em> {{servicio.tiempo_minimo}} Minutos</span>
+                                                                </center>
+                                                               
+                                                            </td>
+                                                            <td class="nk-tb-col">
+                                                                <center>
+                                                                    <span class="badge badge-dim badge-pill badge-outline-danger" style="color: black !important;"><em class="icon ni ni-clock"></em> {{servicio.tiempo_maximo}} Minutos</span>
+                                                                </center>
+                                                                
+                                                            </td>
+                                                            <td class="nk-tb-col">
+                                                                <center>
+                                                                    
+                                                                <span><button type="button" class="btn btn-sm btn-gray" data-toggle="popover" data-placement="bottom" 
+                                                                    data-content="{{servicio.complementos_servicio}}"><em class="icon ni ni-notice"></em></button></span>
+                                                                </center>
+                            
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <div class="custom-control custom-checkbox text-center">
+                                                                    <center>
+                                                                        <input type="checkbox" class="custom-control-input" id="checkboxServicio{{servicio.id_servicio}}" onclick="checarCheckboxClickeadoServicios{{servicio.id_servicio}}()">
+                                                                        <label class="custom-control-label text-dark" for="checkboxServicio{{servicio.id_servicio}}">Agendar</label>
+                                                                    </center>
+                                                                    
+                                                                </div>
+                                                            </td>
+                                                        
+                                                        
+                                                         
+                            
+                                                        </tr>
+                                                        {% endfor %}
+                                                        
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <a href="#" class="accordion-head collapsed" data-toggle="collapse" data-target="#accordion-item-2" id="acordionSesionTratamiento">
+                                        <h6 class="title">Sesión de tratamiento</h6>
+                                        <span class="accordion-icon"></span>
+                                    </a>
+                                    <div class="accordion-body collapse" id="accordion-item-2" data-parent="#accordion" >
+                                        <div class="accordion-inner">
+                                            <div class="card-inner table-responsive">
+                                                <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                                                    <thead>
+                                                        <tr class="nk-tb-item nk-tb-head" style="background-color: #D61C4E !important; color:white !important" >
+                                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Tipo</span></th>
+                                                            <th class="nk-tb-col" ><span class="sub-text textoBlanco">Código</span></th>
+                                                            <th class="nk-tb-col" ><span class="sub-text textoBlanco">Nombre</span></th>
+                                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Descripción</span></th>
+                                                            <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Costo venta</span></th>
+                                                            <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Tiempo mínimo de duración</span></th>
+                                                            <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Tiempo máximo de duración</span></th>
+                                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Complementos</span></th>
+                                                            <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Sesiones recomendadas</span></th>
+                                                            <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Seleccionar</span></th>
+                                                           
+                            
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for tratamiento in tratamientosSucursal %}
+                                                        <tr class="nk-tb-item">
+                                                            <td class="nk-tb-col">
+                                                                <span class="badge badge-info">{{tratamiento.id_tratamiento}}</span>
+                                                            </td>
+                                                            <td class="nk-tb-col" >
+                                                                {% if tratamiento.tipo_tratamiento == "Facial" %}
+                                                                <span class="badge badge-success" >{{tratamiento.tipo_tratamiento}}</span>
+                                                                {% else %}
+                                                                <span class="badge badge-warning" >{{tratamiento.tipo_tratamiento}}</span>
+                                                                {% endif %}
+                                                            </td>
+                                                            <td class="nk-tb-col" >
+                                                                <span class="badge badge-dark" >{{tratamiento.codigo_tratamiento}}</span>
+                                                            </td>
+                                                            <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                                                <span class="fw-bold text-dark">{{tratamiento.nombre_tratamiento}}</span>
+                                                            </td>
+                                                            <td class="nk-tb-col">
+                                                                <center>
+                                                                    
+                                                                <span><button type="button" class="btn btn-sm btn-primary" data-toggle="popover" data-placement="right"  title="Descripción de tratamiento" 
+                                                                    data-content="{{tratamiento.descripcion_tratamiento}}"><em class="icon ni ni-notice"></em></button></span>
+                                                                </center>
+                                                            </td>
+                                                            <td class="nk-tb-col" >
+                                                                <span class="fw-bold text-dark"><span class="text-teal">$ {{tratamiento.costo_venta_tratamiento}}</span> MXN</span>
+                                                            </td>
+                                                            <td class="nk-tb-col">
+                                                                <center>
+                                                                    <span class="badge badge-dim badge-pill badge-outline-success" style="color: black !important;"><em class="icon ni ni-clock"></em>&nbsp;{{tratamiento.tiempo_minimo}} Minutos</span>
+                                                                </center>
+                                                               
+                                                            </td>
+                                                            <td class="nk-tb-col">
+                                                                <center>
+                                                                    <span class="badge badge-dim badge-pill badge-outline-danger" style="color: black !important;"><em class="icon ni ni-clock"></em>&nbsp;{{tratamiento.tiempo_maximo}} Minutos</span>
+                                                                </center>
+                                                                
+                                                            </td>
+                                                            <td class="nk-tb-col">
+                                                                <center>
+                                                                    
+                                                                <span><button type="button" class="btn btn-sm btn-gray" data-toggle="popover" data-placement="right"   title="Complementos de tratamiento"
+                                                                    data-content="{{tratamiento.complementos_tratamiento}}"><em class="icon ni ni-notice"></em></button></span>
+                                                                </center>
+                            
+                                                            </td>
+                                                            <td class="nk-tb-col" >
+                                                                {% if tratamiento.sesiones_rec_tratamiento == 1 %}
+                            
+                                                                    {% if tratamiento.periodo_rec_tratamiento == "Semanal" %}
+                                                                    <span class="badge badge-outline-dark">1 sesión a la semana</span>
+                                                                    {% elif tratamiento.periodo_rec_tratamiento == "Mes" %}
+                                                                    <span class="badge badge-outline-dark">1 sesión al mes</span>
+                                                                    {% elif tratamiento.periodo_rec_tratamiento == "Año" %}
+                                                                    <span class="badge badge-outline-dark">1 sesión al año</span>
+                                                                    {% endif %}
+                                                                {% else %}
+                                                                    {% if tratamiento.periodo_rec_tratamiento == "Semanal" %}
+                                                                    <span class="badge badge-outline-dark">{{tratamiento.sesiones_rec_tratamiento}} sesiones a la semana</span>
+                                                                    {% elif tratamiento.periodo_rec_tratamiento == "Mes" %}
+                                                                    <span class="badge badge-outline-dark">{{tratamiento.sesiones_rec_tratamiento}} sesiones al mes</span>
+                                                                    {% elif tratamiento.periodo_rec_tratamiento == "Año" %}
+                                                                    <span class="badge badge-outline-dark">{{tratamiento.sesiones_rec_tratamiento}} sesiones al año</span>
+                                                                    {% endif %}
+                                                                {% endif %}
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <div class="custom-control custom-checkbox text-center">
+                                                                    <center>
+                                                                        <input type="checkbox" class="custom-control-input" id="checkboxTratamiento{{tratamiento.id_tratamiento}}" onclick="checarCheckboxClickeadoTratamientos{{tratamiento.id_tratamiento}}();">
+                                                                        <label class="custom-control-label text-dark" for="checkboxTratamiento{{tratamiento.id_tratamiento}}">Agendar</label>
+                                                                    </center>
+                                                                    
+                                                                </div>
+                                                            </td>
+                                                            
+                                                           
+                                                        
+                                                        
+                                                         
+                            
+                                                        </tr>
+                                                        {% endfor %}
+                                                        
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <a href="#" class="accordion-head collapsed" data-toggle="collapse" data-target="#accordion-item-3" id="acordionPaqueteTratamiento">
+                                        <h6 class="title">Paquete/Promoción tratamiento</h6>
+                                        <span class="accordion-icon"></span>
+                                    </a>
+                                    <div class="accordion-body collapse" id="accordion-item-3" data-parent="#accordion" >
+                                        <div class="accordion-inner">
+                                            <div class="card-inner table-responsive">
+                                                <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                                                    <thead>
+                                                        <tr class="nk-tb-item nk-tb-head" style="background-color: #377D71 !important; color:white !important" >
+                                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                                            <th class="nk-tb-col" ><span class="sub-text textoBlanco">Nombre Paquete</span></th>
+                                                            <th class="nk-tb-col" ><span class="sub-text textoBlanco">Número de sesiones</span></th>
+                                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Decuento</span></th>
+                                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Precio por paquete</span></th>
+                                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Tratamiento</span></th>
+                                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Seleccionar</span></th>
+                            
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for promocionActiva in promocionesSucursal %}
+                                                        <tr class="nk-tb-item">
+                                                            <td class="nk-tb-col">
+                                                                <span class="badge badge-info">{{promocionActiva.0}}</span>
+                                                            </td>
+                                                            <td class="nk-tb-col" >
+                                                                <span class="badge badge-dark" >{{promocionActiva.5}}</span>
+                                                            </td>
+                                                            <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                                                {% if promocionActiva.1 == 1 %}
+                                                                <span class="fw-bold text-dark"><span class="badge badge-danger">1</span> sesión</span>
+                                                                {% else %}
+                                                                <span class="fw-bold text-dark"><span class="badge badge-danger">{{promocionActiva.1}}</span> sesiones</span>
+                                                                {% endif %}
+                                                            </td>
+                                                            {% if promocionActiva.3 == "Sin descuento" %}
+                                                            <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                                                <span class="fw-bold text-danger">No tiene descuento</span>
+                                                            </td>
+                                                            {% elif promocionActiva.3 == "Con descuento" %}
+                                                            <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                                                <span class="fw-bold text-dark">Descuento del {{promocionActiva.2}} %</span>
+                                                            </td>
+                                                            {% endif %}
+                                                            
+                                                            <td class="nk-tb-col" >
+                                                                <span class="fw-bold text-dark"><span class="text-teal">$ {{promocionActiva.4}}</span> MXN</span>
+                                                            </td>
+                                                            <td class="nk-tb-col" >
+                                                                {% for datoTratamiento in promocionActiva.6 %}
+                                                                
+                                                                <span class="fw-bold text-dark"><span class="badge badge-dark">{{datoTratamiento.0}}</span> {{datoTratamiento.1}}</span>
+                                                                <br>
+                                                                <span class="fw-bold text-dark">{{datoTratamiento.2}}</span>
+                                                                <br>
+                                                                <span class="fw-bold text-dark">$<span class="fw-bold text-azure">{{datoTratamiento.3}}</span> MXN.</span>
+                                                                {% endfor %}
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <div class="custom-control custom-checkbox text-center">
+                                                                    <center>
+                                                                        <input type="checkbox" class="custom-control-input" id="checkboxPaqueteTratamiento{{promocionActiva.0}}" onclick="checarCheckboxClickeadoPaqueteTratamientos{{promocionActiva.0}}();">
+                                                                        <label class="custom-control-label text-dark" for="checkboxPaqueteTratamiento{{promocionActiva.0}}">Agendar</label>
+                                                                    </center>
+                                                                    
+                                                                </div>
+                                                            </td>
+                                                            
+                                                           
+                                                        
+                                                        
+                                                         
+                            
+                                                        </tr>
+                                                        {% endfor %}
+                                                        
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div id="accordion-item">
+                                    
+                                    <div class="card">
+                                      <div id="heading0">
+                                        <h3 class="mb-0">
+                                            <a href="#" class="accordion-head" data-toggle="collapse" data-target="#collapse0" id="acordionCertificados">
+                                                <h6 class="title">Certificados de regalo</h6>
+                                                <span class="accordion-icon"></span>
+                                            </a>
+                                        </h3>
+                                      </div>
+                                      <div id="collapse0" class="collapse" aria-labelledby="heading0" data-parent="#accordion">
+                                        <div class="card-body">
+                                            {% for certificadoPendiente in certificadosPendientes %}
+                                            <div class="card">
+                                                <div id="heading0_{{certificadoPendiente.0}}">
+                                                  <h3 class="mb-0">
+                                                    <a href="#" class="accordion-head"data-toggle="collapse" data-target="#collapse0_{{certificadoPendiente.0}}" id="#sandwich{{certificadoPendiente.0}}" aria-expanded="false" aria-controls="collapse0_{{certificadoPendiente.0}}">
+                                                        <h6 class="title">Certificado {{certificadoPendiente.1}} a {{certificadoPendiente.6}}</h6>
+                                                        <span class="accordion-icon"></span>
+                                                    </a>
+                                                    
+                                                  </h3>
+                                                </div>
+                                                <!-- remove data-parent here or set to "#collapse0" -->
+                                                <div id="collapse0_{{certificadoPendiente.0}}" class="collapse" aria-labelledby="heading0_{{certificadoPendiente.0}}">
+                                                  <div class="card-body">
+                                                    <div class="card-inner table-responsive">
+                                                        <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                                                            <thead>
+                                                                <tr class="nk-tb-item nk-tb-head" style="background-color: #DD5353 !important; color:white !important" >
+                                                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Nombre servicio</span></th>
+                                                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Duración mínima</span></th>
+                                                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Duración máxima</span></th>
+                                                                    <th class="nk-tb-col" ><span class="sub-text textoBlanco">Estatus</span></th>
+                                                                    <th class="nk-tb-col" ><span class="sub-text textoBlanco">Seleccionar</span></th>
+                                    
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {% for servicio, estatus in certificadoPendiente.4 %}
+                                                                <tr class="nk-tb-item">
+                                                                    <td class="nk-tb-col">
+                                                                        <span class="badge badge-dark">{{servicio.0}}</span>
+                                                                    </td>
+                                                                    <td class="nk-tb-col">
+                                                                        <center>
+                                                                            <span class="badge badge-dim badge-pill badge-outline-success" style="color: black !important;"><em class="icon ni ni-clock"></em> {{servicio.2}} Minutos</span>
+                                                                        </center>
+                                                                       
+                                                                    </td>
+                                                                    <td class="nk-tb-col">
+                                                                        <center>
+                                                                            <span class="badge badge-dim badge-pill badge-outline-danger" style="color: black !important;"><em class="icon ni ni-clock"></em> {{servicio.3}} Minutos</span>
+                                                                        </center>
+                                                                        
+                                                                    </td>
+                                                                    <td class="nk-tb-col" >
+                                                                        {% if estatus == "C" %}
+                                                                        <span class="badge badge-danger">Canjeado</span>
+                                                                        {% else %}
+                                                                        <span class="badge badge-success">Sin canjear</span>
+                                                                        {% endif %}
+                                                                    </td>
+                                                                    
+                                                                    <td class="text-center">
+                                                                        {% if estatus == "C" %}
+                                                                        <span class="badge badge-danger">Servicio canjeado</span>
+                                                                        {% else %}
+                                                                        <div class="custom-control custom-checkbox text-center">
+                                                                            <center>
+                                                                                <input type="checkbox" class="custom-control-input" id="checkBoxCertificado{{certificadoPendiente.0}}-servicio{{servicio.1}}" onclick="checarCheckboxClickeadoCertificado{{certificadoPendiente.0}}servicio{{servicio.1}}();">
+                                                                                <label class="custom-control-label text-dark" for="checkBoxCertificado{{certificadoPendiente.0}}-servicio{{servicio.1}}">Agendar</label>
+                                                                            </center>
+                                                                            
+                                                                        </div>
+                                                                        {% endif %}
+
+                                                                        
+                                                                    </td>
+                                                                    
+                                                                   
+                                                                
+                                                                
+                                                                 
+                                    
+                                                                </tr>
+                                                                {% endfor %}
+                                                                
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+
+
+
+                                                  </div>
+                                                </div>
+                                            </div> 
+                                                
+                                            {% endfor %}
+                                          
+
+
+
+
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                
+                              </div>
+                            <hr class="preview-hr">
+                            <span class="preview-title-lg overline-title text-pink">Información extra:</span>
+                            <div class="row gy-4">
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label class="form-label" for="default-03">Comentarios  <em class="icon ni ni-question" data-toggle="tooltip" data-placement="right" title="Describir otros productos intangibles que contribuyen en la realización del paquete del servicio al cliente."></em></label>
+                                                <div class="form-control-wrap">
+                                                    <textarea class="form-control form-control-simple no-resize" id="default-textarea" placeholder="Ingresar comentarios extra" maxlength="99" style="border-width: 1px!important; 
+                                                    border-style: solid!important;
+                                                    border-color: rgb(216, 216, 216)!important;" name="comentarios"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                            </div>
+                              
+                         
+ 
+                            
+                            <br>
+                            <input type="hidden" value="{{sucursalCita}}" name="sucursalCita">
+                            <input type="hidden" value="{{idEmpleado}}" name="idEmpleado">
+                            <input type="hidden" id="servicioSeleccionadoId" value="nada" name="servicioSeleccionado" >
+                            <input type="hidden" id="tratamientoSeleccionadoId" value="nada" name="tratamientoSeleccionado" >
+                            <input type="hidden" id="paqueteTratamientoSeleccionadoId" value="nada" name="paqueteTratamientoSeleccionado" >
+                            <input type="hidden" id="servicioCertificado" value="nada" name="servicioCertificadoSeleccionado">
+                            
+                            <button type="submit" id="botonAgendarCita" class="btn btn-dim btn-primary">Agendar cita</button>
+                        </form>
+                    </div>
+                </div>
+            </div><!-- .card-preview -->
+        </div>
+    </div>
+</div>
+{% block relojJS %}
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+
+        window.onload= mueveReloj ();
+
+        
+    };
+</script>
+{% endblock %}
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<script>
+
+    {% if tratamientoAgregado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{tratamientoAgregado}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    {% if tratamientoNoAgregado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'error',
+            title: 'Ups..!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{tratamientoNoAgregado}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    
+</script>
+
+<script language="javascript">
+    var botonAgendarCita = document.getElementById("botonAgendarCita");
+    botonAgendarCita.disabled = true;
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0');
+    var yyyy = today.getFullYear();
+
+    today = yyyy + '-' + mm + '-' + dd;
+    $('#date_picker').attr('value',today);
+    $('#date_picker').attr('min',today);
+    $('#date_picker').attr('max',"{{fechaLimite}}");
+
+
+
+    
+
+    function cambioFecha(valorInput) {
+        var value = valorInput.value;  
+        {% for fecha, listaHoras in listaZipFechaHora %}
+            var fecha = "{{fecha}}";
+            var horasCompletas = "";
+
+            if (value == fecha){
+                {% for lista in listaHoras %}
+                var horita = "{{lista}}";
+                horasCompletas = horasCompletas + "<option value='"+horita.toString()+"'>"+horita.toString()+"</option>"
+                
+                {% endfor %}
+                console.log(horasCompletas);
+                var codigoHtmlAgregar = "<div class='form-control-wrap'><div class='form-control-select'><select class='form-control'  name='horarioCita'>"+horasCompletas.toString()+"</select></div></div>"
+
+                document.getElementById("opcionesSelect").innerHTML = "";
+                document.getElementById("opcionesSelect").innerHTML = codigoHtmlAgregar.toString();
+            }
+            
+        {% endfor %}
+    }
+
+
+
+    //Checkbox de servicios
+    {% for servicio in serviciosSucursalJS %}
+    function checarCheckboxClickeadoServicios{{servicio.id_servicio}}(){
+        var checkboxServicio = document.getElementById("checkboxServicio{{servicio.id_servicio}}");
+        if (checkboxServicio.checked){
+            var idServicioCheckeado = "{{servicio.id_servicio}}";
+            idServicioCheckeado = idServicioCheckeado.toString();
+            {% for servicio in serviciosSucursalJS %}
+            var idServListita = "{{servicio.id_servicio}}"
+            idServListita = idServListita.toString()
+            if (idServicioCheckeado === idServListita){
+                document.getElementById("servicioSeleccionadoId").value=idServListita
+                botonAgendarCita.disabled = false;
+            }else{
+                //Deshabilitar checkbox
+                var checkboxOtroServicio = document.getElementById("checkboxServicio{{servicio.id_servicio}}");
+                checkboxOtroServicio.disabled = true;
+            }
+            {% endfor %}
+
+            //BLOQUEAR OTROS DIVS DESPLEGABLES
+            $("#acordionSesionTratamiento").attr('data-target', '');
+            $("#acordionPaqueteTratamiento").attr('data-target', '');
+            $("#acordionCertificados").attr('data-target', '');
+        }else{
+            {% for servicio in serviciosSucursalJS %}
+            //Habilitar checkbox
+            var checkboxOtroServicio = document.getElementById("checkboxServicio{{servicio.id_servicio}}");
+            checkboxOtroServicio.disabled = false;
+            {% endfor %}
+
+            //Desbloquear otros disv desplegables
+            $("#acordionSesionTratamiento").attr('data-target', '#accordion-item-2');
+            $("#acordionPaqueteTratamiento").attr('data-target', '#accordion-item-3');
+            $("#acordionCertificados").attr('data-target', '#collapse0');
+            document.getElementById("servicioSeleccionadoId").value="nada";
+            botonAgendarCita.disabled = true;
+        }
+    }
+    {% endfor %}
+
+
+    //Checkbox sesiones tratamientos
+    {% for tratamiento in tratamientosSucursalJS %}
+    function checarCheckboxClickeadoTratamientos{{tratamiento.id_tratamiento}}(){
+        var checkboxTratamiento = document.getElementById("checkboxTratamiento{{tratamiento.id_tratamiento}}");
+        if (checkboxTratamiento.checked){
+            var idTratamientoCheckeado = "{{tratamiento.id_tratamiento}}";
+            idTratamientoCheckeado = idTratamientoCheckeado.toString();
+            {% for tratamiento2 in tratamientosSucursalJS %}
+            var idTratLista = "{{tratamiento2.id_tratamiento}}";
+            idTratLista = idTratLista.toString();
+            if (idTratamientoCheckeado === idTratLista){
+                document.getElementById("tratamientoSeleccionadoId").value=idTratLista
+                botonAgendarCita.disabled = false;
+            }else{
+                //Deshabilitar checkbox
+                var checkboxOtroTratamiento = document.getElementById("checkboxTratamiento{{tratamiento2.id_tratamiento}}");
+                checkboxOtroTratamiento.disabled = true;
+                
+            }
+            {% endfor %}
+
+            //BLOQUEAR OTROS DIVS DESPLEGABLES
+            $("#acordionServicios").attr('data-target', '');
+            $("#acordionPaqueteTratamiento").attr('data-target', '');
+            $("#acordionCertificados").attr('data-target', '');
+
+        }else{
+            {% for tratamiento3 in tratamientosSucursalJS %}
+            //Habilitar checkbox
+            var checkboxOtroTratamiento = document.getElementById("checkboxTratamiento{{tratamiento3.id_tratamiento}}");
+            checkboxOtroTratamiento.disabled = false;
+            {% endfor %}
+
+            //Desbloquear otros disv desplegables
+            $("#acordionServicios").attr('data-target', '#accordion-item-1');
+            $("#acordionPaqueteTratamiento").attr('data-target', '#accordion-item-3');
+            $("#acordionCertificados").attr('data-target', '#collapse0');
+            document.getElementById("tratamientoSeleccionadoId").value="nada";
+            botonAgendarCita.disabled = true;
+        }
+    }
+    {% endfor %}
+
+    //Checkbox paquete tratamientos
+    {% for paquete in promocionesSucursalJS %}
+    function checarCheckboxClickeadoPaqueteTratamientos{{paquete.0}}(){
+        var checkboxPaqueteTratamiento = document.getElementById("checkboxPaqueteTratamiento{{paquete.0}}");
+        if (checkboxPaqueteTratamiento.checked){
+            var idPaqueteTratamientoCheckeado = "{{paquete.0}}";
+            idPaqueteTratamientoCheckeado = idPaqueteTratamientoCheckeado.toString();
+            {% for paquete2 in promocionesSucursalJS %}
+            var idPaqTratLista = "{{paquete2.0}}";
+            idPaqTratLista = idPaqTratLista.toString();
+            if (idPaqueteTratamientoCheckeado === idPaqTratLista){
+                document.getElementById("paqueteTratamientoSeleccionadoId").value=idPaqTratLista
+                botonAgendarCita.disabled = false;
+            }else{
+                //Deshabilitar checkbox
+                var checkboxOtroPaqueteTratamiento = document.getElementById("checkboxPaqueteTratamiento{{paquete2.0}}");
+                checkboxOtroPaqueteTratamiento.disabled = true;
+            }
+            {% endfor %}
+
+            //BLOQUEAR OTROS DIVS DESPLEGABLES
+            $("#acordionServicios").attr('data-target', '');
+            $("#acordionSesionTratamiento").attr('data-target', '');
+            $("#acordionCertificados").attr('data-target', '');
+
+        }else{
+            {% for paquete3 in promocionesSucursalJS %}
+            //Habilitar checkbox
+            var checkboxOtroPaqueteTratamiento = document.getElementById("checkboxPaqueteTratamiento{{paquete3.0}}");
+            checkboxOtroPaqueteTratamiento.disabled = false;
+            {% endfor %}
+
+            //Desbloquear otros disv desplegables
+            $("#acordionServicios").attr('data-target', '#accordion-item-1');
+            $("#acordionSesionTratamiento").attr('data-target', '#accordion-item-2');
+            $("#acordionCertificados").attr('data-target', '#collapse0');
+            document.getElementById("paqueteTratamientoSeleccionadoId").value="nada";
+            botonAgendarCita.disabled = true;
+        }
+    }
+    {% endfor %}
+
+
+
+
+    var arrayCertificadosServicios = []
+    {% for certificado in certificadosPendientesJSTres %}
+
+    {% for servicio in certificado.4 %}
+    var certificadoServicio{{certificado.0}}_{{servicio.1}} = "{{certificado.0}}-{{servicio.1}}";
+    let nuevoCertificadoServicioAgregado{{certificado.0}}_{{servicio.1}} = arrayCertificadosServicios.push(certificadoServicio{{certificado.0}}_{{servicio.1}});
+    {% endfor %}
+
+    {% endfor %}
+
+
+
+    //Checkbox paquete tratamientos
+    {% for certificado in certificadosPendientesJSDos %}
+
+        {% for servicio in certificado.4 %}
+        function checarCheckboxClickeadoCertificado{{certificado.0}}servicio{{servicio.1}}(){
+            var checkboxPaqueteTratamiento = document.getElementById("checkBoxCertificado{{certificado.0}}-servicio{{servicio.1}}");
+            if (checkboxPaqueteTratamiento.checked){
+                var idServicioCertificadoChequeado= "{{certificado.0}}-{{servicio.1}}";
+                console.log("Servvicio chequeado "+idServicioCertificadoChequeado)
+                
+                // for si es igual, habilitar boton y mandar valor al input
+                for (i = 0; i < arrayCertificadosServicios.length; i++) {
+                    let codigito = arrayCertificadosServicios[i];
+                    console.log(codigito);
+                    var certificadito = codigito[0].toString()
+                    var servicito = codigito[2].toString()
+
+                    if (idServicioCertificadoChequeado === codigito){
+                        document.getElementById("servicioCertificado").value=idServicioCertificadoChequeado
+                        botonAgendarCita.disabled = false;
+                        console.log("Coincide")
+                    }else{
+                        console.log("NOOOOOO")
+                        //Deshabilitar checkbox
+                        var idBloquear = "checkBoxCertificado"+certificadito+"-servicio"+servicito
+                        var sandwichBloquear = "#sandwich"+certificadito
+                        console.log("A bloquear este id. "+idBloquear)
+                        var checkBoxOtroServicioCertificado = document.getElementById(idBloquear);
+                        checkBoxOtroServicioCertificado.disabled = true;
+
+                        //Deshabilitar sandwich
+                        $("#sandwich"+certificadito).attr('data-target', '');
+
+
+                    }
+                    $("#acordionServicios").attr('data-target', '');
+                    $("#acordionSesionTratamiento").attr('data-target', '');
+                    $("#acordionPaqueteTratamiento").attr('data-target', '');
+                } 
+                //Si no es igual, bloquear checkbox
+               
+        
+                
+    
+                
+    
+            }else{
+                // for si es igual, habilitar boton y mandar valor al input
+                var idServicioCertificadoChequeado= "{{certificado.0}}-{{servicio.1}}";
+                console.log("Servvicio deschequeadoooooooooooooooooooo "+idServicioCertificadoChequeado)
+                for (i = 0; i < arrayCertificadosServicios.length; i++) {
+                    let codigito = arrayCertificadosServicios[i];
+                    console.log("a deschequear"+codigito);
+                    var certificadito = codigito[0].toString()
+                    var servicito = codigito[2].toString()
+
+                    if (idServicioCertificadoChequeado === codigito){
+                        
+                        console.log("Se deschequeo")
+                    }else{
+                        console.log("NOOOOOO")
+                        //Deshabilitar checkbox
+                        var idBloquear = "checkBoxCertificado"+certificadito+"-servicio"+servicito
+                        var checkBoxOtroServicioCertificado = document.getElementById(idBloquear);
+                        console.log(idBloquear)
+                        checkBoxOtroServicioCertificado.disabled = false;
+
+                    }
+                    $("#acordionServicios").attr('data-target', '#accordion-item-1');
+                    $("#acordionSesionTratamiento").attr('data-target', '#accordion-item-2');
+                    $("#acordionPaqueteTratamiento").attr('data-target', '#accordion-item-3');
+                    document.getElementById("servicioCertificado").value="nada";
+                    botonAgendarCita.disabled = true;
+                } 
+
+
+                
+            }
+        }
+        {% endfor %}
+
+    {% endfor %}
+
+
+
+</script>
+
+
+{% endblock %}

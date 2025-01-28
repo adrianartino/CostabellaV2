@@ -1,0 +1,1484 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Info Cliente | Costabella
+{% endblock %}
+
+{% block estilos %}
+
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-body">
+    <div class="nk-block-head nk-block-head-sm">
+        <div class="nk-block-between g-3">
+            <div class="nk-block-head-content">
+                <h3 class="nk-block-title page-title">Cliente / <strong class="text-primary small">{{clienteCompleto}}</strong></h3>
+                <div class="nk-block-des text-soft">
+                    <ul class="list-inline">
+                        <li>ID CLIENTE: <span class="text-base"># {{idC}}</span></li>
+                    </ul>
+                </div>
+            </div>
+            
+        </div>
+    </div><!-- .nk-block-head -->
+    <div class="nk-block">
+        <div class="card">
+            <div class="card-aside-wrap">
+                <div class="card-content animate__animated animate__fadeIn">
+                    <ul class="nav nav-tabs nav-tabs-mb-icon nav-tabs-card">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#personal" onclick="mostrarTipoCliente()"><em class="icon ni ni-user-circle"></em><span>Personal</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"  data-toggle="tab" href="#compras" onclick="mostrarTipoCliente()"><em class="icon ni ni-cart"></em><span>Compras</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"  data-toggle="tab" href="#creditos" onclick="ocultarTipoCliente()"><em class="icon ni ni-cc-alt"></em><span>Crédito</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"  data-toggle="tab" href="#rentas" onclick="mostrarTipoCliente()"><em class="icon ni ni-exchange"></em><span>Rentas</span></a>
+                        </li>
+                        
+                        <li class="nav-item nav-item-trigger d-xxl-none">
+                            <a href="#" class="toggle btn btn-icon btn-trigger" data-target="userAside"><em class="icon ni ni-user-list-fill"></em></a>
+                        </li>
+                        
+                    </ul><!-- .nav-tabs -->
+                    <div class="tab-content">
+                    {% for cliente in clienteInfo %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="card-inner" >
+                            <div class="nk-block">
+                                <div class="nk-block-head">
+                                    <h5 class="title">Información Personal</h5>
+                                    <p>Información básica del cliente.</p>
+                                </div><!-- .nk-block-head -->
+                                <div class="profile-ud-list">
+                                    <div class="profile-ud-item">
+                                        <div class="profile-ud wider">
+                                            <span class="profile-ud-label">Nombres</span>
+                                            <span class="profile-ud-value">{{cliente.1}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="profile-ud-item">
+                                        <div class="profile-ud wider">
+                                            <span class="profile-ud-label">Apellidos</span>
+                                            <span class="profile-ud-value">{{cliente.2}} {{cliente.3}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="profile-ud-item">
+                                        <div class="profile-ud wider">
+                                            <span class="profile-ud-label">Correo Electrónico</span>
+                                            <span class="profile-ud-value">{{cliente.4}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="profile-ud-item">
+                                        <div class="profile-ud wider">
+                                            <span class="profile-ud-label">Teléfono</span>
+                                            {% for permiso in consultaPermisos %}
+                                            {% if permiso.tabla_modulo == "Clientes" %}
+                                            {% if permiso.editar == "Si"  %}
+                                            <span class="profile-ud-value" data-toggle="tooltip" data-placement="right" title="Clic para actualizar teléfono de contacto">{{cliente.5}} <a href="#" data-toggle="modal" data-target="#profile-edit" class="btn btn-sm btn-primary" > <em class="icon ni ni-call"></em> </a> </span>
+                                            {% else %}
+                                            <span class="profile-ud-value" data-toggle="tooltip" data-placement="right" title="Clic para actualizar teléfono de contacto">{{cliente.5}} </span>
+                                            {% endif %}
+                                            {% endif %}
+                                            {% endfor %}
+
+
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="profile-ud-item">
+                                        <div>
+                                            <span class="profile-ud-label">Dirección</span>
+                                            <div class="bq-note-text">
+                                                <p>{{cliente.6}} </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div><!-- .profile-ud-list -->
+                            </div><!-- .nk-block -->
+                            <div class="nk-block">
+                                <div class="nk-block-head nk-block-head-line">
+                                    <h6 class="title overline-title text-base">Información Adicional</h6>
+                                </div><!-- .nk-block-head -->
+                                <div class="profile-ud-list">
+                                    <div class="profile-ud-item">
+                                        <div class="profile-ud wider">
+                                            <span class="profile-ud-label">Fecha de agregado</span>
+                                            <span class="profile-ud-value">{{cliente.7}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="profile-ud-item">
+                                        <div class="profile-ud wider">
+                                            <span class="profile-ud-label">Agregado por:</span>
+                                            <span class="badge-pill badge-secondary">{{cliente.9}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="profile-ud-item">
+                                        <div class="profile-ud wider">
+                                            <span class="profile-ud-label">Estatus</span>
+                                            {% if cliente.8 == "A" %}
+                                            <span class=" badge-pill badge-success">Activo</span>
+                                            {% elif cliente.8 == "B" %}
+                                            <span class=" badge-pill badge-danger">Bloqueado</span>
+                                            {% endif %}
+    
+                                        </div>
+                                    </div>
+                                    
+                                </div><!-- .profile-ud-list -->
+                            </div><!-- .nk-block -->
+                            <div class="nk-divider divider md"></div>
+                            <div class="nk-block">
+                                <div class="nk-block-head">
+                                    <h5 class="title">Pendientes de cliente</h5>
+                                    <p>Información de los pendientes de pago de crédito y rentas.</p>
+                                </div><!-- .nk-block-head -->
+                                <div class="row gy-4">
+                                    <div class="col-sm-6">
+                                        <h4 class="text-center">Créditos</h4>
+                                        <center>
+                                            <img src="{% static 'images/accesos/creditoPendiente.png' %} " alt="personal">
+                                            <br>
+                                            <br>
+                                            <div>
+                                                <p>El cliente tiene {{cantiadCreditosPendientes}} créditos pendientes</p>
+                                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalCreditosPendientes">Ver créditos pendientes</button>
+                                            </div>
+
+                                       
+                                        </center>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <h4 class="text-center">Rentas</h4>
+                                        <center>
+                                            <img src="{% static 'images/accesos/rentaPendiente.png' %} " alt="personal">
+                                            <br>
+                                            <br>
+                                            <div>
+                                                <p>El cliente tiene {{cantidadRentasPendientes}} rentas pendientes</p>
+                                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalRentasPendientes">Ver rentas pendientes</button>
+                                            </div>
+                                        </center>
+                                    </div>
+                                    
+                                </div>
+                            </div><!-- .nk-block -->
+                            
+                        </div><!-- .card-inner -->
+                    </div>
+                    
+                    {% endfor %}
+                    <div class="tab-pane" id="compras">
+                        <div class="card-inner" >
+                            <div class="nk-block">
+                                <div class="nk-block-head">
+                                    <h5 class="title">Compras Realizadas por cliente.</h5>
+                                    <p>Información detallada de las compras que realizó el cliente.</p>
+                                    <div class="card card-preview">
+                                        <div class="card-inner table-responsive">
+                                            <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                                                <thead>
+                                                    <tr class="nk-tb-item nk-tb-head" style="background-color: #36AE7C !important; color:white !important">
+                                                        <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                                        <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha Compra</span></th>
+                                                        <th class="nk-tb-col"><span class="sub-text textoBlanco">Tipo de pago</span></th>
+                                                        <th class="nk-tb-col" ><span class="sub-text textoBlanco">Vendedor</span></th>
+                                                        <th class="nk-tb-col"><span class="sub-text textoBlanco">Productos</span></th>
+                                                        <th class="nk-tb-col"><span class="sub-text textoBlanco">Servicios</span></th>
+                                                        <th class="nk-tb-col"><span class="sub-text textoBlanco">Descuento</span></th>
+                                                        <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto total</span></th>
+                                                        <th class="nk-tb-col"><span class="sub-text textoBlanco">Ticket</span></th>
+                                                      
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for venta,quienVendio, sucursal,tipoPago, pagoTarjeta, pagoTransferencia, booleanDescuento, costoReal, descuento, datosDescuento,boolProducto, productost, boolServCorporal, servicioCorporal, boolServFacial, servicioFacial in listaVentasCliente %}
+                                                    <tr class="nk-tb-item">
+                                                        <td class="nk-tb-col">
+                                                            <span class="badge-pill badge-info">{{venta.id_venta}}</span>
+                                                        </td>
+                                                       
+                                                        <td class="nk-tb-col" data-order="35040.34">
+                                                            <span class="badge badge-outline-secondary">{{venta.fecha_venta}}</span>
+                                                        </td>
+                                                        <td class="nk-tb-col" data-order="35040.34">
+                                                            {% if tipoPago == "Efectivo" %}
+                                                            <span class="badge badge-outline-secondary">Efectivo</span>
+                                                            {% elif tipoPago == "Tarjeta" %}
+                                                            <span class="badge badge-outline-secondary">{{pagoTarjeta.0}} {{pagoTarjeta.1}}</span>
+                                                            {% elif tipoPago == "Transferencia" %}
+                                                            <span class="badge badge-outline-secondary">{{pagoTransferencia}}</span>
+                                                            {% endif %}
+                                                        </td>
+                        
+                                                        <td class="nk-tb-col">
+                                                                <div style="white-space:nowrap!important;">
+                                                                    <span class="badge badge-dark text-white" >{{quienVendio.0}}</span> <span class="badge badge-dark text-white">{{quienVendio.1}}</span>
+                                                                </div>
+                                                                <div style="white-space:nowrap!important;">
+                                                                    <span class="badge badge-primary text-white">{{sucursal}}</span>
+                                                                </div>
+                                                                  
+                                                                  
+                                                        </td>
+                        
+                                                        
+                        
+                                                        <td class="nk-tb-col" >
+                                                            {% if boolProducto == "Sin productos comprados" %}
+                                                            <span class="badge badge-dot badge-gray">Sin productos.</span>
+                                                            {% else %}
+                                                            <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                                               
+                                                                               {% for pt in productost %}
+                                                                               <div> 
+                                                                                   <h6> <span class='text-primary fs-11px'> {{pt.0}} -</span> <span class='text-soft fs-11px'> {{pt.1}}  </span> <span class='text-info fs-11px'> - {{pt.2}} unidades. </span>   </h6>
+                                                                               </div>
+                                                                               
+                                                                               {% endfor %}"><span>Ver productos</span></button>
+                                                            {% endif %}
+                                                        </td>
+                                                  
+                                                 
+                                                        <td class="nk-tb-col">
+                                                            {% if boolServCorporal == "Sin servicios coorporales" %}
+                                                            <span class="badge badge-dot badge-gray">Sin servicios corporales.</span>
+                                                            {% else %}
+                                                            <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                                               
+                                                                               {% for sc in servicioCorporal %}
+                                                                               <div> 
+                                                                                   <h6> <span class='text-primary fs-11px'> {{sc.0}} -</span> <span class='text-soft fs-11px'> {{sc.1}}  </span> <span class='text-info fs-11px'> - {{sc.2}} unidades. </span>   </h6>
+                                                                               </div>
+                                                                               
+                                                                               {% endfor %}"><span>Ver servicios Corporales</span></button>
+                                                            {% endif %}
+                                                            {% if boolServFacial == "Sin servicios faciales" %}
+                                                             <span class="badge badge-dot badge-gray">Sin servicios faciales.</span>
+                                                            {% else %}
+                                                            <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                                               
+                                                                               {% for sf in servicioFacial %}
+                                                                               <div> 
+                                                                                   <h6> <span class='text-primary fs-11px'> {{sf.0}} -</span> <span class='text-soft fs-11px'> {{sf.1}}  </span> <span class='text-info fs-11px'> - {{sf.2}} unidades. </span>   </h6>
+                                                                               </div>
+                                                                               
+                                                                               {% endfor %}"><span>Ver servicios Corporales</span></button>
+                                                            {% endif %}
+                                                        </td>
+                                            
+                                                     
+                                                        
+                        
+                                                        <td class="nk-tb-col" data-order="Email Verified - Kyc Unverified">
+                                                            {% if booleanDescuento == "Sin descuento" %}
+                                                            
+                                                            <span class="badge badge-dot badge-dark">No se aplicó descuento</span>
+                                                            {% else %}
+                                                            <div>
+                                                                <span class="badge badge-dot badge-warning">Se aplicó descuento</span>
+                                                            </div>
+                                                            <div>
+                                                                <p class="fs-12px">Del <span class="fw-bold text-dark">{{datosDescuento.0}}% - {{datosDescuento.1}}</span>:</p>
+                                                            </div>
+                                                            <div>
+                                                                <p class="fs-12px">Total: <span class="fw-bold text-teal">${{costoReal}} MXN.</span>:</p>
+                                                            </div>
+                                                            <div>
+                                                                <p class="fs-12px">Desc: <span class="fw-bold text-pink">-${{descuento}} MXN.</span>:</p>
+                                                            </div>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td class="nk-tb-col" data-order="Email Verified - Kyc Unverified">
+                                                            <span class="badge badge-success text-dark"> $ {{venta.monto_pagar}} MXN.</span>
+                                                        </td>
+                                                        <td class="nk-tb-col" data-order="Email Verified - Kyc Unverified">
+                                                            <button class="btn btn-sm btn-info"><em class="icon ni ni-printer"></em></button>
+                                                        </td>
+                                                       
+                        
+                                                    </tr>
+                                                    {% endfor %}
+                                                    
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </div> 
+                                    </div>
+                                </div><!-- .nk-block-head -->
+                                
+                                
+                            </div><!-- .nk-block -->
+                            
+                            
+                        </div><!-- .card-inner -->
+                    </div>
+                    <div class="tab-pane" id="creditos">
+                        
+                        
+                      
+                        <div class="card card-preview">
+                            <div class="card-inner table-responsive">
+                                <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                                    <thead>
+                                        <tr class="nk-tb-item nk-tb-head" style="background-color: #900C3F !important; color:white !important">
+                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                           
+                                            
+                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha alta crédito</span></th>
+                                          
+                                          
+                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Productos</span></th>
+                                           
+                                           
+                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto $ total</span></th>
+                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Fechas de pago</span></th>
+                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto $ pagado</span></th>
+                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto $ restante</span></th>
+                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Estatus</span></th>
+                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Ticket</span></th>
+                                         
+                                       
+                                    
+                                          
+                                         
+                                          
+                                         
+                                         
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for creditosCliente,productosCreditoTotal,serviciosCorporalesTotal,serviciosFacialesTotal,boolEstatusCreditoTotal,fechasPagoCreditoTotal,realizadoPorCreditoTotal,sucursalPorCreditoTotal in listaCreditosTotales %}
+                                        <tr class="nk-tb-item">
+                                            <td class="nk-tb-col">
+                                                <span class="badge-pill badge-info">{{creditosCliente.id_credito}}</span>
+                                            </td>
+            
+                                         
+                                            <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                                <span class="tb-amount">{{creditosCliente.fecha_venta_credito}}</span>
+
+                                                <div class="text-center">
+                                                    <p class="fs-12px fw-bold text-pink" style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="{{credito.descripcion_credito}}">Descripción</p> 
+                                                </div> 
+                                                <br>
+                                                <center>
+                                                    <button type="button" class="btn btn-dim btn-danger btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                                   
+                                                             
+                                                    <div> 
+                                                        <h6> <span class='text-primary fs-11px'> {{realizadoPorCreditoTotal}}    </h6>
+                                                    </div>
+                                                    
+                                                  "><em class="icon ni ni-user-alt" ></em></button>
+                                                  <br>
+                                                  <span class="badge badge-pill badge-dark" style="color: rgb(255, 255, 255) !important;;">{{sucursalPorCreditoTotal}}</span>
+                                                </center>
+
+                                            </td>
+
+                                           
+
+                                            <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                                <center>
+                                                    {% if productosCreditoTotal or serviciosCorporalesTotal or serviciosFacialesTotal  %}
+                                                    <div>
+                                                        <button type="button" class="btn btn-dim btn-info btn-xs" data-container="body" data-toggle="popover" 
+                                                        data-placement="bottom" data-html="true" data-content="
+                                                        {% for producto in productosCreditoTotal %}       
+                                                        <div> 
+                                                            <p>Código: <span class='fw-bold text-indigo'>{{producto.0}}</span> - <span class='fw-bold text-dark'>{{producto.1}}</span> - <span  class='fw-bold text-azure'>{{producto.2}} unidades</span></p>
+                                                        </div>
+                                                        {% endfor %}
+
+                                                        {% for sc in serviciosCorporalesTotal %}       
+                                                        <div> 
+                                                            <p>Id servicio: <span class='fw-bold text-indigo'>{{sc.0}}</span> - <span class='fw-bold text-dark'>{{sc.1}}</span> - <span  class='fw-bold text-azure'>{{sc.2}} unidades</span></p>
+                                                        </div>
+                                                        {% endfor %}
+
+                                                        {% for sf in serviciosFacialesTotal %}       
+                                                        <div> 
+                                                            <p>Id servicio: <span class='fw-bold text-indigo'>{{sf.0}}</span> - <span class='fw-bold text-dark'>{{sf.1}}</span> - <span  class='fw-bold text-azure'>{{sf.2}} unidades</span></p>
+                                                        </div>
+                                                        {% endfor %}
+                                            
+                                                        ">
+                                                        <em class="icon ni ni-cart" ></em>&nbsp;Ver productos</button>
+                                                    </div>
+                                                    {% else %}
+                                                    <span class="badge badge-dot badge-gray">Sin productos.</span>
+                                                    {% endif %}
+                                                
+                                                </center>
+                                                
+                                            </td>
+
+                       
+                                           
+                                      
+            
+                                            <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                                <span   class="text-teal fw-bold ">$ {{creditosCliente.monto_pagar}} MXN</span>
+                                            </td>
+                                           
+                                           
+                                            <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                                {% if boolEstatusCreditoTotal == "Finalizado" %}
+                                                    {% if fechasPagoCreditoTotal.0 != "" %}
+                                                    <div>
+                                                        <span class="badge badge-dark">Pago 1</span>  <span class="badge badge-success">Pagó: ${{fechasPagoCreditoTotal.1}}MXN - {{fechasPagoCreditoTotal.0}}</span>
+                                                    </div>
+                                                    {% endif %}
+                                                    {% if fechasPagoCreditoTotal.2 != "" %}
+                                                    <div>
+                                                        <span class="badge badge-dark">Pago 2</span>  <span class="badge badge-success">Pagó: ${{fechasPagoCreditoTotal.3}}MXN - {{fechasPagoCreditoTotal.2}}</span>
+                                                    </div>
+                                                    {% endif %}
+                                                    {% if fechasPagoCreditoTotal.4 != "" %}
+                                                    <div>
+                                                        <span class="badge badge-dark">Pago 3</span>  <span class="badge badge-success">Pagó: ${{fechasPagoCreditoTotal.5}}MXN - {{fechasPagoCreditoTotal.4}}</span>
+                                                    </div>
+                                                    {% endif %}
+                                                    {% if fechasPagoCreditoTotal.6 != "" %}
+                                                    <div>
+                                                        <span class="badge badge-dark">Pago 4</span>  <span class="badge badge-success">Pagó: ${{fechasPagoCreditoTotal.7}}MXN - {{fechasPagoCreditoTotal.6}}</span>
+                                                    </div>
+                                                    {% endif %}
+                                                {% elif boolEstatusCreditoTotal == "Pendiente" %}
+            
+                                                {% if fechasPagoCreditoTotal.1 == "Pendiente" %}
+                                                <div>
+                                                    <span class="badge badge-dark">Pago 1</span>  <span class="badge badge-gray" style="color: white !important;;">{{fechasPagoCreditoTotal.0}} - {{fechasPagoCreditoTotal.1}}</span>
+                                                </div>
+                                                {% else %}
+                                                <div>
+                                                    <span class="badge badge-dark">Pago 1</span>  <span class="badge badge-success">{{fechasPagoCreditoTotal.0}} {{fechasPagoCreditoTotal.1}}</span>
+                                                </div>
+                                                {% endif %}
+                                                
+                                                {% if fechasPagoCreditoTotal.2 == "Pendiente" %}
+                                                <div>
+                                                    <span class="badge badge-dark">Pago 2</span>  <span class="badge badge-gray" style="color: white !important;;">{{fechasPagoCreditoTotal.2}} - {{fechasPagoCreditoTotal.3}}</span>
+                                                </div>
+                                                {% else %}
+                                                <div>
+                                                    <span class="badge badge-dark">Pago 2</span>  <span class="badge badge-success">{{fechasPagoCreditoTotal.2}} {{fechasPagoCreditoTotal.3}}</span>
+                                                </div>
+                                                {% endif %}
+            
+                                                {% if fechasPagoCreditoTotal.4 == "Pendiente" %}
+                                                <div>
+                                                    <span class="badge badge-dark">Pago 3</span>  <span class="badge badge-gray" style="color: white !important;;">{{fechasPagoCreditoTotal.4}} - {{fechasPagoCreditoTotal.5}}</span>
+                                                </div>
+                                                {% else %}
+                                                <div>
+                                                    <span class="badge badge-dark">Pago 3</span>  <span class="badge badge-success">{{fechasPagoCreditoTotal.4}} {{fechasPagoCreditoTotal.5}}</span>
+                                                </div>
+                                                {% endif %}
+            
+                                                {% if fechasPagoCreditoTotal.6 == "Pendiente" %}
+                                                <div>
+                                                    <span class="badge badge-dark">Pago 4</span>  <span class="badge badge-gray" style="color: white !important;;">{{fechasPagoCreditoTotal.5}} - {{fechasPagoCreditoTotal.6}}</span>
+                                                </div>
+                                                {% else %}
+                                                <div>
+                                                    <span class="badge badge-dark">Pago 4</span>  <span class="badge badge-success">{{fechasPagoCreditoTotal.5}} - {{fechasPagoCreditoTotal.6}}</span>
+                                                </div>
+                                                {% endif %}
+                                                
+                                                {% endif %}
+            
+                                            </td>
+            
+                                          
+                                         
+                                            <td class="nk-tb-col">
+                                                {% if creditosCliente.monto_pagado == None %}
+                                                <span class="badge badge-pill badge-warning" style="color: black !important;;">$ 0 MXN</span>
+                                                {% else %}
+                                                <span class="badge badge-pill badge-warning" style="color: black !important;;">$ {{creditosCliente.monto_pagado}} MXN</span>
+                                                {% endif %}
+                                            </td>
+            
+                                            <td class="nk-tb-col">
+                                                <span class="badge badge-pill badge-info" style="color: black !important;;">$ {{creditosCliente.monto_restante}} MXN</span>
+                                            </td>
+
+                                            <td class="nk-tb-col">
+                                                {%  if boolEstatusCreditoTotal == "Finalizado" %}
+                                                <span class="badge badge-pill badge-success" style="color: black !important;;">Finalizado</span>
+                                                {% else %}
+                                                <span class="badge badge-pill badge-danger" style="color: black !important;;">Pendiente</span>
+                                                {% endif %}
+
+                                            </td>
+                                            <td class="nk-tb-col" data-order="Email Verified - Kyc Unverified">
+                                                <button class="btn btn-sm btn-info"><em class="icon ni ni-printer"></em></button>
+                                            </td>
+            
+                                           
+                                       
+                                         
+            
+                                       
+                                        
+                                        
+                                 
+            
+                                        </tr>
+                                        {% endfor %}
+                                        
+                                    </tbody>
+                                </table>
+                              
+                            
+                            </div>
+                       
+                        </div><!-- .card-preview -->
+                    </div>
+                    <div class="tab-pane" id="rentas">
+                        <div class="card card-preview">
+                            <div class="card-inner table-responsive">
+                                <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                                    <thead>
+                                        <tr class="nk-tb-item nk-tb-head" style="background-color: #900C3F !important; color:white !important">
+                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+
+                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Productos</span></th>
+                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto $ total renta</span></th>
+                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Estatus</span></th>
+                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha apartado</span></th>
+                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha entrega</span></th>
+                                           
+                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Fechas limite de devolucion</span></th>
+                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Fechas de devolucion</span></th>
+                                            <th class="nk-tb-col"><span class="sub-text textoBlanco">Ticket</span></th>
+                                            
+                                         
+                                         
+                                    
+                                          
+                                         
+                                          
+                                         
+                                         
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for rentasCliente,productosRentasTotal,realizadoPorRentaTotal,sucursalPorRentaTotal in listaRentasTotalesCliente %}
+                                        <tr class="nk-tb-item">
+                                            <td class="nk-tb-col">
+                                                <span class="badge-pill badge-info">{{rentasCliente.id_renta}}</span>
+                                            </td>
+            
+                                         
+                                         
+
+                                           
+
+                                            <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                                <center>
+                                                    {% if productosRentasTotal  %}
+                                                    <div>
+                                                        <button type="button" class="btn btn-dim btn-primary btn-xs" data-container="body" data-toggle="popover" 
+                                                        data-placement="bottom" data-html="true" data-content="
+                                                        {% for producto in productosRentasTotal %}       
+                                                        <div> 
+                                                            <p>Código: <span class='fw-bold text-indigo'>{{producto.0}}</span> - <span class='fw-bold text-dark'>{{producto.1}}</span> </span></p>
+                                                        </div>
+                                                        {% endfor %}
+
+                                                   
+                                            
+                                                        ">
+                                                        <em class="icon ni ni-cart" ></em></button>
+                                                    </div>
+                                                    {% else %}
+                                                    <span class="badge badge-dot badge-gray">Sin productos.</span>
+                                                    {% endif %}
+                                                
+                                                </center>
+                                                <br>
+
+                                                <center>
+                                                    <button type="button" class="btn btn-dim btn-danger btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                                   
+                                                             
+                                                    <div> 
+                                                        <h6> <span class='text-primary fs-11px'> {{realizadoPorRentaTotal}}    </h6>
+                                                    </div>
+                                                    
+                                                  "><em class="icon ni ni-user-alt" ></em></button>
+                                                  <br>
+                                                  <span class="badge badge-pill badge-dark" style="color: rgb(255, 255, 255) !important;;">{{sucursalPorRentaTotal}}</span>
+                                                </center>
+                                                
+                                            </td>
+
+                                            <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                                <div>
+
+                                                <div>
+                                                <span   class="text-teal fw-bold ">$ {{rentasCliente.monto_total_renta}} MXN</span>
+                                            </td>
+
+                                            {% if rentasCliente.estado_devolucion == "A" %}
+                                            <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                                <div>
+                                                    <p class="badge badge-warning">Apartado</p>
+                                                </div>
+                                            </td>
+                                            {% elif rentasCliente.estado_devolucion == "P" %}
+                                            <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                                <div>
+                                                    <p class="badge badge-success">Entregado</p>
+                                                </div>
+                                            </td>
+                                            {% elif rentasCliente.estado_devolucion == "F" %}
+                                            <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                                <div>
+                                                    <p class="badge badge-danger">Finalizado</p>
+                                                </div>
+                                                <br>
+                                                <div>
+                                                    <center>
+                                                        <button type="button" class="btn btn-dim btn-danger btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                                   
+                                                             
+                                                   {{rentasCliente.descripcion_devolucion}}
+                                                    
+                                                  "><em class="icon ni ni-comments" ></em></button>
+                                                    </center>
+                                                </div>
+                                                
+                                            </td>
+                                            {% endif %}
+
+
+                                            <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                                <div>
+                                                    <p class="text-dark">Se apartó el día: </p>
+                                                </div>
+                                                <div>
+                                                    <p class="fw-bold text-dark">{{rentasCliente.fecha_apartado}}</p>
+                                                </div>
+                                                <div class="text-center">
+                                                    <p><span class="text-dark">Se pagaron </span><span class="fw-bold text-orange">${{rentasCliente.monto_pago_apartado}} MXN.</span></p>
+                                                </div> 
+
+                                            </td>
+                                            
+                                            {% if rentasCliente.estado_devolucion == "A" %}
+                                            <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                                <div>
+                                                    <p class="text-dark">Se debe entregar el día: </p>
+                                                </div>
+                                                <div>
+                                                    <p class="fw-bold text-danger">{{rentasCliente.fecha_entrega_renta}}</p>
+                                                </div>
+                                                
+
+                                            </td>
+                                            {% elif rentasCliente.estado_devolucion == "P" %}
+                                            <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                                <div>
+                                                    <p class="text-dark">Se entregó el día: </p>
+                                                </div>
+                                                <div>
+                                                    <p class="fw-bold text-dark">{{rentasCliente.fecha_entrega_renta}}</p>
+                                                </div>
+                                                <div class="text-center">
+                                                    <p><span class="text-dark">Se liquidó </span><span class="fw-bold text-purple">${{rentasCliente.monto_pago_restante}} MXN.</span></p>
+                                                </div> 
+                                            </td>
+                                            {% elif rentasCliente.estado_devolucion == "F" %}
+                                            <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                                <div>
+                                                    <p class="text-dark">Se entregó el día: </p>
+                                                </div>
+                                                <div>
+                                                    <p class="fw-bold text-dark">{{rentasCliente.fecha_entrega_renta}}</p>
+                                                </div>
+                                                <div class="text-center">
+                                                    <p><span class="text-dark">Se liquidó </span><span class="fw-bold text-azure">${{rentasCliente.monto_pago_restante}} MXN.</span></p>
+                                                </div> 
+                                            </td>
+                                            {% endif %}
+
+
+                                            {% if rentasCliente.estado_devolucion == "F" %}
+                                            <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                                <div>
+                                                    <p class="text-teal">Ya se devolvió</p>
+                                                </div>
+                                                
+
+                                            </td>
+                                            {% else %}
+                                            <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                                <div>
+                                                    <p class="text-dark">Se debe regresar el día: </p>
+                                                </div>
+                                                <div>
+                                                    <p class="fw-bold text-dark">{{rentasCliente.fecha_limite_devolucion}}</p>
+                                                </div>
+                                                
+
+                                            </td>
+                                            {% endif %}
+                                            
+
+                                            {% if rentasCliente.estado_devolucion == "A" %}
+                                            <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                                <div>
+                                                    <p class="text-danger">No devuelto </p>
+                                                </div>
+                                                
+
+                                            </td>
+                                            {% elif rentasCliente.estado_devolucion == "P" %}
+                                            <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                                <div>
+                                                    <p class="text-danger">No devuelto </p>
+                                                </div>
+                                            </td>
+                                            {% elif rentasCliente.estado_devolucion == "F" %}
+                                            <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                                <div>
+                                                    <p class="text-dark">Se devolvió el día: </p>
+                                                </div>
+                                                <div>
+                                                    <p class="fw-bold text-dark">{{rentasCliente.fecha_devolucion}}</p>
+                                                </div>
+                                                
+                                            </td>
+                                            {% endif %}
+
+                                            <td class="nk-tb-col" data-order="Email Verified - Kyc Unverified">
+                                                <button class="btn btn-sm btn-info"><em class="icon ni ni-printer"></em></button>
+                                            </td>
+
+                                            
+                                           
+                                      
+            
+                                            
+                                           
+                                           
+            
+                                     
+
+                                         
+            
+                                       
+                                        
+                                        
+                                 
+            
+                                        </tr>
+                                        {% endfor %}
+                                        
+                                    </tbody>
+                                </table>
+                              
+                            
+                            </div>
+                       
+                        </div><!-- .card-preview -->
+                    </div>
+                   
+                </div>
+                    
+
+                </div><!-- .card-content -->
+                <div class="card-aside card-aside-right user-aside toggle-slide toggle-slide-right toggle-break-xxl" data-content="userAside" data-toggle-screen="xxl" data-toggle-overlay="true" data-toggle-body="true">
+                    <div class="card-inner-group" data-simplebar>
+                        <div class="card-inner">
+                            <div class="user-card user-card-s2">
+                                <div class="user-avatar lg bg-primary">
+                                    <span>{{letrasCliente}}</span>
+                                </div>
+                                <div class="user-info">
+                                    <div class="badge badge-outline-light badge-pill ucap">CLIENTE</div>
+                                    <h5>{{clienteCompleto}}</h5>
+                                    <span class="sub-text">{{correo2}}</span>
+                                </div>
+                            </div>
+                        </div><!-- .card-inner -->
+                        <div class="card-inner card-inner-sm">
+                            <ul class="btn-toolbar justify-center gx-1">
+                                <li data-toggle="tooltip" data-placement="right" title="Mandar correo electrónico."><a href="https://www.gmail.com" class="btn btn-trigger btn-icon"><em class="icon ni ni-mail"></em></a></li>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Clientes" %}
+                                {% if permiso.bloquear == "Si"  %}
+                                {% if estado2 == "A" %}
+                                <form action="/bloqueoCliente/" method="POST" id="bloqueoCliente">{% csrf_token %}
+                                    <input type="hidden" value="{{idClienteEstatus}}" name="idClienteBaja">
+                                    <li style="cursor: pointer!important;" data-toggle="tooltip" data-placement="right" title="Bloquear cliente."><a onclick="document.getElementById('bloqueoCliente').submit()" class="btn btn-trigger btn-icon text-danger" ><em class="icon ni ni-na"></em></a></li>
+                                </form>
+                                {% elif estado2 == "B" %}
+                                <form action="/activoCliente/" method="POST" id="activarCliente">{% csrf_token %}
+                                    <input type="hidden" value="{{idClienteEstatus}}" name="idClienteAlta">
+                                    <li style="cursor: pointer!important;" data-toggle="tooltip" data-placement="right" title="Activar cliente."><a onclick="document.getElementById('activarCliente').submit()" class="btn btn-trigger btn-icon text-success" ><em class="icon ni ni-unlock"></em></a></li>
+                                </form>
+                                {% endif %}
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div><!-- .card-inner -->
+                        <div class="card-inner">
+                            <div class="overline-title-alt mb-2">Balance de compras</div>
+                            <div class="profile-balance">
+                                <div class="profile-balance-group gx-4">
+                                    <div class="profile-balance-sub">
+                                        <div class="profile-balance-amount">
+                                            <div class="number">${{totalComprado}} <small class="currency currency-usd">MXN</small></div>
+                                        </div>
+                                        <div class="profile-balance-subtitle">Compras totales</div>
+                                    </div>
+                                    <div class="profile-balance-sub">
+                                        <span class="profile-balance-plus text-soft"><em class="icon ni ni-plus"></em></span>
+                                        <div class="profile-balance-amount">
+                                            <div class="number">${{totalCredito}} <small class="currency currency-usd">MXN</small></div>
+                                        </div>
+                                        <div class="profile-balance-subtitle">Compras a crédito</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!-- .card-inner -->
+                        <div class="card-inner">
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <div class="profile-stats">
+                                        <center>
+                                            <div class="chat-media user-avatar bg-warning text-center">
+                                                <span class="amount">{{cantidadCompras}}</span>
+                                                <span class="status dot dot-lg dot-success"></span>
+                                            </div>
+                                        </center>
+                                        
+                                        
+                                        <span class="sub-text">Compras</span>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="profile-stats">
+                                        <center>
+                                            <div class="chat-media user-avatar bg-warning">
+                                                <span class="amount">{{numeroCreditos}}</span>
+                                                <span class="status dot dot-lg dot-success"></span>
+                                            </div>
+                                        </center>
+                                       
+                                        <span class="sub-text">Créditos</span>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="profile-stats">
+                                        <center>
+                                            <div class="chat-media user-avatar bg-warning text-center">
+                                                <span class="amount">{{numeroRentas}}</span>
+                                                <span class="status dot dot-lg dot-success"></span>
+                                            </div>
+                                        </center>
+                                        
+                                        <span class="sub-text">Rentas</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!-- .card-inner -->
+                        <div class="card-inner">
+                            <h6 class="overline-title-alt mb-2">Adicional</h6>
+                            <div class="row g-3">
+                                <div class="col-12" id="tipoCliente">
+                                    <span class="sub-text text-center">Tipo de cliente:</span>
+                                    <br>
+                                    <center>
+                                        <img src="{% static 'images/accesos/tipoCliente.png' %} " alt="personal"> 
+                                    </center>
+                                    <br>
+                                    <h3 class="text-center text-success">{{tipoCliente}}</h3>
+                                </div>
+                                <div class="col-12" id="creditoLibre">
+                                    <p class="fw-bold text-dark text-center fs-20px">CRÉDITO LIBRE</p>
+                                    
+                                    <div class="card-inner table-responsive">
+                                        <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                                            <thead>
+                                                <tr class="nk-tb-item nk-tb-head" style="background-color: #37429e !important; color:white !important">
+                                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Id sucursal</span></th>
+                                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Nombre Sucursal</span></th>
+                                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto límite sucursal</span></th>
+                                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Crédito libre cliente</span></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for credito in limitesCreditos %}
+                                                <tr class="nk-tb-item">
+                                                    <td class="nk-tb-col">
+                                                        <span class="badge-pill badge-info">{{credito.0}}</span>
+                                                    </td>
+                                                    <td class="nk-tb-col">
+                                                        <span class="badge badge-dark">{{credito.1}}</span>
+                                                    </td>
+                                                    <td class="nk-tb-col"  style="white-space:nowrap!important;">
+                                                        <p class="fw-bold text-teal">${{credito.2}} MXN</p>
+                                                    </td>
+                                                    <td class="nk-tb-col"  style="white-space:nowrap!important;">
+                                                        <p class="fw-bold text-danger">${{credito.3}} MXN</p>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                                
+                                            </tbody>
+                                        </table>
+                                      
+                                    
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div><!-- .card-inner -->
+                        
+                    </div><!-- .card-inner -->
+                </div><!-- .card-aside -->
+
+
+
+            </div><!-- .card-aside-wrap -->
+        </div><!-- .card -->
+    </div><!-- .nk-block -->
+</div>
+
+
+
+<!-- Modal de información personal -->
+<div class="modal fade" tabindex="-1" role="dialog" id="profile-edit">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h5 class="title text-center ">ACTUALIZAR NÚMERO DE TELÉFONO</h5>
+                <center>
+                    <img src="{% static 'images/accesos/contacto.png' %} " alt="personal">
+                </center>
+                
+                <ul class="nk-nav nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#personal">Número de teléfono</a>
+                    </li>
+                   
+                </ul><!-- .nav-tabs -->
+                <div class="tab-content">
+                    
+                    <form action="/actTelCliente/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <input type="hidden" value="{{idClienteTelefono}}" name="idClienteTelefono">
+                             
+                            
+                              
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="form-label" for="phone-no">Teléfono</label>
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-left">
+                                                <em class="icon ni ni-call"></em>
+                                            </div>
+                                            <input type="text" class="form-control form-control-lg" id="phone-no" value="{{telefonoParaActualizar}}" maxlength="10" placeholder="Ingesar teléfono" name="telefonoClienteActualizado" required>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12">
+                                    <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                        <li>
+                                            <button type="submit" class="btn btn-lg btn-primary">Actualizar número</button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            
+                        </div>
+                    </div><!-- .tab-pane -->
+                </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+<!-- Modal Content Code -->
+<div class="modal fade" tabindex="-1" id="modalCreditosPendientes">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                <em class="icon ni ni-cross"></em>
+            </a>
+            <div class="modal-header">
+                <h5 class="modal-title">Créditos Pendientes</h5>
+            </div>
+            <div class="modal-body">
+                <h5><p>Listado de créditos pendientes de cliente</p></h5>
+                <div class="card card-preview">
+                    {% if listaCreditosPendientesCliente == None %}
+                    <p class="fw-bold fs-18px text-teal">El cliente no tiene créditos pendientes!</p>
+                    {% else %}
+                    <div class="card-inner table-responsive">
+                        <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                            <thead>
+                                <tr class="nk-tb-item nk-tb-head" style="background-color: #0c8c90 !important; color:white !important">
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                   
+                                    
+                                    <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco" >Fecha alta crédito</span></th>
+                                    <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Concepto crédito</span></th>
+                                    <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Productos comprados</span></th>
+                                    <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Monto $ total</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Fechas de pago</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto $ pagado</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto $ restante</span></th>
+                                 
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Realizado por:</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal:</span></th>
+                                 
+                                  
+                                 
+                                 
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for credito,vendedor,sucursal, fechaPendiente, estatusPago, fechaPago, productosCredito, serviciosCorpCredito, serviciosFacCredito in listaCreditosPendientesCliente %}
+                                {% if credito.concepto_credito == "Renta" %}
+                                
+                                {% elif credito.concepto_credito == "Venta" %}
+                                <tr class="nk-tb-item">
+                                  
+    
+                                    <td class="nk-tb-col">
+                                        <span class="tb-amount">{{credito.id_credito}}</span>
+                                    </td>
+                                    <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                        <span class="tb-amount">{{credito.fecha_venta_credito}}</span>
+                                    </td>
+                                    <td class="nk-tb-col">
+                                        <center>
+                                            <div>
+                                                {% if credito.concepto_credito == "Renta" %}
+                                                <span class="badge  badge-primary">Renta</span>
+                                                {% elif credito.concepto_credito == "Venta" %}
+                                                <span class="badge  badge-danger">Venta</span>
+                                                {% endif %}
+                                            </div>
+                                        
+                                           <br>
+                                            <div>
+                                                <p class="fs-12px fw-bold text-pink" data-toggle="tooltip" data-placement="bottom" title="{{credito.descripcion_credito}}">Descripción</p> 
+                                            </div>
+                                        </center>
+                                     
+                                    </td>
+                                    <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                        <button type="button" class="btn btn-primary" data-container="body" 
+                                            data-toggle="popover" data-html="true" data-placement="bottom"  
+                                            data-content=" {% for prod in productosCredito %}
+                                            <div> 
+                                                <h6> <span class='text-primary '> {{prod.0}}  </span> <span class='text-soft'> {{prod.1}}  </span> <span class='text-info'>  {{prod.2}} unidades. </span>   </h6>
+                                            </div>
+                                            
+                                            {% endfor %}
+                                            {% for prodCorp in serviciosCorpCredito %}
+                                            <div> 
+                                                <h6> <span class='text-primary '> {{prodCorp.0}}  </span> <span class='text-soft'> {{prodCorp.1}}  </span> <span class='text-info'>  {{prodCorp.2}} unidades. </span>   </h6>
+                                            </div>
+                                            
+                                            {% endfor %}
+                                            {% for prodFa in serviciosFacCredito %}
+                                            <div> 
+                                                <h6> <span class='text-primary '> {{prodFa.0}}  </span> <span class='text-soft'> {{prodFa.1}}  </span> <span class='text-info'>  {{prodFa.2}} unidades. </span>   </h6>
+                                            </div>
+                                            
+                                            {% endfor %}
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            ">
+                                            <span>Ver productos</span>
+                                        </button>
+                                    </td>
+                                   
+                                    
+    
+                                    <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                        <span   class="text-dark fw-bold" style="color: black !important;;">$ {{credito.monto_pagar}} MXN</span>
+                                    </td>
+                                   
+                                   
+                                    <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                        {% if credito.concepto_credito == "Renta" %}
+                                        <span class="badge badge-gray" style="color: black !important;;">No aplica</span>
+                                        {% elif credito.concepto_credito == "Venta" %}
+    
+                                        {% if estatusPago.0 == "Pendiente" %}
+                                        <div>
+                                            <span class="badge badge-dark">Pago 1</span>  <span class="badge badge-gray" style="color: white !important;;">{{fechaPendiente.0}} - {{estatusPago.0}}</span>
+                                        </div>
+                                        {% else %}
+                                        <div>
+                                            <span class="badge badge-dark">Pago 1</span>  <span class="badge badge-success">{{estatusPago.0}} {{fechaPago.0}}</span>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        {% if estatusPago.1 == "Pendiente" %}
+                                        <div>
+                                            <span class="badge badge-dark">Pago 2</span>  <span class="badge badge-gray" style="color: white !important;;">{{fechaPendiente.1}} - {{estatusPago.1}}</span>
+                                        </div>
+                                        {% else %}
+                                        <div>
+                                            <span class="badge badge-dark">Pago 2</span>  <span class="badge badge-success">{{estatusPago.1}} {{fechaPago.1}}</span>
+                                        </div>
+                                        {% endif %}
+    
+                                        {% if estatusPago.2 == "Pendiente" %}
+                                        <div>
+                                            <span class="badge badge-dark">Pago 3</span>  <span class="badge badge-gray" style="color: white !important;;">{{fechaPendiente.2}} - {{estatusPago.2}}</span>
+                                        </div>
+                                        {% else %}
+                                        <div>
+                                            <span class="badge badge-dark">Pago 3</span>  <span class="badge badge-success">{{estatusPago.2}} {{fechaPago.2}}</span>
+                                        </div>
+                                        {% endif %}
+    
+                                        {% if estatusPago.3 == "Pendiente" %}
+                                        <div>
+                                            <span class="badge badge-dark">Pago 4</span>  <span class="badge badge-gray" style="color: white !important;;">{{fechaPendiente.3}} - {{estatusPago.3}}</span>
+                                        </div>
+                                        {% else %}
+                                        <div>
+                                            <span class="badge badge-dark">Pago 4</span>  <span class="badge badge-success">{{estatusPago.3}} {{fechaPago.3}}</span>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        {% endif %}
+    
+                                    </td>
+    
+                                  
+                                 
+                                    <td class="nk-tb-col">
+                                        {% if credito.monto_pagado == None %}
+                                        <span class="badge badge-pill badge-warning" style="color: black !important;;">$ 0 MXN</span>
+                                        {% else %}
+                                        <span class="badge badge-pill badge-warning" style="color: black !important;;">$ {{credito.monto_pagado}} MXN</span>
+                                        {% endif %}
+                                    </td>
+    
+                                    <td class="nk-tb-col">
+                                        <span class="badge badge-pill badge-info" style="color: black !important;;">$ {{credito.monto_restante}} MXN</span>
+                                    </td>
+    
+                                   
+                                    <td class="nk-tb-col">
+                                        <center>
+                                            <button type="button" class="btn btn-dim btn-danger btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                           
+                                                     
+                                            <div> 
+                                                <h6> <span class='text-primary fs-11px'> {{vendedor}}    </h6>
+                                            </div>
+                                            
+                                          "><em class="icon ni ni-user-alt" data-toggle="tooltip" data-placement="bottom" title="Clic para ver empleado"></em></button>
+                                        </center>
+                                     
+                                    </td>
+    
+                                    <td class="nk-tb-col">
+                                       
+                                        <span class="badge badge-pill badge-light fw-bold">{{sucursal}}</span>
+                                   
+                                    </td>
+                                
+                         
+    
+                                </tr>
+
+                                {% endif %}
+                               
+                                {% endfor %}
+                                
+                            </tbody>
+                        </table>
+                      
+                    
+                    </div>
+                    {% endif %}
+                    
+                    
+                </div><!-- .card-preview -->
+            </div>
+            <div class="modal-footer bg-light">
+                <span class="fw-bold text-pink">&reg; Costabella - 2022</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Content Code -->
+<div class="modal fade" tabindex="-1" id="modalRentasPendientes">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                <em class="icon ni ni-cross"></em>
+            </a>
+            <div class="modal-header">
+                <h5 class="modal-title">Rentas pendientes</h5>
+            </div>
+            <div class="modal-body">
+                {% if listaRentasPendientesCliente == None %}
+                    <p class="fw-bold fs-18px text-teal">El cliente no tiene rentas pendientes!</p>
+                {% else %}
+                <h5><p>Listado de rentas pendientes de cliente</p></h5>
+                <div class="card card-preview">
+                    <div class="card-inner table-responsive">
+                        <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                            <thead>
+                                <tr class="nk-tb-item nk-tb-head" style="background-color: #6867AC !important; color:white !important">
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                    <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Prenda Rentada</span></th>
+                                    
+                                    <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco" >Devolución </span></th>
+                                    <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Monto $ total</span></th>
+                                    <th class="nk-tb-col" ><span class="sub-text textoBlanco">Monto $ mínimo apartado</span></th>
+                                    
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto $ pagado</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Entrega</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Límite devolución</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Cuota?</span></th>
+                                    <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco" >Comentarios </span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Realizado por:</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal:</span></th>
+                                 
+                                  
+                                 
+                                 
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for renta,producto,vendedor,sucursal in listaRentasPendientesCliente %}
+                                <tr class="nk-tb-item">
+                                  
+    
+                                    <td class="nk-tb-col">
+                                        <span class="badge badge-info">{{renta.id_renta}}</span>
+                                    </td>
+                                    <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                       
+                                        {% for prod in producto %}
+                                        <div>
+                                            <p><span class="fw-bold text-dark">Código: </span><span class="fw-bold text-dark">{{prod.0}}</span></p>
+                                        </div>
+                                        <div>
+                                            <p><span class="fw-bold text-dark">Nombre: </span><span class="fw-bold text-dark">{{prod.1}}</span></p>
+                                        </div>
+                                        {% if prod.2 %}
+                                        <div class="text-center">
+                                            
+                                            <img src="{{prod.2.url}}" width="40" alt="lap">
+                                        </div>
+                                        {% else %}
+                                        <div>
+                                            
+                                            <span class="tb-amount">Sin imagen</span>
+                                        </div>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </td>
+
+                                                       
+                                   
+                                    <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    
+    
+                                    
+                                        {% if renta.estado_devolucion == "A" %}
+                                        <span class="badge badge-danger"> Entrega de vestido a cliente pendiente </span>
+                                        {% elif renta.estado_devolucion == "P" %}
+                                     
+                                        <span class="badge badge-danger"> En espera de devolución </span>
+                                        {% endif %}
+                                  
+                                       
+                                   
+    
+                                    </td>
+
+                                    <td class="nk-tb-col"  style="white-space:nowrap!important;">
+                                        <span class="fw-bold text-azure">$ {{renta.monto_total_renta}} MXN</span>
+                                    </td>
+
+                                    <td class="nk-tb-col"  style="white-space:nowrap!important;">
+                                        <span class="fw-bold text-orange" >$ {{renta.monto_min_apartado}} MXN</span>
+                                    </td>
+
+                                    <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                        <div>
+                                            
+                                            <span class="fw-bold text-teal"  >$ {{renta.monto_pago_apartado}} MXN</span>
+                                        </div>
+                                        <div>
+                                            <p class="fw-bold text-dark">Apartado el día: </p>
+                                            
+                                        </div>
+                                        <div>
+                                            <p><span class=" text-dark">{{renta.fecha_apartado}}</span></p>
+                                        </div>
+                                    </td>
+                                    <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                        {% if renta.estado_devolucion == "A" %}
+                                        <span class="badge badge-danger"> Aún no se realiza la entrega </span>
+                                        {% elif renta.estado_devolucion == "P" %}
+                                     
+                                        <div>
+                                            <span class="fw-bold text-teal"  >$ {{renta.monto_pago_restante}} MXN</span>
+                                        </div>
+                                        <div>
+                                            <p class="fw-bold text-dark">Entregado el día: </p>
+                                            
+                                        </div>
+                                        <div>
+                                            <p><span class=" text-dark">{{renta.fecha_entrega_renta}}</span></p>
+                                        </div>
+                                        {% endif %}
+
+                                        
+                                    </td>
+                                    <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                        
+                                        <div>
+                                            <p class="fw-bold text-dark">Tiene hasta el día: </p>
+                                            
+                                        </div>
+                                        <div>
+                                            <p><span class=" text-danger">{{renta.fecha_limite_devolucion}}</span></p>
+                                        </div>
+                                        <div>
+                                            <p class="fw-bold text-dark">para devolver </p>
+                                            
+                                        </div>
+                                    </td>
+                                    <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                        
+                                        <div>
+                                            <p class="fw-bold text-dark">Después del día: </p>
+                                            
+                                        </div>
+                                        <div>
+                                            <p><span class="fw-bold text-danger">{{renta.fecha_limite_devolucion_cuota}}</span></p>
+                                        </div>
+                                        <div>
+                                            <p class="fw-bold text-dark"> aplica cuota </p>
+                                            
+                                        </div>
+                                    </td>
+
+
+    
+                                   
+                                  
+                                    <td class="nk-tb-col">
+                                        <center>
+                                        
+                                            <div>
+                                                <p class="fs-12px fw-bold text-pink" style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="{{renta.comentarios_renta}}">Descripción</p> 
+                                            </div>
+                                        </center>
+                                     
+                                    </td>
+                            
+                                   
+
+    
+                                   
+                                    <td class="nk-tb-col">
+                                        <center>
+                                            <button type="button" class="btn btn-dim btn-danger btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                           
+                                                     
+                                            <div> 
+                                                <h6> <span class='text-primary fs-11px'> {{vendedor}}    </h6>
+                                            </div>
+                                            
+                                          "><em class="icon ni ni-user-alt"></em></button>
+                                        </center>
+                                     
+                                    </td>
+    
+                                    <td class="nk-tb-col">
+                                       
+                                        <span class="badge badge-pill badge-light fw-bold">{{sucursal}}</span>
+                                   
+                                    </td>
+                                
+                         
+    
+                                </tr>
+                                {% endfor %}
+                                
+                            </tbody>
+                        </table>
+                      
+                    
+                    </div>
+                </div><!-- .card-preview -->
+                {% endif %}
+                
+            </div>
+            <div class="modal-footer bg-light">
+                <span class="fw-bold text-pink">&reg; Costabella - 2022</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Content Code -->
+
+
+<script>
+    window.onload =function(){
+        var divTipoCliente = document.getElementById('tipoCliente');
+        var creditoLibre = document.getElementById('creditoLibre');
+        divTipoCliente.style.display = "block";
+        creditoLibre.style.display = "none";
+        
+        window.onload= mueveReloj ();
+        
+    }
+
+    function mostrarTipoCliente(){
+        var divTipoCliente = document.getElementById('tipoCliente');
+        var creditoLibre = document.getElementById('creditoLibre');
+        divTipoCliente.style.display = "block";
+        creditoLibre.style.display = "none";
+    }
+
+    function ocultarTipoCliente(){
+        var divTipoCliente = document.getElementById('tipoCliente');
+        var creditoLibre = document.getElementById('creditoLibre');
+        divTipoCliente.style.display = "none";
+        creditoLibre.style.display = "block";
+    }
+</script>
+
+{% endblock %}

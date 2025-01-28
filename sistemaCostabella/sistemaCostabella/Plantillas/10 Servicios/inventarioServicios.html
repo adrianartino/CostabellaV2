@@ -1,0 +1,1081 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Inventario de servicios | Costabella
+{% endblock %}
+
+{% block estilos %}
+<style>
+    @media screen and (max-width: 320px) {
+        table {
+          display: block!important;
+          overflow-x: auto!important;
+        }
+   }
+</style>
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    <h3 class="nk-block-title page-title color-texto-seleccion">LISTADO DE SERVICIOS</h3>
+                    <h4 class="fw-bold text-dark">Sucursal: {{nombreSucursalServicios}}</h4>
+                    <div class="nk-block-des text-soft">
+                        <p>Total de servicios por tipo: {{contadorProductosVentas}} Servicios Corporales - {{contadorProductosRentas}} Servicios Faciales.</p>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+                <div class="nk-block-head-content">
+                    <div class="toggle-wrap nk-block-tools-toggle">
+                        <a href="#" class="btn btn-icon btn-trigger toggle-expand mr-n1" data-target="more-options"><em class="icon ni ni-more-v"></em></a>
+                        <div class="toggle-expand-content" data-content="more-options">
+                            <ul class="nk-block-tools g-3">
+                                <li>
+                                    <div class="drodown">
+                                        <a href="#" class="dropdown-toggle dropdown-indicator btn btn-outline-light btn-white" data-toggle="dropdown">Filtro tipo de servicios</a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <ul class="link-list-opt no-bdr">
+                                                <li style="cursor: pointer!important;"><a onclick="mostrarCorporales()"><span>Corporales</span></a></li>
+                                                <li style="cursor: pointer!important;"> <a onclick="mostrarFaciales()"><span>Faciales</span></a></li>
+                                                
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Servicios" %}
+                                {% if permiso.agregar == "Si" %}
+                
+                                <li class="nk-block-tools-opt">
+                                    <a href="#" class="btn btn-icon btn-primary d-md-none"><em class="icon ni ni-plus"></em></a>
+                                    <a href="/altaServicios/" class="btn btn-primary d-none d-md-inline-flex"><em class="icon ni ni-plus"></em><span>Agregar Servicio</span></a>
+                                </li>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                               
+                               
+
+                            </ul>
+                        </div>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        
+        <!-- Div empleados todos -->
+        <div  id="divServiciosCorporales">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Servicios corporales para venta</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de <span class="coloralta">servicios corporales para venta</span> en el sistema.</p>
+                    </div>
+                
+                </div>
+                
+                
+            </div>
+        
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #6ECB63 !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco" >Nombre</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Descripción</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Costo venta</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Tiempo mínimo de duración</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Tiempo máximo de duración</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Complementos</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Servicios" %}
+                                {% if permiso.editar == "Si" %}
+                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Editar</span></th>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Paquetes" %}
+                                {% if permiso.agregar == "Si" %}
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Paquete de productos</span></th>
+                              
+                               
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                             
+                                
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for corporal,sucursal, yaTienePaqueteCorporal, productos in listaCorporales %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{corporal.id_servicio}}</span>
+                                </td>
+                               
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-dark">{{corporal.nombre_servicio}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <center>
+                                        
+                                    <span><button type="button" class="btn btn-sm btn-primary" data-toggle="popover" data-placement="bottom" 
+                                        data-content="{{corporal.descripcion_servicio}}"><em class="icon ni ni-notice"></em></button></span>
+                                    </center>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="fw-bold text-dark"><span class="text-teal">$ {{corporal.precio_venta}}</span> MXN</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <center>
+                                        <span class="badge badge-dim badge-pill badge-outline-success" style="color: black !important;"><em class="icon ni ni-clock"></em> {{corporal.tiempo_minimo}} Minutos</span>
+                                    </center>
+                                   
+                                </td>
+                                <td class="nk-tb-col">
+                                    <center>
+                                        <span class="badge badge-dim badge-pill badge-outline-danger" style="color: black !important;"><em class="icon ni ni-clock"></em> {{corporal.tiempo_maximo}} Minutos</span>
+                                    </center>
+                                    
+                                </td>
+                                <td class="nk-tb-col">
+                                    <center>
+                                        
+                                    <span><button type="button" class="btn btn-sm btn-gray" data-toggle="popover" data-placement="bottom" 
+                                        data-content="{{corporal.complementos_servicio}}"><em class="icon ni ni-notice"></em></button></span>
+                                    </center>
+
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-outline-dark">{{sucursal}}</span>
+                                </td>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Servicios" %}
+                                {% if permiso.editar == "Si" %}
+                
+                                <td class="nk-tb-col">
+                                    
+                                    <input type="hidden" name="idServicioEditar" value="{{corporal.id_servicio}}">
+                                    <center>
+                                        <button type="button" data-toggle="modal" data-target="#editarServicioCorporal{{corporal.id_servicio}}" class="btn btn-icon btn-sm btn-primarypruple"><em class="icon ni ni-edit" ></em></button>
+                                    </center>
+                                    
+                                </td>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+
+                                
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Paquetes" %}
+                                {% if permiso.agregar == "Si" %}
+                                <td class="nk-tb-col">
+                                    {% if yaTienePaqueteCorporal %}
+                                    <span class="fw-bold text-danger">Ya tiene un paquete asignado.</span>
+                                    <center>
+                                        <button type="button" id="verProductosServicioCorporal{{corporal.id_servicio}}" data-toggle="modal" data-target="#verProductosSC{{corporal.id_servicio}}" class="btn btn-icon btn-sm btn-success"><em class="icon ni ni-eye" ></em></button>
+                                    </center>
+                                    {% else %}
+                                    <form action="/crearPaqueteServicios/" method="POST">{% csrf_token %}
+                                        <input type="hidden" name="idServicioPaquete" value="{{corporal.id_servicio}}">
+                                        <center>
+                                        <button type="submit"   class="btn btn-icon btn-sm bg-indigo text-white"><em class="icon ni ni-package" ></em></button>
+                                        </center>
+
+                                    </form>
+                                    {% endif %}
+                                    
+                                    
+                                    
+                                </td>
+                              
+                               
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                            
+                            
+                             
+
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+        <!-- DIV EMPLEADOS ACTIVOS -->
+        <div  id="divServiciosFaciales">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Servicios faciales para venta</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de servicios <span class="coloralta"> faciales para venta</span> en el sistema.</p>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #24A19C !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco" >Nombre</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Descripción</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Costo venta</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Tiempo mínimo de duración</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Tiempo máximo de duración</span></th>
+                                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Complementos</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Servicios" %}
+                                {% if permiso.editar == "Si" %}
+                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Editar</span></th>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Paquetes" %}
+                                {% if permiso.agregar == "Si" %}
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Paquete de productos</span></th>
+                              
+                               
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                           
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for facial,sucursal, yaTienePaqueteFacial, productos in listaFaciales %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{facial.id_servicio}}</span>
+                                </td>
+                               
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-dark" >{{facial.nombre_servicio}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <center>
+                                        <span><button type="button" class="btn btn-sm btn-primary" data-toggle="popover" data-placement="bottom" 
+                                            data-content="{{facial.descripcion_servicio}}"><em class="icon ni ni-notice"></em></button></span>
+                                    </center>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="fw-bold text-dark"><span class="text-teal">$ {{facial.precio_venta}}</span> MXN</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <center>
+                                        <span class="badge badge-dim badge-pill badge-outline-success" style="color: black !important;"><em class="icon ni ni-clock"></em> {{facial.tiempo_minimo}} Minutos</span>
+                                    </center>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <center>
+                                        <span class="badge badge-dim badge-pill badge-outline-danger" style="color: black !important;"><em class="icon ni ni-clock"></em> {{facial.tiempo_maximo}} Minutos</span>
+                                    </center>
+                                    
+                                </td>
+                                <td class="nk-tb-col">
+                                    <center>
+                                        
+                                    <span><button type="button" class="btn btn-sm btn-gray" data-toggle="popover" data-placement="bottom" 
+                                        data-content="{{facial.complementos_servicio}}"><em class="icon ni ni-notice"></em></button></span>
+                                    </center>
+
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-outline-dark">{{sucursal}}</span>
+                                </td>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Servicios" %}
+                                {% if permiso.editar == "Si" %}
+                
+                                <td class="nk-tb-col">
+                                    
+                                    <input type="hidden" name="idServicioEditar" value="{{facial.id_servicio}}">
+                                    <center>
+                                        <button type="button" data-toggle="modal" data-target="#editarServicioFacial{{facial.id_servicio}}" class="btn btn-icon btn-sm btn-primarypruple"><em class="icon ni ni-edit" ></em></button>
+                                    </center>
+                                    
+                                </td>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Paquetes" %}
+                                {% if permiso.agregar == "Si" %}
+                                <td class="nk-tb-col">
+                                    {% if yaTienePaqueteFacial %}
+                                    <span class="fw-bold text-danger">Ya tiene un paquete asignado.</span>
+                                    <center>
+                                        <button type="button" id="verProductosBoton{{ser.id_servicio}}" data-toggle="modal" data-target="#verProductosSF{{facial.id_servicio}}" class="btn btn-icon btn-sm btn-success"><em class="icon ni ni-eye" ></em></button>
+                                    </center>
+                                    {% else %}
+                                    <form action="/crearPaqueteServicios/" method="POST">{% csrf_token %}
+                                        <input type="hidden" name="idServicioPaquete" value="{{facial.id_servicio}}">
+                                        <center>
+                                        <button type="submit"   class="btn btn-icon btn-sm bg-indigo text-white"><em class="icon ni ni-package" ></em></button>
+                                        </center>
+
+                                    </form>
+                                    {% endif %}
+
+                                    
+                                    
+                                    
+                                </td>
+                              
+                               
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                             
+                              
+                         
+                                
+                            </tr><!-- .nk-tb-item  -->
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+    </div>
+</div>
+
+{% if listaProductosVenta or listaProductosGasto %}
+<h1>{{listaProductosVenta }}</h1>
+<h1>{{listaProductosGasto }}</h1>
+
+{% endif %}
+
+
+
+<!-- Modal de editar servicios corporales -->
+
+{% for corporal, sucursal in listaCorporalesEditar %}
+<!-- Modal de editar producto -->
+<div class="modal fade" tabindex="-1" role="dialog" id="editarServicioCorporal{{corporal.id_servicio}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center ">EDITAR SERVICIO CORPORAL</h3>
+                <center>
+                  
+                    <img src="{% static 'images/iconosMenu/9.png' %} " alt="personal">
+               
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/actualizarServiciosCoporales/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <h3 class="title text-center ">Información del servicio</h3>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            <input type="hidden" value="{{corporal.id_servicio}}" name="idServicioCorporalEditar">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #24A19C !important; color:white !important">
+                                                <th scope="col">Id</th>
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Descripción</th>
+                                                <th scope="col">Costo venta</th>
+                                                <th scope="col">Tiempo mínimo</th>
+                                                <th scope="col">Tiempo máximo</th>
+                                              
+                                                <th scope="col">Sucursal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row" > <span  class="badge-pill badge-info">{{corporal.id_servicio}}</span> </th>
+                                                <td><input  type="text" class="form-control"   name="nombreActualizado" value="{{corporal.nombre_servicio}}"  ></td>
+                                                <td><input  class="form-control"   name="descripcionActualizado" value="{{corporal.descripcion_servicio}}"  ></td>
+                                                <td><input  type="number" class="form-control" min="0.00" max="10000.00" step="0.01"   name="precioActualizado" value="{{corporal.precio_venta}}"  ></td>
+                                                <td><input  type="number" class="form-control" min="0" max="10000" step="1"   name="minimoActualizado" value="{{corporal.tiempo_minimo}}"  ></td>
+                                                <td> <input  type="number" class="form-control"  min="0" max="10000" step="1" name="maximoActualizado" value="{{corporal.tiempo_maximo}}"  ></td>
+                                                <td>   
+                                                            <div class="form-control-select">
+                                                                <select class="form-control" id="default-06" name="idSucursal">
+                                                                   
+                                                                  
+                                                                   
+                                                                    <option value="{{sucursal.0}}" selected>{{sucursal.1}}</option>
+                                                                    {% for sucFalt in sucursalesTotalesEditat %}
+                                                                    <option value="{{sucFalt.0}}">{{sucFalt.1}}</option>
+                                                                    {% endfor %}
+                    
+                                                              
+                                                                </select>
+                                                            </div>
+                                                        
+                                                   
+                                               </td>
+                                        
+                                              
+                                             
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row gy-4">
+                            <div class="col-12">
+                                <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                    <li>
+                                        <button type="submit" class="btn btn-lg btn-primary">Actualizar servicio</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+
+                    </div><!-- .tab-pane -->
+                    </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+
+<!-- Modal de crear paquetes servicios corporales -->
+
+{% for corporal, productosVenta, productosGasto in listaCorporalesProductosVenta %}
+<!-- Modal de editar producto -->
+<div class="modal fade" tabindex="-1" role="dialog" id="paqueteServicioCorporal{{corporal.id_servicio}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center ">PAQUETE SERVICIO CORPORAL</h3>
+                <center>
+                  
+                    <img src="{% static 'images/iconosMenu/9.png' %} " alt="personal">
+               
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/crearPaqueteServiciosCorporales/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <h3 class="title text-center ">{{corporal.nombre_servicio}}</h3>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            <input type="hidden" value="{{corporal.id_servicio}}" name="idServicioCorporalPaquete">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #24A19C !important; color:white !important">
+                                               
+                                             
+                                                <th scope="col">Productos Venta</th>
+                                              
+                                                <th scope="col">Productos Gasto</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                               
+                                                <td>  
+                                                    <div class="form-control-select">
+                                                        <select class="form-select" multiple="multiple" data-placeholder="Select Multiple options" name="idProductoVenta" id="productosVenta{{corporal.id_servicio}}" onchange="displayValores{{corporal.id_servicio}}()">
+                                                            <option value="Ninguno" selected>Ninguno</option>
+                                                            {% for producto in productosVenta %}
+                                                            <option value="{{producto.0}}" >{{producto.1}} - {{producto.2}}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                                <td>   
+                                                            <div class="form-control-select">
+                                                                <select class="form-select" multiple="multiple" data-placeholder="Select Multiple options" name="idProductoGasto">
+                                                                   
+                                                                  
+                                                                   
+                                                                    <option value="Ninguno" selected>Ninguno</option>
+                                                                    {% for productoGasto in productosGasto %}
+                                                                    <option value="{{productoGasto.0}}">{{productoGasto.1}} {{productoGasto.2}}</option>
+                                                                    {% endfor %}
+                    
+                                                              
+                                                                </select>
+                                                            </div>
+                                                        
+                                                   
+                                               </td>
+                                        
+                                              
+                                             
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row gy-4">
+                            <div class="col-12">
+                                <p class="text-body"><span class="text-danger">Nota:</span> Al momento de realizar una venta por este servicio, se descontarán en existencia los productos seleccionados aqui.</p>
+                            </div>
+                        </div>
+                        <div class="row gy-4">
+                            <div class="col-12">
+                                <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                    <li>
+                                        <button type="submit" class="btn btn-lg btn-primary">Agregar paquete</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+
+                    </div><!-- .tab-pane -->
+                    </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+
+
+<!-- Modal de editar servicios faciales -->
+
+{% for facial, sucursal in listaFacialesEditar %}
+<!-- Modal de editar producto -->
+<div class="modal fade" tabindex="-1" role="dialog" id="editarServicioFacial{{facial.id_servicio}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center ">EDITAR SERVICIO FACIAL</h3>
+                <center>
+                  
+                    <img src="{% static 'images/iconosMenu/9.png' %} " alt="personal">
+               
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/actualizarServiciosFaciales/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <h3 class="title text-center ">Información del servicio</h3>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            <input type="hidden" value="{{facial.id_servicio}}" name="idServicioFacialEditar">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #24A19C !important; color:white !important">
+                                                <th scope="col">Id</th>
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Descripción</th>
+                                                <th scope="col">Costo venta</th>
+                                                <th scope="col">Tiempo mínimo</th>
+                                                <th scope="col">Tiempo máximo</th>
+                                              
+                                                <th scope="col">Sucursal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row" > <span  class="badge-pill badge-info">{{facial.id_servicio}}</span> </th>
+                                                <td><input  type="text" class="form-control"   name="nombreActualizado" value="{{facial.nombre_servicio}}"  ></td>
+                                                <td><input  class="form-control"   name="descripcionActualizado" value="{{facial.descripcion_servicio}}"  ></td>
+                                                <td><input  type="number" class="form-control" min="0.00" max="10000.00" step="0.01"   name="precioActualizado" value="{{facial.precio_venta}}"  ></td>
+                                                <td><input  type="number" class="form-control" min="0" max="10000" step="1"   name="minimoActualizado" value="{{facial.tiempo_minimo}}"  ></td>
+                                                <td> <input  type="number" class="form-control"  min="0" max="10000" step="1" name="maximoActualizado" value="{{facial.tiempo_maximo}}"  ></td>
+                                                <td>   
+                                                            <div class="form-control-select">
+                                                                <select class="form-control" id="default-06" name="idSucursal">
+                                                                   
+                                                                  
+                                                                   
+                                                                    <option value="{{sucursal.0}}" selected>{{sucursal.1}}</option>
+                                                                    {% for sucFalt in sucursalesTotalesEditat %}
+                                                                    <option value="{{sucFalt.0}}">{{sucFalt.1}}</option>
+                                                                    {% endfor %}
+                    
+                                                              
+                                                                </select>
+                                                            </div>
+                                                        
+                                                   
+                                               </td>
+                                        
+                                              
+                                             
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row gy-4">
+                            <div class="col-12">
+                                <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                    <li>
+                                        <button type="submit" class="btn btn-lg btn-primary">Actualizar servicio</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+
+                    </div><!-- .tab-pane -->
+                    </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+
+
+<!-- Modal crear paquetes servicios faciales -->
+
+{% for facial, sucursal in listaFacialesEditar %}
+<!-- Modal de editar producto -->
+<div class="modal fade" tabindex="-1" role="dialog" id="editarServicioFacial{{facial.id_servicio}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center ">EDITAR SERVICIO FACIAL</h3>
+                <center>
+                  
+                    <img src="{% static 'images/iconosMenu/9.png' %} " alt="personal">
+               
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/actualizarServiciosFaciales/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <h3 class="title text-center ">Información del servicio</h3>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            <input type="hidden" value="{{facial.id_servicio}}" name="idServicioFacialEditar">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #24A19C !important; color:white !important">
+                                                <th scope="col">Id</th>
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Descripción</th>
+                                                <th scope="col">Costo venta</th>
+                                                <th scope="col">Tiempo mínimo</th>
+                                                <th scope="col">Tiempo máximo</th>
+                                              
+                                                <th scope="col">Sucursal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row" > <span  class="badge-pill badge-info">{{facial.id_servicio}}</span> </th>
+                                                <td><input  type="text" class="form-control"   name="nombreActualizado" value="{{facial.nombre_servicio}}"  ></td>
+                                                <td><input  class="form-control"   name="descripcionActualizado" value="{{facial.descripcion_servicio}}"  ></td>
+                                                <td><input  type="number" class="form-control" min="0.00" max="10000.00" step="0.01"   name="precioActualizado" value="{{facial.precio_venta}}"  ></td>
+                                                <td><input  type="number" class="form-control" min="0" max="10000" step="1"   name="minimoActualizado" value="{{facial.tiempo_minimo}}"  ></td>
+                                                <td> <input  type="number" class="form-control"  min="0" max="10000" step="1" name="maximoActualizado" value="{{facial.tiempo_maximo}}"  ></td>
+                                                <td>   
+                                                            <div class="form-control-select">
+                                                                <select class="form-control" id="default-06" name="idSucursal">
+                                                                   
+                                                                  
+                                                                   
+                                                                    <option value="{{sucursal.0}}" selected>{{sucursal.1}}</option>
+                                                                    {% for sucFalt in sucursalesTotalesEditat %}
+                                                                    <option value="{{sucFalt.0}}">{{sucFalt.1}}</option>
+                                                                    {% endfor %}
+                    
+                                                              
+                                                                </select>
+                                                            </div>
+                                                        
+                                                   
+                                               </td>
+                                        
+                                              
+                                             
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row gy-4">
+                            <div class="col-12">
+                                <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                    <li>
+                                        <button type="submit" class="btn btn-lg btn-primary">Actualizar producto</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+
+                    </div><!-- .tab-pane -->
+                    </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+
+
+
+
+
+<!-- Modal para ver los productos del paquete Corporal -->
+{% for corporal,sucursal, yaTienePaqueteCorporal, productos in listaCorporales2 %}
+<div class="modal fade" tabindex="-1" role="dialog" id="verProductosSC{{corporal.id_servicio}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center ">PAQUETE DE PRODUCTOS DE SERVICIO CORPORAL</h3>
+                <center>
+                  
+                    <img src="{% static 'images/iconosMenu/paquetes.png' %} " alt="personal">
+               
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                   
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <center>
+                                        <div class="form-group">
+                                            <span class="badge badge-dim badge-danger"><h3  style="color: rgb(180, 10, 10) !important;">{{corporal.nombre_servicio}}</h3></span>
+                                        </div>
+                                    </center>
+                                    
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #24A19C !important; color:white !important">
+                                               
+                                             
+                                                <th scope="col">Id Producto</th>
+                                              
+                                                <th scope="col">Codigo</th>
+                                                <th scope="col">SKU</th>
+                                              
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Cantidad utilizada por sesión</th>
+                                                
+                                               
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for p in productos %}
+                                            <tr>
+                                                
+                                                <th scope="row" > <span  class="badge badge-dark">{{p.0}}</span> </th>
+                                                <th scope="row" > <span  class="badge badge-primary">{{p.1}}</span> </th>
+                                                <th scope="row" > <span  class="badge badge-danger">{{p.2}}</span> </th>
+                                                <th scope="row" > <span  class="fw-bold text-dark">{{p.3}}</span> </th>
+                                                
+                                                <th scope="row" > 
+                                                    <center>
+                                                        
+                                                    <span  class="badge badge-outline-warning" style="color: black !important;">{{p.4}} unidades</span> 
+                                                    </center>
+                                                </th>
+                                                
+                                            </tr>
+                                            {% endfor %}
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <center>
+                                    {% for permiso in consultaPermisos %}
+                                    {% if permiso.tabla_modulo == "Paquetes" %}
+                                    {% if permiso.editar == "Si" %}
+                                    <form action="/verProductoDePaqueteCorporalEditar/" method="POST">{% csrf_token %}
+                                        <input type="hidden" value="{{corporal.id_servicio}}" name="idServicioCorporalEditar">
+                                        <button type="submit" class="btn btn-dim btn-warning">Editar productos</button>
+                                    </form>
+                                    {% endif %}
+                                    {% endif %}
+                                    {% endfor %}
+                                </center>
+                               
+
+                            </div>
+                        </div>
+                
+                        
+
+                    </div><!-- .tab-pane -->
+               
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+{% for corporal,sucursal, yaTienePaqueteCorporal, productos in listaFaciales2 %}
+<div class="modal fade" tabindex="-1" role="dialog" id="verProductosSF{{corporal.id_servicio}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center ">PAQUETE DE PRODUCTOS DE SERVICIO CORPORAL</h3>
+                <center>
+                  
+                    <img src="{% static 'images/iconosMenu/paquetes.png' %} " alt="personal">
+               
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                   
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <center>
+                                        <div class="form-group">
+                                            <span class="badge badge-dim badge-danger"><h3  style="color: rgb(180, 10, 10) !important;">{{corporal.nombre_servicio}}</h3></span>
+                                        </div>
+                                    </center>
+                                    
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #24A19C !important; color:white !important">
+                                               
+                                             
+                                                <th scope="col">Id Producto</th>
+                                              
+                                                <th scope="col">Codigo</th>
+                                                <th scope="col">SKU</th>
+                                              
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Cantidad utilizada por sesión</th>
+                                                
+                                               
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for p in productos %}
+                                            <tr>
+                                                
+                                                <th scope="row" > <span  class="badge badge-dark">{{p.0}}</span> </th>
+                                                <th scope="row" > <span  class="badge badge-primary">{{p.1}}</span> </th>
+                                                <th scope="row" > <span  class="badge badge-danger">{{p.2}}</span> </th>
+                                                <th scope="row" > <span  class="fw-bold text-dark">{{p.3}}</span> </th>
+                                                
+                                                <th scope="row" > 
+                                                    <center>
+                                                        
+                                                    <span  class="badge badge-outline-warning" style="color: black !important;">{{p.4}} unidades</span> 
+                                                    </center>
+                                                </th>
+                                                
+                                            </tr>
+                                            {% endfor %}
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <center>
+                                    {% for permiso in consultaPermisos %}
+                                    {% if permiso.tabla_modulo == "Paquetes" %}
+                                    {% if permiso.editar == "Si" %}
+                                    <form action="/verProductoDePaqueteCorporalEditar/" method="POST">{% csrf_token %}
+                                        <input type="hidden" value="{{corporal.id_servicio}}" name="idServicioCorporalEditar">
+                                        <button type="submit" class="btn btn-dim btn-warning">Editar productos</button>
+                                    </form>
+                                    {% endif %}
+                                    {% endif %}
+                                    {% endfor %}
+                                </center>
+                               
+
+                            </div>
+                        </div>
+                
+                        
+
+                    </div><!-- .tab-pane -->
+               
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+
+
+<script>
+    {% for productoVentaEditar, usuario, sucursal in listaProductosVentaEditar2 %}
+    function calcularPrecioVenta{{productoVentaEditar.id_producto}}() {
+        const valorCosto = document.getElementById("costoCompra{{productoVentaEditar.id_producto}}").value;
+        const valorMargen = document.getElementById("margenCompra{{productoVentaEditar.id_producto}}").value;
+        const inputCostoVenta = document.getElementById("inputCostoVenta{{productoVentaEditar.id_producto}}");
+
+        margenFloat = parseFloat(valorMargen);
+        margenEntero = margenFloat.toFixed();
+        margenString = "1."+margenEntero.toString();
+        margenIntFinal = parseFloat(margenString);
+
+        const costoVentaNuevo = valorCosto * margenIntFinal;
+        costoVentaNuevoChido =costoVentaNuevo.toFixed(2);
+        inputCostoVenta.value = costoVentaNuevoChido;
+        console.log(costoVentaNuevoChido);
+
+    }
+    {% endfor %}
+
+   
+</script>
+
+
+
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+        var divServiciosCorporales = document.getElementById("divServiciosCorporales");
+        var divServiciosFaciales = document.getElementById("divServiciosFaciales");
+     
+        divServiciosCorporales.style.display = "block";
+        divServiciosFaciales.style.display = "none";
+       
+        window.onload= mueveReloj ();
+      
+
+        
+    };
+    var ninguno = true;
+    function displayValores3(){
+        var valoresSelect = $("#productosVenta3").val() || [];
+        
+        if (ninguno && valoresSelect.includes('Ninguno')){
+            console.log('hay mas de uno');
+            //desmarcar ninguno
+            $("#productosVenta3 option[value=Ninguno]").removeAttr("selected");
+          
+            //actualizar los nuevos valores seleccionados
+            valoresSelect = $("#productosVenta3").val();
+            console.log(valoresSelect);
+            //indicar que niniguno ya no esta marcado
+            ninguno = false;
+        }
+        else if (!ninguno && valoresSelect.indexOf('Ninguno') > -1 ){
+            //dejar a ninguno como unico valor
+            $("#productosVenta3").val("Ninguno");
+            //actualizar los nuevos valores seleccionads
+            valoresSelect = $("#productosVenta3").val();
+            ninguno = true;
+        }
+    }
+
+    
+
+    function mostrarCorporales(){
+        divServiciosCorporales.style.display = "block";
+        divServiciosFaciales.style.display = "none";
+       
+        console.log("Todos los divs");
+    };
+
+    function mostrarFaciales(){
+        divServiciosCorporales.style.display = "none";
+        divServiciosFaciales.style.display = "block";
+        
+        console.log("activos");
+    };
+
+
+</script>
+{% endblock %}

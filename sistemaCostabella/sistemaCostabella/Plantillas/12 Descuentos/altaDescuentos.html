@@ -1,0 +1,205 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Alta Producto | Costabella
+{% endblock %}
+
+{% block estilos %}
+
+{% endblock %}
+
+{% block contenido %}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    <div class="nk-block-head-sub"><a class="back-to" href="/descuentos/"><em class="icon ni ni-arrow-left"></em><span>Ver descuentos.</span></a></div>
+                        <h2 class="overline-title text-purple fs-20px">ALTA DE DESCUENTOS.</h2>
+                        <div class="nk-block-des">
+                            <p class="fs-15px">En este módulo se darán de alta nuevos descuentos al sistema. Es necesario contar con la información necesaria.</p>
+                        </div>
+                </div><!-- .nk-block-head-content -->
+             
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        <div class="nk-block nk-block-lg">
+            <div class="card card-preview">
+                <div class="card-inner">
+                    <div class="preview-block">
+                        <form action="/altaDescuentos/" enctype="multipart/form-data" method="POST">{% csrf_token %}
+                           
+                            <span class="preview-title-lg overline-title text-pink">Información básica de descuento</span>
+                            <hr class="preview-hr">
+                           
+                            <div class="row gy-6">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span> Nombre de descuento</label>
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-left">
+                                                <em class="icon ni ni-report-profit"></em>
+                                            </div>
+                                            <input type="text"  onkeypress='return soloLetras(event)' class="form-control" id="default-01" placeholder="Ingresar nombre del descuento" maxlength="50" required name="nombreDescuento"> 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span> Porcentaje</label>
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-left">
+                                                <em class="icon ni ni-percent"></em>
+                                            </div>
+                                            <input type="number" class="form-control" value="0" min="0" max="100" step="5"  maxlength="5" placeholder="Ingresar precio de compra" required name="porcentajeDescuento">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-03">Descripción</label>
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-left">
+                                                <em class="icon ni ni-todo-fill"></em>
+                                            </div>
+                                            <textarea class="form-control form-control-simple no-resize" id="default-textarea" placeholder="Ingresar la descripción" maxlength="99" style="border-width: 1px!important; 
+                                            border-style: solid!important;
+                                            border-color: rgb(216, 216, 216)!important;" name="descripcion"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                
+                            </div>
+                            
+                           
+                           
+                            
+                            <br>
+                            <button type="submit" class="btn btn-dim btn-primary">Dar de alta descuento</button>
+                        </form>
+                    </div>
+                </div>
+            </div><!-- .card-preview -->
+        </div>
+    </div>
+</div>
+
+{% block relojJS %}
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+
+        window.onload= mueveReloj ();
+
+        
+    };
+</script>
+{% endblock %}
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+
+<script>
+
+    {% if productoAgregado %}
+    $(document).ready(function(){
+        toastr.clear();
+        NioApp.Toast('{{productoAgregado}}', 'success', {
+        position: 'top-right',
+        timeOut:5000
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    {% if productoNoAgregado %}
+    $(document).ready(function(){
+        toastr.clear();
+        NioApp.Toast('{{productoNoAgregado}}', 'error', {
+        position: 'top-right',
+        timeOut:5000
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    window.onload = function(){
+      
+        var divProveedor = document.getElementById('divProveedor');
+        var divProveedor1 = document.getElementById('divProveedor1');
+
+        //Divs para mostrar dependiendo del select
+        var divVenta = document.getElementById('divVenta');
+        var divRenta = document.getElementById('divRenta');
+        var divGasto = document.getElementById('divGasto');
+        var divInventario = document.getElementById('divInventario');
+        var productoGasto = document.getElementById('productoGasto');
+        divVenta.style.display = "block";
+        divRenta.style.display = "none";
+        divGasto.style.display = "none";
+        divInventario.style.display = "block";
+        productoGasto.style.display = "none";
+
+        
+        
+        
+      
+
+     
+        divProveedor.style.display = "none";
+        divProveedor1.style.display = "block";
+
+        var checkbox = document.getElementById('checkbox');
+        checkbox.addEventListener("change", validarCheckBox, false);
+
+        function validarCheckBox(){
+           
+            if(checkbox.checked){
+             
+                divProveedor.style.display = "block";
+                
+                divProveedor1.style.display = "none";
+               
+            }else{
+              
+                divProveedor.style.display = "none";
+            
+                divProveedor1.style.display = "block";
+                
+            }
+        }
+
+        window.onload= mueveReloj ();
+
+
+
+    }
+
+    function cambiarTipo(){
+        var cod = document.getElementById("selectTipoProducto").value;
+        
+        if(cod == "venta"){
+            divVenta.style.display = "block";
+            divRenta.style.display = "none";
+            divGasto.style.display = "none";
+            divInventario.style.display = "block";
+            productoGasto.style.display = "none";
+        }else if(cod == "renta"){
+            divVenta.style.display = "none";
+            divRenta.style.display = "block";
+            divGasto.style.display = "none";
+            divInventario.style.display = "none";
+            productoGasto.style.display = "none";
+        }else if(cod == "gasto"){
+            divVenta.style.display = "none";
+            divRenta.style.display = "none";
+            divGasto.style.display = "block";
+            divInventario.style.display = "block";
+            productoGasto.style.display = "block";
+        }
+    }
+</script>
+{% endblock %}

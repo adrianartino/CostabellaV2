@@ -1,0 +1,352 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Alta paquete | Costabella
+{% endblock %}
+
+{% block estilos %}
+
+{% endblock %}
+
+{% block contenido %}
+
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="content-page wide-xxl m-auto">
+         
+            <div class="nk-block">
+                <form action="/actualizarPaquete/" method="POST">{% csrf_token %}
+                <div class="card">
+                    <div class="card-inner card-inner-xl">
+                       
+                        {% for servicio in infoServicio %}
+                        <input type="hidden" value="{{idServicio}}" name="idServicio">
+                        <div class="divCabecera" >
+
+                    
+                        <h6 class="text-center">EDITAR PAQUETE SERVICIO</h6>
+                        <div class="nk-block-des text-center">
+                            <img src="{% static 'images/iconosMenu/editarPaquete.png' %}" alt="">
+                        </div>
+                     
+                        <br>
+                       <div class="text-center">
+                        
+                         
+                                <h2 class="text-center">{{servicio.0}} </h2>
+                               
+                  
+                       </div>
+                       <input type="hidden" value="{{idServicio}}">
+                      
+                       {% endfor %}
+                    </div>
+                       
+                       
+                      
+                       
+                       <br> 
+                       <span class="badge badge-dim badge-danger"><h4  style="color: rgb(18, 13, 13) !important;">Buscar productos de venta para uso en servicio:</h4></span> <br>
+                       
+                       <div class="card-inner table-responsive">
+                        <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                            <thead>
+                                <tr class="nk-tb-item nk-tb-head" style="background-color: #c83d1e !important; color:white !important">
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Código Producto</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">SKU</span></th>
+                                    <th class="nk-tb-col" ><span class="sub-text textoBlanco" >Nombre</span></th>
+                                  
+                                    
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Existencias</span></th>
+                                    
+                                
+                                
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Descripción</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Imagen</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha Agregado</span></th>
+                                 
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Seleccionar</span></th>
+                                   
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for productoVenta in productosVenta %}
+                                <tr class="nk-tb-item">
+                                    <td class="nk-tb-col">
+                                        <span class="badge-pill badge-info">{{productoVenta.id_producto}}</span>
+                                    </td>
+                                   
+                                    <td class="nk-tb-col" data-order="35040.34">
+                                        <span class="badge badge-outline-secondary">{{productoVenta.codigo_producto}}</span>
+                                    </td>
+                                    <td class="nk-tb-col">
+                                        <span class="badge-pill badge-warning">{{productoVenta.sku_producto}}</span>
+                                    </td>
+                                    <td class="nk-tb-col">
+                                        <span class="tb-amount">{{productoVenta.nombre_producto}}</span>
+                                    </td>
+                                 
+                                   
+                              
+                             
+                                    <td class="nk-tb-col" data-order="Email Verified - Kyc Unverified">
+                                        <span class="tb-amount">{{productoVenta.cantidad}} unidades</span>
+                                        
+                                    </td>
+                        
+                                 
+                                 
+                                    
+                                    <td class="nk-tb-col" data-order="Email Verified - Kyc Unverified">
+                                        <span class="tb-amount">{{productoVenta.descripcion}}</span>
+                                    </td>
+                                    <td class="nk-tb-col" data-order="Email Verified - Kyc Unverified">
+                                        <center>
+                                            {% if productoVenta.imagen_producto %}
+                                            <img src="{{productoVenta.imagen_producto.url}}" width="40%" alt="lap">
+                                            {% else %}
+                                            <span class="tb-amount">Sin imagen</span>
+                                            {% endif %}
+                                        </center>
+                                    </td>
+                                    <td class="nk-tb-col" data-order="Email Verified - Kyc Unverified">
+                                        <span class="tb-amount">{{productoVenta.fecha_alta}}</span>
+                                    </td>
+                                   
+                                    <td class="nk-tb-col">
+                                        
+                                        <input type="hidden" name="idProductoEditar" value="{{productoVenta.id_producto}}">
+                                        <center>
+                                            <div class="preview-block"  >
+                                                
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input"  id="checkbox{{productoVenta.codigo_producto}}" onclick="agregarProducto{{productoVenta.id_producto}}('{{productoVenta.codigo_producto}}')">
+                                                    <label class="custom-control-label" for="checkbox{{productoVenta.codigo_producto}}">Agregar</label>
+                                                </div>
+                                            </div>
+                                        </center>
+                                        
+                                    </td>
+                              
+    
+                                </tr>
+                                {% endfor %}
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                    <br>
+                    <h4 class="text-left">Productos seleccionados:</h4> 
+                    <div class="card-inner table-responsive">
+                        <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                            <thead>
+                                <tr class="nk-tb-item nk-tb-head" style="background-color: #069a8e !important; color:white !important">
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Código Producto</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">SKU</span></th>
+                                    <th class="nk-tb-col" ><span class="sub-text textoBlanco" >Nombre</span></th>
+                                 
+                                    
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Existencias</span></th>
+                                    
+                                
+                                
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Descripción</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Imagen</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha Agregado</span></th>
+                                 
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Seleccionar</span></th>
+                                   
+                                </tr>
+                            </thead>
+                            <tbody id="productosAgregados">
+                                
+                        
+                                
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="divCantidadProductos">
+
+                    </div>
+                     
+                     
+                     
+                        
+              
+
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-dim btn-primary">Dar de alta paquete</button>
+            </form>
+            </div><!-- .nk-block -->
+        </div><!-- .content-page -->
+    </div>
+</div>
+
+<script>
+    const datosJson = '{{productosVentaJson}}';
+    console.log(datosJson);
+    const datosJsonBonitos = JSON.parse(datosJson.replace(/&quot;/g,'"'));
+    console.log(datosJsonBonitos);
+
+    var contadorCheckbox = 0;
+    var idsProductosVentaSolicitar = [];
+    var valorProductosTotalesMandar = "";
+    {% for productoVenta in productosVentaJavaScript %}
+
+    function agregarProducto{{productoVenta.id_producto}}(codigoProducto){
+            var codigoProductoRecibido = codigoProducto;
+            let resultadoProductoCodigo = [];
+            resultadoProductoCodigo = datosJsonBonitos.filter(productoVenta => productoVenta['codigo_producto'].includes(codigoProductoRecibido));
+            console.log(resultadoProductoCodigo);
+
+            var idCheckbox = 'checkbox'+codigoProductoRecibido;
+            var checkbox = document.getElementById(idCheckbox);
+            var idTablaProductosAgregados = document.getElementById('productosAgregados');
+            var divCantidadProductos = document.getElementById('divCantidadProductos');
+
+
+            if (checkbox.checked == true){
+                contadorCheckbox = contadorCheckbox + 1;
+                resultadoProductoCodigo.map(productoVenta =>{
+                    var idProductoAgregar = productoVenta['id_producto'].toString();
+                    var codigoProductoAgregar = productoVenta['codigo_producto'].toString();
+                    var codigoBarrasProductoAgregar = productoVenta['codigo_barras'].toString();
+                    var tipoProductoAgregar = productoVenta['tipo_producto'].toString();
+                    var nombreProductoAgregar = productoVenta['nombre_producto'].toString();
+                    var costoProductoAgregar = productoVenta['costo_compra'].toString();
+                   
+                    var cantidadProductoAgregar = productoVenta['cantidad'].toString();
+                    var stockProductoAgregar = productoVenta['stock'].toString();
+                    var descripcionProductoAgregar = productoVenta['descripcion'].toString();
+                    var imagenProductoAgregar = productoVenta['imagen_producto'].toString();
+                    var altaProductoAgregar = productoVenta['fecha_alta'].toString();
+                    var skuProductoAgregar = productoVenta['sku_producto'].toString();
+                    let agregarId = idsProductosVentaSolicitar.push(idProductoAgregar);
+                    idTablaProductosAgregados.innerHTML+='<tr id="filaRegistroProductoVenta'+idProductoAgregar +'" class="nk-tb-item">\
+                        <td class="nk-tb-col">\
+                            <span class="badge-pill badge-info"> '+idProductoAgregar +'</span> <input type="hidden" readonly value="'+idProductoAgregar+'" name="idProducto'+idProductoAgregar+'"></input>\
+                        </td>\
+                        <td class="nk-tb-col" data-order="35040.34">\
+                            <span class="badge badge-outline-secondary">'+codigoProductoAgregar +'</span>\
+                        </td>\
+                        <td class="nk-tb-col">\
+                            <span class="tb-amount">'+skuProductoAgregar +'</span>\
+                        </td>\
+                        <td class="nk-tb-col">\
+                            <span class="tb-amount">'+nombreProductoAgregar +'</span>\
+                        </td>\
+                        <td class="nk-tb-col" data-order="Email Verified - Kyc Unverified">\
+                            <span class="tb-amount">'+cantidadProductoAgregar +'  unidades</span>\
+                        </td>\
+                        <td class="nk-tb-col" data-order="Email Verified - Kyc Unverified">\
+                            <span class="tb-amount">'+descripcionProductoAgregar +' </span>\
+                        </td>\
+                        <td class="nk-tb-col" data-order="Email Verified - Kyc Unverified">\
+                            <center>\
+                                {% if productoVenta.imagen_producto %}\
+                                <img src="{{productoVenta.imagen_producto.url}}" width="40%" alt="lap">\
+                                {% else %}\
+                                <span class="tb-amount">Sin imagen</span>\
+                                {% endif %}\
+                            </center>\
+                        </td>\
+                        <td class="nk-tb-col" data-order="Email Verified - Kyc Unverified">\
+                            <span class="tb-amount">'+altaProductoAgregar +' </span>\
+                        </td>\
+                        <td>\
+                            <input type="number" value="1" max="'+cantidadProductoAgregar+'" min="1" name="cantidadUsar'+idProductoAgregar+'">\
+                        </td>\
+                    </tr>';
+                })
+            }
+            else{
+                contadorCheckbox = contadorCheckbox -1;
+                resultadoProductoCodigo.map(productoVenta =>{
+                    var idProductoAgregar = productoVenta['id_producto'].toString();
+                    var index = idsProductosVentaSolicitar.indexOf(idProductoAgregar);
+                    if(index !== -1){
+                        idsProductosVentaSolicitar.splice(index,1)
+                    }
+                    var idFila = "#filaRegistroProductoVenta"+idProductoAgregar;
+                    $(idFila).remove();
+                
+
+            })
+
+            }
+
+            if (idsProductosVentaSolicitar.length == 0){
+                valorProductosTotalesMandar = "No se mandara ningun producto";
+            }else{
+                idsProductosVentaSolicitar.forEach(function(valor,index){
+                    var posicion = index;
+                    var valor = valor;
+                    if(posicion==0){
+                        valorProductosTotalesMandar = valor.toString();
+                    }
+                    else{
+                        valorProductosTotalesMandar += "," + valor.toString();
+                    }
+
+                })
+            }
+
+            divCantidadProductos.innerHTML= '<input type="hidden" value="'+valorProductosTotalesMandar+'" readonly name="cantidadesProductosVenta"></input>';
+            console.log(contadorCheckbox);
+            console.log(idsProductosVentaSolicitar);
+            console.log("Esto se mandara a python" +valorProductosTotalesMandar);
+
+        }
+    {% endfor %}
+
+</script>
+
+<script>
+    {% if paqueteAgregado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{paqueteAgregado}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    {% if paqueteNoAgregado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'error',
+            title: 'Ups..!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{paqueteNoAgregado}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+</script>
+
+
+{% endblock %}
+
+{% block relojJS %}
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+
+        window.onload= mueveReloj ();
+
+        
+    };
+</script>
+{% endblock %}

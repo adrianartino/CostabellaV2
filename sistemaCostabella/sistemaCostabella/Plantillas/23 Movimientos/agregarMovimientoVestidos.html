@@ -1,0 +1,266 @@
+agregarMovimientoVestidos
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Sucursales Movimientos | Costabella
+{% endblock %}
+
+{% block estilos %}
+<style>
+    @media screen and (max-width: 320px) {
+        table {
+          display: block!important;
+          overflow-x: auto!important;
+        }
+   }
+</style>
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-lg wide-xs mx-auto">
+            <div class="nk-block-head-content text-center">
+                <h2 class="nk-block-title fw-normal fuenteTitulo">Selección de vestidos a mover</h2>
+                <span><img src="{% static 'images/accesos/flechitas.png' %}" alt="icono" width="80"></span>
+                <div class="nk-block-des">
+                    <p class="lead">Elegir los vestidos a mover de la sucursal {{nombreSucursalOrigen}} a la sucursal {{nombreSucursalDestino}}.</p>
+                </div>
+            </div>
+        </div><!-- .nk-block-head -->
+        
+        <form action="/guardarMovimiento/" method="POST">{% csrf_token %}
+        <div class="row gy-4">
+            
+               
+                <div class="col-sm-6">
+                    <div class="card card-preview">
+                        
+                        <div class="card-inner">
+                            <h2 class="fw-bold text-dark fuenteTitulo">Listado de vestidos sucursal <span class="text-pink">{{nombreSucursalOrigen}}</span></h2>
+                            <br>
+
+                            <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                                <thead>
+                                    <tr class="nk-tb-item nk-tb-head">
+                                        <th class="nk-tb-col nk-tb-col-check"><span class="sub-text">Mover</span></th>
+                                        <th class="nk-tb-col"><span class="sub-text">Código</span></th>
+                                        <th class="nk-tb-col tb-col-mb"><span class="sub-text">Nombre</span></th>
+                                        <th class="nk-tb-col tb-col-md"><span class="sub-text">Imagen</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for vestido in consultaVestidosRenta %}
+                                    <tr class="nk-tb-item">
+                                        <td class="nk-tb-col nk-tb-col-check">
+                                            <div class="custom-control custom-control-sm custom-checkbox notext">
+                                                <input type="checkbox" class="custom-control-input" id="checkboxVestido{{vestido.id_producto}}" name="checkboxVestido{{vestido.id_producto}}" onclick="agregarAlCarrito{{vestido.id_producto}}('{{vestido.codigo_producto}}')">
+                                                <label class="custom-control-label" for="checkboxVestido{{vestido.id_producto}}"></label>
+                                            </div>
+                                        </td>
+                                        <td class="nk-tb-col tb-col-mb" >
+                                            <span class="badge badge-dark">{{vestido.codigo_producto}}</span>
+                                        </td>
+                                        <td class="nk-tb-col tb-col-md">
+                                            <span class="fw-bold text-dark">{{vestido.nombre_producto}}</span>
+                                        </td>
+                                        <td class="nk-tb-col tb-col-lg" >
+                                            <center>
+                                                {% if vestido.imagen_producto %}
+                                                <img src="{{vestido.imagen_producto.url}}" width="60" alt="lap">
+                                                {% else %}
+                                                <span class="tb-amount">Sin imagen</span>
+                                                {% endif %}
+                                            </center>
+                                        </td>
+                                        
+                                    </tr><!-- .nk-tb-item  -->
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+
+
+
+
+
+
+
+
+
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                <div class="col-sm-6">
+                    <div class="card card-preview">
+                        
+                        <div class="card-inner">
+                            <h2 class="fw-bold text-dark fuenteTitulo">Vestidos a mover a sucursal <span class="text-pink">{{nombreSucursalDestino}}</span></h2>
+                            <div>
+                                <center>
+                                    <input type="hidden" name="idSucursalOrigen" value="{{idSucursalOrigen}}">
+                                    <input type="hidden" name="idSucursalDestino" value="{{idSucursalDestino}}">
+                                    <button id="botonMovimientoRealizar" type="submit" class="btn btn-outline-primary">Mover vestidos</a>
+
+                                </center>
+                            </div>
+                            <br>
+                            
+                            <br>
+
+                            <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                                <thead>
+                                    <tr class="nk-tb-item nk-tb-head">
+                                        <th class="nk-tb-col nk-tb-col-check"><span class="sub-text">Mover</span></th>
+                                        <th class="nk-tb-col"><span class="sub-text">Código</span></th>
+                                        <th class="nk-tb-col tb-col-mb"><span class="sub-text">Nombre</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="listaProductosCarrito">
+                                    
+                                </tbody>
+                            </table>
+
+
+
+
+
+
+
+
+
+                        </div>
+                    </div>
+                    
+                </div>
+        </div>
+        </form>
+            
+        
+       
+
+        
+       
+
+
+    </div>
+</div>
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+
+<script>
+
+    const data ='{{data}}';
+    console.log(data);
+    const dataAcomodada = JSON.parse(data.replace(/&quot;/g,'"'));
+    console.log(dataAcomodada);
+
+    var listaProductosCarrito = document.getElementById("listaProductosCarrito");
+    
+    
+    var vestidosEnElCarrito = [];
+    var codigosEnElCarrito = [];
+    var nombresEnElCarrito = [];
+    var rutaMedias = "{{rutaMedias}}";
+
+    var botonMovimientoRealizar = document.getElementById("botonMovimientoRealizar");
+    botonMovimientoRealizar.disabled = true;
+
+    var contadorCheckbox = 0
+    
+    {% for vestido in consultaVestidosRenta2 %}
+    function agregarAlCarrito{{vestido.id_producto}}(codigoProducto){
+        
+        var checkboxVestido{{vestido.id_producto}} = document.getElementById("checkboxVestido{{vestido.id_producto}}");
+        var codigoProducto = codigoProducto;
+        var resultadosBusqueda = dataAcomodada.filter(productoRenta => productoRenta['codigo_producto'].includes(codigoProducto));
+
+
+        if (checkboxVestido{{vestido.id_producto}}.checked){
+            contadorCheckbox = contadorCheckbox + 1
+            if(contadorCheckbox > 0){
+                botonMovimientoRealizar.disabled = false;
+            }
+            resultadosBusqueda.map(productoRenta =>{
+                var arregloFilasHTML = [];
+                var idProducto = productoRenta['id_producto']
+                var codigoProducto = productoRenta['codigo_producto']
+                var nombreProducto =productoRenta['nombre_producto']
+                var imagenProducto = productoRenta['imagen_producto']
+                var linkImagen = "http://192.168.10.97:8000/media"+"/"+imagenProducto
+                let imgTag = document.createElement('img');
+                imgTag.src = linkImagen;
+                imgTag.width = "60";
+                imgTag.alt = "img";
+
+                let agregarIdVestidoAlCarrito = vestidosEnElCarrito.push(idProducto);
+                let agregarCodigoVestidoAlCarrito = codigosEnElCarrito.push(codigoProducto);
+                let agregarNombreVestidoAlCarrito = nombresEnElCarrito.push(nombreProducto);
+
+                for (var i = 0; i < vestidosEnElCarrito.length; i++) {
+                    var filaHtml = '<tr class="nk-tb-item" id="filaVestidoTabla'+vestidosEnElCarrito[i]+'">\
+                        <td class="nk-tb-col nk-tb-col-check">\
+                            <div class="custom-control custom-control-sm custom-checkbox notext">\
+                                <input type="checkbox" class="custom-control-input" id="checkboxVestido'+vestidosEnElCarrito[i]+'" onclick="agregarAlCarrito'+vestidosEnElCarrito[i]+'("'+codigosEnElCarrito[i]+'")" checked>\
+                                <label class="custom-control-label" for="checkboxVestido'+vestidosEnElCarrito[i]+'"></label>\
+                            </div>\
+                        </td>\
+                        <td class="nk-tb-col tb-col-mb" >\
+                            <span class="badge badge-dark">'+codigosEnElCarrito[i]+'</span>\
+                        </td>\
+                        <td class="nk-tb-col tb-col-md">\
+                            <span class="fw-bold text-dark">'+nombresEnElCarrito[i]+'</span>\
+                        </td>\
+                    </tr>'
+                    
+                    let agregarFila = arregloFilasHTML.push(filaHtml);
+                    
+                }
+
+                var todasLasFilas = "";
+
+                arregloFilasHTML.forEach(function(valor,index){
+                    var posicion = index;
+                    var filahtml = valor;
+                    todasLasFilas = todasLasFilas + filahtml;
+    
+                }) 
+
+                listaProductosCarrito.innerHTML=todasLasFilas;
+
+            })
+
+        }else{
+            contadorCheckbox = contadorCheckbox - 1
+            if(contadorCheckbox < 1){
+                botonMovimientoRealizar.disabled = true;
+            }
+
+            resultadosBusqueda.map(productoRenta =>{
+                var idProducto = productoRenta['id_producto']
+                var posicion = vestidosEnElCarrito.indexOf(idProducto);
+                if (posicion !== -1){
+                    vestidosEnElCarrito.splice(posicion,1)
+                    codigosEnElCarrito.splice(posicion,1)
+                    nombresEnElCarrito.splice(posicion,1)
+                }
+                var idFila = "#filaVestidoTabla"+productoRenta['id_producto'];
+                $(idFila).remove();
+
+                
+            })
+        }
+
+
+    }
+    {% endfor %}
+</script>
+
+
+
+{% endblock %}

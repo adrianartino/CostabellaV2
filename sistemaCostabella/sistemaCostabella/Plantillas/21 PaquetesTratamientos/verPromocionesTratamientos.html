@@ -1,0 +1,462 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Promos Tratamientos | Costabella
+{% endblock %}
+
+{% block estilos %}
+<style>
+    @media screen and (max-width: 320px) {
+        table {
+          display: block!important;
+          overflow-x: auto!important;
+        }
+   }
+</style>
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    {% if nombreSucursalView == "Todas las sucursales" %}
+                    <h3 class="nk-block-title page-title color-texto-seleccion">LISTADO DE PROMOCIONES TRATAMIENTOS <span class="fw-bold text-dark">-></span> Todas las sucursales.</h3>
+                    {% else %}
+                    <h3 class="nk-block-title page-title color-texto-seleccion">LISTADO DE PROMOCIONES TRATAMIENTOS <span class="fw-bold text-dark">-></span> {{nombreSucursalView}}</h3>
+                    {% endif %}
+                    <div class="nk-block-des text-soft">
+                        <p>Total de paquetes de promoción de tratamientos en Costabella.</p>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+                <div class="nk-block-head-content">
+                    <div class="toggle-wrap nk-block-tools-toggle">
+                        <a href="#" class="btn btn-icon btn-trigger toggle-expand mr-n1" data-target="more-options"><em class="icon ni ni-more-v"></em></a>
+                        <div class="toggle-expand-content" data-content="more-options">
+                            <ul class="nk-block-tools g-3">
+                                <li>
+                                    <div class="drodown">
+                                        <a href="#" class="dropdown-toggle dropdown-indicator btn btn-outline-light btn-white" data-toggle="dropdown">Filtro Promociones</a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <ul class="link-list-opt no-bdr">
+                                                <li style="cursor: pointer!important;"><a onclick="mostrarActivas()"><span>Activas</span></a></li>
+                                                <li style="cursor: pointer!important;"> <a onclick="mostrarInactivas()"><span>Inactivas</span></a></li>
+                                                
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Servicios" %}
+                                {% if permiso.agregar == "Si" %}
+                
+                                <li class="nk-block-tools-opt">
+                                    <a href="#" class="btn btn-icon btn-primary d-md-none"><em class="icon ni ni-plus"></em></a>
+                                    <a href="/agregarPaquetePromocionTratamiento/" class="btn btn-primary d-none d-md-inline-flex"><em class="icon ni ni-plus"></em><span>Agregar Promoción</span></a>
+                                </li>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                               
+                               
+
+                            </ul>
+                        </div>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        
+        <!-- Div empleados todos -->
+        <div  id="divPromocionesActivas">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Promociones activas de tratamientos</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de <span class="coloralta">promociones de tratamientos activas</span> en el sistema.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #377D71 !important; color:white !important" >
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco">Nombre Paquete</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco">Número de sesiones</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Decuento</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Precio por paquete</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Tratamiento</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Baja</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Ver</span></th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for promocionActiva in promocionesTratamientos %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{promocionActiva.0}}</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-dark" >{{promocionActiva.1}}</span>
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    {% if promocionActiva.2 == 1 %}
+                                    <span class="fw-bold text-dark"><span class="badge badge-danger">1</span> sesión</span>
+                                    {% else %}
+                                    <span class="fw-bold text-dark"><span class="badge badge-danger">{{promocionActiva.2}}</span> sesiones</span>
+                                    {% endif %}
+                                </td>
+                                {% if promocionActiva.3 == "Sin descuento" %}
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span class="fw-bold text-danger">No tiene descuento</span>
+                                </td>
+                                {% elif promocionActiva.3 == "Con descuento" %}
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span class="fw-bold text-dark">Descuento del {{promocionActiva.4}} %</span>
+                                </td>
+                                {% endif %}
+                                
+                                <td class="nk-tb-col" >
+                                    <span class="fw-bold text-dark"><span class="text-teal">$ {{promocionActiva.5}}</span> MXN</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    {% for datoTratamiento in promocionActiva.6 %}
+                                    
+                                    <span class="fw-bold text-dark"><span class="badge badge-dark">{{datoTratamiento.0}}</span> {{datoTratamiento.1}}</span>
+                                    <br>
+                                    <span class="fw-bold text-dark">{{datoTratamiento.2}}</span>
+                                    <br>
+                                    <span class="fw-bold text-dark">$<span class="fw-bold text-azure">{{datoTratamiento.3}}</span> MXN.</span>
+                                    {% endfor %}
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-primary">{{promocionActiva.7}}</span>
+                                </td>
+                                
+                                <td class="nk-tb-col" >
+                                    <center>
+                                        <button type="button" data-toggle="modal" data-target="#bajaPromocion{{promocionActiva.0}}" class="btn btn-icon btn-sm btn-danger"><em class="icon ni ni-caret-down-fill" ></em></button>
+                                    </center>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <form action="/verInfoPromocionTratamiento/" method="POST">{% csrf_token %}
+                                        <input type="hidden" name="idPromocionTratamiento" value="{{promocionActiva.0}}">
+                                        <center>
+                                        <button type="submit"   class="btn btn-icon btn-sm bg-warning text-white" data-toggle="tooltip" data-placement="left" title="Crear paquete"><em class="icon ni ni-eye" ></em></button>
+                                        </center>
+
+                                    </form>
+                                </td>
+                                
+                               
+                            
+                            
+                             
+
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+        <!-- DIV EMPLEADOS ACTIVOS -->
+        <div  id="divPromocionesInactivas">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Promociones inactivas de tratamientos</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de <span class="colorbaja">promociones de tratamientos ianctivas</span> en el sistema.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #EB4747 !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco">Nombre Paquete</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco">Número de sesiones</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Decuento</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Precio por paquete</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Tratamiento</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Alta</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Ver</span></th>
+                           
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for promocionInactiva in promocionesTratamientosInactivos %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{promocionInactiva.0}}</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-dark" >{{promocionInactiva.1}}</span>
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    {% if promocionInactiva.2 == 1 %}
+                                    <span class="fw-bold text-dark"><span class="badge badge-danger">1</span> sesión</span>
+                                    {% else %}
+                                    <span class="fw-bold text-dark"><span class="badge badge-danger">{{promocionInactiva.2}}</span> sesiones</span>
+                                    {% endif %}
+                                </td>
+                                {% if promocionInactiva.3 == "Sin descuento" %}
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span class="fw-bold text-danger">No tiene descuento</span>
+                                </td>
+                                {% elif promocionInactiva.3 == "Con descuento" %}
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span class="fw-bold text-dark">Descuento del {{promocionInactiva.4}} %</span>
+                                </td>
+                                {% endif %}
+                                
+                                <td class="nk-tb-col" >
+                                    <span class="fw-bold text-dark"><span class="text-teal">$ {{promocionInactiva.5}}</span> MXN</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    {% for datoTratamiento in promocionInactiva.6 %}
+                                    
+                                    <span class="fw-bold text-dark"><span class="badge badge-dark">{{datoTratamiento.0}}</span> {{datoTratamiento.1}}</span>
+                                    <br>
+                                    <span class="fw-bold text-dark">{{datoTratamiento.2}}</span>
+                                    <br>
+                                    <span class="fw-bold text-dark">$<span class="fw-bold text-azure">{{datoTratamiento.3}}</span> MXN.</span>
+                                    {% endfor %}
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-primary">{{promocionInactiva.7}}</span>
+                                </td>
+                                
+                                <td class="nk-tb-col" >
+                                    <center>
+                                        <button type="button" data-toggle="modal" data-target="#altaPromocion{{promocionInactiva.0}}" class="btn btn-icon btn-sm btn-success"><em class="icon ni ni-sort-up-fill" ></em></button>
+                                    </center>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <form action="/verInfoPromocionTratamiento/" method="POST">{% csrf_token %}
+                                        <input type="hidden" name="idPromocionTratamiento" value="{{promocionActiva.0}}">
+                                        <center>
+                                        <button type="submit"   class="btn btn-icon btn-sm bg-warning text-white" data-toggle="tooltip" data-placement="left" title="Crear paquete"><em class="icon ni ni-eye" ></em></button>
+                                        </center>
+
+                                    </form>
+                                </td>
+                                
+                               
+                            
+                            
+                             
+
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+    </div>
+</div>
+
+
+
+<!--MODAL SEGURO DAR DE BAJA-->
+{% for promocionBaja in promocionesTratamientosModalBaja %}
+<!-- Modal de editar tratamiento corporal -->
+<div class="modal fade" tabindex="-1" role="dialog" id="bajaPromocion{{promocionBaja.0}}">
+    <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center text-dark ">BAJA DE PROMOCIÓN TRATAMIENTO</h3>
+                <center>
+                  
+                    <img src="{% static 'images/iconosMenu/gifBaja.gif' %} " alt="personal">
+               
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/bajaPromocionTratamiento/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <h3 class="title text-center fuenteTitulo">{{promocionBaja.1}}</h3>
+                                        <h5 class="text-center fw-bold text-azure">Segura que se quiere dar de baja esta promoción de la sucursal {{promocionBaja.7}}??</h5>
+                                        <p class="text-center fw-bold">Al dar de baja, esta promoción ya no podrá ser aplicada al realizar una venta en dicha sucursal.</p>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            <div class="col-12">
+                                <center>
+                                    <input type="hidden" value="{{promocionBaja.0}}" name="idPromocionBaja">
+                                    <button type="submit" class="btn btn-lg btn-primary">Dar de baja promoción</button>
+                                </center>
+                                
+                            </div>
+                        </div>
+                        
+
+                    </div><!-- .tab-pane -->
+                    </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+
+
+<!--MODAL SEGURO DAR DE ALTA-->
+{% for promocionAlta in promocionesTratamientosInactivosModalAlta %}
+<!-- Modal de editar tratamiento corporal -->
+<div class="modal fade" tabindex="-1" role="dialog" id="altaPromocion{{promocionAlta.0}}">
+    <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center text-dark ">ALTA DE PROMOCIÓN TRATAMIENTO</h3>
+                <center>
+                  
+                    <img src="{% static 'images/iconosMenu/gifAlta.gif' %} " alt="personal" width="90">
+               
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/altaPromocionTratamiento/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <h3 class="title text-center fuenteTitulo">{{promocionAlta.1}}</h3>
+                                        <h5 class="text-center fw-bold text-azure">Segura que se quiere dar de alta esta promoción de la sucursal {{promocionAlta.7}}??</h5>
+                                        <p class="text-center fw-bold">Al dar de alta, esta promoción podrá ser aplicada al realizar una venta en dicha sucursal.</p>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            <div class="col-12">
+                                <center>
+                                    <input type="hidden" value="{{promocionAlta.0}}" name="idPromocionAlta">
+                                    <button type="submit" class="btn btn-lg btn-primary">Dar de alta promoción</button>
+                                </center>
+                                
+                            </div>
+                        </div>
+                        
+
+                    </div><!-- .tab-pane -->
+                    </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+
+
+
+
+<script>
+    {% for productoVentaEditar, usuario, sucursal in listaProductosVentaEditar2 %}
+    function calcularPrecioVenta{{productoVentaEditar.id_producto}}() {
+        const valorCosto = document.getElementById("costoCompra{{productoVentaEditar.id_producto}}").value;
+        const valorMargen = document.getElementById("margenCompra{{productoVentaEditar.id_producto}}").value;
+        const inputCostoVenta = document.getElementById("inputCostoVenta{{productoVentaEditar.id_producto}}");
+
+        margenFloat = parseFloat(valorMargen);
+        margenEntero = margenFloat.toFixed();
+        margenString = "1."+margenEntero.toString();
+        margenIntFinal = parseFloat(margenString);
+
+        const costoVentaNuevo = valorCosto * margenIntFinal;
+        costoVentaNuevoChido =costoVentaNuevo.toFixed(2);
+        inputCostoVenta.value = costoVentaNuevoChido;
+        console.log(costoVentaNuevoChido);
+
+    }
+    {% endfor %}
+
+   
+</script>
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+        var divPromocionesActivas= document.getElementById("divPromocionesActivas");
+        var divPromocionesInactivas = document.getElementById("divPromocionesInactivas");
+     
+        divPromocionesActivas.style.display = "block";
+        divPromocionesInactivas.style.display = "none";
+       
+        window.onload= mueveReloj ();
+      
+
+        
+    };
+    var ninguno = true;
+    function displayValores3(){
+        var valoresSelect = $("#productosVenta3").val() || [];
+        
+        if (ninguno && valoresSelect.includes('Ninguno')){
+            console.log('hay mas de uno');
+            //desmarcar ninguno
+            $("#productosVenta3 option[value=Ninguno]").removeAttr("selected");
+          
+            //actualizar los nuevos valores seleccionados
+            valoresSelect = $("#productosVenta3").val();
+            console.log(valoresSelect);
+            //indicar que niniguno ya no esta marcado
+            ninguno = false;
+        }
+        else if (!ninguno && valoresSelect.indexOf('Ninguno') > -1 ){
+            //dejar a ninguno como unico valor
+            $("#productosVenta3").val("Ninguno");
+            //actualizar los nuevos valores seleccionads
+            valoresSelect = $("#productosVenta3").val();
+            ninguno = true;
+        }
+    }
+
+    
+
+    function mostrarActivas(){
+        divPromocionesActivas.style.display = "block";
+        divPromocionesInactivas.style.display = "none";
+       
+    };
+
+    function mostrarInactivas(){
+        divPromocionesActivas.style.display = "none";
+        divPromocionesInactivas.style.display = "block";
+        
+    };
+
+
+</script>
+{% endblock %}

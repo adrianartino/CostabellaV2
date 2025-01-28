@@ -1,0 +1,988 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Renta | Costabella
+{% endblock %}
+
+{% block estilos %}
+
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        
+           
+        
+    
+      
+
+      
+
+        <div class="nk-block" >
+            <form action="/guardarRentas/" method="POST">{% csrf_token %}
+            <div class="row g-gs" >
+      
+
+                <!--Encabezado Renta-->
+                
+                <div class="col-xxl-12">
+                    
+                    <input type="hidden" name="idSucursal" value="{{sucursal}}" readonly>
+                    <div class="card h-150 animate__animated animate__slideInDown" id="div1">
+                        <div class="card-inner animate__animated animate__slideInDown">
+                            <center>
+                                <h2 class="fuenteTitulo">REALIZAR RENTA</h2>
+                                <img src="{% static 'images/iconosMenu/renta.png' %}" width="50px" alt="spa"> 
+                            </center>
+                            <hr class="preview-hr" style="border-color:  #FA4EAB   !important;">
+                            <div class="row gy-4">
+
+                                <div class="col-sm-2" >
+                                   
+                                    <div class="form-group">
+                                        
+                                       
+                                            <div class="form-control-wrap ">
+                                           
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #FF7396   !important;">FECHA: <h6><script type="text/javascript"> var meses = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+                                                     var f=new Date(); document.write(f.getDate() + " " + meses[f.getMonth()] + " " + f.getFullYear()); </script></h6></span>
+                                                <span class="preview-title-lg overline-title text-pink" style="color:#FF7396   !important;" onload="time1()" >HORA: <h6 id="reloj"> </h6></span>
+                                       
+                                            </div>
+                                   
+                                        
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4">
+                                   
+                                    <div class="form-group">
+                                        <div class="form-control-wrap ">
+                                            {% for vendedor in datosVendedor %}
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #FF7396   !important;">Vendedor: <h6>{{vendedor.nombres}}</h6></span>
+                                                <span class="preview-title-lg overline-title text-pink" style="color:#FF7396   !important;" >Puesto: <h6>{{vendedor.puesto}} </h6></span>
+                                                
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-2">
+                                       
+                                    <div class="form-group">
+                                        <div class="form-control-wrap ">
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #FF7396   !important;">Sucursal: <h6>{{nombreSucursalSeleccionada}}</h6></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="form-label">Seleccionar cliente:</label>
+                                        <div class="form-control-wrap">
+                                            <select class="form-select form-control form-control-sm" data-search="on" id="selectCliente" onchange="cambioCliente()" name="clienteSeleccionado" >
+                                               
+                                                <option value="clienteMomentaneo">Ninguno</option>
+                                                {% for c in clientes %}
+                                                <option value="{{c.id_cliente}}">{{c.nombre_cliente}} {{c.apellidoPaterno_cliente}} {{c.apellidoMaterno_cliente}}</option>
+                                              
+                                                {% endfor %}
+                                            </select>
+                                       
+                                        </div>
+                                    </div>
+                                </div>
+                           
+                                </div>
+                        
+                   
+                        
+                        
+                            
+                            </div>
+                        </div><!-- .card -->
+                    </div>
+                </div>
+                
+                <div class="row g-gs">
+                    <div class="col-xxl-6">
+                                <div class="card animate__animated animate__slideInDown" id="alturadiv1Rentas">
+                                    <div class="card-inner animate__animated animate__slideInDown">
+                                        <div class="card-title-group align-start mb-2">
+                                            <div class="card-title">
+                                                <center>
+                                                   
+                                                   
+                                                    <h6 class="title">PRODUCTOS RENTA</h6>
+                                                    
+                                                    <img src="{% static 'images/iconosMenu/rentaVestido.png' %}" alt="producto" width="40px">
+                                              
+                                                </center>
+                                            
+                                               
+                                            </div>
+                                         
+                                           
+                                        </div>
+                                        <hr style="border-color: #EBC7E8  !important;">
+                                        <div class="nk-block nk-block-lg  ">
+                                         
+                                        
+                                                 
+                                            <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                                                <thead>
+                                                    <tr class="nk-tb-item nk-tb-head" style="background-color: #EBC7E8 !important; color:white !important">
+                                                 
+                                                        <th class="nk-tb-col tb-col-sm" style="color: white !important;" ><span>Código</span></th>
+                                                        <th class="nk-tb-col tb-col-sm" style="color: white !important;" ><span>Imagen</span></th>
+                                                      
+                                                        <th class="nk-tb-col" style="color: white !important;" ><span>Nombre</span></th>
+                                                        <th class="nk-tb-col" style="color: white !important;" ><span>Precio</span></th>
+                                                        <th class="nk-tb-col tb-col-md" style="color: white !important;" ><span>Cantidad</span></th>
+                                                        <th class="nk-tb-col tb-col-md" style="color: white !important;" ><span>Descripción</span></th>
+                                                     
+                                                        <th class="nk-tb-col " style="color: white !important;" ><span>Rentar</span></th>
+                                                        
+                                                      
+                                               
+                                                    </tr><!-- .nk-tb-item -->
+                                                </thead>
+                                                <tbody>
+                                                    {% for renta in productosRenta %}
+                                                    <tr class="nk-tb-item">
+                                                     
+                                                        
+                                                        <td class="nk-tb-col tb-col-sm">
+                                                           
+                                                                <span class="tb-lead">{{renta.codigo_producto}}</span>
+                                                         
+                                                        </td>
+                                                        <td class="nk-tb-col tb-col-sm">
+                                                           
+                                                            {% if renta.imagen_producto %}
+                                                            <img src="{{renta.imagen_producto.url}}" width="40%" alt="lap">
+                                                            {% else %}
+                                                            <span class="tb-amount">Sin imagen</span>
+                                                            {% endif %}
+                                                     
+                                                        </td>
+                                                        <td class="nk-tb-col">
+                                                            <span class="tb-lead">{{renta.nombre_producto}}</span>
+                                                        </td>
+                                                        <td class="nk-tb-col">
+                                                            <span class="tb-lead"> $ {{renta.costo_renta}} MXN </span>
+                                                        </td>
+                                                       
+                                                        <td class="nk-tb-col tb-col-md">
+                                                            <input  type="number" class="form-control" min="1" max="{{renta.cantidad}}" step="1"   name="minimoActualizado"  value="{{renta.cantidad}}" readonly>
+                                                        </td>
+                                                        <td class="nk-tb-col">
+                                                            <span class="tb-lead">{{renta.descripcion}} </span>
+                                                        </td>
+                                                        
+                                                        <td class="nk-tb-col tb-col-md">
+                                                            <input type="hidden" name="idProductoRentar" value="{{renta.id_producto}}">
+                                                            <center>
+                                                                <div class="preview-block"  >
+                                                                    
+                                                                    <div class="custom-control custom-checkbox">
+                                                                        <input type="checkbox" class="custom-control-input"  id="checkbox{{renta.codigo_producto}}" onclick="agregarProducto{{renta.codigo_producto}}('{{renta.codigo_producto}}')">
+                                                                        <label class="custom-control-label tb-lead" for="checkbox{{renta.codigo_producto}}">Agregar</label>
+                                                                    </div>
+                                                                </div>
+                                                            </center>
+                                                        </td>
+                                                       
+                                                        
+                                                    </tr><!-- .nk-tb-item -->
+    
+                                                 
+                                        
+                                                    {% endfor %}
+                                         
+                                        
+                                           
+                                                
+                                                </tbody>
+                                            </table><!-- .nk-tb-list -->
+                                        </div> <!-- nk-block -->
+                                        
+                                    </div>
+                                    
+                                </div>
+                             
+                       
+                        
+                    </div><!-- .col -->
+                    <div class="col-xxl-6">
+                        <div class="card h-100 animate__animated animate__zoomInRight" id="div3212">
+                            <div class="card-inner animate__animated animate__zoomInRight">
+    
+                            <div class="row gy-8">
+    
+                                <div class="col-sm-12" >
+                                    <div class="form-group">
+                                        <center>
+                                            
+                                            <h2 class="fuenteTitulo">APARTAR VESTIDO</h2>
+                                        </center>
+                                        
+                                        
+                                        <span class="preview-title-lg overline-title text-pink" style="color: #B48C16   !important;">Apartado:</span>
+                                            <div class="preview-block"  >
+                                                
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input"  id="checkboxApartado" name="checkboxApartado" >
+                                                    <label class="custom-control-label" for="checkboxApartado">SI</label>
+                                                </div>
+                                            </div>
+                                    
+                                        
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            <hr class="preview-hr" style="border-color:  #FA4EAB   !important;">
+                                
+                            
+                
+                            <div class="row gy-4">
+                                <div class="col-sm-" id="credito1" style="display: none;">
+                                    
+                                    <div class="form-group">
+                                        <div class="form-control-wrap ">
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #B48C16   !important;">Monto total renta:</span>
+                                            <h6 ><span id="montoTotalPagar">SI</span></h6>
+                                        </div>
+                                        <br>
+                                        
+                                    </div>
+                                </div>
+                                <div class="col-sm-4" id="credito2" style="display: none;">
+                                    
+                                    <div class="form-group">
+                                        
+                                        <div class="form-control-wrap ">
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #B48C16   !important;">Monto mínimo para apartado:</span>
+                                            <h6><span id="montoMinimoApartado">4 quincenas</span></h6>
+                                        </div>
+                                        <br>
+                                        <div class="form-control-wrap ">
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #B48C16   !important;">Monto restante:</span>
+                                            <h6>$<span id="montoRestante">124.00</span>MXN</h6>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <div class="col-sm-4" id="credito3" style="display: none;">
+                                    
+                                    <div class="form-group">
+                                        
+                                        <div class="form-control-wrap ">
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #B48C16   !important;">fecha de apartado:</span>
+                                            <h6><span id="fechaApartado"></span></h6>
+                                        </div>
+                                        <br>
+                    
+                                    </div>
+                            
+                                    
+                                </div>
+    
+                            </div>
+                            
+                            </div>
+                            
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                <div class="row g-gs">
+                    <div class="col-xxl-6">
+                        <div class="card h-100 animate__animated animate__zoomInLeft" id="div2">
+                            <div class="card-inner animate__animated animate__zoomInLeft">
+                                <center>      
+                                    <h6 class="title">AGREGADOS AL CARRITO</h6>
+                                    <img src="{% static 'images/iconosMenu/carrito.png' %}" alt="producto" width="40px">
+                                   
+                                </center>
+                              
+                                <hr class="preview-hr" style="border-color:  #BFACE0    !important;">
+    
+                                <div class="nk-block nk-block-lg  ">
+                                         
+                                        
+                                                 
+                                    <table class=" nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                                        <thead>
+                                            <tr class="nk-tb-item nk-tb-head" style="background-color: #BFACE0  !important; color:white !important">
+                                         
+                                                <th class="nk-tb-col tb-col-sm" style="color: white !important;" ><span>Código</span></th>
+                                                <th class="nk-tb-col" style="color: white !important;" ><span>Concepto</span></th>
+                                                <th class="nk-tb-col" style="color: white !important;" ><span>Nombre</span></th>
+                                                <th class="nk-tb-col" style="color: white !important;" ><span>Precio</span></th>
+                                                <th class="nk-tb-col tb-col-md" style="color: white !important;" ><span>Cantidad a rentar</span></th>
+                                                <th class="nk-tb-col " style="color: white !important;" ><span>Total</span></th>
+                                            
+                                                
+                                              
+                                       
+                                            </tr><!-- .nk-tb-item -->
+                                        </thead>
+                                        <tbody id="tablaProductosARentar">
+                                            
+                                         
+                                
+                                      
+                                 
+                                
+                                   
+                                        
+                                        </tbody>
+                                    </table><!-- .nk-tb-list -->
+                                </div> <!-- nk-block -->
+                                <div id="divCantidadProductos">
+    
+                                </div>
+                                <hr class="preview-hr" style="border-color:  #E4B60B   !important;">
+                               
+                            
+                            
+                       
+                            </div>
+                        </div><!-- .card -->
+                    </div>
+
+                    <div class="col-xxl-6">
+    
+                        <div class="card h-100 animate__animated animate__zoomInRight" id="div3Total">
+                            <div class="card-inner animate__animated animate__zoomInRight">
+                                <center>
+                                            
+                                    <h2 class="fuenteTitulo">DATOS DE PAGO</h2>
+                                    <br>
+                                </center>
+                                <div class="row gy-4">
+                                    
+                             
+    
+                                    <div class="col-sm-4"   >
+                                        <div class="form-group">
+                                            <div class="form-control-wrap ">
+                                           
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #B48C16   !important;">Forma de pago:</span>
+                                                <div class="form-control-select">
+                                                    <select class="form-control" id="selectTipoPago" name="tipoPago" onchange="cambioTipoPago()">
+                                                        <option value="Efectivo">Efectivo</option>
+                                                        <option value="Tarjeta">Tarjeta</option>
+                                                        <option value="Transferencia">Transferencia</option>
+                                                    </select>
+                                                </div>
+                                       
+                                            </div>
+                                            <br>
+                                           
+                                            <div class="form-control-wrap " id="divSelectTipoTarjeta">
+                                           
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #B48C16   !important;">Tipo tarjeta:</span>
+                                                <div class="form-control-select">
+                                                    <select class="form-control" id="default-06" name="tipoTarjeta">
+                                                        <option value="Credito">Crédito</option>
+                                                        <option value="Debito">Débito</option>
+                                                    </select>
+                                                </div>
+                                       
+                                            </div>
+                                        
+                                            
+                                            
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="col-sm-4" >
+                                        <div class="form-group">
+                                           
+                                            
+                                            <div class="form-control-wrap" id="cantidadEfectivo">
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #B48C16   !important;">Cantidad:</span>
+                                                <input type="number"class="form-control"   placeholder="Ingresar efectivo" maxlength="4" max="10000" min="5" value="5" step="1" id="efectivoPagoCliente" onchange="calcularFeria()"> 
+                                            </div>
+                                            <div class="form-control-wrap" id="cantidadAbono">
+                                                
+                                            </div>
+                                            <div class="form-control-wrap " id="divClaveRastreoTransferencia">
+                                           
+                                                <div class="form-group">
+                                                    <label class="form-label" for="default-01">Clave de rastreo:</label>
+                                                    <div class="form-control-wrap">
+                                                        
+                                                        <input type="text"class="form-control" placeholder="Ingresar Clave" maxlength="50" name="claveRastreoTransferencia"> 
+                                                    </div>
+                                                </div>
+                                       
+                                            </div>
+                                            <div class="form-control-wrap " id="divReferenciaBancaria">
+                                           
+                                                <div class="form-group">
+                                                    <span class="preview-title-lg overline-title text-pink" style="color: #B48C16   !important;">Referencia de pago:</span>
+                                                    <div class="form-control-wrap">
+                                                        
+                                                        <input type="text"class="form-control" placeholder="Ingresar referencia Vouncher" maxlength="50" name="referenciaTarjeta"> 
+                                                    </div>
+                                                </div>
+                                       
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <div class="form-control-wrap ">
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #B48C16   !important;">Total a pagar:</span>
+                                                <h6>$<input id="costoTotal" type="text" value="0" size="10" readonly style="border: none;" name="costoTotalAPagar"></input> MXN.</h6>
+                                            </div> 
+                                            <div id="infoDescuento">
+                                                <div class="form-control-wrap ">
+                                                    
+                                                    <h6>-$<span id="spanResta">0</span> MXN Descuento</h6>
+                                                </div>
+                                                <br>
+                                                <div class="form-control-wrap ">
+                                                    <span class="preview-title-lg overline-title text-pink" style="color: #B48C16   !important;">Total con descuento:</span>
+                                                    <h6>$<span id="spanTotalConDescuento">0</span> MXN.</h6>
+                                                </div>
+                                            </div>
+                                            <div class="form-control-wrap" id="spanCambio">
+                                                
+                                                <h6 class="fs-13px">Cambio: $<span id="spanCambioChico">0</span> MXN.</h6>
+                                            </div>  
+                                            <br>
+                                           
+                                            
+                                        </div>
+                                        <div class="form-control-wrap ">
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #B48C16   !important;">Fecha entrega vestido:</span>
+                                            <div class="form-group">
+                                                <div class="form-icon form-icon-left">
+                                                    <em class="icon ni ni-calendar"></em>
+                                                </div>
+                                                <input type="text" class="form-control date-picker" data-date-format="yyyy-mm-dd" required name="fechaEntregaVestido">
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    
+    
+                                   
+                                </div>
+                                
+                                
+                               
+                            
+                            
+                       
+                            </div>
+
+                            
+                        </div><!-- .card -->
+                        
+                        <div class="card h-100 animate__animated animate__zoomInRight" id="div3">
+                            <div class="card-inner animate__animated animate__zoomInRight">
+                           
+                                
+            
+                                <div class="row gy-4">
+                                    <div class="col-sm-8" >
+                                        <div class="form-group">
+                                            <div class="form-control-wrap ">
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Comentarios de venta:</span>
+                                                <textarea class="form-control form-control-sm" id="cf-default-textarea" placeholder="Ingresar comentarios de la venta" name="comentarios"></textarea>
+                                                    
+                                            </div> 
+                                        </div>
+                                            
+                                    </div>
+                                    <div class="col-sm-4" >
+                                        <div class="form-group">
+                                            <center>
+
+                                                <br>
+                                                <br>
+                                                <br>
+                                                
+                                            <button type="submit" class="btn btn-dim btn-primary" id="botonGuardarVenta">Rentar</button>
+                                            </center>
+                                        </div>
+                                            
+                                    </div>
+                                    <br>
+                                </div>
+                                    
+                            </div>
+                        </div>
+                      
+                    </div><!--columna-->
+                     
+                </div>
+                <br>
+                
+                
+            </form>    
+            </div><!-- .row -->
+        </div><!-- .nk-block -->
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+
+
+
+<script type="text/javascript">
+    showTime();
+    function showTime(){
+    myDate = new Date();
+    hours = myDate.getHours();
+    minutes = myDate.getMinutes();
+    seconds = myDate.getSeconds();
+    if (hours < 10) hours = 0 + hours;
+    
+    if (minutes < 10) minutes = "0" + minutes;
+    
+    if (seconds < 10) seconds = "0" + seconds;
+    
+    $("#reloj").text(hours+ ":" +minutes+ ":" +seconds);
+    setTimeout("showTime()", 1000);
+    }
+    
+</script> 
+
+<script>
+    const data ='{{data}}';
+    console.log(data);
+    const dataAcomodada = JSON.parse(data.replace(/&quot;/g,'"'));
+    console.log(dataAcomodada);
+
+    
+
+    //PRODUUUCTOOOOOOOOOOOOOOOOOOOOOOOOOOOOOSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+    var contadorCkeckbox = 0;                   
+
+    var codigosProductosARentar = []; //CODIGO PRODUCTO ID SERVICIO
+    var costosProductosARentar = [];  //Costo de producto y costo de servicio
+    var nombresProductos =[]; //Nombre de producto y nombre de servicio
+    
+    var idsProductosARentarString ="";
+
+    {% for productos in productosRentaJava %}
+    
+
+    function agregarProducto{{productos.codigo_producto}}(codigoProducto){
+        var codigo_producto = codigoProducto;
+        let resultadosBusqueda = []; //este arreglo vaa guardar el resultado de la busqueda de este producto en el arreglo de json
+        resultadosBusqueda = dataAcomodada.filter(productoVenta => productoVenta['codigo_producto'].includes(codigo_producto));
+        console.log(resultadosBusqueda);
+
+        var nameCheckbox = 'checkbox'+codigo_producto;
+        var checkbox = document.getElementById(nameCheckbox);
+        var tablaProductosRenta = document.getElementById('tablaProductosARentar');
+        var divCantidadProductos = document.getElementById('divCantidadProductos');
+        var spanCostoTotal = document.getElementById('costoTotal');
+
+
+        //calcular el total a pagar por la cantidad de productos que se requieran 
+
+
+        if (checkbox.checked==true){
+            //si se apreto el checkbox del producto
+            contadorCkeckbox = contadorCkeckbox +1;
+
+            
+            var clienteSeleccionado = document.getElementById('selectCliente').value;
+            var checkboxApartado = document.getElementById('checkboxApartado');
+            if (clienteSeleccionado == 'clienteMomentaneo'){
+                checkboxApartado.disabled=true;
+            }
+            else{
+                checkboxApartado.disabled=false;
+            }
+
+            resultadosBusqueda.map(productoRenta =>{
+                var arregloFilasHTML = [];
+                var codigoProducto = productoRenta['codigo_producto']
+                var nombreProducto =productoRenta['nombre_producto']
+                var costoProducto = productoRenta['costo_renta']
+
+                
+
+                let agregarIdProducto = codigosProductosARentar.push(codigoProducto);
+                let agregarNombreProducto = nombresProductos.push(nombreProducto);
+                let agregarCostoProducto = costosProductosARentar.push(costoProducto);
+                
+
+                for (var i = 0; i < codigosProductosARentar.length; i++) {
+                    var html = '<tr class="nk-tb-item" id="filaProducto'+codigosProductosARentar[i]+'"><td class="nk-tb-col tb-col-sm"><span class="tb-lead">'+codigosProductosARentar[i]+'</span></td><td class="nk-tb-col"><span class="tb-lead">Vestido</span></td><td class="nk-tb-col"><span class="tb-lead">'+nombresProductos[i]+'</span></td><td class="nk-tb-col"><span class="tb-lead">$ '+costosProductosARentar[i]+' MXN</span></td><td class="nk-tb-col tb-col-md"><span class="tb-lead">1 unidad</span></td><td class="nk-tb-col tb-col-md"><span class="tb-lead">$ <span id="subtotalProducto'+codigosProductosARentar[i]+'">'+costosProductosARentar[i]+'</span> MXN</span></td><td class="nk-tb-col tb-col-md"></tr>';
+                    let agregarFila = arregloFilasHTML.push(html);
+                    
+                }
+
+                var todasLasFilas = "";
+
+                arregloFilasHTML.forEach(function(valor,index){
+                    var posicion = index;
+                    var filahtml = valor;
+                    todasLasFilas = todasLasFilas + filahtml;
+    
+                }) 
+
+                tablaProductosRenta.innerHTML=todasLasFilas;
+
+                //Actualizar precio subtotal que estaba antes
+
+
+
+                //Suma de costo de productos
+                costoTotal = 0;
+                for(var i = 0; i < costosProductosARentar.length; i++){
+                    var codigoProducto = codigosProductosARentar[i];
+                    var costoDeRenta = costosProductosARentar[i];
+
+
+                    costoTotal = costoTotal + costoDeRenta
+
+                }
+
+                console.log("CostoTotal:"+costoTotal);
+
+                spanCostoTotal.value = costoTotal.toString();
+
+                //Pago en efectivo para el cambiooooo
+                var efectivoPagoCliente = document.getElementById("efectivoPagoCliente");
+                var spanCambioChico = document.getElementById("spanCambioChico");
+                var valorInput = efectivoPagoCliente.value;
+
+                if (valorInput == ""){
+                    spanCambioChico.innerHTML = "0";
+                }
+                else{
+                    var cambio = parseFloat(valorInput) - costoTotal;
+
+                    
+
+                    spanCambioChico.innerHTML = cambio.toString();
+                }
+
+                
+
+
+
+                var montoTotalPagar = document.getElementById("montoTotalPagar");
+                var montoMinimoApartado = document.getElementById("montoMinimoApartado");
+                montoTotalPagar.innerHTML = '$'+costoTotal.toString()+' MXN.';
+                var micha = costoTotal/2;
+
+                montoMinimoApartado.innerHTML = '$'+micha.toString()+' MXN.';
+
+                cantidadAbono.innerHTML = '<span class="preview-title-lg overline-title text-pink" style="color: #B48C16   !important;">Abono:</span>\
+                <input type="number"class="form-control"   placeholder="Ingresar efectivo" maxlength="5" max="'+montoTotalPagar.toString()+'" min="'+micha.toString()+'" value="'+micha.toString()+'" step="1" name="cantidadAbono"> '
+
+
+                
+            })
+        }
+        else{ //Si descheckea el checkbox
+            resultadosBusqueda.map(productoRenta=>{
+                var codigoProducto = productoRenta['codigo_producto'];
+                var posicion = codigosProductosARentar.indexOf(codigoProducto);
+                if (posicion !== -1){
+                    codigosProductosARentar.splice(posicion,1)
+                    costosProductosARentar.splice(posicion,1)
+                    nombresProductos.splice(posicion,1)
+                    
+                }
+                var idFila = "#filaProducto"+productoRenta['codigo_producto'];
+                $(idFila).remove();
+
+                costoTotal = 0;
+                for(var i = 0; i < costosProductosARentar.length; i++){
+                    var codigoProducto = codigosProductosARentar[i];
+                    var costoDeRenta = costosProductosARentar[i];
+
+
+                    costoTotal = costoTotal + costoDeRenta
+
+                }
+
+                console.log("CostoTotal:"+costoTotal);
+
+                spanCostoTotal.value = costoTotal.toString();
+
+                
+                //Pago en efectivo para el cambiooooo
+                var efectivoPagoCliente = document.getElementById("efectivoPagoCliente");
+                var spanCambioChico = document.getElementById("spanCambioChico");
+                var valorInput = efectivoPagoCliente.value;
+
+                if (valorInput == ""){
+                    spanCambioChico.innerHTML = "0";
+                }
+                else{
+                    var cambio = parseFloat(valorInput) - costoTotal;
+
+                    
+
+                    spanCambioChico.innerHTML = cambio.toString();
+                }
+
+                contadorCkeckbox = contadorCkeckbox -1;
+                var clienteSeleccionado = document.getElementById('selectCliente').value;
+                var checkboxApartado = document.getElementById('checkboxApartado');
+                if (clienteSeleccionado == 'clienteMomentaneo'){
+                    checkboxApartado.disabled=true;
+                }
+                else{
+                    if(contadorCkeckbox>=1){
+                        
+                        checkboxApartado.disabled=false;
+                    }else{
+                        checkboxApartado.disabled=true;
+                        checkboxApartado.checked = false;
+                        var credito1 = document.getElementById('credito1');
+                        var credito2 = document.getElementById('credito2');
+                        var credito3 = document.getElementById('credito3');
+
+                        credito1.style.display = "none";
+                        credito2.style.display = "none";
+                        credito3.style.display = "none";
+
+
+                    }
+                }
+
+
+                
+                
+
+            })
+        }
+
+        //CODIGO PARA AGREGAR TODOS LOS HTMLS DE LAS FILAS
+        if (codigosProductosARentar.length == 0){
+            idsProductosARentarString = "No se mandara ningun producto";
+        }else{
+            codigosProductosARentar.forEach(function(valor,index){
+                var posicion = index;
+                var valor = valor;
+                if(posicion==0){
+                    idsProductosARentarString = valor.toString();
+                }
+                else{
+                    idsProductosARentarString += "," + valor.toString();
+                }
+
+            })
+            
+        }
+        var filaConValores = "#inputsValores"
+        $(filaConValores).remove();
+        divCantidadProductos.innerHTML= '<div id="inputsValores"><input type="hidden" value="'+idsProductosARentarString+'" readonly name="codigosProductosRenta"></input></div>';
+        
+        console.log("Esto se mandara a python" +idsProductosARentarString);
+
+    
+    }
+
+    {% endfor %}
+
+
+
+    
+
+
+</script>
+
+<script>
+    
+    window.onload = function(){
+      
+        var credito1 = document.getElementById('credito1');
+        var credito2 = document.getElementById('credito2');
+        var credito3 = document.getElementById('credito3');
+        var checkboxApartado = document.getElementById('checkboxApartado');
+        var divSelectTipoTarjeta = document.getElementById('divSelectTipoTarjeta');
+        var divReferenciaBancaria = document.getElementById('divReferenciaBancaria');
+        var divClaveRastreoTransferencia = document.getElementById('divClaveRastreoTransferencia');
+        var infoDescuento = document.getElementById('infoDescuento');
+        var divCantidadEfectivo = document.getElementById('cantidadEfectivo');
+        var spanCambio = document.getElementById('spanCambio');
+        var cantidadAbono = document.getElementById('cantidadAbono');
+
+        
+        
+        checkboxApartado.disabled=true;
+        divSelectTipoTarjeta.style.display = "none";
+        divReferenciaBancaria.style.display = "none";
+        divClaveRastreoTransferencia.style.display = "none";
+    
+        infoDescuento.style.display = "none";
+        divCantidadEfectivo.style.display = "block";
+    
+
+        credito1.style.display = "none";
+        credito2.style.display = "none";
+        credito3.style.display = "none";
+        cantidadAbono.style.display = "none";
+        
+
+      
+        checkboxApartado.addEventListener("change", validarCheckBox, false);
+
+        function validarCheckBox(){
+           
+            if(checkboxApartado.checked){
+                var fechaApartado = document.getElementById('fechaApartado');
+                var cantidadAbono = document.getElementById('cantidadAbono');
+                var spanCambio = document.getElementById('spanCambio');
+                var divCantidadEfectivo = document.getElementById('cantidadEfectivo');
+                cantidadAbono.style.display = "block"
+                spanCambio.style.display = "none"
+                divCantidadEfectivo.style.display = "none"
+
+
+
+                var montoTotalPagar = document.getElementById("montoTotalPagar");
+                var montoMinimoApartado = document.getElementById("montoMinimoApartado");
+                montoTotalPagar.innerHTML = '$'+costoTotal.toString()+' MXN.';
+                var micha = costoTotal/2;
+
+                montoMinimoApartado.innerHTML = '$'+micha.toString()+' MXN.';
+
+                cantidadAbono.innerHTML = '<span class="preview-title-lg overline-title text-pink" style="color: #B48C16   !important;">Abono:</span>\
+                <input type="number"class="form-control"   placeholder="Ingresar efectivo" maxlength="5" max="'+montoTotalPagar.toString()+'" min="'+micha.toString()+'" value="'+micha.toString()+'" step="1" name="cantidadAbono" id="inputCantidadAbono" onchange="calcularMontoRestante()"> '
+
+                var montoRestante = costoTotal - micha
+                var divmontoRestante = document.getElementById("montoRestante");
+                divmontoRestante.innerHTML = montoRestante.toString();
+                
+                let date = new Date();
+                let output = String(date.getDate()).padStart(2, '0') + '/' + String(date.getMonth() + 1).padStart(2, '0') + '/' + date.getFullYear();
+                fechaApartado.innerHTML = output.toString();
+
+                credito1.style.display = "block";
+                credito2.style.display = "block";
+                credito3.style.display = "block";
+
+                
+         
+               
+            }else{
+              
+                credito1.style.display = "none";
+                credito2.style.display = "none";
+                credito3.style.display = "none";
+
+                var cantidadAbono = document.getElementById('cantidadAbono');
+                var spanCambio = document.getElementById('spanCambio');
+                var divCantidadEfectivo = document.getElementById('cantidadEfectivo');
+                cantidadAbono.style.display = "none"
+                spanCambio.style.display = "block"
+                divCantidadEfectivo.style.display = "block"
+            
+               
+                
+            }
+        }
+    
+        window.onload= mueveReloj ();
+
+
+    }
+    function cambioCliente(){
+        var clienteSeleccionado = document.getElementById('selectCliente').value;
+        var checkboxApartado = document.getElementById('checkboxApartado');
+        if (clienteSeleccionado == 'clienteMomentaneo'){
+            checkboxApartado.disabled=true;
+        }
+        else{
+            if(contadorCkeckbox>=1){
+                
+                checkboxApartado.disabled=false;
+            }else{
+                checkboxApartado.disabled=true;
+            }
+        }
+   
+    }
+
+    function cambioTipoPago(){
+        var tipoPagoSeleccionado = document.getElementById('selectTipoPago').value;
+        var divCantidadEfectivo = document.getElementById('cantidadEfectivo');
+        var spanCambio = document.getElementById('spanCambio');
+        if (tipoPagoSeleccionado == 'Efectivo'){
+            divCantidadEfectivo.style.display = "block";
+            divSelectTipoTarjeta.style.display = "none";
+            divReferenciaBancaria.style.display = "none";
+            divClaveRastreoTransferencia.style.display = "none";
+            spanCambio.style.display = "block";
+            if(checkboxApartado.checked){
+                divCantidadEfectivo.style.display = "none";
+            }
+            
+        }
+        else if(tipoPagoSeleccionado == 'Tarjeta'){
+            divCantidadEfectivo.style.display = "none";
+            divSelectTipoTarjeta.style.display = "block";
+            divReferenciaBancaria.style.display = "block";
+            divClaveRastreoTransferencia.style.display = "none";
+            spanCambio.style.display = "none";
+        }
+        else if(tipoPagoSeleccionado == 'Transferencia'){
+            divCantidadEfectivo.style.display = "none";
+            divSelectTipoTarjeta.style.display = "none";
+            divReferenciaBancaria.style.display = "none";
+            
+            divClaveRastreoTransferencia.style.display = "block";
+            spanCambio.style.display = "none";
+        
+        }
+   
+    }
+
+    
+    function calcularFeria(){
+        var efectivoPagoCliente = document.getElementById("efectivoPagoCliente");
+        var spanCambioChico = document.getElementById("spanCambioChico");
+        var valorInput = efectivoPagoCliente.value;
+
+        if (valorInput == ""){
+            spanCambioChico.innerHTML = "0";
+        }
+        else{
+            var cambio = parseFloat(valorInput) - costoTotal;
+
+            
+
+            spanCambioChico.innerHTML = cambio.toString();
+        }
+        
+
+
+    }
+
+    function calcularMontoRestante(){
+        var abono = document.getElementById("inputCantidadAbono");
+        var divmontoRestante = document.getElementById("montoRestante");
+        var valorInput = abono.value;
+
+        var montoRestante = costoTotal - valorInput;
+        divmontoRestante.innerHTML = montoRestante.toString();
+        
+        
+
+
+    }
+</script>
+
+{% endblock %}

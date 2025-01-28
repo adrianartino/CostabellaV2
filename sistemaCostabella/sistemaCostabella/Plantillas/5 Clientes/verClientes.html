@@ -1,0 +1,479 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Ver Clientes | Costabella
+{% endblock %}
+
+{% block estilos %}
+
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    <h3 class="nk-block-title page-title color-texto-seleccion">LISTA DE CLIENTES</h3>
+                    <div class="nk-block-des text-soft">
+                        <p>Total de clientes: {{contadorActivos}} Activos - {{contadorBloqueados}} inactivos.</p>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+                <div class="nk-block-head-content">
+                    <div class="toggle-wrap nk-block-tools-toggle">
+                        <a href="#" class="btn btn-icon btn-trigger toggle-expand mr-n1" data-target="more-options"><em class="icon ni ni-more-v"></em></a>
+                        <div class="toggle-expand-content" data-content="more-options">
+                            <ul class="nk-block-tools g-3">
+                                <li>
+                                    <div class="drodown">
+                                        <a href="#" class="dropdown-toggle dropdown-indicator btn btn-outline-light btn-white" data-toggle="dropdown">Estado de clientes</a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <ul class="link-list-opt no-bdr">
+                                                <li style="cursor: pointer!important;"><a onclick="mostrarTodos()"><span>Todos los clientes</span></a></li>
+                                                <li style="cursor: pointer!important;"><a onclick="mostrarActivos()"><span>Activos</span></a></li>
+                                                <li style="cursor: pointer!important;"> <a onclick="mostrarInactivos()"><span>Bloqueados</span></a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Clientes" %}
+                                {% if permiso.agregar == "Si"  %}
+                                <li class="nk-block-tools-opt">
+                                    <a href="#" class="btn btn-icon btn-primary d-md-none"><em class="icon ni ni-plus"></em></a>
+                                    <a href="/altaCliente/" class="btn btn-primary d-none d-md-inline-flex"><em class="icon ni ni-plus"></em><span>Agregar Clientes</span></a>
+                                </li>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        
+        <!-- Div empleados todos -->
+        <div class="nk-block nk-block-lg" id="divEmpleadosTotales">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Clientes Totales</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de clientes <span class="coloralta">activos</span> y <span class="colorbaja">bloqueados</span> en el sistema.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #FFC600 !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Nombres</span></th>
+                                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Apellidos</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Correo</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Teléfono</span></th>
+                                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Dirección</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Estado</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha agregado</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Agregado por</span></th>
+                               
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Clientes" %}
+                                {% if permiso.ver_detalles == "Si"  %}
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Ver información</span></th>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Clientes" %}
+                                {% if permiso.bloquear == "Si"  %}
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Bloquear / Desbloquear <span><em class="icon ni ni-question" data-toggle="tooltip" data-placement="right" title="Al bloquear un cliente, significa que a este cliente ya no se le pueden realizar préstamos, ventas y/o créditos."></em></span></span></th>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                                
+                                
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cliente, empleadoAgrego in listaClientes %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-info">{{cliente.0}}</span>
+                                </td>
+                       
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span class="tb-amount">{{cliente.1}}</span>
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span class="tb-amount">{{cliente.2}} {{cliente.3}}</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-outline-dark">{{cliente.4}}</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount">{{cliente.5}}</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount">{{cliente.6}}</span>
+                                </td>
+                              
+                                <td class="nk-tb-col">
+                                    {% if cliente.7 == "Activo" %}
+                                    
+                                    <span class="badge badge-sm badge-dot has-bg badge-success d-none d-mb-inline-flex">Activo</span>
+                                    {% elif cliente.7 == "Bloqueado" %}
+                                    <span class="badge badge-sm badge-dot has-bg badge-danger d-none d-mb-inline-flex">Bloqueado</span>
+                                    {% endif %}
+                                </td>
+                                <td class="nk-tb-col">
+                                  
+                                    <span class="tb-amount">{{cliente.8}}</span>
+                                   
+                           
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-dark">{{empleadoAgrego.1}}</span>
+                                </td>
+                                
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Clientes" %}
+                                {% if permiso.ver_detalles == "Si"  %}
+                                <td class="nk-tb-col">
+                                    <form action="/infoCliente/" method="POST">{% csrf_token %}
+                                        <input type="hidden" name="idInfoCliente" value="{{cliente.0}}">
+                                        <center>
+                                            <button type="submit" class="btn btn-icon btn-sm btn-primarypruple" data-toggle="tooltip" data-placement="right" title="Clic para ver la información completa del cliente."><em class="icon ni ni-eye"></em></button>
+                                        </center>
+                                        
+                                    </form>
+                                    
+                                </td>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Clientes" %}
+                                {% if permiso.bloquear == "Si"  %}
+                                {% if cliente.7 == "Activo" %}
+                                <td class="nk-tb-col">
+                                    <form action="/bloqueoCliente/" method="POST">{% csrf_token %}
+                                        <input type="hidden" name="idClienteBaja" value="{{cliente.0}}">
+                                        <center>
+                                            <button type="submit" class="btn btn-icon btn-sm btn-danger" data-toggle="tooltip" data-placement="right" title="Clic para bloquear al cliente."><em class="icon ni ni-na"></em></button>
+                                        </center>
+                                        
+                                    </form>
+                                    
+                                </td>
+                                {% elif cliente.7 == "Bloqueado" %}
+                                <td class="nk-tb-col">
+                                    <form action="/activoCliente/" method="POST">{% csrf_token %}
+                                        <input type="hidden" name="idClienteAlta" value="{{cliente.0}}">
+                                        <center>
+                                            <button type="submit" class="btn btn-icon btn-sm btn-success" data-toggle="tooltip" data-placement="right" title="Clic para desbloquear al cliente."><em class="icon ni ni-unlock"></em></button>
+                                        </center>
+                                        
+                                    </form>
+                                    
+                                </td>
+                                {% endif %}
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+
+                                
+
+                                
+                            </tr><!-- .nk-tb-item  -->
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+        <!-- Div empleados todos -->
+        <div  id="divEmpleadosActivos">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Clientes Activos</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de clientes <span class="coloralta">activos</span> en el sistema.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #14C38E !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Nombres</span></th>
+                                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Apellidos</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Correo</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Teléfono</span></th>
+                                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Dirección</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Estado</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha agregado</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Agregado por</span></th>
+                               
+                               
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Ver información</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Bloquear <span><em class="icon ni ni-question" data-toggle="tooltip" data-placement="right" title="Al bloquear un cliente, significa que a este cliente ya no se le pueden realizar préstamos, ventas y/o créditos."></em></span></span></th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cliente, empleadoAgrego in listaClientesActivos %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge-pill badge-info">{{cliente.0}}</span>
+                                </td>
+                       
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{cliente.1}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{cliente.2}} {{cliente.3}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{cliente.4}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{cliente.5}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{cliente.6}}</span>
+                                </td>
+                              
+                                <td class="nk-tb-col">
+                                    {% if cliente.7 == "Activo" %}
+                                    
+                                    <span class="badge badge-sm badge-dot has-bg badge-success d-none d-mb-inline-flex">Activo</span>
+                                    {% elif cliente.7 == "Bloqueado" %}
+                                    <span class="badge badge-sm badge-dot has-bg badge-danger d-none d-mb-inline-flex">Bloqueado</span>
+                                    {% endif %}
+                                </td>
+                                <td class="nk-tb-col">
+                                  
+                                    <span class="tb-amount">{{cliente.8}}</span>
+                                   
+                           
+                                </td>
+                                <td class="nk-tb-col" style="cursor: pointer!important;">
+                                    
+                                        <form action="/editarEmpleado/" method="POST" id="formActualizar">{% csrf_token %}
+                                            <input type="hidden" value="{{empleadoAgrego.0}}" name="idEmpleadoEditar">
+                                            <span class="tb-lead"></span><a onclick="document.getElementById('formActualizar').submit()">{{empleadoAgrego.1}}</a></span>
+                                        </form>
+                                </td>
+                          
+                                <td class="nk-tb-col">
+                                    <form action="/infoCliente/" method="POST">{% csrf_token %}
+                                        <input type="hidden" name="idInfoCliente" value="{{cliente.0}}">
+                                        <center>
+                                            <button type="submit" class="btn btn-icon btn-sm btn-primarypruple" data-toggle="tooltip" data-placement="right" title="Clic para ver la información completa del cliente."><em class="icon ni ni-eye"></em></button>
+                                        </center>
+                                        
+                                    </form>
+                                    
+                                </td>
+
+                                <td class="nk-tb-col">
+                                    <form action="/bloqueoCliente/" method="POST">{% csrf_token %}
+                                        <input type="hidden" name="idClienteBaja" value="{{cliente.0}}">
+                                        <center>
+                                            <button type="submit" class="btn btn-icon btn-sm btn-danger" data-toggle="tooltip" data-placement="right" title="Clic para bloquear al cliente."><em class="icon ni ni-na"></em></button>
+                                        </center>
+                                        
+                                    </form>
+                                    
+                                </td>
+                                
+                            </tr><!-- .nk-tb-item  -->
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+        <!-- DIV EMPLEADOS INACTIVOS -->
+        <div id="divEmpleadosInActivos">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Clientes Inativos</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de clientes <span class="colorbaja">inactivos</span> en el sistema.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #E94560 !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Nombres</span></th>
+                                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Apellidos</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Correo</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Teléfono</span></th>
+                                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Dirección</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Estado</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha agregado</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Agregado por</span></th>
+                               
+                               
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Ver información</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Desbloquear <span><em class="icon ni ni-question" data-toggle="tooltip" data-placement="right" title="Al bloquear un cliente, significa que a este cliente ya no se le pueden realizar préstamos, ventas y/o créditos."></em></span></span></th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cliente, empleadoAgrego in listaClientesBloqueados %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge-pill badge-info">{{cliente.0}}</span>
+                                </td>
+                       
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount">{{cliente.1}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{cliente.2}} {{cliente.3}}</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount">{{cliente.4}}</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount">{{cliente.5}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{cliente.6}}</span>
+                                </td>
+                              
+                                <td class="nk-tb-col">
+                                    {% if cliente.7 == "Activo" %}
+                                    
+                                    <span class="badge badge-sm badge-dot has-bg badge-success d-none d-mb-inline-flex">Activo</span>
+                                    {% elif cliente.7 == "Bloqueado" %}
+                                    <span class="badge badge-sm badge-dot has-bg badge-danger d-none d-mb-inline-flex">Bloqueado</span>
+                                    {% endif %}
+                                </td>
+                                <td class="nk-tb-col">
+                                  
+                                    <span class="tb-amount">{{cliente.8}}</span>
+                                   
+                           
+                                </td>
+                                <td class="nk-tb-col" style="cursor: pointer!important;">
+                                    
+                                        <form action="/editarEmpleado/" method="POST" id="formActualizar">{% csrf_token %}
+                                            <input type="hidden" value="{{empleadoAgrego.0}}" name="idEmpleadoEditar">
+                                            <span class="tb-lead"></span><a onclick="document.getElementById('formActualizar').submit()">{{empleadoAgrego.1}}</a></span>
+                                        </form>
+                                </td>
+                          
+                                <td class="nk-tb-col">
+                                    <form action="/infoCliente/" method="POST">{% csrf_token %}
+                                        <input type="hidden" name="idInfoCliente" value="{{cliente.0}}">
+                                        <center>
+                                            <button type="submit" class="btn btn-icon btn-sm btn-primarypruple" data-toggle="tooltip" data-placement="right" title="Clic para ver la información completa del cliente."><em class="icon ni ni-eye"></em></button>
+                                        </center>
+                                        
+                                    </form>
+                                    
+                                </td>
+
+                                
+                                <td class="nk-tb-col">
+                                    <form action="/activoCliente/" method="POST">{% csrf_token %}
+                                        <input type="hidden" name="idClienteAlta" value="{{cliente.0}}">
+                                        <center>
+                                            <button type="submit" class="btn btn-icon btn-sm btn-success" data-toggle="tooltip" data-placement="right" title="Clic para desbloquear al cliente."><em class="icon ni ni-unlock"></em></button>
+                                        </center>
+                                        
+                                    </form>
+                                    
+                                </td>
+                            </tr><!-- .nk-tb-item  -->
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<script>
+
+    {% if mensaje %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{mensaje}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+</script>
+
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+        var divEmpleadosTotales = document.getElementById("divEmpleadosTotales");
+        var divEmpleadosActivos = document.getElementById("divEmpleadosActivos");
+        var divEmpleadosInActivos = document.getElementById("divEmpleadosInActivos");
+        divEmpleadosTotales.style.display = "block";
+        divEmpleadosActivos.style.display = "none";
+        divEmpleadosInActivos.style.display = "none";
+        
+        window.onload = mueveReloj();
+        
+        
+    };
+
+    function mostrarTodos(){
+        divEmpleadosTotales.style.display = "block";
+        divEmpleadosActivos.style.display = "none";
+        divEmpleadosInActivos.style.display = "none";
+        console.log("Todos los divs");
+    };
+
+    function mostrarActivos(){
+        divEmpleadosTotales.style.display = "none";
+        divEmpleadosActivos.style.display = "block";
+        divEmpleadosInActivos.style.display = "none";
+        console.log("activos");
+    };
+
+    function mostrarInactivos(){
+        divEmpleadosTotales.style.display = "none";
+        divEmpleadosActivos.style.display = "none";
+        divEmpleadosInActivos.style.display = "block";
+        console.log("inactivos");
+    };
+</script>
+{% endblock %}

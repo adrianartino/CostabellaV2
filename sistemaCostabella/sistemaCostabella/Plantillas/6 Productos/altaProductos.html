@@ -1,0 +1,481 @@
+    
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Alta Producto | Costabella
+{% endblock %}
+
+{% block estilos %}
+
+{% endblock %}
+
+{% block contenido %}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    <div class="nk-block-head-sub"><a class="back-to" href="/verEmpleados/"><em class="icon ni ni-arrow-left"></em><span>Ver Productos.</span></a></div>
+                        <h2 class="overline-title text-purple fs-20px animate__animated animate__slideInLeft">ALTA DE PRODUCTOS.</h2>
+                        <div class="nk-block-des animate__animated animate__fadeIn">
+                            <p class="fs-15px">En este módulo se darán de alta nuevos productos al sistema. Es necesario contar con la información necesaria.</p>
+                        </div>
+                </div><!-- .nk-block-head-content -->
+             
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        <!-- Modal validación acentos-->
+        <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Error<em class="icon ni fat-remove"></em></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                No se permiten letras con acentos.
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <div class="nk-block nk-block-lg">
+            <div class="card card-preview animate__animated animate__zoomIn">
+                <div class="card-inner animate__animated animate__zoomIn">
+                    <div class="preview-block">
+                        <form action="/altaProductos/" enctype="multipart/form-data" method="POST">{% csrf_token %}
+                            <span class="preview-title-lg overline-title text-pink">Tipo de producto</span>
+                            <div class="row gy-4">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="form-label" for="selectTipoProducto"><span style="color: #dd2e2e;">* </span>Tipo de producto: <em class="icon ni ni-question" data-toggle="tooltip" data-placement="right" title="Producto para venta, se vende a los clientes. Producto Gasto, no se vende pero se gasta al vender un servicio. Producto Renta, se renta."></em></label>
+                                        <div class="form-control-wrap ">
+                                            <div class="form-control-select">
+                                                <select class="form-control" id="selectTipoProducto" name="tipoProducto" onchange="cambiarTipo();">
+                                                    <option value="venta">Producto para venta</option>
+                                                    <option value="renta">Producto para renta</option>
+                                                    <option value="gasto">Producto gasto</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <hr class="preview-hr">
+                            <span class="preview-title-lg overline-title text-pink">Información básica de producto</span>
+                            <div class="row gy-4">
+                                <div class="col-sm-3">
+                                    <div class="form-group">             
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span>Nombre de producto</label>
+                                        <div class="form-control-wrap">
+                                            <input type="text"  class="form-control" id="miCampo" placeholder="Ingresar nombre de producto" maxlength="50" required name="nombreProducto"> 
+                                        </div>
+                                    </div>
+                                    <script>
+                                    
+
+
+                                    </script>
+
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-03"><span style="color: #dd2e2e;">* </span>Descripción</label>
+                                        <div class="form-control-wrap">
+                                            <textarea class="form-control form-control-simple no-resize" id="default-textarea" placeholder="Ingresar la descripción" maxlength="99" style="border-width: 1px!important; 
+                                            border-style: solid!important;
+                                            border-color: rgb(216, 216, 216)!important;" name="descripcion"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-03">Imagen/Fotografía</label>
+                                        <div class="form-control-wrap">
+                                            <input type="file" multiple class="custom-file-input" id="customFile" name="imagenProducto">
+                                            <label class="custom-file-label" for="customFile">Seleccionar archivo</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01">SKU</label>
+                                        <div class="form-control-wrap">
+                                            <input type="text"   class="form-control" id="default-01" placeholder="Ingresar SKU de producto" maxlength="30" required name="skuProducto"> 
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            
+                            <!-- DIV DE VENTA -->
+                            <div id="divVenta">
+                                <hr class="preview-hr">
+                                <span class="preview-title-lg overline-title text-pink">Información De Venta</span>
+                                <div class="row gy-4">
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span>Costo compra</label>
+                                            <div class="form-control-wrap">
+                                                <div class="form-icon form-icon-left">
+                                                    <em class="icon ni ni-sign-usd-alt"></em>
+                                                </div>
+                                                <input type="number" class="form-control" value="1.00" min="0.00" max="10000.00" step="0.01"  maxlength="5" placeholder="Ingresar precio de compra" required name="costoCompra">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2" id="solInt">
+                                        <div class="form-group" >
+                                          
+                                           
+                                                <div class="preview-block"  >
+                                                    <span class="preview-title overline-title">Checked</span>
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" class="custom-control-input"  id="checkbox" name="checkboxMargen">
+                                                        <label class="custom-control-label" for="checkbox">Ingresar % margen de ganancia manualmente</label>
+                                                    </div>
+                                                </div>
+                                       
+                                      
+                                        </div>
+                                    </div>  
+                                    <div class="col-sm-2" id="divProveedor1">
+                                        <div class="form-group">
+                                            <label class="form-label" for="default-06"><span style="color: #dd2e2e;">* </span>Margen de ganancia </label>
+                                            <div class="form-control-wrap ">
+                                                <div class="form-control-select">
+                                                    <select class="form-control" id="default-06" name="margen">
+                                                        <option value="5">5%</option>
+                                                        <option value="10">10%</option>
+                                                        <option value="15">15%</option>
+                                                        <option value="20">20%</option>
+                                                        <option value="25">25%</option>
+                                                        <option value="30">35%</option>
+                                                        <option value="40">40%</option>
+                                                        <option value="45">45%</option>
+                                                        <option value="50">50%</option>
+                                                        <option value="100">100%</option>
+                                                      
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                            
+
+                                
+                                    <div class="col-sm-4"  id="divProveedor" style="display: none;">
+                                        <div class="form-group">
+                                            <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span>Ingresar margen de ganancia</label>
+                                            <div class="form-control-wrap">
+                                                <div class="form-icon form-icon-left">
+                                                    <em class="icon ni ni-coin"></em>
+                                                </div>
+                                                <input type="number" min="0" max="100" step="1" class="form-control" id="default-01" placeholder="Ingresar margen de ganancia" maxlength="3"  name="margenManual">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    
+                                </div>
+                    
+                            </div>
+                            
+                            <!-- DIV DE RENTA -->
+                            <div id="divRenta">
+                                <hr class="preview-hr">
+                                <span class="preview-title-lg overline-title text-pink">Información De Renta</span>
+                                <div class="row gy-4">
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span>Costo compra:</label>
+                                            <div class="form-control-wrap">
+                                                <div class="form-icon form-icon-left">
+                                                    <em class="icon ni ni-sign-usd-alt"></em>
+                                                </div>
+                                                <input type="number" class="form-control" value="1.00" min="0.00" max="10000.00" step="0.01"  maxlength="5" placeholder="Ingresar precio de compra" required name="costoCompraRenta">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span>Costo de renta al cliente:</label>
+                                            <div class="form-control-wrap">
+                                                <div class="form-icon form-icon-left">
+                                                    <em class="icon ni ni-sign-usd-alt"></em>
+                                                </div>
+                                                <input type="number" class="form-control" value="1.00" min="0.00" max="10000.00" step="0.01" placeholder="Ingresar precio de renta" name="costoRenta">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label class="form-label" for="default-01">Estado de renta:</label>
+                                            <div class="form-control-wrap">
+                                                <div class="form-icon form-icon-left">
+                                                    <em class="icon ni ni-sign-usd-alt"></em>
+                                                </div>
+                                                <span class="badge badge-pill badge-success">Sin rentar</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row gy-4">
+                                    <div class="col-sm-2">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="checkboxProductoRentaSePuedeVender" onclick="verificarSiSePuedeVender()" name="sePuedeVender">
+                                            <label class="custom-control-label fw-bold text-dark" for="checkboxProductoRentaSePuedeVender">Se puede vender</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="form-group" id="divProductoRentaSePuedeVender">
+                                            <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span>Costo de venta:</label>
+                                            <div class="form-control-wrap">
+                                                <div class="form-icon form-icon-left">
+                                                    <em class="icon ni ni-sign-usd-alt"></em>
+                                                </div>
+                                                <input type="number" class="form-control" value="1.00" min="0.00" max="10000.00" step="0.01" placeholder="Ingresar precio de venta" name="costoVentaVestido">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            
+                            
+                            <!-- DIV DE GASTO-->
+                            <div id="divGasto">
+                                <hr class="preview-hr">
+                                <span class="preview-title-lg overline-title text-pink">Información De Gasto</span>
+                                <div class="row gy-4">
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span>Costo de compra/gasto:</label>
+                                            <div class="form-control-wrap">
+                                                <div class="form-icon form-icon-left">
+                                                    <em class="icon ni ni-sign-usd-alt"></em>
+                                                </div>
+                                                <input  type="number" class="form-control" value="1.00" min="0.00" max="10000.00" step="0.01" placeholder="Ingresar precio de compra"  name="costoGasto">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- DIV DE INVENTARIO CON CANTIDAD Y STOCK -->
+                            <div id="divInventario">
+                                <hr class="preview-hr">
+                                <span class="preview-title-lg overline-title text-pink">Información De Inventario</span>
+                                <div class="row gy-4">
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span>Cantidad a dar de alta el producto: <span><em class="icon ni ni-question" data-toggle="tooltip" data-placement="right" title="La cantidad es el número de productos que se darán de alta en el sistema."></em></span></label>
+                                            <div class="form-control-wrap">
+                                                <div class="form-icon form-icon-left">
+                                                    <em class="icon ni ni-layers"></em>
+                                                </div>
+                                                <input type="number" value="1" class="form-control" min="1" max="100" step="1" name="cantidadAltaProducto">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span>Cantidad en Stock del producto: <span><em class="icon ni ni-question" data-toggle="tooltip" data-placement="right" title="El stock es la cantidad de producto que debe procurar tener siempre que se necesite."></em></span></label>
+                                            <div class="form-control-wrap">
+                                                <div class="form-icon form-icon-left">
+                                                    <em class="icon ni ni-coins"></em>
+                                                </div>
+                                                <input type="number" value="1" class="form-control" min="1" max="100" step="1" name="cantidadStock">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3" id="productoGasto">
+                                        <div class="form-group">
+                                            <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span>Contenido del producto cuantificable?: <span><em class="icon ni ni-question" data-toggle="tooltip" data-placement="right" title="Se refiere a que si el contenido del producto se utiliza una sola vez o se puede utilizar más de una."></em></span></label>
+                                            <div class="form-control-wrap">
+                                                <div class="form-icon form-icon-left">
+                                                    <em class="icon ni ni-coins"></em>
+                                                </div>
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input"  id="checkboxCuantificable" name="checkboxCuantificable">
+                                                    <label class="custom-control-label" for="checkboxCuantificable">Seleccionar si el contenido es cuantificable.</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="preview-hr">
+                            <span class="preview-title-lg overline-title text-pink">Información Sucursal</span>
+                            <div class="row gy-4">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-06"><span style="color: #dd2e2e;">* </span>Sucursal <em class="icon ni ni-question" data-toggle="tooltip" data-placement="right" title="Seleccionar la sucursal donde se encuentra el producto."></em></label>
+                                        <div class="form-control-wrap ">
+                                            <div class="form-control-select">
+                                                <select class="form-control" id="default-06" name="sucursal">
+                                                    {% for sucursal in sucursales %}
+                                                    <option value="{{sucursal.id_sucursal}}">{{sucursal.nombre}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                
+                            </div>
+                            <br>
+                            <button type="submit" class="btn btn-dim btn-primary">Dar de alta producto</button>
+                        </form>
+                    </div>
+                </div>
+            </div><!-- .card-preview -->
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+
+<script>
+
+    {% if productoAgregado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{productoAgregado}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    {% if productoNoAgregado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'error',
+            title: 'Ups..!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{productoNoAgregado}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    window.onload = function(){
+        
+        
+        window.onload= mueveReloj ();
+        var divProveedor = document.getElementById('divProveedor');
+        var divProveedor1 = document.getElementById('divProveedor1');
+
+        //Divs para mostrar dependiendo del select
+        var divVenta = document.getElementById('divVenta');
+        var divRenta = document.getElementById('divRenta');
+        var divGasto = document.getElementById('divGasto');
+        var divInventario = document.getElementById('divInventario');
+        var productoGasto = document.getElementById('productoGasto');
+        divVenta.style.display = "block";
+        divRenta.style.display = "none";
+        divGasto.style.display = "none";
+        divInventario.style.display = "block";
+        productoGasto.style.display = "none";
+
+        
+        
+        
+      
+
+     
+        divProveedor.style.display = "none";
+        divProveedor1.style.display = "block";
+
+        var checkbox = document.getElementById('checkbox');
+        checkbox.addEventListener("change", validarCheckBox, false);
+
+        function validarCheckBox(){
+           
+            if(checkbox.checked){
+             
+                divProveedor.style.display = "block";
+                
+                divProveedor1.style.display = "none";
+               
+            }else{
+              
+                divProveedor.style.display = "none";
+            
+                divProveedor1.style.display = "block";
+                
+            }
+        }
+
+        var divProductoRentaSePuedeVender = document.getElementById("divProductoRentaSePuedeVender");
+        divProductoRentaSePuedeVender.style.display = "none";
+
+
+
+    }
+
+    function cambiarTipo(){
+        var cod = document.getElementById("selectTipoProducto").value;
+        
+        if(cod == "venta"){
+            divVenta.style.display = "block";
+            divRenta.style.display = "none";
+            divGasto.style.display = "none";
+            divInventario.style.display = "block";
+            productoGasto.style.display = "none";
+        }else if(cod == "renta"){
+            divVenta.style.display = "none";
+            divRenta.style.display = "block";
+            divGasto.style.display = "none";
+            divInventario.style.display = "none";
+            productoGasto.style.display = "none";
+        }else if(cod == "gasto"){
+            divVenta.style.display = "none";
+            divRenta.style.display = "none";
+            divGasto.style.display = "block";
+            divInventario.style.display = "block";
+            productoGasto.style.display = "block";
+        }
+    }
+
+    function verificarSiSePuedeVender(){
+
+        var checkboxProductoRentaSePuedeVender = document.getElementById("checkboxProductoRentaSePuedeVender");
+        var divProductoRentaSePuedeVender = document.getElementById("divProductoRentaSePuedeVender");
+        
+        if (checkboxProductoRentaSePuedeVender.checked == true){
+            divProductoRentaSePuedeVender.style.display = "block";
+        }else{
+            divProductoRentaSePuedeVender.style.display = "none";
+        }
+    }
+
+    document.getElementById("miCampo").addEventListener("input", function(event) {
+        const valor = event.target.value;
+        
+        // Expresión regular para detectar letras con acentos
+        const acentos = /[áéíóúÁÉÍÓÚ/]/g;
+        
+        if (acentos.test(valor)) {
+            // Mostrar el modal de error
+            $('#errorModal').modal('show');
+            
+            // Remover el último carácter ingresado
+            event.target.value = valor.replace(acentos, '');
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,245 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Movimientos | Costabella
+{% endblock %}
+
+{% block estilos %}
+<style>
+    @media screen and (max-width: 320px) {
+        table {
+          display: block!important;
+          overflow-x: auto!important;
+        }
+   }
+</style>
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    <h3 class="nk-block-title page-title color-texto-seleccion">LISTADO DE MOVIMIENTOS</h3>
+                   
+                </div><!-- .nk-block-head-content -->
+                {% for permiso in consultaPermisos %}
+                {% if permiso.tabla_modulo == "Movimientos" %}
+                {% if permiso.agregar == "Si" %}
+
+                <div class="nk-block-head-content">
+                    <div class="toggle-wrap nk-block-tools-toggle">
+                        <a href="#" class="btn btn-icon btn-trigger toggle-expand mr-n1" data-target="more-options"><em class="icon ni ni-more-v"></em></a>
+                        <div class="toggle-expand-content" data-content="more-options">
+                            <ul class="nk-block-tools g-3">
+                             
+                                <li class="nk-block-tools-opt">
+                                    <a href="#" class="btn btn-icon btn-primary d-md-none"><em class="icon ni ni-plus"></em></a>
+                                    <a href="/agregarMovimientoCaja/" class="btn btn-primary d-none d-md-inline-flex"><em class="icon ni ni-plus"></em><span>Agregar movimiento</span></a>
+                                </li>
+                               
+
+                            </ul>
+                        </div>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+                
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        
+        <!-- Div empleados todos -->
+        <div class="nk-block nk-block-lg" id="divProductosComprasVentas">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Movimientos de caja</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de <span class="coloralta">movimientos de caja</span> en el sistema.</p>
+                    </div>
+                
+                </div>
+              
+                
+            </div>
+        
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #1F4690 !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Hora</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Realizado por el empleado</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                               
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Tipo de movimiento</span></th>
+                             
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Cantidad $</span></th>
+                                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Descripción</span></th>
+                                
+                             
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for movimiento, empleado,sucursal in lista %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{movimiento.id_movimiento}}</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-outline-dark">{{movimiento.fecha}}</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount">{{movimiento.hora}} hrs.</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-outline-primary">{{empleado}}</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <center>
+                                        
+                                        <span class="badge badge-warning">{{sucursal}}</span>
+                                    </center>
+                                </td>
+                               
+                                <td class="nk-tb-col" >
+                                    <center>
+                                        {% if movimiento.tipo == "IN" %}
+                                        <span class="tb-amount"> <span class="badge badge-success text-dark fw-bold" >INGRESO</span></span>
+                                        {% elif movimiento.tipo == "RE" %}
+                                        <span class="tb-amount"> <span class="badge badge-danger text-dark fw-bold">RETIRO</span></span>
+                                        {% endif %}
+                                    </center>
+                                    
+
+                                </td>
+                                <td class="nk-tb-col">
+                                    {% if movimiento.tipo == "IN" %}
+                                    <span class="text-dark"><span class=" text-teal fw-bold"><em class="icon ni ni-chevron-up"></em> $ {{movimiento.monto}}</span> MXN</span>
+                                    {% elif movimiento.tipo == "RE" %}
+                                    <span  class="text-dark"><span class=" text-danger fw-bold"><em class="icon ni ni-chevron-down"></em> $ {{movimiento.monto}}</span> MXN</span>
+                                    {% endif %}
+                                    
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount">{{movimiento.descripcion}}</span>
+                                </td>
+                                
+                     
+
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+
+       
+    </div>
+</div>
+
+
+{% block relojJS %}
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+
+        window.onload= mueveReloj ();
+
+        
+    };
+</script>
+{% endblock %}
+
+
+
+<script>
+    {% for productoVentaEditar, usuario, sucursal in listaProductosVentaEditar2 %}
+    function calcularPrecioVenta{{productoVentaEditar.id_producto}}() {
+        const valorCosto = document.getElementById("costoCompra{{productoVentaEditar.id_producto}}").value;
+        const valorMargen = document.getElementById("margenCompra{{productoVentaEditar.id_producto}}").value;
+        const inputCostoVenta = document.getElementById("inputCostoVenta{{productoVentaEditar.id_producto}}");
+
+        margenFloat = parseFloat(valorMargen);
+        margenEntero = margenFloat.toFixed();
+        margenString = "1."+margenEntero.toString();
+        margenIntFinal = parseFloat(margenString);
+
+        const costoVentaNuevo = valorCosto * margenIntFinal;
+        costoVentaNuevoChido =costoVentaNuevo.toFixed(2);
+        inputCostoVenta.value = costoVentaNuevoChido;
+        console.log(costoVentaNuevoChido);
+
+    }
+    {% endfor %}
+
+   
+</script>
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<script>
+
+    {% if productoActualizado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{productoActualizado}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+</script>
+
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+        var divProductosComprasVentas = document.getElementById("divProductosComprasVentas");
+        var divProductosComprasRentas = document.getElementById("divProductosComprasRentas");
+        var divProductosComprasGastos = document.getElementById("divProductosComprasGastos");
+        divProductosComprasVentas.style.display = "block";
+        divProductosComprasRentas.style.display = "none";
+        divProductosComprasGastos.style.display = "none";
+
+        window.onload= mueveReloj ();
+
+        
+    };
+
+    
+
+    function mostrarCompraParaVenta(){
+        divProductosComprasVentas.style.display = "block";
+        divProductosComprasRentas.style.display = "none";
+        divProductosComprasGastos.style.display = "none";
+        console.log("Todos los divs");
+    };
+
+    function mostrarCompraParaRenta(){
+        divProductosComprasVentas.style.display = "none";
+        divProductosComprasRentas.style.display = "block";
+        divProductosComprasGastos.style.display = "none";
+        console.log("activos");
+    };
+
+    function mostrarCompraParaGasto(){
+        divProductosComprasVentas.style.display = "none";
+        divProductosComprasRentas.style.display = "none";
+        divProductosComprasGastos.style.display = "block";
+        console.log("inactivos");
+    };
+</script>
+{% endblock %}

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /*! Email Template */
+        .email-wraper { background: #f8e5f5; font-size: 14px; line-height: 22px; font-weight: 400; color: #8094ae; width: 100%; }
+
+        .email-wraper a { color: #854fff; word-break: break-all; }
+
+        .email-wraper .link-block { display: block; }
+
+        .email-ul { margin: 5px 0; padding: 0; }
+
+        .email-ul:not(:last-child) { margin-bottom: 10px; }
+
+        .email-ul li { list-style: disc; list-style-position: inside; }
+
+        .email-ul-col2 { display: flex; flex-wrap: wrap; }
+
+        .email-ul-col2 li { width: 50%; padding-right: 10px; }
+
+        .email-body { width: 96%; max-width: 620px; margin: 0 auto; background: #ffffff; }
+
+        .email-success { border-bottom: #1ee0ac; }
+
+        .email-warning { border-bottom: #f4bd0e; }
+
+        .email-btn { background: #854fff; border-radius: 4px; color: #ffffff !important; display: inline-block; font-size: 13px; font-weight: 600; line-height: 44px; text-align: center; text-decoration: none; text-transform: uppercase; padding: 0 30px; }
+
+        .email-btn-sm { line-height: 38px; }
+
+        .email-header, .email-footer { width: 100%; max-width: 620px; margin: 0 auto; }
+
+        .email-logo { height: 40px; }
+
+        .email-title { font-size: 35px; color: #ff4fd3; font-weight: bold; padding-top: 4px; }
+
+        .email-heading { font-size: 18px; color: #854fff; font-weight: 600; margin: 0; line-height: 1.4; }
+
+        .email-heading-sm { font-size: 24px; line-height: 1.4; margin-bottom: .75rem; }
+
+        .email-heading-s1 { font-size: 20px; font-weight: 400; color: #526484; }
+
+        .email-heading-s2 { font-size: 16px; color: #526484; font-weight: 600; margin: 0; text-transform: uppercase; margin-bottom: 10px; }
+
+        .email-heading-s3 { font-size: 18px; color: #854fff; font-weight: 400; margin-bottom: 8px; }
+
+        .email-heading-success { color: #1ee0ac; }
+
+        .email-heading-warning { color: #f4bd0e; }
+
+        .email-note { margin: 0; font-size: 13px; line-height: 22px; color: #8094ae; }
+
+        .email-copyright-text { font-size: 13px; }
+
+        .email-social li { display: inline-block; padding: 4px; }
+
+        .email-social li a { display: inline-block; height: 30px; width: 30px; border-radius: 50%; background: #ffffff; }
+
+        .email-social li a img { width: 30px; }
+
+        @media (max-width: 480px) { .email-preview-page .card { border-radius: 0; margin-left: -20px; margin-right: -20px; }
+        .email-ul-col2 li { width: 100%; } }
+
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap" rel="stylesheet">
+    
+</head>
+<body>
+    <table class="email-wraper">
+        <tr>
+            <td class="py-5">
+                <center>
+                    <table class="email-header">
+                        <tbody>
+                            <tr>
+                                <td class="text-center pb-4">
+                                    <!-- cambiar a direccion de servidor local -->
+                                    <center>
+                                        <br>
+                                        <a href="http://127.0.0.1:8000"><img class="email-logo" src="http://127.0.0.1:8000/static/images/costabella.png" alt="logo" width="320"></a>
+                                        {% if productos == "venta" %}
+                                        <p class="email-title" style="font-family: 'Amatic SC', cursive!important;">Informe de productos para venta con stock bajo.</p>
+                                        {% else %}
+                                        <p class="email-title" style="font-family: 'Amatic SC', cursive!important;">Informe de productos gasto con stock bajo.</p>
+                                        {% endif %}
+                                        
+                                       
+                                        {% if nombreSucursalCorreo == "Todas las sucursales" %}
+                                        <p class="email-title" style="font-family: 'Amatic SC', cursive!important;">Todas las sucursales.</p>
+                                        {% else %}
+                                        <p class="email-title" style="font-family: 'Amatic SC', cursive!important;">Sucursal {{nombreSucursalCorreo}}.</p>
+                                        {% endif %}
+                                        <br>
+                                    </center>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="email-body text-center">
+                        <tbody>
+                            <tr>
+                                <td style="padding: 1rem !important; padding: 2.75rem !important;">
+                                    <center>
+                                        <br>
+                                        {% if productos == "venta" %}
+                                        <h5 class="email-heading email-heading-s1 mb-4">Hola {{nombresEmpleado}}!<br>Has generado un nuevo informe de productos para venta!</h5>
+                                        {% else %}
+                                        <h5 class="email-heading email-heading-s1 mb-4">Hola {{nombresEmpleado}}!<br>Has generado un nuevo informe de productos gasto!</h5>
+                                        {% endif %}
+
+                                        
+                                    
+                                        <p class="fs-16px text-base">Favor de revisar la lista de productos, la cual indica las cantidades en existencia actuales y el stock con el cual fue dado de alta.</p>
+
+
+                                        <p>Esperamos que te haya servido esta información, para cualquier duda, comunicate al <span style="color: #1cbe80; font-weight:bold;">8712805457</span> o soportecostabella@gmail.com</p>
+                                        <br>
+                                    </center>
+                                    
+                                    
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br>
+
+                    <table class="email-footer">
+                        <tbody>
+                            <tr>
+                                <td class="text-center pt-4">
+                                    <center>
+                                        <p class="email-copyright-text">Copyright © 2022 <span><img src="http://127.0.0.1:8000/static/images/slipy/logo_large.png" alt="logoslipy" width="50"></span>. Todos los derechos reservados. <br>Punto de venta realizado por Slipy.</a></p>
+                                        <a href="#"><img style="border-radius: 50%!imporant;" src="http://127.0.0.1:8000/static/images/facebook.png" alt="" width="40"></a>
+                                        
+                                    </center>
+                                    
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </center>
+                
+               
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

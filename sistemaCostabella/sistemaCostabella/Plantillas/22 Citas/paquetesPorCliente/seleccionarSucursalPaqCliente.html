@@ -1,0 +1,152 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Sucursal Paquete Cita | Costabella
+{% endblock %}
+
+{% block estilos %}
+<style>
+    @media screen and (max-width: 320px) {
+        table {
+          display: block!important;
+          overflow-x: auto!important;
+        }
+   }
+</style>
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-lg wide-xs mx-auto">
+            <div class="nk-block-head-content text-center">
+                <h2 class="nk-block-title fw-normal fuenteTitulo">Selección Sucursal Paquetes activos de clientes</h2>
+                <div class="nk-block-des">
+                    <p class="lead">Elegir la sucursal para ver el historial de tratamientos de los clientes.</p>
+                </div>
+            </div>
+        </div><!-- .nk-block-head -->
+        <div class="row gy-4">
+            <div class="col-sm-1">
+
+            </div>
+            <div class="col-sm-10">
+                <center>
+                    <div class="nk-block">
+                        <div class="row g-gs justify-content-center">
+                            
+                            {% for sucursal in sucursales %}
+                            <div class="col-xxl-4 col-6 col-sm-6 ">
+                                <div class="card animate__animated animate__fadeInDown">
+                                    <div class="nk-ecwg nk-ecwg6 " id="zoom1">
+                                            <div class="card-inner">
+                                                <div class="card-title-group">
+                                                    <div class="card-title ">
+                                                        <center>
+                                                        <h6 class="title">Sucursal</h6>
+                                                        <h3 class="fuenteTituloSucursal">{{sucursal.nombre}}</h3>
+                                                        <form action="/paquetesPorCliente/" method="POST">{% csrf_token %}
+                                                            <input type="hidden" value="{{sucursal.id_sucursal}}" name="sucursalPromos">
+                                                            <button type="submit" class="btn btn-sm btn-warning">Ver paquetes activos</a>
+                                                        </form>
+                                                        </center>
+                                                    </div>
+                                                </div>
+                                                <div class="data">
+                                                    
+                                                    <center>
+                                                        <span><img src="{% static 'images/accesos/puntolocacion.gif' %}" alt="icono" width="20"></span>
+                                                        <div class="info"><span>{{sucursal.direccion}}</span></div>
+                                                    </center>
+                                                  
+                                                </div>
+                                            </div><!-- .card-inner -->
+                                    </div><!-- .nk-ecwg -->
+                                </div><!-- .card -->
+                            </div><!-- .col -->
+                            {% endfor %}
+                            
+                            
+            
+                            
+                            
+                            
+                           
+                            
+                            
+                            
+                            
+                            
+                            
+            
+                            
+                        </div>
+                    </div>
+                </center>
+                
+                
+            </div>
+            <div class="col-sm-1">
+                
+            </div>
+        </div>
+       
+
+        
+       
+
+
+    </div>
+</div>
+
+{% block relojJS %}
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+
+        window.onload= mueveReloj ();
+
+        
+    };
+</script>
+{% endblock %}
+
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<script>
+
+    {% if citaGuardada %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{citaGuardada}}'
+        });
+        e.preventDefault();
+    });
+    
+    {% endif %}
+
+    {% if citaNoGuardada %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'error',
+            title: 'Ups..!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{citaNoGuardada}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    
+
+</script>
+
+{% endblock %}

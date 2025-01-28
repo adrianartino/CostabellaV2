@@ -1,0 +1,326 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Descuentos | Costabella
+{% endblock %}
+
+{% block estilos %}
+<style>
+    @media screen and (max-width: 320px) {
+        table {
+          display: block!important;
+          overflow-x: auto!important;
+        }
+   }
+</style>
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    <h3 class="nk-block-title page-title color-texto-seleccion">LISTADO DE DESCUENTOS</h3>
+                 
+                   
+                </div><!-- .nk-block-head-content -->
+                {% for permiso in consultaPermisos %}
+                {% if permiso.tabla_modulo == "Descuentos" %}
+                {% if permiso.agregar == "Si"   %}
+                <div class="nk-block-head-content">
+                    <div class="toggle-wrap nk-block-tools-toggle">
+                        <a href="#" class="btn btn-icon btn-trigger toggle-expand mr-n1" data-target="more-options"><em class="icon ni ni-more-v"></em></a>
+                        <div class="toggle-expand-content" data-content="more-options">
+                            <ul class="nk-block-tools g-3">
+                       
+                                
+                                <li class="nk-block-tools-opt">
+                                    <a href="#" class="btn btn-icon btn-primary d-md-none"><em class="icon ni ni-plus"></em></a>
+                                    <a href="/altaDescuentos/" class="btn btn-primary d-none d-md-inline-flex"><em class="icon ni ni-plus"></em><span>Agregar descuento</span></a>
+                                </li>
+                               
+
+                            </ul>
+                        </div>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+                
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        
+        <!-- Div empleados todos -->
+        <div class="nk-block nk-block-lg" id="divRentasTotales">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Descuentos</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de <span class="coloralta">rentas realizadas</span> en el sistema.</p>
+                    </div>
+                
+                </div>
+           
+                
+            </div>
+        
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #FF8B8B !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Nombre descuento</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Porcentaje %</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Descripción</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha de alta</span></th>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Descuentos" %}
+                                {% if permiso.editar == "Si"   %}
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Editar</span></th>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                                
+                              
+                             
+                             
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for descuento in descuentos_totales %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{descuento.id_descuento}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="text-indigo fw-bold" >{{descuento.nombre_descuento}}</span>
+                                </td>
+                               
+                                <td class="nk-tb-col">
+                                    <div>
+                                        <span class="tb-amount"> <span class="badge badge-danger fw-bold" style="color: white !important;">{{descuento.porcentaje}} %</span></span>
+                                    </div>
+                                
+                                   
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="text-dark"> {{descuento.descripcion_descuento}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{descuento.fecha_agregado}}</span>
+                                </td>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Descuentos" %}
+                                {% if permiso.editar == "Si"   %}
+                                <td class="nk-tb-col">
+                                    <input type="hidden" name="idDescuentoEditar" value="{{descuento.id_descuento}}">
+                                    <center>
+                                        <button type="button" data-toggle="modal" data-target="#editarDescuento{{descuento.id_descuento}}" class="btn btn-icon btn-sm btn-primarypruple"><em class="icon ni ni-edit" data-toggle="tooltip" data-placement="left" title="Clic para editar descuento."></em></button>
+                                    </center>
+                                </td>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                                
+                         
+                     
+
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+<!-- Modal de editar porcentaje -->
+{% for descuento in descuentos_totales_modal_editar %}
+<div class="modal fade" tabindex="-1" role="dialog" id="editarDescuento{{descuento.id_descuento}}">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h2 class="title text-center fuenteTitulo">EDITAR DESCUENTO</h2>
+                <center>
+                    <img src="{% static 'images/iconosMenu/porcentaje.png' %} " alt="personal">
+                </center>
+                <h4 class="title text-center ">{{descuento.nombre_descuento}}</h4>
+                
+                <div class="tab-content">
+                    
+                    <form action="/actualizarDescuentos/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <input type="hidden" value="{{descuento.id_descuento}}" name="idDescuentoEditar">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="form-label" for="full-name">Nuevo porcentaje:</label>
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-left">
+                                                <em class="icon ni ni-percent"></em>
+                                            </div>
+                                            <input type="number" class="form-control" value="{{descuento.porcentaje}}" min="0" max="100" step="5"  maxlength="5" placeholder="Ingresar precio de compra" required name="porcentajeDescuentoEditar">
+                                        </div>
+                                    </div>
+
+                                
+                                </div>
+
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label class="form-label" for="full-name">Nueva descripción:</label>
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-left">
+                                                <em class="icon ni ni-todo-fill"></em>
+                                            </div>
+                                            <textarea class="form-control form-control-simple no-resize" id="default-textarea" placeholder="Ingresar la  nueva descripción" maxlength="99" style="border-width: 1px!important; 
+                                            border-style: solid!important;
+                                            border-color: rgb(215, 122, 175)!important;" name="descripcion"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                              
+
+                                
+                            
+                        </div>
+                        <br>
+                        
+                        <center>
+                            <button type="submit" class="btn btn-lg btn-primary">Actualizar descuento</button>
+                        </center>
+                    </div><!-- .tab-pane -->
+                </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+{% endfor %}
+
+
+{% block relojJS %}
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+
+        window.onload= mueveReloj ();
+
+        
+    };
+</script>
+{% endblock %}
+
+
+
+<script>
+    {% for rentaJS, clienteJS, productoJS,encargadoJS in listaPendientesEditarJs %}
+    function calcularCuotaRetraso{{rentaJS.id_renta}}() {
+        const fechDevolucion = document.querySelector("fechaDev{{rentaT.id_renta}}").value
+        const estadoDev = document.getElementById("estadoDev{{rentaT.id_renta}}").value;
+        const inputCuota = document.getElementById("cuota{{rentaT.id_renta}}");
+
+        
+        const estadoNuevo = "F";
+        estadoDev.value = estadoNuevo;
+
+        const fechaFinalRenta = '{{rentaJS.fecha_final_renta}}';
+        
+        if (fechDevolucion > fechaFinalRenta){
+            const nuevaCuota = "S";
+
+            inputCuota.value = nuevaCuota;
+        }
+     
+
+    }
+    {% endfor %}
+
+   
+</script>
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<script>
+
+    {% if descuentoAgregado %}
+    $(document).ready(function(){
+        toastr.clear();
+        NioApp.Toast('{{descuentoAgregado}}', 'success', {
+        position: 'top-right',
+        timeOut:5000
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    
+    {% if descuentoNoAgregado %}
+    $(document).ready(function(){
+        toastr.clear();
+        NioApp.Toast('{{descuentoNoAgregado}}', 'error', {
+        position: 'top-right',
+        timeOut:5000
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    {% if porcentajeActualizado %}
+    $(document).ready(function(){
+        toastr.clear();
+        NioApp.Toast('{{porcentajeActualizado}}', 'success', {
+        position: 'top-right',
+        timeOut:5000
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+</script>
+
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+        var divRentasTotales = document.getElementById("divRentasTotales");
+        var divRentasPendientes = document.getElementById("divRentasPendientes");
+        var divRentasFinalizadas = document.getElementById("divRentasFinalizadas");
+        divRentasTotales.style.display = "block";
+        divRentasPendientes.style.display = "none";
+        divRentasFinalizadas.style.display = "none";
+
+        window.onload= mueveReloj ();
+        
+    };
+
+    
+
+    function mostrarTodos(){
+        divRentasTotales.style.display = "block";
+        divRentasPendientes.style.display = "none";
+        divRentasFinalizadas.style.display = "none";
+        console.log("Todos los divs");
+    };
+
+    function mostrarPendientes(){
+        divRentasTotales.style.display = "none";
+        divRentasPendientes.style.display = "block";
+        divRentasFinalizadas.style.display = "none";
+        console.log("inactivos");
+    };
+
+    function mostrarFinalizadas(){
+        divRentasTotales.style.display = "none";
+        divRentasPendientes.style.display = "none";
+        divRentasFinalizadas.style.display = "block";
+        console.log("activos");
+    };
+
+   
+</script>
+{% endblock %}

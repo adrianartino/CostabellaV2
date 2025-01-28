@@ -1,0 +1,207 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Alta Empleado | Costabella
+{% endblock %}
+
+{% block estilos %}
+
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    {% for permiso in consultaPermisos %}
+                    {% if permiso.tabla_modulo == "Empleados" %}
+                    {% if permiso.ver == "Si"  %}
+                    <div class="nk-block-head-sub"><a class="back-to" href="/verEmpleados/"><em class="icon ni ni-arrow-left"></em><span>Ver empleados.</span></a></div>
+                    {% endif %}
+                    {% endif %}
+                    {% endfor %}
+                        <p class="overline-title text-purple fs-20px animate__animated animate__slideInLeft">ALTA DE EMPLEADOS.</p>
+                        <div class="nk-block-des  animate__animated animate__fadeIn">
+                            <p class="fs-15px">En este módulo se darán de alta nuevos empleados/usuarios al sistema. Es necesario contar con la información personal, así como el puesto y la sucursal a la que pertenece.</p>
+                        </div>
+                </div><!-- .nk-block-head-content -->
+             
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        <div class="nk-block nk-block-lg">
+            <div class="card card-preview animate__animated animate__zoomIn">
+                <div class="card-inner animate__animated animate__zoomIn">
+                    <div class="preview-block">
+                        <form action="/altaEmpleado/" method="POST">{% csrf_token %}
+                            <span class="preview-title-lg overline-title text-pink">Información Personal</span>
+                            <div class="row gy-4">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span>Nombre(s)</label>
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-left">
+                                                <em class="icon ni ni-user"></em>
+                                            </div>
+                                            <input type="text"  onkeypress='return soloLetras(event)' class="form-control" id="default-01" placeholder="Ingresar nombre" maxlength="39" required name="nombresEmpleado"> 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span>Apellido Paterno</label>
+                                        <div class="form-control-wrap">
+                                            <input type="text"  onkeypress='return soloLetras(event)' class="form-control" id="default-01" placeholder="Ingresar apellido paterno" maxlength="20" required name="apellidoPat"> 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-03"><span style="color: #dd2e2e;">* </span>Apellido Materno</label>
+                                        <div class="form-control-wrap">
+                                            <input type="text"  onkeypress='return soloLetras(event)' class="form-control" id="default-03" placeholder="Ingresar apellido materno" maxlength="20" required name="apellidoMat">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-03">Teléfono</label>
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-left">
+                                                <em class="icon ni ni-call"></em>
+                                            </div>
+                                            <input type="text"  onkeypress='return validaNumericos(event)' class="form-control" id="default-03" placeholder="Ingresar teléfono personal" maxlength="10" required name="telefono">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="preview-hr">
+                            <span class="preview-title-lg overline-title text-pink">Información de acceso</span>
+                            <div class="row gy-4">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span>Nombre de usuario <span><em class="icon ni ni-question" data-toggle="tooltip" data-placement="right" title="El nombre de usuario es el nombre que se pondrá en el Login para ingresar al sistema."></em></span></label>
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-left">
+                                                <em class="icon ni ni-user-check"></em>
+                                            </div>
+                                            <input type="text" class="form-control" id="default-01" placeholder="Ingresar nombre de usuario" maxlength="20" required name="nombreUsuario">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span>Contraseña</label>
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-left">
+                                                <em class="icon ni ni-lock"></em>
+                                            </div>
+                                            <input type="password" class="form-control" id="default-01" placeholder="Ingresar contraseña" maxlength="20" required name="pwd">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="preview-hr">
+                            <span class="preview-title-lg overline-title text-pink">Información laboral</span>
+                            <div class="row gy-4">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-06"><span style="color: #dd2e2e;">* </span>Tipo <em class="icon ni ni-question" data-toggle="tooltip" data-placement="right" title="El administrador, tiene control total del sistema, el empleado tiene ciertos módulos restringidos."></em></label>
+                                        <div class="form-control-wrap ">
+                                            <div class="form-control-select">
+                                                <select class="form-control" id="default-06" name="tipoUsuario">
+                                                    <option value="Empleado">Empleado</option>
+                                                    <option value="Administrador">Administrador</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-06"><span style="color: #dd2e2e;">* </span>Puesto</label>
+                                        <div class="form-control-wrap ">
+                                            <div class="form-control-select">
+                                                <select class="form-control" id="default-06" name="puestoUsuario" required>
+                                                    <option value="Cajera">Cajera</option>
+                                                    <option value="Encargada">Encargada</option>
+                                                    <option value="Subdirectora">Subdirectora</option>
+                                                    <option value="Directora">Directora</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-06">Sucursal</label>
+                                        <div class="form-control-wrap ">
+                                            <div class="form-control-select">
+                                                <select class="form-control" id="default-06" name="sucursal">
+                                                    <option value="Todas">Todas las sucursales</option>
+                                                    {% for sucursal in sucursales %}
+                                                    <option value="{{sucursal.id_sucursal}}">{{sucursal.nombre}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <br>
+                            <button type="submit" class="btn btn-dim btn-primary">Dar de alta empleado</button>
+                        </form>
+                    </div>
+                </div>
+            </div><!-- .card-preview -->
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<script>
+
+    {% if empleadoAgregado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{empleadoAgregado}}'
+        });
+        e.preventDefault();
+        
+    });
+    {% endif %}
+
+    {% if empleadoNoAgregado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'error',
+            title: 'Ups..!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{empleadoNoAgregado}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+</script>
+{% endblock %}
+
+{% block relojJS %}
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+
+        window.onload= mueveReloj ();
+
+        
+    };
+</script>
+{% endblock %}

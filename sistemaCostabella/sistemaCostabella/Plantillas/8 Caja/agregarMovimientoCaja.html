@@ -1,0 +1,140 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Alta de movimiento de caja | Costabella
+{% endblock %}
+
+{% block estilos %}
+
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    <div class="nk-block-head-sub"><a class="back-to" href="/movimientosCaja/"><em class="icon ni ni-arrow-left"></em><span>Ver movimientos.</span></a></div>
+                        <h2 class="overline-title text-purple fs-20px ">ALTA DE MOVIMIENTOS DE CAJA.</h2>
+                        <div class="nk-block-des">
+                            <p class="fs-15px">En este módulo se darán de alta movimientos de caja en el sistema. Es necesario contar con la información necesaria.</p>
+                        </div>
+                </div><!-- .nk-block-head-content -->
+             
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        <div class="nk-block nk-block-lg">
+            <div class="card card-preview">
+                <div class="card-inner">
+                    <div class="preview-block">
+                        <form action="/agregarMovimientoCaja/" method="POST">{% csrf_token %}
+                            <span class="preview-title-lg overline-title text-pink">Información Básica</span>
+                            <div class="row gy-4">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-06"><span style="color: #dd2e2e;">* </span> Tipo <em class="icon ni ni-question" data-toggle="tooltip" data-placement="right" title="Se selecciona que tipo de movimiento se va a ingresar."></em></label>
+                                        <div class="form-control-wrap ">
+                                            <div class="form-control-select">
+                                                <select class="form-control" id="default-06" name="tipoMovimiento">
+                                                    <option value="IN">Ingreso</option>
+                                                    <option value="RE">Retiro</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01"> <span style="color: #dd2e2e;">* </span> Monto de movimiento:</label>
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-left">
+                                                <em class="icon ni ni-sign-usd-alt"></em>
+                                            </div>
+                                            <input type="number" class="form-control" value="1.00" min="0.00" max="10000.00" step="0.01"  maxlength="5" placeholder="Ingresar monto" required name="montoMovimiento">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-06"> <span style="color: #dd2e2e;">* </span> Sucursal <em class="icon ni ni-question" data-toggle="tooltip" data-placement="right" title="Seleccionar la sucursal donde se registrara el movimiento."></em></label>
+                                        <div class="form-control-wrap ">
+                                            <div class="form-control-select">
+                                                <select class="form-control" id="default-06" name="sucursal">
+                                                    {% for sucursal in sucursales %}
+                                                    <option value="{{sucursal.id_sucursal}}">{{sucursal.nombre}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                             
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span> Descripción</label>
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-left">
+                                                <em class="icon ni ni-file-text"></em>
+                                            </div>
+                                            <textarea class="form-control form-control-simple no-resize" id="default-textarea" placeholder="Ingresar descripción de movimiento" maxlength="99" style="border-width: 1px!important; 
+                                            border-style: solid!important;
+                                            border-color: rgb(216, 216, 216)!important;" name="descripcionMov"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                           
+                            
+                            </div>
+                      
+                       
+                            <br>
+                            <button type="submit" class="btn btn-dim btn-primary">Dar de alta movimiento</button>
+                        </form>
+                    </div>
+                </div>
+            </div><!-- .card-preview -->
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<script>
+
+    {% if movimientoAgregado %}
+    $(document).ready(function(){
+        toastr.clear();
+        NioApp.Toast('{{movimientoAgregado}}', 'success', {
+        position: 'top-right',
+        timeOut:5000
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    {% if movimientoNoAgregado %}
+    $(document).ready(function(){
+        toastr.clear();
+        NioApp.Toast('{{movimientoNoAgregado}}', 'error', {
+        position: 'top-right',
+        timeOut:5000
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+</script>
+{% endblock %}
+
+{% block relojJS %}
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+
+        window.onload= mueveReloj ();
+
+        
+    };
+</script>
+{% endblock %}

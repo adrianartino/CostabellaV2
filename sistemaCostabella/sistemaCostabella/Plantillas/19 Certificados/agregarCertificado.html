@@ -1,0 +1,596 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Alta Certificado | Costabella
+{% endblock %}
+
+{% block estilos %}
+
+{% endblock %}
+
+{% block contenido %}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    {% for permiso in consultaPermisos %}
+                    {% if permiso.tabla_modulo == "Certificado" %}
+                    {% if permiso.ver == "Si" %}
+    
+                    <div class="nk-block-head-sub"><a class="back-to" href="/verCertificados/"><em class="icon ni ni-arrow-left"></em><span>Ver Certificados de regalo.</span></a></div>
+
+                    {% endif %}
+                    {% endif %}
+                    {% endfor %}
+                        <h2 class="overline-title text-purple fs-20px animate__animated animate__slideInLeft">NUEVO CERTIFICADO DE REGALO.</h2>
+                        <h3 class="overline-title text-purple fs-20px animate__animated animate__slideInLeft">Sucursal: <span class="fw-bold text-dark">{{nombreSucursal}}</span>.</h3>
+                        <div class="nk-block-des animate__animated animate__fadeIn">
+                            <p class="fs-15px">En este módulo se darán de alta y se venderá un certificado de regalo. Es necesario contar con la información de los servicios y tratamientos necesaria.</p>
+                        </div>
+                </div><!-- .nk-block-head-content -->
+             
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        <div class="nk-block nk-block-lg">
+            <div class="card card-preview animate__animated animate__zoomIn">
+                <div class="card-inner animate__animated animate__zoomIn">
+                    <div class="preview-block">
+                        <form action="/guardarVenderCertificado/" enctype="multipart/form-data" method="POST">{% csrf_token %}
+                            <span class="preview-title-lg overline-title text-pink">Información del certificado.</span>
+                            <div class="row gy-4">
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span> Folio de certificado:</label>
+                                        <div class="form-control-wrap">
+                                            <input type="text" class="form-control" id="default-01" placeholder="Ingresar nombre del servicio" value="{{nuevoCodigoCertificado}}" name="codigoCertificadoNuevo"  readonly> 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span> Beneficiaria:</label>
+                                        <div class="form-control-wrap">
+                                            <input type="text"  onkeypress='return soloLetras(event)' class="form-control" id="default-01" placeholder="Ingresar nombre de la beneficiaria" maxlength="50" required name="nombreBeneficiaria"> 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01"> Correo electrónico:</label>
+                                        <div class="form-control-wrap">
+                                            <input type="email"   class="form-control" id="default-01" placeholder="Ingresar correo electrónico de beneficiario" maxlength="50" required name="correoBeneficiaria"> 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-03">Cliente:</label>
+                                        <div class="form-control-wrap">
+                                            <select class="form-select form-control form-control-sm" data-search="on" id="selectCliente" onchange="cambioCliente()" name="clienteSeleccionado" >
+                                               
+                                                <option value="clienteMomentaneo">N/A</option>
+                                                {% for cliente in clientes %} 
+                                                <option value="{{cliente.id_cliente}}">{{cliente.nombre_cliente}} {{cliente.apellidoPaterno_cliente}} {{cliente.apellidoMaterno_cliente}}</option>
+                                              
+                                                {% endfor %}
+                                            </select>
+                                       
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <hr class="preview-hr">
+                            <div class="row gy-4">
+                                <div class="col-sm-2">
+                                    
+                                </div>
+                                <div class="col-sm-4">
+                                    <center>
+                                        <h4 class="text-azure">Fecha de hoy:</h4>
+                                        <p class="fw-bold text-dark">{{fechaHoy}}</p>
+                                    </center>
+                                </div>
+                                <div class="col-sm-4">
+                                    <center>
+                                        <h4 class="text-azure">Fecha de vigencia:</h4>
+                                        <p class="fw-bold text-dark">{{fechaVigencia}}</p>
+                                    </center>
+                                </div>
+                                <div class="col-sm-2">
+                                    
+                                </div>
+                                
+                            </div>
+                            <hr class="preview-hr">
+                            <span class="preview-title-lg overline-title text-pink">Selección de los servicios a regalar</span>
+                            <div class="row gy-4">
+                                <div class="col-sm-6">
+                                    <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                                        <thead>
+                                            <tr class="nk-tb-item nk-tb-head">
+                                                <th class="nk-tb-col nk-tb-col-check">
+                                                    
+                                                </th>
+                                                <th class="nk-tb-col"><span class="sub-text">Código</span></th>
+                                                <th class="nk-tb-col tb-col-mb"><span class="sub-text">Nombre</span></th>
+                                                <th class="nk-tb-col tb-col-md"><span class="sub-text">Precio</span></th>
+                                                <th class="nk-tb-col tb-col-lg"><span class="sub-text">Descripción</span></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for servicio in consultaServicios %}
+                                            <tr class="nk-tb-item">
+                                                <td class="nk-tb-col nk-tb-col-check">
+                                                    <div class="custom-control custom-control-sm custom-checkbox notext">
+                                                        <input type="checkbox" class="custom-control-input" id="checkboxServicio{{servicio.id_servicio_certificado}}" name="checkboxServicio{{servicio.id_servicio_certificado}}"  onclick="agregarServicio{{servicio.id_servicio_certificado}}('{{servicio.id_servicio_certificado}}')">
+                                                        <label class="custom-control-label" for="checkboxServicio{{servicio.id_servicio_certificado}}"></label>
+                                                    </div>
+                                                </td>
+                                                <td class="nk-tb-col">
+                                                    <div class="user-card">
+                                                        <div class="user-info">
+                                                            <span class="badge badge-dark">{{servicio.codigo_servocio}}</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="nk-tb-col">
+                                                    <div class="user-card">
+                                                        <div class="user-info">
+                                                            <span class="fw-bold text-dark">{{servicio.nombre}}</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="nk-tb-col">
+                                                    <div class="user-card">
+                                                        <div class="user-info">
+                                                            <span class="fw-bold text-dark">$<span class="text-teal">{{servicio.precio}}</span> MXN</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="nk-tb-col">
+                                                    <div class="user-card">
+                                                        <div class="user-info">
+                                                            <span class="tb-lead"> 
+                                                                <button type="button" class="btn btn-sm btn-danger" data-toggle="popover" 
+                                                                title="Descripción" 
+                                                                data-content="{{servicio.descripcion}}">
+                                                                <span><em class="icon ni ni-eye"></em></span>
+                                                                </button>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                
+                                            </tr><!-- .nk-tb-item  -->
+                                            {% endfor %}
+                                            
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-sm-6">
+                                    <center>
+                                        
+                                        <h3 class="text-pink">Datos de pago</h3>
+                                        <p class="fw-bold text-dark fs-22px">Total</p>
+                                        <p class="fw-bold text-dark fs-22px"><span><input id="inputCostoTotal"type="text" value="$0 MXN" readonly style="text-align: center !important; border:none !important;"></span></p>
+                                        <hr class="preview-hr">
+                                        <div class="row gy-4">
+
+                                            <div class="col-sm-4" >
+                                                <div class="form-group">
+                                                    <div class="form-control-wrap " id="formaPago">
+                                                   
+                                                        <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Forma de pago:</span>
+                                                        <div class="form-control-select">
+                                                            <select class="form-control" id="selectTipoPago" name="tipoPago" onchange="cambioTipoPago()">
+                                                                <option value="Efectivo">Efectivo</option>
+                                                                <option value="Tarjeta">Tarjeta</option>
+                                                                <option value="Transferencia">Transferencia</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            
+                                            </div>
+                                            <div class="col-sm-4" >
+                                                <div class="form-group">
+                                                    <div class="form-control-wrap " id="cantidadEfectivoCliente">
+                                                   
+                                                        <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Efectivo:</span>
+                                                        <input type="number"class="form-control"   placeholder="Ingresar efectivo" maxlength="4" max="10000" min="5" value="5" step="1" id="pagoEfectivoCliente" onchange="calcularFeria()"> 
+                                                    </div>
+                                                    <div class="form-control-wrap " id="tipoTarjeta">
+                                                   
+                                                        <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Tipo de tarjeta:</span>
+                                                        <div class="form-control-select">
+                                                            <select class="form-control" id="selectTipoPago" name="tipoTarjeta" >
+                                                                <option value="Débito">Débito</option>
+                                                                <option value="Crédito">Crédito</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-control-wrap " id="claveRastreo">
+                                                   
+                                                        <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Clave de rastreo:</span>
+                                                        <div class="form-control-wrap">
+                                                            <div class="form-text-hint">
+                                                                <span class="overline-title">Mxn</span>
+                                                            </div>
+                                                            <input type="text" class="form-control" placeholder="Clave de rastreo" name="claveRastreo">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                               
+                                            </div>
+                                            <div class="col-sm-4" >
+                                                <div class="form-group">
+                                                    <div class="form-control-wrap " id="cambioEfectivo">
+                                                   
+                                                        <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Cambio:</span>
+                                                        <h5 class="fw-bold text-dark">$ <span class="text-azure" id="spanCambio">0</span>MXN.</h5>
+                                                    </div>
+                                                    <div class="form-control-wrap " id="referenciaTarjeta">
+                                                   
+                                                        <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Referencia de pago:</span>
+                                                        <div class="form-control-wrap">
+                                                            <div class="form-text-hint">
+                                                                <span class="overline-title">Mxn</span>
+                                                            </div>
+                                                            <input type="text" class="form-control" placeholder="Referencia" name="referencia">
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </center>
+                                </div>
+                                
+                                
+                            </div>
+                            <hr class="preview-hr">
+                            <span class="preview-title-lg overline-title text-pink">Servicios Agregados</span>
+                            <div class="row gy-4">
+                                <div class="col-sm-6">
+                                    <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                                        <thead>
+                                            <tr class="nk-tb-item nk-tb-head">
+                                                <th class="nk-tb-col"><span class="sub-text">Código</span></th>
+                                                <th class="nk-tb-col tb-col-mb"><span class="sub-text">Nombre</span></th>
+                                                <th class="nk-tb-col tb-col-md"><span class="sub-text">Precio</span></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tablaServiciosCertificado">
+                                            
+                                            
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-sm-6">
+                                    
+                                </div>
+                            </div>
+                            <br>
+                            <input type="hidden" name="sucursalCertificado" value="{{sucursalCertificado}}">
+                            <button type="submit" class="btn btn-dim btn-primary" id="botonVenderCertificado">Vender Certificado</button>
+                        </form>
+                    </div>
+                </div>
+            </div><!-- .card-preview -->
+        </div>
+    </div>
+</div>
+
+<script>
+    //Mostrar y ocultar divs.
+    var cantidadEfectivoCliente = document.getElementById("cantidadEfectivoCliente");
+    var referenciaTarjeta = document.getElementById("referenciaTarjeta");
+    var cambioEfectivo = document.getElementById("cambioEfectivo");
+    var claveRastreo = document.getElementById("claveRastreo");
+    var tipoTarjeta = document.getElementById("tipoTarjeta");
+    
+    cantidadEfectivoCliente.style.display = "block";
+    claveRastreo.style.display = "none";
+    cambioEfectivo.style.display="block";
+    referenciaTarjeta.style.display="none";
+    tipoTarjeta.style.display= "none";
+
+    function cambioTipoPago(){
+        var select = document.getElementById("selectTipoPago").value;
+        
+        if (select == "Efectivo") {
+
+            cantidadEfectivoCliente.style.display = "block";
+            claveRastreo.style.display = "none";
+            cambioEfectivo.style.display="block";
+            referenciaTarjeta.style.display="none";
+            tipoTarjeta.style.display= "none";
+        }
+        else if (select == "Tarjeta") {
+            cantidadEfectivoCliente.style.display = "none";
+            claveRastreo.style.display = "none";
+            cambioEfectivo.style.display="none";
+            referenciaTarjeta.style.display="block";
+            tipoTarjeta.style.display= "block";
+        }
+        else if (select  == "Transferencia") {
+            cantidadEfectivoCliente.style.display = "none";
+            claveRastreo.style.display = "block";
+            cambioEfectivo.style.display="none";
+            referenciaTarjeta.style.display="none";
+            tipoTarjeta.style.display= "none";
+        }
+
+    }
+    //Input del total de compra
+    var inputCostoTotal = document.getElementById("inputCostoTotal")
+    
+    //Recibir servicios de la sucursal seleccionada en json
+    const data ='{{serviciosTotales}}';
+    console.log(data);
+    const dataAcomodada = JSON.parse(data.replace(/&quot;/g,'"'));
+    console.log(dataAcomodada);
+
+    var contadorCkeckbox = 0; //Contador
+
+    //Boton certificado
+    var botonVenderCertificado = document.getElementById("botonVenderCertificado");
+    botonVenderCertificado.disabled = true;
+
+
+    //Arreglos para las tablas
+    var idaServiciosTabla = [];
+    var codigosServiciosTabla = [];
+    var nombresServiciosTabla = [];
+    var precioServiciosTabla = [];
+
+    
+
+    
+
+    //Tabla donde se irán agregando los servicios
+    var tablaServiciosCertificado = document.getElementById("tablaServiciosCertificado");
+    var costoTotalActual = 0;
+    {% for servicio in consultaServiciosJava %}
+    function agregarServicio{{servicio.id_servicio_certificado}}(idServicio){
+        var id_servicio = idServicio;
+        
+        let resultadosBusqueda = []; //este arreglo vaa guardar el resultado de la busqueda de este producto en el arreglo de json
+        resultadosBusqueda = dataAcomodada.filter(servicio => servicio['id_servicio_certificado'].includes(id_servicio));
+        console.log(resultadosBusqueda); //Se imprime dicha selección cuando se le da clic al checkbox.
+
+        
+        var nameCheckbox = "checkboxServicio"+id_servicio
+        var checkbox = document.getElementById(nameCheckbox);
+
+        //Tabla donde iran los servicios seleccionados
+        var tablaServiciosCertificado = document.getElementById("tablaServiciosCertificado");
+
+        //Si chequea el chekbox
+        if (checkbox.checked==true){
+            var arregloFilasHTML = [];
+            contadorCkeckbox = contadorCkeckbox + 1;
+            botonVenderCertificado.disabled = false;
+
+            resultadosBusqueda.map(servicio =>{
+                var idServicio = servicio['id_servicio_certificado']
+                var codigoServicio = servicio['codigo_servocio']
+                var nombreServicio = servicio['nombre']
+                var precio = servicio['precio']
+                
+                //Agregar los datos a los arreglos para la tabla.
+                let agregarId = idaServiciosTabla.push(idServicio);
+                let agregarCodigo = codigosServiciosTabla.push(codigoServicio);
+                let agregarNombre = nombresServiciosTabla.push(nombreServicio);
+                let agregarPrecio = precioServiciosTabla.push(precio);
+                
+                //Llenar lo que ira en el html
+                for (var i = 0; i < idaServiciosTabla.length; i++) {
+                    var html = '<tr class="nk-tb-item" id="filaServicio'+idaServiciosTabla[i]+'"><td class="nk-tb-col"><div class="user-card"><div class="user-info"><span class="badge badge-dark">'+codigosServiciosTabla[i]+'</span></div></div></td><td class="nk-tb-col"><div class="user-card"><div class="user-info"><span class="fw-bold text-dark">'+nombresServiciosTabla[i]+'</span></div></div></td><td class="nk-tb-col"><div class="user-card"><div class="user-info"><span class="fw-bold text-dark">$<span class="text-teal">'+precioServiciosTabla[i]+'</span> MXN</span></div></div></td></tr>';
+                    let agregarFila = arregloFilasHTML.push(html);
+                }
+
+                //El arreglo ya está lleno, se le agrega al div donde está la tabla vacía
+                var todasLasFilas = "";
+
+                arregloFilasHTML.forEach(function(valor,index){
+                    var posicion = index;
+                    var filahtml = valor;
+                    todasLasFilas = todasLasFilas + filahtml;
+                }) 
+
+                tablaServiciosCertificado.innerHTML=todasLasFilas;//Se agregan los servicios a esa tabla.
+
+                //Suma de costo de productos
+                var costoTotal = 0;
+                for(var i = 0; i < precioServiciosTabla.length; i++){
+                    var costoServicio = precioServiciosTabla[i];
+                    costoTotal = costoTotal + parseFloat(costoServicio);
+                   
+                }
+                costoTotalActual = costoTotal;
+
+                inputCostoTotal.value ="$"+costoTotal.toString()+" MXN"
+                
+                //caluclo cambio
+                var pagoEfectivoCliente = document.getElementById("pagoEfectivoCliente")
+                var valorInputPagoCliente = pagoEfectivoCliente.value;
+                var cambio = valorInputPagoCliente - costoTotal
+
+                var spanCambio = document.getElementById("spanCambio");
+                spanCambio.innerHTML = cambio.toString()
+
+
+                
+            })
+
+        }
+        else{
+            contadorCkeckbox = contadorCkeckbox - 1;
+
+            if(contadorCkeckbox == 0){
+                botonVenderCertificado.disabled = true;
+            }
+
+            //Aqui xd
+            resultadosBusqueda.map(servicio =>{
+                var idServicio = servicio['id_servicio_certificado']
+                var posicion = idaServiciosTabla.indexOf(idServicio)
+                if (posicion !== -1){
+                    idaServiciosTabla.splice(posicion,1)
+                    codigosServiciosTabla.splice(posicion,1)
+                    nombresServiciosTabla.splice(posicion,1)
+                    precioServiciosTabla.splice(posicion,1)
+
+
+                }
+                var filaAQuitar = "#filaServicio"+servicio['id_servicio_certificado']
+                $(filaAQuitar).remove();
+                var costoTotal = 0;
+                for(var i = 0; i < precioServiciosTabla.length; i++){
+                    var costoServicio = precioServiciosTabla[i];
+                    costoTotal = costoTotal + parseFloat(costoServicio);
+                
+                
+                }
+                costoTotalActual = costoTotal;
+                inputCostoTotal.value ="$"+costoTotal.toString()+" MXN"
+
+                //caluclo cambio
+                var pagoEfectivoCliente = document.getElementById("pagoEfectivoCliente")
+                var valorInputPagoCliente = pagoEfectivoCliente.value;
+                var cambio = valorInputPagoCliente - costoTotal
+
+                var spanCambio = document.getElementById("spanCambio");
+                spanCambio.innerHTML = cambio.toString()
+            })
+
+        }
+
+    }
+    {% endfor %}
+
+    function calcularFeria(){
+        //caluclo cambio
+                var pagoEfectivoCliente = document.getElementById("pagoEfectivoCliente")
+                var valorInputPagoCliente = pagoEfectivoCliente.value;
+                var cambio = valorInputPagoCliente - costoTotalActual
+
+                var spanCambio = document.getElementById("spanCambio");
+                spanCambio.innerHTML = cambio.toString()
+    }
+</script>
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<script>
+
+    {% if servicioAgregado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{servicioAgregado}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    {% if servicioNoAgregado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'error',
+            title: 'Ups..!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{servicioNoAgregado}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    window.onload = function(){
+      
+        var divProveedor = document.getElementById('divProveedor');
+        var divProveedor1 = document.getElementById('divProveedor1');
+
+        //Divs para mostrar dependiendo del select
+        var divVenta = document.getElementById('divVenta');
+        var divRenta = document.getElementById('divRenta');
+        var divGasto = document.getElementById('divGasto');
+        var divInventario = document.getElementById('divInventario');
+        var productoGasto = document.getElementById('productoGasto');
+        divVenta.style.display = "block";
+        divRenta.style.display = "none";
+        divGasto.style.display = "none";
+        divInventario.style.display = "block";
+        productoGasto.style.display = "none";
+
+        
+        
+        
+      
+
+     
+        divProveedor.style.display = "none";
+        divProveedor1.style.display = "block";
+
+        var checkbox = document.getElementById('checkbox');
+        checkbox.addEventListener("change", validarCheckBox, false);
+
+        function validarCheckBox(){
+           
+            if(checkbox.checked){
+             
+                divProveedor.style.display = "block";
+                
+                divProveedor1.style.display = "none";
+               
+            }else{
+              
+                divProveedor.style.display = "none";
+            
+                divProveedor1.style.display = "block";
+                
+            }
+        }
+
+        window.onload= mueveReloj ();
+
+
+    }
+
+    function cambiarTipo(){
+        var cod = document.getElementById("selectTipoProducto").value;
+        
+        if(cod == "venta"){
+            divVenta.style.display = "block";
+            divRenta.style.display = "none";
+            divGasto.style.display = "none";
+            divInventario.style.display = "block";
+            productoGasto.style.display = "none";
+        }else if(cod == "renta"){
+            divVenta.style.display = "none";
+            divRenta.style.display = "block";
+            divGasto.style.display = "none";
+            divInventario.style.display = "none";
+            productoGasto.style.display = "none";
+        }else if(cod == "gasto"){
+            divVenta.style.display = "none";
+            divRenta.style.display = "none";
+            divGasto.style.display = "block";
+            divInventario.style.display = "block";
+            productoGasto.style.display = "block";
+        }
+    }
+</script>
+{% endblock %}

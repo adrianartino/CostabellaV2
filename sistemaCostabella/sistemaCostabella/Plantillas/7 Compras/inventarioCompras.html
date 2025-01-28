@@ -1,0 +1,382 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Compras | Costabella
+{% endblock %}
+
+{% block estilos %}
+<style>
+    @media screen and (max-width: 320px) {
+        table {
+          display: block!important;
+          overflow-x: auto!important;
+        }
+   }
+</style>
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    <h3 class="nk-block-title page-title color-texto-seleccion">LISTADO DE COMPRAS</h3>
+                    <div class="nk-block-des text-soft">
+                        <p>Total de compras: {{contadorComprasVentas}} Compras para venta - {{contadorComprasRentas}} compras para renta - {{contadorComprasGastos}} compras para Gasto.</p>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+                <div class="nk-block-head-content">
+                    <div class="toggle-wrap nk-block-tools-toggle">
+                        <a href="#" class="btn btn-icon btn-trigger toggle-expand mr-n1" data-target="more-options"><em class="icon ni ni-more-v"></em></a>
+                        <div class="toggle-expand-content" data-content="more-options">
+                            <ul class="nk-block-tools g-3">
+                                <li>
+                                    <div class="drodown">
+                                        <a href="#" class="dropdown-toggle dropdown-indicator btn btn-outline-light btn-white" data-toggle="dropdown">Filtro tipo de compras</a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <ul class="link-list-opt no-bdr">
+                                                <li style="cursor: pointer!important;"><a onclick="mostrarCompraParaVenta()"><span>Compras para ventas</span></a></li>
+                                                <li style="cursor: pointer!important;"> <a onclick="mostrarCompraParaRenta()"><span>Compras para rentas</span></a></li>
+                                                <li style="cursor: pointer!important;"> <a onclick="mostrarCompraParaGasto()"><span>Compras para gasto</span></a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Productos" %}
+                                {% if permiso.agregar == "Si" %}
+                
+                                <li class="nk-block-tools-opt">
+                                    <a href="#" class="btn btn-icon btn-primary d-md-none"><em class="icon ni ni-plus"></em></a>
+                                    <a href="/altaProductos/" class="btn btn-primary d-none d-md-inline-flex"><em class="icon ni ni-plus"></em><span>Agregar Producto</span></a>
+                                </li>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+
+
+
+
+                              
+                               
+
+                            </ul>
+                        </div>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        
+        <!-- Div empleados todos -->
+        <div  id="divProductosComprasVentas">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Compras para venta</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de <span class="coloralta">compras de productos para venta</span> en el sistema.</p>
+                    </div>
+                
+                </div>
+               
+                
+            </div>
+        
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #5463FF !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Producto</span></th>
+                               
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Costo compra</span></th>
+                             
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Cantidad </span></th>
+                                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Total de compra</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha de compra</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                             
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for compra, producto, sucursal in listaComprasProductosVenta %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{compra.id_compraVenta}}</span>
+                                </td>
+                               
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount"> <span class="badge badge-gray text-dark fw-bold"></span> {{producto}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount" > <span class="badge badge-warning text-dark fw-bold">$ {{compra.costo_unitario}} MXN</span> </span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount">{{compra.cantidad_comprada}} unidades </span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span  class="badge badge-success"> $ {{compra.total_costoCompra}} MXN</span>
+                                </td>
+                                <td class="nk-tb-col" da>
+                                    <span class="tb-amount">{{compra.fecha_compra}}</span>
+                                </td>
+                          
+                         
+                           
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-pill badge-dark">{{sucursal}}</span>
+                                </td>
+                     
+
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+        <!-- DIV EMPLEADOS ACTIVOS -->
+        <div  id="divProductosComprasRentas">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Compras para renta</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de compras <span class="coloralta">de productos para renta</span> en el sistema.</p>
+                    </div>
+                </div>
+                <div>
+                    <form action="/xlEmpleados/" method="POST">{% csrf_token %}
+                        <input type="hidden" name="todos" value="todos">
+                        <button type="submit" class="btn btn-icon btn-sm btn-light" 
+                            data-toggle="tooltip" data-placement="right"
+                            title="Descargar reporte Empleados en Excel.">
+                            &nbsp;<img src="{% static 'images/iconosMenu/iconoExcel.png' %}" alt="iconoExcel" width="25"> &nbsp;Excel&nbsp;&nbsp;               
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #24A19C !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Producto</span></th>
+                               
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Costo compra</span></th>
+                             
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Cantidad </span></th>
+                                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Total de compra</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha de compra</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                             
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for compra, producto, sucursal in listaComprasProductosRenta %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{compra.id_compraRenta}}</span>
+                                </td>
+                               
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{producto}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount"> <span class="badge badge-warning text-dark fw-bold">$ {{compra.costo_unitario}} MXN</span> </span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount">{{compra.cantidad_comprada}} unidades </span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-success">$ {{compra.total_costoCompra}} MXN</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount">{{compra.fecha_compra}}</span>
+                                </td>
+                          
+                         
+                           
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-pill badge-dark">{{sucursal}}</span>
+                                </td>
+                     
+
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+        <!-- DIV EMPLEADOS INACTIVOS -->
+        <div  id="divProductosComprasGastos">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Compras para gastos</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de compras <span class="colorbaja">de productos para gasto</span> en el sistema.</p>
+                    </div>
+                </div>
+                <div>
+                    <form action="/xlEmpleados/" method="POST">{% csrf_token %}
+                        <input type="hidden" name="todos" value="todos">
+                        <button type="submit" class="btn btn-icon btn-sm btn-light" 
+                            data-toggle="tooltip" data-placement="right"
+                            title="Descargar reporte Empleados en Excel.">
+                            &nbsp;<img src="{% static 'images/iconosMenu/iconoExcel.png' %}" alt="iconoExcel" width="25"> &nbsp;Excel&nbsp;&nbsp;               
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #6F69AC !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Producto</span></th>
+                               
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Costo compra</span></th>
+                             
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Cantidad </span></th>
+                                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Total de compra</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha de compra</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                             
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for compra, producto, sucursal in listaComprasProductosGasto %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{compra.id_compraGasto}}</span>
+                                </td>
+                               
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount">{{producto}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount"> <span class="badge badge-warning text-dark fw-bold">$ {{compra.costo_unitario}} MXN</span> </span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount">{{compra.cantidad_comprada}} unidades </span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-success"> $ {{compra.total_costoCompra}} MXN</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount">{{compra.fecha_compra}}</span>
+                                </td>
+                          
+                         
+                           
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-pill badge-dark">{{sucursal}}</span>
+                                </td>
+                     
+
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+    </div>
+</div>
+
+
+
+
+
+
+<script>
+    {% for productoVentaEditar, usuario, sucursal in listaProductosVentaEditar2 %}
+    function calcularPrecioVenta{{productoVentaEditar.id_producto}}() {
+        const valorCosto = document.getElementById("costoCompra{{productoVentaEditar.id_producto}}").value;
+        const valorMargen = document.getElementById("margenCompra{{productoVentaEditar.id_producto}}").value;
+        const inputCostoVenta = document.getElementById("inputCostoVenta{{productoVentaEditar.id_producto}}");
+
+        margenFloat = parseFloat(valorMargen);
+        margenEntero = margenFloat.toFixed();
+        margenString = "1."+margenEntero.toString();
+        margenIntFinal = parseFloat(margenString);
+
+        const costoVentaNuevo = valorCosto * margenIntFinal;
+        costoVentaNuevoChido =costoVentaNuevo.toFixed(2);
+        inputCostoVenta.value = costoVentaNuevoChido;
+        console.log(costoVentaNuevoChido);
+
+    }
+    {% endfor %}
+
+   
+</script>
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<script>
+
+    {% if productoActualizado %}
+    $(document).ready(function(){
+        toastr.clear();
+        NioApp.Toast('{{productoActualizado}}', 'success', {
+        position: 'top-right',
+        timeOut:5000
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+</script>
+
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+        var divProductosComprasVentas = document.getElementById("divProductosComprasVentas");
+        var divProductosComprasRentas = document.getElementById("divProductosComprasRentas");
+        var divProductosComprasGastos = document.getElementById("divProductosComprasGastos");
+        divProductosComprasVentas.style.display = "block";
+        divProductosComprasRentas.style.display = "none";
+        divProductosComprasGastos.style.display = "none";
+
+        window.onload= mueveReloj ();
+
+        
+    };
+
+    
+
+    function mostrarCompraParaVenta(){
+        divProductosComprasVentas.style.display = "block";
+        divProductosComprasRentas.style.display = "none";
+        divProductosComprasGastos.style.display = "none";
+        console.log("Todos los divs");
+    };
+
+    function mostrarCompraParaRenta(){
+        divProductosComprasVentas.style.display = "none";
+        divProductosComprasRentas.style.display = "block";
+        divProductosComprasGastos.style.display = "none";
+        console.log("activos");
+    };
+
+    function mostrarCompraParaGasto(){
+        divProductosComprasVentas.style.display = "none";
+        divProductosComprasRentas.style.display = "none";
+        divProductosComprasGastos.style.display = "block";
+        console.log("inactivos");
+    };
+</script>
+{% endblock %}

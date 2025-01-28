@@ -1,0 +1,173 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Alta Sucursal | Costabella
+{% endblock %}
+
+{% block estilos %}
+
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    {% for permiso in consultaPermisos %}
+                    {% if permiso.tabla_modulo == "Sucursales" %}
+                    {% if permiso.ver == "Si" %}
+                    <div class="nk-block-head-sub"><a class="back-to" href="/verSucursales/"><em class="icon ni ni-arrow-left"></em><span>Ver sucursales.</span></a></div>
+                    {% endif %}
+                    {% endif %}
+                    {% endfor %}
+                    
+                    <p class="overline-title text-purple fs-20px animate__animated animate__slideInLeft">ALTA DE SUCURSALES.</p>
+                        <div class="nk-block-des animate__animated animate__fadeIn">
+                            <p class="fs-15px">En este módulo se darán de alta nuevas sucursales al sistema. Es necesario contar con la información correspondiente.</p>
+                        </div>
+                </div><!-- .nk-block-head-content -->
+             
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        <div class="nk-block nk-block-lg">
+            <div class="card card-preview animate__animated animate__zoomIn">
+                <div class="card-inner animate__animated animate__zoomIn">
+                    <div class="preview-block">
+                        <form action="/altaSucursal/" method="POST">{% csrf_token %}
+                            <span class="preview-title-lg overline-title text-pink">Información sucursal</span>
+                            <div class="row gy-4">
+                                <div class="col-sm-4">
+                                    <div class="row gy-4"> 
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span>Nombre Sucursal</label>
+                                                <div class="form-control-wrap">
+                                                    <div class="form-icon form-icon-left">
+                                                        <em class="icon ni ni-home"></em>
+                                                    </div>
+                                                    <input type="text"  onkeypress='return soloLetras(event)' class="form-control" id="default-01" placeholder="Ingresar nombre" maxlength="39" required name="nombreSucursal"> 
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label" for="default-03"><span style="color: #dd2e2e;">* </span>Teléfono</label>
+                                                <div class="form-control-wrap">
+                                                    <div class="form-icon form-icon-left">
+                                                        <em class="icon ni ni-call-alt"></em>
+                                                    </div>
+                                                    <input type="text"  onkeypress='return validaNumericos(event)' class="form-control" id="default-03" placeholder="Ingresar número de teléfono" maxlength="10" required name="telefonoSucursal">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span>Dirección</label>
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-left">
+                                                <em class="icon ni ni-location"></em>
+                                            </div>
+                                            <input type="text" class="form-control" id="location" placeholder="Ingresar dirección de sucursal" maxlength="50" required name="direccionSucursal">
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="map">
+
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <br>
+                            
+                            <br>
+                            <input type="hidden" value="" name="latitud" id="latitud">
+                            <input type="hidden" value="" name="longitud" id="longitud">
+                            <button type="submit" class="btn btn-dim btn-primary">Dar de alta sucursal</button>
+                        </form>
+                    </div>
+                </div>
+            </div><!-- .card-preview -->
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<script>
+
+    {% if sucursalAgregado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{sucursalAgregado}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    {% if sucursalNoAgregado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'error',
+            title: 'Ups..!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{sucursalNoAgregado}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+</script>
+<script type="text/javascript">
+    let autocomplete;
+    
+
+    function initAutocomplete(){
+        autocomplete = new google.maps.places.Autocomplete(
+            document.getElementById('location'),
+            {
+                types:['geocode']
+            }
+        );
+        
+        autocomplete.addListener('place_changed', function(){
+            var place = autocomplete.getPlace();
+            var latitud = place.geometry.location.lat();
+            var longitud = place.geometry.location.lng()
+            console.log(latitud);
+            console.log(longitud);
+            var latitudhtml = document.getElementById("latitud");
+            var longitudhtml = document.getElementById("longitud");
+            latitudhtml.value= latitud;
+            longitudhtml.value = longitud;
+            
+        })
+    }
+
+
+   
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC7LMDCuG9qUgLU6-43LhstBh1o7vz-9Wk&libraries=places&callback=initAutocomplete"></script>
+
+{% endblock %}
+
+{% block relojJS %}
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+
+        window.onload= mueveReloj ();
+
+        
+    };
+</script>
+{% endblock %}

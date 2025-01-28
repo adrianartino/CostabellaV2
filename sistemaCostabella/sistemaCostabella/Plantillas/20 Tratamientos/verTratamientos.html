@@ -1,0 +1,881 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Tratamientos | Costabella
+{% endblock %}
+
+{% block estilos %}
+<style>
+    @media screen and (max-width: 320px) {
+        table {
+          display: block!important;
+          overflow-x: auto!important;
+        }
+   }
+</style>
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    {% if nombreSucursalView == "Todas las sucursales" %}
+                    <h3 class="nk-block-title page-title color-texto-seleccion">LISTADO DE TRATAMIENTOS <span class="fw-bold text-dark">-></span> Todas las sucursales.</h3>
+                    {% else %}
+                    <h3 class="nk-block-title page-title color-texto-seleccion">LISTADO DE TRATAMIENTOS <span class="fw-bold text-dark">-></span> {{nombreSucursalView}}</h3>
+                    {% endif %}
+                    <div class="nk-block-des text-soft">
+                        <p>Total de servicios por tipo: {{contadorTratamientosCorporales}} Tratamientos Corporales - {{contadorTratamientosFaciales}} Tratamientos Faciales.</p>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+                <div class="nk-block-head-content">
+                    <div class="toggle-wrap nk-block-tools-toggle">
+                        <a href="#" class="btn btn-icon btn-trigger toggle-expand mr-n1" data-target="more-options"><em class="icon ni ni-more-v"></em></a>
+                        <div class="toggle-expand-content" data-content="more-options">
+                            <ul class="nk-block-tools g-3">
+                                <li>
+                                    <div class="drodown">
+                                        <a href="#" class="dropdown-toggle dropdown-indicator btn btn-outline-light btn-white" data-toggle="dropdown">Filtro tipo de tratamiento</a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <ul class="link-list-opt no-bdr">
+                                                <li style="cursor: pointer!important;"><a onclick="mostrarCorporales()"><span>Corporales</span></a></li>
+                                                <li style="cursor: pointer!important;"> <a onclick="mostrarFaciales()"><span>Faciales</span></a></li>
+                                                
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Servicios" %}
+                                {% if permiso.agregar == "Si" %}
+                
+                                <li class="nk-block-tools-opt">
+                                    <a href="#" class="btn btn-icon btn-primary d-md-none"><em class="icon ni ni-plus"></em></a>
+                                    <a href="/agregarTratamiento/" class="btn btn-primary d-none d-md-inline-flex"><em class="icon ni ni-plus"></em><span>Agregar Tratamiento</span></a>
+                                </li>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                               
+                               
+
+                            </ul>
+                        </div>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        
+        <!-- Div empleados todos -->
+        <div  id="divServiciosCorporales">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Tratamientos corporales para venta</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de <span class="coloralta">tratamientos corporales para venta</span> en el sistema.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #9C9EFE !important; color:white !important" >
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco">Código</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco">Nombre</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Descripción</span></th>
+                                <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Costo venta</span></th>
+                                <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Tiempo mínimo de duración</span></th>
+                                <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Tiempo máximo de duración</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Complementos</span></th>
+                                <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Sesiones recomendadas</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursales</span></th>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Tratamientos" %}
+                                {% if permiso.editar == "Si" %}
+                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Editar</span></th>
+                                <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Paquete productos</span></th>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tratamientoCorporal in tratamientosCorporales %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{tratamientoCorporal.0}}</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-dark" >{{tratamientoCorporal.1}}</span>
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span class="fw-bold text-dark">{{tratamientoCorporal.2}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <center>
+                                        
+                                    <span><button type="button" class="btn btn-sm btn-primary" data-toggle="popover" data-placement="right"  title="Descripción de tratamiento" 
+                                        data-content="{{tratamientoCorporal.3}}"><em class="icon ni ni-notice"></em></button></span>
+                                    </center>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="fw-bold text-dark"><span class="text-teal">$ {{tratamientoCorporal.4}}</span> MXN</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <center>
+                                        <span class="badge badge-dim badge-pill badge-outline-success" style="color: black !important;"><em class="icon ni ni-clock"></em>&nbsp;{{tratamientoCorporal.5}} Minutos</span>
+                                    </center>
+                                   
+                                </td>
+                                <td class="nk-tb-col">
+                                    <center>
+                                        <span class="badge badge-dim badge-pill badge-outline-danger" style="color: black !important;"><em class="icon ni ni-clock"></em>&nbsp;{{tratamientoCorporal.6}} Minutos</span>
+                                    </center>
+                                    
+                                </td>
+                                <td class="nk-tb-col">
+                                    <center>
+                                        
+                                    <span><button type="button" class="btn btn-sm btn-gray" data-toggle="popover" data-placement="right"   title="Complementos de tratamiento"
+                                        data-content="{{tratamientoCorporal.7}}"><em class="icon ni ni-notice"></em></button></span>
+                                    </center>
+
+                                </td>
+                                <td class="nk-tb-col" >
+                                    {% if tratamientoCorporal.8 == 1 %}
+
+                                        {% if tratamientoCorporal.9 == "Semanal" %}
+                                        <span class="badge badge-outline-dark">1 sesión a la semana</span>
+                                        {% elif tratamientoCorporal.9 == "Mes" %}
+                                        <span class="badge badge-outline-dark">1 sesión al mes</span>
+                                        {% elif tratamientoCorporal.9 == "Año" %}
+                                        <span class="badge badge-outline-dark">1 sesión al año</span>
+                                        {% endif %}
+                                    {% else %}
+                                        {% if tratamientoCorporal.9 == "Semanal" %}
+                                        <span class="badge badge-outline-dark">{{tratamientoCorporal.8}} sesiones a la semana</span>
+                                        {% elif tratamientoCorporal.9 == "Mes" %}
+                                        <span class="badge badge-outline-dark">{{tratamientoCorporal.8}} sesiones al mes</span>
+                                        {% elif tratamientoCorporal.9 == "Año" %}
+                                        <span class="badge badge-outline-dark">{{tratamientoCorporal.8}} sesiones al año</span>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                                <td class="nk-tb-col" >
+                                    {% for tratamiento in tratamientoCorporal.10 %}
+                                    <span class="badge badge-info">{{tratamiento.0}} - {{tratamiento.1}}</span><br>
+                                    
+                                    {% endfor %}
+                                </td>
+
+
+
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Tratamientos" %}
+                                {% if permiso.editar == "Si" %}
+                
+                                <td class="nk-tb-col">
+                                    
+                                    <center>
+                                        <button type="button" data-toggle="modal" data-target="#editarTratamientoCorporal{{tratamientoCorporal.0}}" class="btn btn-icon btn-sm btn-primarypruple"><em class="icon ni ni-edit" ></em></button>
+                                    </center>
+                                    
+                                </td>
+
+
+                                <td class="nk-tb-col">
+                                    {% if tratamientoCorporal.11 == True %}
+                                    <span class="fw-bold text-danger">Ya tiene un paquete asignado.</span>
+                                    <center>
+                                        <button type="button" id="verProductosTratamientosCorporal{{tratamientoCorporal.0}}" data-toggle="modal" data-target="#verProductosTC{{tratamientoCorporal.0}}" class="btn btn-icon btn-sm btn-success"><em class="icon ni ni-eye" ></em></button>
+                                    </center>
+                                    {% else %}
+                                    <form action="/crearPaqueteTratamientos/" method="POST">{% csrf_token %}
+                                        <input type="hidden" name="idTratamientoPaquete" value="{{tratamientoCorporal.0}}">
+                                        <center>
+                                        <button type="submit"   class="btn btn-icon btn-sm bg-warning text-white" data-toggle="tooltip" data-placement="left" title="Crear paquete"><em class="icon ni ni-package" ></em></button>
+                                        </center>
+
+                                    </form>
+                                    {% endif %}
+                                    
+                                    
+                                    
+                                </td>
+                              
+
+
+                              
+
+
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+
+                               
+                            
+                            
+                             
+
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+        <!-- DIV EMPLEADOS ACTIVOS -->
+        <div  id="divServiciosFaciales">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Tratamientos faciales para venta</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de tratamientos <span class="coloralta"> faciales para venta</span> en el sistema.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #24A19C !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco">Código</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco">Nombre</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Descripción</span></th>
+                                <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Costo venta</span></th>
+                                <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Tiempo mínimo de duración</span></th>
+                                <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Tiempo máximo de duración</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Complementos</span></th>
+                                <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Sesiones recomendadas</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursales</span></th>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Tratamientos" %}
+                                {% if permiso.editar == "Si" %}
+                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Editar</span></th>
+                                <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Paquete productos</span></th>
+                                
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                           
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tratamientoFacial in tratamientosFaciales %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{tratamientoFacial.0}}</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-dark">{{tratamientoFacial.1}}</span>
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span class="fw-bold text-dark">{{tratamientoFacial.2}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <center>
+                                        
+                                    <span><button type="button" class="btn btn-sm btn-primary" data-toggle="popover" data-placement="right" 
+                                        data-content="{{tratamientoFacial.3}}"><em class="icon ni ni-notice"></em></button></span>
+                                    </center>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="fw-bold text-dark"><span class="text-teal">$ {{tratamientoFacial.4}}</span> MXN</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <center>
+                                        <span class="badge badge-dim badge-pill badge-outline-success" style="color: black !important;"><em class="icon ni ni-clock"></em> {{tratamientoFacial.5}} Minutos</span>
+                                    </center>
+                                   
+                                </td>
+                                <td class="nk-tb-col">
+                                    <center>
+                                        <span class="badge badge-dim badge-pill badge-outline-danger" style="color: black !important;"><em class="icon ni ni-clock"></em> {{tratamientoFacial.6}} Minutos</span>
+                                    </center>
+                                    
+                                </td>
+                                <td class="nk-tb-col">
+                                    <center>
+                                        
+                                    <span><button type="button" class="btn btn-sm btn-gray" data-toggle="popover" data-placement="right" 
+                                        data-content="{{tratamientoFacial.7}}"><em class="icon ni ni-notice"></em></button></span>
+                                    </center>
+
+                                </td>
+                                <td class="nk-tb-col" >
+                                    {% if tratamientoFacial.8 == 1 %}
+
+                                        {% if tratamientoFacial.9 == "Semanal" %}
+                                        <span class="badge badge-outline-dark">1 sesion a la semana</span>
+                                        {% elif tratamientoFacial.9 == "Mes" %}
+                                        <span class="badge badge-outline-dark">1 sesion al mes</span>
+                                        {% elif tratamientoFacial.9 == "Año" %}
+                                        <span class="badge badge-outline-dark">1 sesion al año</span>
+                                        {% endif %}
+                                    {% else %}
+                                        {% if tratamientoFacial.9 == "Semanal" %}
+                                        <span class="badge badge-outline-dark">{{tratamientoFacial.8}} sesiones a la semana</span>
+                                        {% elif tratamientoFacial.9 == "Mes" %}
+                                        <span class="badge badge-outline-dark">{{tratamientoFacial.8}} sesiones al mes</span>
+                                        {% elif tratamientoFacial.9 == "Año" %}
+                                        <span class="badge badge-outline-dark">{{tratamientoFacial.8}} sesiones al año</span>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                                <td class="nk-tb-col" >
+                                    {% for tratamiento in tratamientoFacial.10 %}
+                                    <span class="badge badge-info">{{tratamiento.0}} - {{tratamiento.1}}</span><br>
+                                    
+                                    {% endfor %}
+                                </td>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Tratamientos" %}
+                                {% if permiso.editar == "Si" %}
+                
+                                <td class="nk-tb-col">
+                                    <center>
+                                        <button type="button" data-toggle="modal" data-target="#editarTratamientoFacial{{tratamientoFacial.0}}" class="btn btn-icon btn-sm btn-primarypruple"><em class="icon ni ni-edit" ></em></button>
+                                    </center>
+                                    
+                                </td>
+
+
+                                <td class="nk-tb-col">
+                                    {% if tratamientoFacial.11 == True %}
+                                    <span class="fw-bold text-danger">Ya tiene un paquete asignado.</span>
+                                    <center>
+                                        <button type="button" id="verProductosTratamientoFacial{{tratamientoFacial.0}}" data-toggle="modal" data-target="#verProductosTF{{tratamientoFacial.0}}" class="btn btn-icon btn-sm btn-success"><em class="icon ni ni-eye" ></em></button>
+                                    </center>
+                                    {% else %}
+                                    <form action="/crearPaqueteTratamientos/" method="POST">{% csrf_token %}
+                                        <input type="hidden" name="idTratamientoPaquete" value="{{tratamientoFacial.0}}">
+                                        <center>
+                                        <button type="submit"   class="btn btn-icon btn-sm bg-warning text-white" data-toggle="tooltip" data-placement="left" title="Crear paquete"><em class="icon ni ni-package" ></em></button>
+                                        </center>
+
+                                    </form>
+                                    {% endif %}
+                                    
+                                    
+                                    
+                                </td>
+                              
+
+
+                              
+
+
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+
+                               
+                            
+                            
+                             
+
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+    </div>
+</div>
+
+{% if listaProductosVenta or listaProductosGasto %}
+<h1>{{listaProductosVenta }}</h1>
+<h1>{{listaProductosGasto }}</h1>
+
+{% endif %}
+
+
+{% for tratamiento in tratamientosCorporalesModal %}
+<!-- Modal de editar tratamiento corporal -->
+<div class="modal fade" tabindex="-1" role="dialog" id="editarTratamientoCorporal{{tratamiento.0}}">
+    <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center text-dark ">EDITAR TRATAMIENTO CORPORAL</h3>
+                <center>
+                  
+                    <img src="{% static 'images/iconosMenu/9.png' %} " alt="personal">
+               
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/actualizarTratamientosCorporales/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <h3 class="title text-center fuenteTitulo">{{tratamiento.2}}</h3>
+                                        <h5 class="text-center fw-bold text-azure">{{tratamiento.1}}</h5>
+                                        <p class="text-center fw-bold">Descripción:</p>
+                                        <p class="text-center fw-bold">{{tratamiento.3}}</p>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            <input type="hidden" value="{{tratamiento.0}}" name="idTratamientoCorporalEditar">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #003865 !important; color:white !important">
+                                                <th scope="col">Id</th>
+                                                <th scope="col" >Costo venta</th>
+                                                <th scope="col" >Tiempo mínimo</th>
+                                                <th scope="col" >Tiempo máximo</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row" > <span  class="badge badge-info">{{tratamiento.0}}</span> </th>
+                                                <th >
+                                                    <input  type="number" class="form-control" min="0.00" max="10000.00" step="0.01"   name="precioActualizado" value="{{tratamiento.4}}">
+                                                    <span>$ MXN.</span>
+                                                </th>
+                                                <td>
+                                                    <input  type="number" class="form-control" min="0" max="10000" step="1"   name="minimoActualizado" value="{{tratamiento.5}}"  >
+                                                    <span>min.</span>
+                                                </td>
+                                                <td>
+                                                    <input  type="number" class="form-control"  min="0" max="10000" step="1" name="maximoActualizado" value="{{tratamiento.6}}"  >
+                                                    <span>min.</span>
+                                                </td>
+                                               
+                                        
+                                              
+                                             
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row gy-4">
+                            <div class="col-12">
+                                <center>
+                                    <button type="submit" class="btn btn-lg btn-primary">Actualizar tratamiento</button>
+                                </center>
+                                
+                            </div>
+                        </div>
+                        
+
+                    </div><!-- .tab-pane -->
+                    </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+
+
+{% for tratamiento in tratamientosFacialesModal %}
+<!-- Modal de editar tratamiento Facial -->
+<div class="modal fade" tabindex="-1" role="dialog" id="editarTratamientoFacial{{tratamiento.0}}">
+    <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center text-dark ">EDITAR TRATAMIENTO FACIAL</h3>
+                <center>
+                  
+                    <img src="{% static 'images/iconosMenu/9.png' %} " alt="personal">
+               
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/actualizarTratamientosCorporales/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <h3 class="title text-center fuenteTitulo">{{tratamiento.2}}</h3>
+                                        <h5 class="text-center fw-bold text-azure">{{tratamiento.1}}</h5>
+                                        <p class="text-center fw-bold">Descripción:</p>
+                                        <p class="text-center fw-bold">{{tratamiento.3}}</p>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            <input type="hidden" value="{{tratamiento.0}}" name="idTratamientoCorporalEditar">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #003865 !important; color:white !important">
+                                                <th scope="col">Id</th>
+                                                <th scope="col" >Costo venta</th>
+                                                <th scope="col" >Tiempo mínimo</th>
+                                                <th scope="col" >Tiempo máximo</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row" > <span  class="badge badge-info">{{tratamiento.0}}</span> </th>
+                                                <th >
+                                                    <input  type="number" class="form-control" min="0.00" max="10000.00" step="0.01"   name="precioActualizado" value="{{tratamiento.4}}">
+                                                    <span>$ MXN.</span>
+                                                </th>
+                                                <td>
+                                                    <input  type="number" class="form-control" min="0" max="10000" step="1"   name="minimoActualizado" value="{{tratamiento.5}}"  >
+                                                    <span>min.</span>
+                                                </td>
+                                                <td>
+                                                    <input  type="number" class="form-control"  min="0" max="10000" step="1" name="maximoActualizado" value="{{tratamiento.6}}"  >
+                                                    <span>min.</span>
+                                                </td>
+                                               
+                                        
+                                              
+                                             
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row gy-4">
+                            <div class="col-12">
+                                <center>
+                                    <button type="submit" class="btn btn-lg btn-primary">Actualizar tratamiento</button>
+                                </center>
+                                
+                            </div>
+                        </div>
+                        
+
+                    </div><!-- .tab-pane -->
+                    </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+
+<!-- Modal para ver los productos del tratamiento Corporal -->
+{% for tratamiento in tratamientosCorporalesModalProductos %}
+<div class="modal fade" tabindex="-1" role="dialog" id="verProductosTC{{tratamiento.0}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center ">PAQUETE DE PRODUCTOS DE TRATAMIENTO CORPORAL</h3>
+                <center>
+                  
+                    <img src="{% static 'images/iconosMenu/paquetes.png' %} " alt="personal">
+               
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                   
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <center>
+                                        <div class="form-group">
+                                            <span class="badge badge-dim badge-danger"><h3  style="color: rgb(180, 10, 10) !important;">{{tratamiento.2}}</h3></span>
+                                            {% for sucursal in tratamiento.10 %}
+                                            <p class="fw-bold text-dark">Sucursal: <span>{{sucursal.1}}</span></p>
+                                            {% endfor %}
+                                        </div>
+                                    </center>
+                                    
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #24A19C !important; color:white !important">
+                                               
+                                             
+                                                <th scope="col">Id Producto</th>
+                                              
+                                                <th scope="col">Codigo</th>
+                                                <th scope="col">SKU</th>
+                                              
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Cantidad utilizada por sesión</th>
+                                                
+                                               
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for p in productos %}
+                                            <tr>
+                                                
+                                                <th scope="row" > <span  class="badge badge-dark">{{p.0}}</span> </th>
+                                                <th scope="row" > <span  class="badge badge-primary">{{p.1}}</span> </th>
+                                                <th scope="row" > <span  class="badge badge-danger">{{p.2}}</span> </th>
+                                                <th scope="row" > <span  class="fw-bold text-dark">{{p.3}}</span> </th>
+                                                
+                                                <th scope="row" > 
+                                                    <center>
+                                                        
+                                                    <span  class="badge badge-outline-warning" style="color: black !important;">{{p.4}} unidades</span> 
+                                                    </center>
+                                                </th>
+                                                
+                                            </tr>
+                                            {% endfor %}
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <center>
+                                    {% for permiso in consultaPermisos %}
+                                    {% if permiso.tabla_modulo == "Tratamientos" %}
+                                    {% if permiso.editar == "Si" %}
+                                    <form action="/verProductosPaqueteTratamientoEditar/" method="POST">{% csrf_token %}
+                                        <input type="hidden" value="{{tratamiento.0}}" name="idTratamientoProductoEditar">
+                                        <button type="submit" class="btn btn-dim btn-warning">Editar productos</button>
+                                    </form>
+                                    {% endif %}
+                                    {% endif %}
+                                    {% endfor %}
+                                </center>
+                               
+
+                            </div>
+                        </div>
+                
+                        
+
+                    </div><!-- .tab-pane -->
+               
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+{% for tratamiento in tratamientosFacialesModalProductos %}
+<div class="modal fade" tabindex="-1" role="dialog" id="verProductosTF{{tratamiento.0}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center ">PAQUETE DE PRODUCTOS DE TRATAMIENTO FACIAL</h3>
+                <center>
+                  
+                    <img src="{% static 'images/iconosMenu/paquetes.png' %} " alt="personal">
+               
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                   
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <center>
+                                        <div class="form-group">
+                                            <span class="badge badge-dim badge-danger"><h3  style="color: rgb(180, 10, 10) !important;">{{tratamiento.2}}</h3></span>
+                                            {% for sucursal in tratamiento.10 %}
+                                            <p class="fw-bold text-dark">Sucursal: <span>{{sucursal.1}}</span></p>
+                                            {% endfor %}
+                                        </div>
+                                    </center>
+                                    
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #D61C4E !important; color:white !important">
+                                               
+                                             
+                                                <th scope="col">Id Producto</th>
+                                              
+                                                <th scope="col">Codigo</th>
+                                                <th scope="col">SKU</th>
+                                              
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Cantidad utilizada por sesión</th>
+                                                
+                                               
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for x in tratamiento.12 %}
+                                            {% for p in x %}
+                                            <tr>
+                                                
+                                                <th scope="row" > <span  class="badge badge-dark">{{p.0}}</span> </th>
+                                                <th scope="row" > <span  class="badge badge-primary">{{p.1}}</span> </th>
+                                                <th scope="row" > <span  class="badge badge-danger">{{p.2}}</span> </th>
+                                                <th scope="row" > <span  class="fw-bold text-dark">{{p.3}}</span> </th>
+                                                
+                                                <th scope="row" > 
+                                                    <center>
+                                                        
+                                                    <span  class="badge badge-outline-warning" style="color: black !important;">{{p.4}} unidades</span> 
+                                                    </center>
+                                                </th>
+                                                
+                                            </tr>
+                                            {% endfor %}
+                                            
+                                            
+                                            {% endfor %}
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <center>
+                                    {% for permiso in consultaPermisos %}
+                                    {% if permiso.tabla_modulo == "Tratamientos" %}
+                                    {% if permiso.editar == "Si" %}
+                                    <form action="/verProductosPaqueteTratamientoEditar/" method="POST">{% csrf_token %}
+                                        <input type="hidden" value="{{tratamiento.0}}" name="idTratamientoProductoEditar">
+                                        <button type="submit" class="btn btn-dim btn-warning">Editar productos</button>
+                                    </form>
+                                    {% endif %}
+                                    {% endif %}
+                                    {% endfor %}
+                                </center>
+                               
+
+                            </div>
+                        </div>
+                
+                        
+
+                    </div><!-- .tab-pane -->
+               
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+
+
+
+<script>
+    {% for productoVentaEditar, usuario, sucursal in listaProductosVentaEditar2 %}
+    function calcularPrecioVenta{{productoVentaEditar.id_producto}}() {
+        const valorCosto = document.getElementById("costoCompra{{productoVentaEditar.id_producto}}").value;
+        const valorMargen = document.getElementById("margenCompra{{productoVentaEditar.id_producto}}").value;
+        const inputCostoVenta = document.getElementById("inputCostoVenta{{productoVentaEditar.id_producto}}");
+
+        margenFloat = parseFloat(valorMargen);
+        margenEntero = margenFloat.toFixed();
+        margenString = "1."+margenEntero.toString();
+        margenIntFinal = parseFloat(margenString);
+
+        const costoVentaNuevo = valorCosto * margenIntFinal;
+        costoVentaNuevoChido =costoVentaNuevo.toFixed(2);
+        inputCostoVenta.value = costoVentaNuevoChido;
+        console.log(costoVentaNuevoChido);
+
+    }
+    {% endfor %}
+
+   
+</script>
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+        var divServiciosCorporales = document.getElementById("divServiciosCorporales");
+        var divServiciosFaciales = document.getElementById("divServiciosFaciales");
+     
+        divServiciosCorporales.style.display = "block";
+        divServiciosFaciales.style.display = "none";
+       
+        window.onload= mueveReloj ();
+      
+
+        
+    };
+    var ninguno = true;
+    function displayValores3(){
+        var valoresSelect = $("#productosVenta3").val() || [];
+        
+        if (ninguno && valoresSelect.includes('Ninguno')){
+            console.log('hay mas de uno');
+            //desmarcar ninguno
+            $("#productosVenta3 option[value=Ninguno]").removeAttr("selected");
+          
+            //actualizar los nuevos valores seleccionados
+            valoresSelect = $("#productosVenta3").val();
+            console.log(valoresSelect);
+            //indicar que niniguno ya no esta marcado
+            ninguno = false;
+        }
+        else if (!ninguno && valoresSelect.indexOf('Ninguno') > -1 ){
+            //dejar a ninguno como unico valor
+            $("#productosVenta3").val("Ninguno");
+            //actualizar los nuevos valores seleccionads
+            valoresSelect = $("#productosVenta3").val();
+            ninguno = true;
+        }
+    }
+
+    
+
+    function mostrarCorporales(){
+        divServiciosCorporales.style.display = "block";
+        divServiciosFaciales.style.display = "none";
+       
+        console.log("Todos los divs");
+    };
+
+    function mostrarFaciales(){
+        divServiciosCorporales.style.display = "none";
+        divServiciosFaciales.style.display = "block";
+        
+        console.log("activos");
+    };
+
+
+</script>
+{% endblock %}

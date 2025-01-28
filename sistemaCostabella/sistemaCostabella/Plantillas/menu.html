@@ -1,0 +1,1651 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zxx" class="js">
+
+<head>
+    <base href="../">
+    <meta charset="utf-8">
+    <meta name="author" content="Softnio">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="A powerful and conceptual apps base dashboard template that especially build for developers and programmers.">
+    <!-- Fav Icon  -->
+    <link rel="shortcut icon" href="{% static 'images/flor.ico' %}">
+    <!-- Page Title  -->
+    <title>
+        {% block titulo %}
+
+        {% endblock %}
+    </title>
+    <!-- StyleSheets  -->
+    <link rel="stylesheet" href="{% static 'css/dashlite.css' %}">
+    <link id="skin-default" rel="stylesheet" href="{% static 'css/theme.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style-email.css' %}" >
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+    <!-- Estilo de fuente -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Edu+VIC+WA+NT+Beginner&display=swap" rel="stylesheet">
+
+    {% block estilos %}
+
+    {% endblock %}
+    
+    
+</head>
+
+<body class="nk-body bg-lighter npc-default has-sidebar " >
+    <div class="nk-app-root">
+        <!-- main @s -->
+        <div class="nk-main ">
+            <!-- sidebar @s -->
+            <div class="nk-sidebar nk-sidebar-fixed is-light " data-content="sidebarMenu">
+                <div class="nk-sidebar-element nk-sidebar-head">
+                    <div class="nk-sidebar-brand">
+                        <a href="/inicio/" class="logo-link nk-sidebar-logo">
+                            <img  src="{% static 'images/costabellaMenu.jpg' %}"  alt="logo" width="40%">
+                        </a>
+                    </div>
+                    <div class="nk-menu-trigger mr-n2">
+                        <a href="#" class="nk-nav-toggle nk-quick-nav-icon d-xl-none" data-target="sidebarMenu"><em class="icon ni ni-arrow-left"></em></a>
+                        <a href="#" class="nk-nav-compact nk-quick-nav-icon d-none d-xl-inline-flex" data-target="sidebarMenu"><em class="icon ni ni-menu"></em></a>
+                    </div>
+                </div><!-- .nk-sidebar-element -->
+                <div class="nk-sidebar-element">
+                    <div class="nk-sidebar-content">
+                        <div class="nk-sidebar-menu" data-simplebar>
+                            <ul class="nk-menu">
+                                <li class="nk-menu-heading">
+                                    <h6 class="overline-title text-primary-alt">INICIO</h6>
+                                </li><!-- .nk-menu-item -->
+                                {% if estaEnInicio %}
+                                <li class="nk-menu-item" >
+                                    <a href="/inicio/" class="nk-menu-link fondo-activo-seleccion">
+                                        <span class="nk-menu-icon"><img src="{% static 'images/iconosMenu/1.png' %} " alt="personal"> </span>
+                                        <span class="nk-menu-text color-texto-seleccion" >Accesos Directos</span>
+                                    </a>
+                                </li><!-- .nk-menu-item -->
+                                {% else %}
+                                <li class="nk-menu-item" >
+                                    <a href="/inicio" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><img src="{% static 'images/iconosMenu/1.png' %} " alt="personal"> </span>
+                                        <span class="nk-menu-text">Accesos Directos</span>
+                                    </a>
+                                </li><!-- .nk-menu-item -->
+                                {% endif %}
+                                
+                                <li class="nk-menu-heading">
+                                    <h6 class="overline-title text-primary-alt">Dashboards</h6>
+                                </li><!-- .nk-menu-item -->
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Panel administrativo" %}
+                                {% if permiso.ver == "Si" %}
+                                <li class="nk-menu-item">
+                                    <a href="/verPanelAdministrativo/" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><img src="{% static 'images/iconosMenu/2.png' %} " alt="personal"> </span>
+                                        <span class="nk-menu-text">Panel Administrativo</span>
+                                    </a>
+                                </li><!-- .nk-menu-item -->
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                            
+                                <li class="nk-menu-item">
+                                    <a href="/informeDeVentas/" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><img src="{% static 'images/iconosMenu/3.png' %} " alt="personal"> </span>
+                                        <span class="nk-menu-text">Informe de Ventas</span>
+                                    </a>
+                                </li><!-- .nk-menu-item -->
+                             
+                                
+                                
+                                <li class="nk-menu-heading">
+                                    <h6 class="overline-title text-primary-alt">SISTEMA</h6>
+                                </li><!-- .nk-menu-heading -->
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Empleados" %}
+                                {% if permiso.ver == "No" and permiso.agregar == "No"  %}
+                                
+                                {% else %}
+                                
+                                <li class="nk-menu-item has-sub">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><img src="{% static 'images/iconosMenu/5.png' %} " alt="personal"> </span>
+                                        <span class="nk-menu-text">Empleados</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        {% if permiso.ver == "Si" %}
+                                        <li class="nk-menu-item">
+                                            <a href="/verEmpleados/" class="nk-menu-link"><span class="nk-menu-text">Ver empleados</span></a>
+                                        </li>
+                                        {% endif %}
+                                        {% if permiso.agregar == "Si" %}
+                                        <li class="nk-menu-item">
+                                            <a href="/altaEmpleado/" class="nk-menu-link"><span class="nk-menu-text">Alta empleados</span></a>
+                                        </li>
+                                        {% endif %}
+                                    </ul><!-- .nk-menu-sub -->
+                                </li><!-- .nk-menu-item -->
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                                
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Clientes" %}
+                                {% if permiso.ver == "No" and permiso.agregar == "No"   %}
+                                
+                                {% else %}
+                                <li class="nk-menu-item has-sub">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><img src="{% static 'images/iconosMenu/6.png' %} " alt="personal"> </span>
+                                        <span class="nk-menu-text">Clientes</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        {% if permiso.ver == "Si" %}
+                                        <li class="nk-menu-item">
+                                            <a href="/verClientes/" class="nk-menu-link"><span class="nk-menu-text">Ver clientes</span></a>
+                                        </li>
+                                        {% endif %}
+                                        {% if permiso.agregar == "Si" %}
+                                        <li class="nk-menu-item">
+                                            <a href="/altaCliente/" class="nk-menu-link"><span class="nk-menu-text">Alta clientes</span></a>
+                                        </li>
+                                        {% endif %}
+                                        
+                                    </ul><!-- .nk-menu-sub -->
+                                </li><!-- .nk-menu-item -->
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                                
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Sucursales" %}
+                                {% if permiso.ver == "No" and permiso.agregar == "No"   %}
+                                
+                                {% else %}
+                                
+                                <li class="nk-menu-item has-sub">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><img src="{% static 'images/iconosMenu/7.png' %} " alt="personal"> </span>
+                                        <span class="nk-menu-text">Sucursales</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        {% if permiso.ver == "Si" %}
+                                        <li class="nk-menu-item">
+                                            <a href="/verSucursales/" class="nk-menu-link"><span class="nk-menu-text">Ver sucursales</span></a>
+                                        </li>
+                                        {% endif %}
+                                        {% if permiso.agregar == "Si" %}
+                                        <li class="nk-menu-item">
+                                            <a href="/altaSucursal/" class="nk-menu-link"><span class="nk-menu-text">Alta sucursales</span></a>
+                                        </li>
+                                        {% endif %}
+                                        
+                                    </ul><!-- .nk-menu-sub -->
+                                </li><!-- .nk-menu-item -->
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                            
+
+                                
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Ventas" %}
+                                {% if permiso.ver == "No" and permiso.agregar == "No"   %}
+
+                                    {% for permiso in consultaPermisos %}
+                                        {% if permiso.tabla_modulo == "Descuentos" %}
+                                            {% if permiso.ver == "No"   %}
+                                            {% else %}
+                                            <li class="nk-menu-heading">
+                                                <h6 class="overline-title text-primary-alt">VENTAS</h6>
+                                            </li><!-- .nk-menu-heading -->
+
+                                            <li class="nk-menu-item has-sub">
+                                                <a href="#" class="nk-menu-link nk-menu-toggle">
+                                                    <span class="nk-menu-icon"><img src="{% static 'images/iconosMenu/venta.png' %} " alt="personal"> </span>
+                                                    <span class="nk-menu-text">Ventas</span>
+                                                </a>
+                                                <ul class="nk-menu-sub">
+                                            
+                                                    <li class="nk-menu-item">
+                                                        <a href="/descuentos/" class="nk-menu-link">
+                                                            <span class="nk-menu-text">Descuentos</span>
+                                                        </a>
+                                                    </li>
+                                                
+                                                </ul><!-- .nk-menu-sub -->
+                                                
+                                            </li><!-- .nk-menu-item -->
+
+                                            {% endif %}
+                                        {% endif %} 
+                                    {% endfor %}
+                                {% else %}
+                                <li class="nk-menu-heading">
+                                    <h6 class="overline-title text-primary-alt">VENTAS</h6>
+                                </li><!-- .nk-menu-heading -->
+
+                                <li class="nk-menu-item has-sub">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><img src="{% static 'images/iconosMenu/venta.png' %} " alt="personal"> </span>
+                                        <span class="nk-menu-text">Ventas</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        {% if permiso.agregar == "Si" %}
+                                        <li class="nk-menu-item">
+                                            <a href="/seleccionarSucursalVentas/" class="nk-menu-link">
+                                                <span class="nk-menu-text">Realizar venta</span>
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                        {% if permiso.ver == "Si" %}
+                                        <li class="nk-menu-item">
+                                            <a href="/ventas/" class="nk-menu-link">
+                                                <span class="nk-menu-text">Ver ventas</span>
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                        
+                                        {% for permiso in consultaPermisos %}
+                                        {% if permiso.tabla_modulo == "Descuentos" %}
+                                        {% if permiso.ver == "No"   %}
+
+                                        {% else %}
+                                        <li class="nk-menu-item">
+                                            <a href="/descuentos/" class="nk-menu-link">
+                                                <span class="nk-menu-text">Descuentos</span>
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+
+                                     
+                                    </ul><!-- .nk-menu-sub -->
+                                    
+                                </li><!-- .nk-menu-item -->
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+
+
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Rentas" %}
+                                {% if permiso.ver == "No" and permiso.agregar == "No"   %}
+
+                                    {% for permiso in consultaPermisos %}
+                                        {% if permiso.tabla_modulo == "Calendario rentas" %}
+                                            {% if permiso.ver == "No"   %}
+
+                                            {% else %}
+                                            
+                                            <li class="nk-menu-item has-sub">
+                                                <a href="#" class="nk-menu-link nk-menu-toggle">
+                                                    <span class="nk-menu-icon"><img src="{% static 'images/iconosMenu/12.png' %} " alt="personal"> </span>
+                                                    <span class="nk-menu-text">Rentas</span>
+                                                </a>
+                                                <ul class="nk-menu-sub">
+                                                    <li class="nk-menu-item">
+                                                        <a href="/verCalendarioRentas/" class="nk-menu-link">
+                                                            <span class="nk-menu-text">Ver calendario rentas</span>
+                                                        </a>
+                                                    </li>
+                                                 
+                                                </ul><!-- .nk-menu-sub -->
+                                            </li><!-- .nk-menu-item -->
+
+                                            {% endif %}
+                                        {% endif %} 
+                                    {% endfor %}
+                                {% else %}
+
+                            
+                                <li class="nk-menu-item has-sub">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><img src="{% static 'images/iconosMenu/12.png' %} " alt="personal"> </span>
+                                        <span class="nk-menu-text">Rentas</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        {% if permiso.agregar == "Si" %}
+                                        <li class="nk-menu-item">
+                                            <a href="/seleccionarSucursalRentas/" class="nk-menu-link">
+                                                <span class="nk-menu-text">Realizar renta</span>
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                        {% if permiso.ver == "Si" %}
+                                        <li class="nk-menu-item">
+                                            <a href="/rentas/" class="nk-menu-link">
+                                                <span class="nk-menu-text">Ver rentas</span>
+                                            </a>
+                                        </li>
+                                        {% endif %}
+
+                                        {% for permiso in consultaPermisos %}
+                                        {% if permiso.tabla_modulo == "Calendario rentas" %}
+                                        {% if permiso.ver == "No"   %}
+
+                                        {% else %}
+                                        <li class="nk-menu-item">
+                                            <a href="/verCalendarioRentas/" class="nk-menu-link">
+                                                <span class="nk-menu-text">Ver calendario rentas</span>
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+                                        
+                                     
+                                    </ul><!-- .nk-menu-sub -->
+                                </li><!-- .nk-menu-item -->
+
+
+
+
+
+
+
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+
+                                <!-- citas -->
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Citas" %}
+                                {% if permiso.ver == "No" and permiso.agregar == "No"   %}
+
+                                    {% for permiso in consultaPermisos %}
+                                        {% if permiso.tabla_modulo == "Calendario citas" %}
+                                            {% if permiso.ver == "No"   %}
+
+                                            {% else %}
+                                            
+                                            <li class="nk-menu-item has-sub">
+                                                <a href="#" class="nk-menu-link nk-menu-toggle">
+                                                    <span class="nk-menu-icon"><img src="{% static 'images/iconosMenu/cita.png' %} " alt="personal"> </span>
+                                                    <span class="nk-menu-text">Citas</span>
+                                                </a>
+                                                <ul class="nk-menu-sub">
+                                                    <li class="nk-menu-item">
+                                                        <a href="/calendarioCitas/" class="nk-menu-link">
+                                                            <span class="nk-menu-text">Ver calendario citas</span>
+                                                        </a>
+                                                    </li>
+                                                 
+                                                </ul><!-- .nk-menu-sub -->
+                                            </li><!-- .nk-menu-item -->
+
+                                            {% endif %}
+                                        {% endif %} 
+                                    {% endfor %}
+                                {% else %}
+
+                            
+                                <li class="nk-menu-item has-sub">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><img src="{% static 'images/iconosMenu/cita.png' %} " alt="personal"> </span>
+                                        <span class="nk-menu-text">Citas</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        {% if permiso.agregar == "Si" %}
+                                        <li class="nk-menu-item">
+                                            <a href="/agendarCita/" class="nk-menu-link">
+                                                <span class="nk-menu-text">Agendar cita</span>
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                        {% if permiso.ver == "Si" %}
+                                        <li class="nk-menu-item">
+                                            <a href="/citas/" class="nk-menu-link">
+                                                <span class="nk-menu-text">Ver citas</span>
+                                            </a>
+                                        </li>
+                                        {% endif %}
+
+                                        {% for permiso in consultaPermisos %}
+                                        {% if permiso.tabla_modulo == "Calendario rentas" %}
+                                        {% if permiso.ver == "No"   %}
+
+                                        {% else %}
+                                        <li class="nk-menu-item">
+                                            <a href="/calendarioCitas/" class="nk-menu-link">
+                                                <span class="nk-menu-text">Ver calendario citas</span>
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+
+                                        {% if permiso.ver == "Si" %}
+                                        <li class="nk-menu-item">
+                                            <a href="/paquetesPorCliente/" class="nk-menu-link">
+                                                <span class="nk-menu-text">Paquetes por cliente</span>
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                        
+                                     
+                                    </ul><!-- .nk-menu-sub -->
+                                </li><!-- .nk-menu-item -->
+
+
+
+
+
+
+
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+
+                                <!---creditos-->
+
+                               
+
+
+
+                                
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Configuracion credito" %}
+                                {% if permiso.ver == "No" %}
+
+                                    {% for permiso in consultaPermisos %}
+                                    {% if permiso.tabla_modulo == "Creditos" %}
+                                    {% if permiso.ver == "No" %}
+                                        {% for permiso in consultaPermisos %}
+                                        {% if permiso.tabla_modulo == "Pagos creditos" %}
+                                        {% if permiso.ver == "No" %}
+
+                                        {% else %}
+                                            <li class="nk-menu-item has-sub">
+                                                <a href="#" class="nk-menu-link nk-menu-toggle">
+                                                    <span class="nk-menu-icon"><img src="{% static 'images/iconosMenu/credito.png' %} " alt="personal"> </span>
+                                                    <span class="nk-menu-text">Créditos</span>
+                                                </a>
+                                                <ul class="nk-menu-sub">
+                                                    {% for permiso in consultaPermisos %}
+                                                    {% if permiso.tabla_modulo == "Configuracion credito" %}
+                                                    {% if permiso.ver == "Si" %}
+            
+                                                    <li class="nk-menu-item">
+                                                        <a href="/configuracionCredito/" class="nk-menu-link">
+                                                            <span class="nk-menu-text">Configuración de crédito</span>
+                                                        </a>
+                                                    </li>
+                                                    {% endif %}
+                                                    {% endif %}
+                                                    {% endfor %}
+            
+                                                    {% for permiso in consultaPermisos %}
+                                                    {% if permiso.tabla_modulo == "Creditos" %}
+                                                    {% if permiso.ver == "Si" %}
+            
+                                                    <li class="nk-menu-item">
+                                                        <a href="/verCreditosClientes/" class="nk-menu-link">
+                                                            <span class="nk-menu-text">Ver créditos</span>
+                                                        </a>
+                                                    </li>
+                                                    {% endif %}
+                                                    {% endif %}
+                                                    {% endfor %}
+            
+                                                    {% for permiso in consultaPermisos %}
+                                                    {% if permiso.tabla_modulo == "Pagos creditos" %}
+                                                    {% if permiso.ver == "Si" %}
+            
+                                                    <li class="nk-menu-item">
+                                                        <a href="/pagosCreditosClientes/" class="nk-menu-link">
+                                                            <span class="nk-menu-text">Pagos créditos</span>
+                                                        </a>
+                                                    </li>
+                                                    {% endif %}
+                                                    {% endif %}
+                                                    {% endfor %}
+                                                    
+                                                    
+                                                </ul><!-- .nk-menu-sub -->
+                                                
+                                            </li><!-- .nk-menu-item -->
+
+
+
+
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                    <li class="nk-menu-item has-sub">
+                                        <a href="#" class="nk-menu-link nk-menu-toggle">
+                                            <span class="nk-menu-icon"><img src="{% static 'images/iconosMenu/credito.png' %} " alt="personal"> </span>
+                                            <span class="nk-menu-text">Créditos</span>
+                                        </a>
+                                        <ul class="nk-menu-sub">
+                                            {% for permiso in consultaPermisos %}
+                                            {% if permiso.tabla_modulo == "Configuracion credito" %}
+                                            {% if permiso.ver == "Si" %}
+    
+                                            <li class="nk-menu-item">
+                                                <a href="/configuracionCredito/" class="nk-menu-link">
+                                                    <span class="nk-menu-text">Configuración de crédito</span>
+                                                </a>
+                                            </li>
+                                            {% endif %}
+                                            {% endif %}
+                                            {% endfor %}
+    
+                                            {% for permiso in consultaPermisos %}
+                                            {% if permiso.tabla_modulo == "Creditos" %}
+                                            {% if permiso.ver == "Si" %}
+    
+                                            <li class="nk-menu-item">
+                                                <a href="/verCreditosClientes/" class="nk-menu-link">
+                                                    <span class="nk-menu-text">Ver créditos</span>
+                                                </a>
+                                            </li>
+                                            {% endif %}
+                                            {% endif %}
+                                            {% endfor %}
+    
+                                            {% for permiso in consultaPermisos %}
+                                            {% if permiso.tabla_modulo == "Pagos creditos" %}
+                                            {% if permiso.ver == "Si" %}
+    
+                                            <li class="nk-menu-item">
+                                                <a href="/pagosCreditosClientes/" class="nk-menu-link">
+                                                    <span class="nk-menu-text">Pagos créditos</span>
+                                                </a>
+                                            </li>
+                                            {% endif %}
+                                            {% endif %}
+                                            {% endfor %}
+                                            
+                                            
+                                        </ul><!-- .nk-menu-sub -->
+                                        
+                                    </li><!-- .nk-menu-item -->
+                                    {% endif %}
+                                    {% endif %}
+                                    {% endfor %}
+
+                                {% else %}
+                                <li class="nk-menu-item has-sub">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><img src="{% static 'images/iconosMenu/credito.png' %} " alt="personal"> </span>
+                                        <span class="nk-menu-text">Créditos</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        {% for permiso in consultaPermisos %}
+                                        {% if permiso.tabla_modulo == "Configuracion credito" %}
+                                        {% if permiso.ver == "Si" %}
+
+                                        <li class="nk-menu-item">
+                                            <a href="/configuracionCredito/" class="nk-menu-link">
+                                                <span class="nk-menu-text">Configuración de crédito</span>
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+
+                                        {% for permiso in consultaPermisos %}
+                                        {% if permiso.tabla_modulo == "Creditos" %}
+                                        {% if permiso.ver == "Si" %}
+
+                                        <li class="nk-menu-item">
+                                            <a href="/verCreditosClientes/" class="nk-menu-link">
+                                                <span class="nk-menu-text">Ver créditos</span>
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+
+                                        {% for permiso in consultaPermisos %}
+                                        {% if permiso.tabla_modulo == "Pagos creditos" %}
+                                        {% if permiso.ver == "Si" %}
+
+                                        <li class="nk-menu-item">
+                                            <a href="/pagosCreditosClientes/" class="nk-menu-link">
+                                                <span class="nk-menu-text">Pagos créditos</span>
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+                                        
+                                        
+                                    </ul><!-- .nk-menu-sub -->
+                                    
+                                </li><!-- .nk-menu-item -->
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+
+                                <!--Caja--->
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Configuracion caja" %}
+                                {% if permiso.ver == "No" %}
+
+                                    {% for permiso in consultaPermisos %}
+                                    {% if permiso.tabla_modulo == "Movimientos" %}
+                                    {% if permiso.ver == "No" %}
+                                        {% for permiso in consultaPermisos %}
+                                        {% if permiso.tabla_modulo == "Movimiento semanal" %}
+                                        {% if permiso.ver == "No" %}
+
+                                        {% else %}
+                                            
+                                            <li class="nk-menu-item has-sub">
+                                                <a href="#" class="nk-menu-link nk-menu-toggle">
+                                                    <span class="nk-menu-icon"><img src="{% static 'images/iconosMenu/caja.png' %} " alt="personal"> </span>
+                                                    <span class="nk-menu-text">Caja</span>
+                                                </a>
+                                                <ul class="nk-menu-sub">
+                                                    {% for permiso in consultaPermisos %}
+                                                    {% if permiso.tabla_modulo == "Configuracion caja" %}
+                                                    {% if permiso.ver == "Si" %}
+            
+                                                    <li class="nk-menu-item">
+                                                        <a href="/configuracionCaja/"  class="nk-menu-link"><span class="nk-menu-text">Configuración de caja</span></a>
+                                                    </li>
+                                                    {% endif %}
+                                                    {% endif %}
+                                                    {% endfor %}
+            
+                                                    {% for permiso in consultaPermisos %}
+                                                    {% if permiso.tabla_modulo == "Movimientos" %}
+                                                    {% if permiso.ver == "Si" %}
+            
+                                                    <li class="nk-menu-item">
+                                                        <a href="/movimientosCaja/"  class="nk-menu-link"><span class="nk-menu-text">Total de Movimientos</span></a>
+                                                    </li>
+                                                    {% endif %}
+                                                    {% endif %}
+                                                    {% endfor %}
+            
+                                                    {% for permiso in consultaPermisos %}
+                                                    {% if permiso.tabla_modulo == "Movimiento semanal" %}
+                                                    {% if permiso.ver == "Si" %}
+            
+                                                    <li class="nk-menu-item">
+                                                        <a href="/seleccionarSucursalMovimientosDia/"  class="nk-menu-link"><span class="nk-menu-text">Movimientos / Realizar corte</span></a>
+                                                    </li>
+
+                                                    <li class="nk-menu-item">
+                                                        <a href="/seleccionarSucursalCortesDeCaja/"  class="nk-menu-link"><span class="nk-menu-text">Cortes de caja</span></a>
+                                                    </li>
+                                                    {% endif %}
+                                                    {% endif %}
+                                                    {% endfor %}
+                                                    
+                                                    
+                                                </ul><!-- .nk-menu-sub -->
+                                                
+                                            </li><!-- .nk-menu-item -->
+
+
+
+
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                   
+                                    <li class="nk-menu-item has-sub">
+                                        <a href="#" class="nk-menu-link nk-menu-toggle">
+                                            <span class="nk-menu-icon"><img src="{% static 'images/iconosMenu/caja.png' %} " alt="personal"> </span>
+                                            <span class="nk-menu-text">Caja</span>
+                                        </a>
+                                        <ul class="nk-menu-sub">
+                                            {% for permiso in consultaPermisos %}
+                                            {% if permiso.tabla_modulo == "Configuracion caja" %}
+                                            {% if permiso.ver == "Si" %}
+    
+                                            <li class="nk-menu-item">
+                                                <a href="/configuracionCaja/"  class="nk-menu-link"><span class="nk-menu-text">Configuración de caja</span></a>
+                                            </li>
+                                            {% endif %}
+                                            {% endif %}
+                                            {% endfor %}
+    
+                                            {% for permiso in consultaPermisos %}
+                                            {% if permiso.tabla_modulo == "Movimientos" %}
+                                            {% if permiso.ver == "Si" %}
+    
+                                            <li class="nk-menu-item">
+                                                <a href="/movimientosCaja/"  class="nk-menu-link"><span class="nk-menu-text">Total de Movimientos</span></a>
+                                            </li>
+                                            {% endif %}
+                                            {% endif %}
+                                            {% endfor %}
+    
+                                            {% for permiso in consultaPermisos %}
+                                            {% if permiso.tabla_modulo == "Movimiento semanal" %}
+                                            {% if permiso.ver == "Si" %}
+    
+                                            <li class="nk-menu-item">
+                                                <a href="/seleccionarSucursalMovimientosDia/"  class="nk-menu-link"><span class="nk-menu-text">Movimientos / Realizar corte</span></a>
+                                            </li>
+
+                                            <li class="nk-menu-item">
+                                                <a href="/seleccionarSucursalCortesDeCaja/"  class="nk-menu-link"><span class="nk-menu-text">Cortes de caja</span></a>
+                                            </li>
+                                            {% endif %}
+                                            {% endif %}
+                                            {% endfor %}
+                                            
+                                            
+                                        </ul><!-- .nk-menu-sub -->
+                                        
+                                    </li><!-- .nk-menu-item -->
+                                    {% endif %}
+                                    {% endif %}
+                                    {% endfor %}
+
+                                {% else %}
+                               
+                                <li class="nk-menu-item has-sub">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><img src="{% static 'images/iconosMenu/caja.png' %} " alt="personal"> </span>
+                                        <span class="nk-menu-text">Caja</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        {% for permiso in consultaPermisos %}
+                                        {% if permiso.tabla_modulo == "Configuracion caja" %}
+                                        {% if permiso.ver == "Si" %}
+
+                                        <li class="nk-menu-item">
+                                            <a href="/configuracionCaja/"  class="nk-menu-link"><span class="nk-menu-text">Configuración de caja</span></a>
+                                        </li>
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+
+                                        {% for permiso in consultaPermisos %}
+                                        {% if permiso.tabla_modulo == "Movimientos" %}
+                                        {% if permiso.ver == "Si" %}
+
+                                        <li class="nk-menu-item">
+                                            <a href="/movimientosCaja/"  class="nk-menu-link"><span class="nk-menu-text">Total de Movimientos</span></a>
+                                        </li>
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+
+                                        {% for permiso in consultaPermisos %}
+                                        {% if permiso.tabla_modulo == "Movimiento semanal" %}
+                                        {% if permiso.ver == "Si" %}
+
+                                        <li class="nk-menu-item">
+                                            <a href="/seleccionarSucursalMovimientosDia/"  class="nk-menu-link"><span class="nk-menu-text">Movimientos / Realizar corte</span></a>
+                                        </li>
+
+                                        <li class="nk-menu-item">
+                                            <a href="/seleccionarSucursalCortesDeCaja/"  class="nk-menu-link"><span class="nk-menu-text">Cortes de caja</span></a>
+                                        </li>
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+                                        
+                                        
+                                    </ul><!-- .nk-menu-sub -->
+                                    
+                                </li><!-- .nk-menu-item -->
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+
+                                <li class="nk-menu-heading">
+                                    <h6 class="overline-title text-primary-alt">MOVIMIENTOS</h6>
+                                </li><!-- .nk-menu-heading -->
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Productos" %}
+                                {% if permiso.ver == "No" and permiso.agregar == "No"  %}
+
+                                {% else %}
+                                <li class="nk-menu-item has-sub">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><img src="{% static 'images/iconosMenu/transfer.png' %} " alt="personal"> </span>
+                                        <span class="nk-menu-text">Mov. de vestidos</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        {% if permiso.ver == "Si" %}
+                                        <li class="nk-menu-item">
+                                            <a href="/agregarMovimiento/" class="nk-menu-link"><span class="nk-menu-text">Agregar movimiento</span></a>
+                                        </li>
+                                        {% endif %}
+                                        
+                                    </ul><!-- .nk-menu-sub -->
+                                </li><!-- .nk-menu-item -->
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+
+
+
+
+
+
+
+
+
+                                <li class="nk-menu-heading">
+                                    <h6 class="overline-title text-primary-alt">INVENTARIOS</h6>
+                                </li><!-- .nk-menu-heading -->
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Productos" %}
+                                {% if permiso.ver == "No" and permiso.agregar == "No"  %}
+
+                                {% else %}
+                                <li class="nk-menu-item has-sub">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><img src="{% static 'images/iconosMenu/8.png' %} " alt="personal"> </span>
+                                        <span class="nk-menu-text">Productos</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        {% if permiso.ver == "Si" %}
+                                        <li class="nk-menu-item">
+                                            <a href="/inventarioProductos/" class="nk-menu-link"><span class="nk-menu-text">Inventario Productos</span></a>
+                                        </li>
+                                        {% endif %}
+                                        {% if permiso.agregar == "Si" %}
+                                        <li class="nk-menu-item">
+                                            <a href="/altaProductos/" class="nk-menu-link" ><span class="nk-menu-text">Alta de Productos</span></a>
+                                        </li>
+                                        {% endif %}
+                                    </ul><!-- .nk-menu-sub -->
+                                </li><!-- .nk-menu-item -->
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+
+                                
+
+
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Servicios" %}
+                                {% if permiso.ver == "No" and permiso.agregar == "No"  %}
+
+                                {% else %}
+                                <li class="nk-menu-item has-sub">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><img src="{% static 'images/iconosMenu/9.png' %} " alt="personal"> </span>
+                                        <span class="nk-menu-text">Servicios</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        {% if permiso.ver == "Si" %}
+                                        <li class="nk-menu-item">
+                                            <a href="/inventarioServicios/"  class="nk-menu-link"><span class="nk-menu-text">Ver Servicios</span></a>
+                                        </li>
+                                        {% endif %}
+                                        {% if permiso.agregar == "Si" %}
+                                        <li class="nk-menu-item">
+                                            <a href="/altaServicios/"  class="nk-menu-link"><span class="nk-menu-text">Alta Servicios</span></a>
+                                        </li>
+                                        {% endif %}
+                                    </ul><!-- .nk-menu-sub -->
+                                </li><!-- .nk-menu-item -->
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+
+
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Certificado" %}
+                                {% if permiso.ver == "No" and permiso.agregar == "No"  %}
+
+
+                                {% else %}     
+                                <li class="nk-menu-item has-sub">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><img src="{% static 'images/iconosMenu/regalito.png' %} " alt="personal"> </span>
+                                        <span class="nk-menu-text">Certificado de Regalo</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        {% if permiso.ver == "Si" %}
+                                        <li class="nk-menu-item">
+                                            <a href="/verCertificadosProgramados/"  class="nk-menu-link"><span class="nk-menu-text">Ver certificados</span></a>
+                                        </li>
+                                        {% endif %}
+
+                                        {% if permiso.agregar == "Si" %}
+                                        <li class="nk-menu-item">
+                                            <a href="/agregarCertificado/"  class="nk-menu-link"><span class="nk-menu-text">Agregar certificado</span></a>
+                                        </li>
+                                        {% endif %}
+
+                                        {% if permiso.ver == "Si" %}
+                                        <li class="nk-menu-item">
+                                            <a href="/verServiciosCertificado/"  class="nk-menu-link"><span class="nk-menu-text">Ver servicios certificado</span></a>
+                                        </li>
+                                        {% endif %}
+
+                                        {% if permiso.agregar == "Si" %}
+                                        <li class="nk-menu-item">
+                                            <a href="/agregarServicioCertificado/"  class="nk-menu-link"><span class="nk-menu-text">Agregar Servicio para certificado</span></a>
+                                        </li>
+                                        {% endif %}
+
+                                        
+                                    
+                                    </ul><!-- .nk-menu-sub -->
+                                </li><!-- .nk-menu-item -->
+
+
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Tratamientos" %}
+                                {% if permiso.ver == "No" and permiso.editar == "No" and permiso.agregar == "No"  %}
+
+
+                                {% else %}     
+                                <li class="nk-menu-item has-sub">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><img src="{% static 'images/iconosMenu/pills.png' %} " alt="personal"> </span>
+                                        <span class="nk-menu-text">Tratamientos</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        {% if permiso.ver == "Si" %}
+                                        <li class="nk-menu-item">
+                                            <a href="/verTratamientos/"  class="nk-menu-link"><span class="nk-menu-text">Ver tratamientos</span></a>
+                                        </li>
+                                        {% endif %}
+
+                                        {% if permiso.agregar == "Si" %}
+                                        <li class="nk-menu-item">
+                                            <a href="/agregarTratamiento/"  class="nk-menu-link"><span class="nk-menu-text">Agregar tratamiento</span></a>
+                                        </li>
+                                        {% endif %}
+                                    
+                                    </ul><!-- .nk-menu-sub -->
+                                </li><!-- .nk-menu-item -->
+
+
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Tratamientos" %}
+                                {% if permiso.ver == "No" and permiso.editar == "No" and permiso.agregar == "No"  %}
+
+
+                                {% else %}     
+                                <li class="nk-menu-item has-sub">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><img src="{% static 'images/iconosMenu/tratamientos.png' %} " alt="personal"> </span>
+                                        <span class="nk-menu-text">Paquetes Tratamientos</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        {% if permiso.ver == "Si" %}
+                                        <li class="nk-menu-item">
+                                            <a href="/verPaquetesPromocionTratamientos/"  class="nk-menu-link"><span class="nk-menu-text">Ver paquetes</span></a>
+                                        </li>
+                                        {% endif %}
+
+                                        {% if permiso.agregar == "Si" %}
+                                        <li class="nk-menu-item">
+                                            <a href="/agregarPaquetePromocionTratamiento/"  class="nk-menu-link"><span class="nk-menu-text">Agregar paquete</span></a>
+                                        </li>
+                                        {% endif %}
+                                    
+                                    </ul><!-- .nk-menu-sub -->
+                                </li><!-- .nk-menu-item -->
+
+
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                                
+                                    
+
+                            
+
+
+                                        
+
+
+
+
+                           
+
+                                
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Compras" %}
+                                {% if permiso.ver == "No"   %}
+                                
+                                {% else %}
+                                <li class="nk-menu-heading">
+                                    <h6 class="overline-title text-primary-alt">COMPRAS</h6>
+                                </li><!-- .nk-menu-heading -->
+                                <li class="nk-menu-item has-sub">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><img src="{% static 'images/iconosMenu/compras.png' %} " alt="personal"> </span>
+                                        <span class="nk-menu-text">Compras</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        {% if permiso.ver == "Si" %}
+                                        <li class="nk-menu-item">
+                                            <a href="/inventarioCompras/" class="nk-menu-link"><span class="nk-menu-text">Compras totales</span></a>
+                                        </li>
+                                        {% endif %}
+                                      
+                                    </ul><!-- .nk-menu-sub -->
+                                </li><!-- .nk-menu-item -->
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+
+
+
+
+
+                              
+                                
+                                
+                               
+                                
+                                
+                               
+                            </ul><!-- .nk-menu -->
+                        </div><!-- .nk-sidebar-menu -->
+                    </div><!-- .nk-sidebar-content -->
+                </div><!-- .nk-sidebar-element -->
+            </div>
+            <!-- sidebar @e -->
+            <!-- wrap @s -->
+            <div class="nk-wrap ">
+                <!-- main header @s -->
+                <div class="nk-header nk-header-fixed is-light">
+                    <div class="container-fluid">
+                        <div class="nk-header-wrap">
+                            <div class="nk-menu-trigger d-xl-none ml-n1">
+                                <a href="#" class="nk-nav-toggle nk-quick-nav-icon" data-target="sidebarMenu"><em class="icon ni ni-menu"></em></a>
+                            </div>
+                            <div class="nk-header-brand d-xl-none">
+                                <a href="html/index.html" class="logo-link">
+                                    <img class="logo-light logo-img" src="{% static 'images/logo.png' %}" srcset="{% static 'images/logo2x.png' %} 2x" alt="logo">
+                                    <img class="logo-dark logo-img" src="{% static 'images/costabella.png' %}" srcset="{% static 'images/costabella.png' %} 2x" alt="logo-dark">
+                                </a>
+                            </div><!-- .nk-header-brand -->
+                            
+                            <div class="nk-header-tools">
+                                <ul class="nk-quick-nav">
+                                    <div>
+                                       
+                                        <div class="user-status user-status-verified"><p ><span id="fechaHoy" class="fw-bold text-dark"></span></p></div>
+                                        <div class="user-name">
+                                            <p ><span class="fw-bold text-pink fs-20px" id="spanReloj2"></span></p>
+                                        </div>
+                                    </div>
+                                    <li class="dropdown notification-dropdown">
+                                        <a href="#" class="dropdown-toggle nk-quick-nav-icon" data-toggle="dropdown">
+                                            <div class="icon-status icon-status-danger"><em class="icon ni ni-sign-usdc"></em></div>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-xl dropdown-menu-right">
+                                            <div class="dropdown-head">
+                                                <span class="sub-title nk-dropdown-title fw-bold text-dark">Rentas (Entregas y devoluciones) del día!</span>
+                                                
+                                            </div>
+                                            <div class="dropdown-body">
+                                               
+                                                <div class="nk-notification">
+                                                    {% for notiRenta in notificacionRenta %}
+                                                        <div class="nk-notification-item dropdown-inner">
+                                                            <div class="nk-notification-icon">
+                                                                {% if notiRenta.1 == "A" %}
+                                                                <em class="icon icon-circle bg-warning-dim ni ni-curve-up-right"></em>
+                                                                {% elif notiRenta.1 == "P" %}
+                                                                <em class="icon icon-circle bg-danger-dim ni ni-swap"></em>
+                                                                {% endif %}
+                                                            </div>
+                                                            <div class="nk-notification-content">
+                                                                {% if notiRenta.1 == "A" %}
+                                                                <div class="nk-notification-text">{{notiRenta.4}} - Entrega de renta de vestido #{{notiRenta.0}} a {{notiRenta.3}}.</div>
+                                                                {% elif notiRenta.1 == "P" %}
+                                                                <div class="nk-notification-text">{{notiRenta.4}} - Aviso de Devolución de renta #{{notiRenta.0}} a {{notiRenta.3}}.</div>
+                                                                {% endif %}
+
+                                                                {% for vestido in notiRenta.2 %}
+                                                                <div class="nk-notification-time">{{vestido.0}} - {{vestido.1}}</div>
+                                                                {% endfor %}
+                                                                
+                                                            </div>
+                                                        </div>
+                                                    {% empty %}
+                                                    <div class="nk-notification-item dropdown-inner">
+                                                        
+                                                        <p class="fw-bold text-teal">No hay rentas pendientes!</p>
+                                                    </div>
+                                                    {% endfor %}
+                                                    <div>
+                                                        <center>
+                                                            <form action="/notificacionRentasDeHoy/" method="POST">{% csrf_token %}
+                                                                <button id="botonNotiRentas" type="submit" class="btn btn-xs btn-dim btn-outline-success">Notificar rentas de hoy.</button>
+                                                            </form>
+                                                        </center>
+                                                    </div>
+                                                    <br>
+
+                                                    {% for notiRenta in notificacionRenta %}
+                                                       
+                                                    {% empty %}
+                                                    <script>
+                                                        var botonNotiRentas = document.getElementById("botonNotiRentas");
+                                                        botonNotiRentas.disabled = true;
+                                                    </script>
+                                                    {% endfor %}
+
+                                                    
+                                                    
+                                                </div><!-- .nk-notification -->
+                                            </div><!-- .nk-dropdown-body -->
+                                            
+                                        </div>
+                                    </li>
+                                    <li class="dropdown notification-dropdown">
+                                        <a href="#" class="dropdown-toggle nk-quick-nav-icon" data-toggle="dropdown">
+                                            <div class="icon-status icon-status-danger"><em class="icon ni ni-calendar-alt"></em></div>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-xl dropdown-menu-right">
+                                            <div class="dropdown-head">
+                                                <span class="sub-title nk-dropdown-title fw-bold text-dark">Citas pendientes del día!</span>
+                                                
+                                            </div>
+                                            <div class="dropdown-body">
+                                                <div class="nk-notification">
+                                                    {% for notiCita in notificacionCita %}
+                                                        <div class="nk-notification-item dropdown-inner">
+                                                            <div class="nk-notification-icon">
+                                                                
+                                                                <em class="icon icon-circle bg-danger-dim ni ni-calendar"></em>
+                                                            </div>
+                                                            <div class="nk-notification-content">
+                                                                
+                                                                <div class="nk-notification-text">Id:{{notiCita.0}} - {{notiCita.1}} - {{notiCita.3}}</div>
+                                                                
+
+                                                               
+                                                                <div class="nk-notification-time">{{notiCita.2}} - {{notiCita.4}} - {{notiCita.5}} min.</div>
+
+                                                                {% if notiCita.6 == "No" %}
+                                                                <form action="/vistaVenderCita/" method="POST">{% csrf_token %}
+                                                                    <input type="hidden" name="idCita" value="{{notiCita.0}}">
+                                                                    <button type="submit" class="btn btn-xs btn-dim btn-outline-primary">Vender Cita</button>
+                                                                </form>
+                                                                {% else %}
+                                                                <form action="/verServiciosParaCanjear/" method="POST">{% csrf_token %}
+                                                                    <input type="hidden" value="{{notiCita.7}}" name="idCertificado">
+                                                                    <input type="hidden" value="{{notiCita.0}}" name="viendeDeCita">
+                                                                    <button type="submit" class="btn btn-xs btn-dim btn-outline-primary">Canjear servicio</button>
+                                                                </form>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                        {% empty %}
+                                                        <div class="nk-notification-item dropdown-inner">
+                                                        
+                                                            <p class="fw-bold text-teal">No hay citas programadas para el día de hoy!</p>
+                                                            
+                                                        </div>
+                                                        {% endfor %}
+                                                        <div>
+                                                            <center>
+                                                                <form action="/notificacionCitasDeHoy/" method="POST">{% csrf_token %}
+                                                                    <button id="botonNotiCitas"  type="submit" class="btn btn-xs btn-dim btn-outline-success">Notificar citas de hoy.</button>
+                                                                </form>
+                                                            </center>
+                                                        </div>
+                                                        <br>
+                                                        {% for notiCita in notificacionCita %}
+                                                       
+                                                        {% empty %}
+                                                        <script>
+                                                            var botonNotiCitas = document.getElementById("botonNotiCitas");
+                                                            botonNotiCitas.disabled = true;
+                                                        </script>
+                                                        {% endfor %}
+
+                                                    
+                                                    
+                                                    
+                                                    
+                                                </div><!-- .nk-notification -->
+                                            </div><!-- .nk-dropdown-body -->
+                                        </div>
+                                    </li>
+                                    
+                                    <li class="dropdown user-dropdown">
+                                        <a href="#" class="dropdown-toggle mr-n1" data-toggle="dropdown">
+                                            <div class="user-toggle">
+                                                <div class="user-avatar sm">
+                                                    <em class="icon ni ni-user-alt"></em>
+                                                </div>
+                                                <div class="user-info d-none d-xl-block">
+                                                    <div class="user-status user-status-verified">Usuario</div>
+                                                    <div class="user-name dropdown-indicator">{{nombresEmpleado}}</div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-md dropdown-menu-right">
+                                            <div class="dropdown-inner user-card-wrap bg-lighter d-none d-md-block">
+                                                <div class="user-card">
+                                                    <div class="user-avatar">
+                                                        <span>{{letra}}</span>
+                                                    </div>
+                                                    <div class="user-info">
+                                                        <span class="lead-text">{{nombresEmpleado}}</span>
+                                                        <span class="sub-text">{{puestoEmpleado}}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% for permiso in consultaPermisos %}
+                                            {% if permiso.tabla_modulo == "Empleados" %}
+                                            {% if permiso.editar == "Si"  %}
+                                            <div class="dropdown-inner">
+                                                <ul class="link-list">
+                                                    <form action="/editarEmpleado/" method="POST" id="formActualizar">{% csrf_token %}
+                                                        <input type="hidden" value="{{idPerfil}}" name="idEmpleadoEditar">
+                                                        <li style="cursor: pointer!important;"><a onclick="document.getElementById('formActualizar').submit()"><em class="icon ni ni-user-alt"></em><span>Mi Perfil</span></a></li>
+                                                    </form>
+                                                    <form action="/editarConfiguracionEmpleado/" method="POST" id="formConfig">{% csrf_token %}
+                                                        <input type="hidden" value="{{idConfig}}" name="idEmpleadoConfigurar">
+                                                        <li style="cursor: pointer!important;"><a onclick="document.getElementById('formConfig').submit()"><em class="icon ni ni-setting-alt"></em><span>Configuración</span></a></li>
+                                                    </form>
+                                                    
+                                                </ul>
+                                            </div>
+                                            {% endif %}
+                                            {% endif %}
+                                            {% endfor %}
+
+                                            
+                                            <div class="dropdown-inner">
+                                                <ul class="link-list">
+                                                    <li><a href="/salir/"><em class="icon ni ni-signout"></em><span>Salir</span></a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div><!-- .nk-header-wrap -->
+                    </div><!-- .container-fliud -->
+                </div>
+                <!-- main header @e -->
+                <!-- content @s -->
+                <div class="nk-content ">
+                    <div class="container-fluid">
+                        {% block contenido %}
+
+                        {% endblock %}
+                    </div>
+                </div>
+                <!-- content @e -->
+                <!-- footer @s -->
+                <div class="nk-footer">
+                    <div class="container-fluid">
+                        <div class="nk-footer-wrap">
+                            <div class="nk-footer-copyright"> &copy; 2022 - <span>Hecho por: <span class="fw-bold text-danger">A - B - I</span></span></div>
+                            <div class="nk-footer-copyright text-right"> <p><span class="fw-bold text-pink fs-20px" id="spanReloj"></span></p></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- footer @e -->
+            </div>
+            <!-- wrap @e -->
+        </div>
+        <!-- main @e -->
+    </div>
+    <!-- app-root @e -->
+    <!-- JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+    
+
+
+    <script src="{% static 'js/bundle.js' %}"></script>
+    <script src="{% static 'js/scripts.js' %}"></script>
+    <script src="{% static 'js/example-sweetalert.js' %}"></script>
+    <script src="{% static 'js/example-toastr.js' %}"></script>
+    <script src="{% static 'js/charts/chart-ecommerce.js' %}"></script>
+    <script src="{% static 'js/validarLetNum.js' %}"></script>
+    <script src="{% static 'js/libs/fullcalendar.js' %}"></script> 
+    {% block codigojschart %}
+
+    {% endblock %}
+    <script>
+        "use strict";
+
+        !function (NioApp, $) {
+        "use strict"; // Variable
+
+        var $win = $(window),
+            $body = $('body'),
+            breaks = NioApp.Break;
+
+        NioApp.Calendar = function () {
+            var today = new Date();  //Fri may 20 2022 +08:22:10 GMT-0500(Hora de verano central)
+            var dd = String(today.getDate()).padStart(2, '0');   //Dia 20
+            var mm = String(today.getMonth() + 1).padStart(2, '0'); //El mes en numero 05
+            var yyyy = today.getFullYear(); //2022
+            var tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);  //Sat may 21 2022 08:25:14 GMT-0500
+            var t_dd = String(tomorrow.getDate()).padStart(2, '0'); //Día siguiente 21
+            var t_mm = String(tomorrow.getMonth() + 1).padStart(2, '0'); //05
+            var t_yyyy = tomorrow.getFullYear(); //2022
+            var yesterday = new Date(today); 
+            yesterday.setDate(today.getDate() - 1);//Thu may 19 2022 08:25:14 GMT-0500
+            var y_dd = String(yesterday.getDate()).padStart(2, '0'); //19
+            var y_mm = String(yesterday.getMonth() + 1).padStart(2, '0'); //05
+            var y_yyyy = yesterday.getFullYear();//2022
+            var YM = yyyy + '-' + mm; //2022-05
+            var YESTERDAY = y_yyyy + '-' + y_mm + '-' + y_dd; //2022-05-19
+            var TODAY = yyyy + '-' + mm + '-' + dd; //2022-05-20
+            var TOMORROW = t_yyyy + '-' + t_mm + '-' + t_dd; //2022-05-21
+            var month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]; //Arreglo de meses
+            var calendarEl = document.getElementById('calendar'); //Div de calendar
+            var eventsEl = document.getElementById('externalEvents'); //No se encuentra ID
+            var removeEvent = document.getElementById('removeEvent'); //No se encuentra ID
+            var addEventBtn = $('#addEvent'); //Botón que se borró de agregar evento
+            var addEventForm = $('#addEventForm'); //Id de form del modal al dar clic en agregar un nuevo evento
+            var addEventPopup = $('#addEventPopup');  //Id del modal que aparece al dar clic en agregar nuevo evento
+            var updateEventBtn = $('#updateEvent'); //Id del boton de update event al dar clic en el evento y dar clic en editar.
+            var editEventForm = $('#editEventForm'); //Id del form de al dar clic en el evento y dar clic en editar
+            var editEventPopup = $('#editEventPopup'); //Id del modal que se muestra al dar clic en editar
+            var previewEventPopup = $('#previewEventPopup'); //Modal que aparece al dar clic en evento
+            var deleteEventBtn = $('#deleteEvent'); //Boton de eliminar evento..
+            var mobileView = NioApp.Win.width < NioApp.Break.md ? true : false;
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+            monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+            monthNamesShort: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+            dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+            dayNamesShort: ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],
+            timeZone: 'UTC',
+            initialView: mobileView ? 'listWeek' : 'dayGridMonth',
+            themeSystem: 'bootstrap',
+            headerToolbar: {
+                left: 'title prev,next',
+                center: null,
+                right: 'today dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+            },
+            height: 800,
+            contentHeight: 780,
+            aspectRatio: 3,
+            editable: true,
+            droppable: true,
+            views: {
+                dayGridMonth: {
+                dayMaxEventRows: 2
+                }
+            },
+            direction: NioApp.State.isRTL ? "rtl" : "ltr",
+            nowIndicator: true,
+            now: TODAY + 'T09:25:00',
+            eventDragStart: function eventDragStart(info) {
+                $('.popover').popover('hide');
+            },
+            eventMouseEnter: function eventMouseEnter(info) {
+                $(info.el).popover({
+                template: '<div class="popover"><div class="arrow"></div><h3 class="popover-header"></h3><div class="popover-body"></div></div>',
+                title: info.event._def.title,
+                content: info.event._def.extendedProps.description,
+                placement: 'top'
+                });
+                info.event._def.extendedProps.description ? $(info.el).popover('show') : $(info.el).popover('hide');
+            },
+            eventMouseLeave: function eventMouseLeave(info) {
+                $(info.el).popover('hide');
+            },
+            eventClick: function eventClick(info) {
+                // Get data
+                var title = info.event._def.title;
+                var description = info.event._def.extendedProps.description;
+                var start = info.event._instance.range.start;
+                var startDate = start.getFullYear() + '-' + String(start.getMonth() + 1).padStart(2, '0') + '-' + String(start.getDate()).padStart(2, '0');
+                var startTime = start.toUTCString().split(' ');
+                startTime = startTime[startTime.length - 2];
+                startTime = startTime == '00:00:00' ? '' : startTime;
+                var end = info.event._instance.range.end;
+                var endDate = end.getFullYear() + '-' + String(end.getMonth() + 1).padStart(2, '0') + '-' + String(end.getDate()).padStart(2, '0');
+                var endTime = end.toUTCString().split(' ');
+                endTime = endTime[endTime.length - 2];
+                endTime = endTime == '00:00:00' ? '' : endTime;
+
+                var className = info.event._def.ui.classNames[0].slice(3);
+
+                var eventId = info.event._def.publicId; //Set data in eidt form
+
+                $('#edit-event-title').val(title);
+                $('#edit-event-start-date').val(startDate).datepicker('update');
+                $('#edit-event-end-date').val(endDate).datepicker('update');
+                $('#edit-event-start-time').val(startTime);
+                $('#edit-event-end-time').val(endTime);
+                $('#edit-event-description').val(description);
+                $('#edit-event-theme').val(className);
+                $('#edit-event-theme').trigger('change.select2');
+                editEventForm.attr('data-id', eventId); // Set data in preview
+
+                var previewStart = String(start.getDate()).padStart(2, '0') + ' ' + month[start.getMonth()] + ' ' + start.getFullYear() + (startTime ? ' - ' + to12(startTime) : '');
+                var previewEnd = String(end.getDate()).padStart(2, '0') + ' ' + month[end.getMonth()] + ' ' + end.getFullYear() + (endTime ? ' - ' + to12(endTime) : '');
+                $('#preview-event-title').text(title);
+                $('#preview-event-header').addClass('fc-' + className);
+                $('#preview-event-start').text(previewStart);
+                $('#preview-event-end').text(previewEnd);
+                $('#preview-event-description').text(description);
+                !description ? $('#preview-event-description-check').css('display', 'none') : null;
+                previewEventPopup.modal('show');
+                $('.popover').popover('hide');
+            },
+            events: [
+            {% for titulo, descripcion, fechaEntrega, claseColor in listaRentasEntregaCalendario %}
+            {
+                id: 'default-event-id-' + Math.floor(Math.random() * 9999999),
+                title: '{{titulo}}',
+                start: '{{fechaEntrega}}',
+                className: "{{claseColor}}",
+                description: "{{descripcion}}"
+            },
+            {% endfor %}
+
+            {% for titulo, descripcion, fechaEntrega,fechaFinal, claseColor in listaRentasCalendario %}
+            {
+                id: 'default-event-id-' + Math.floor(Math.random() * 9999999),
+                title: '{{titulo}}',
+                start: '{{fechaEntrega}}',
+                end: '{{fechaFinal}}',
+                className: "{{claseColor}}",
+                description: "{{descripcion}}"
+            },
+            {% endfor %}
+
+            {% for citaPendiente in arrayCitasPendientes %}
+            {
+                id: 'default-event-id-' + Math.floor(Math.random() * 9999999),
+                title: 'ID:{{citaPendiente.1}} - Cita para {{citaPendiente.2}} a las {{citaPendiente.6}}',
+                start: '{{citaPendiente.8}}',
+                className: "fc-event-warning",
+                description: "Tipo de cita: {{citaPendiente.3}}. {{citaPendiente.4}}, duración de {{citaPendiente.7}} min. ${{citaPendiente.5}} MXN."
+            },
+            {% endfor %}
+
+            {% for citaEfectuada in arrayCitasEfectuadas %}
+            {
+                id: 'default-event-id-' + Math.floor(Math.random() * 9999999),
+                title: 'ID:{{citaEfectuada.1}} - Cita efectuada para {{citaEfectuada.2}} a las {{citaEfectuada.6}}',
+                start: '{{citaEfectuada.8}}',
+                className: "fc-event-success",
+                description: "Tipo de cita: {{citaEfectuada.3}}. {{citaEfectuada.4}}, duración de {{citaEfectuada.7}} min. Por ${{citaEfectuada.5}} MXN."
+            },
+            {% endfor %}
+
+
+            ]
+            });
+            calendar.render(); //Add event
+
+            addEventBtn.on("click", function (e) {
+            e.preventDefault();
+            var eventTitle = $('#event-title').val();
+            var eventStartDate = $('#event-start-date').val();
+            var eventEndDate = $('#event-end-date').val();
+            var eventStartTime = $('#event-start-time').val();
+            var eventEndTime = $('#event-end-time').val();
+            var eventDescription = $('#event-description').val();
+            var eventTheme = $('#event-theme').val();
+            var eventStartTimeCheck = eventStartTime ? 'T' + eventStartTime + 'Z' : '';
+            var eventEndTimeCheck = eventEndTime ? 'T' + eventEndTime + 'Z' : '';
+            console.log(eventStartTime);
+            calendar.addEvent({
+                id: 'added-event-id-' + Math.floor(Math.random() * 9999999),
+                title: eventTitle,
+                start: eventStartDate + eventStartTimeCheck,
+                end: eventEndDate + eventEndTimeCheck,
+                className: "fc-" + eventTheme,
+                description: eventDescription
+            });
+            addEventPopup.modal('hide');
+            });
+            updateEventBtn.on("click", function (e) {
+            e.preventDefault();
+            var eventTitle = $('#edit-event-title').val();
+            var eventStartDate = $('#edit-event-start-date').val();
+            var eventEndDate = $('#edit-event-end-date').val();
+            var eventStartTime = $('#edit-event-start-time').val();
+            var eventEndTime = $('#edit-event-end-time').val();
+            var eventDescription = $('#edit-event-description').val();
+            var eventTheme = $('#edit-event-theme').val();
+            var eventStartTimeCheck = eventStartTime ? 'T' + eventStartTime + 'Z' : '';
+            var eventEndTimeCheck = eventEndTime ? 'T' + eventEndTime + 'Z' : '';
+            var selectEvent = calendar.getEventById(editEventForm[0].dataset.id);
+            selectEvent.remove();
+            calendar.addEvent({
+                id: editEventForm[0].dataset.id,
+                title: eventTitle,
+                start: eventStartDate + eventStartTimeCheck,
+                end: eventEndDate + eventEndTimeCheck,
+                className: "fc-" + eventTheme,
+                description: eventDescription
+            });
+            editEventPopup.modal('hide');
+            });
+            deleteEventBtn.on("click", function (e) {
+            e.preventDefault();
+            var selectEvent = calendar.getEventById(editEventForm[0].dataset.id);
+            selectEvent.remove();
+            });
+
+            function to12(time) {
+            time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+
+            if (time.length > 1) {
+                time = time.slice(1);
+                time.pop();
+                time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
+
+                time[0] = +time[0] % 12 || 12;
+            }
+
+            time = time.join('');
+            return time;
+            }
+
+            function customCalSelect(cat) {
+            if (!cat.id) {
+                return cat.text;
+            }
+
+            var $cat = $('<span class="fc-' + cat.element.value + '"> <span class="dot"></span>' + cat.text + '</span>');
+            return $cat;
+            }
+
+            ;
+            $(".select-calendar-theme").select2({
+            templateResult: customCalSelect
+            });
+            addEventPopup.on('hidden.bs.modal', function (e) {
+            setTimeout(function () {
+                $('#addEventForm input,#addEventForm textarea').val('');
+                $('#event-theme').val('event-primary');
+                $('#event-theme').trigger('change.select2');
+            }, 1000);
+            });
+            previewEventPopup.on('hidden.bs.modal', function (e) {
+            $('#preview-event-header').removeClass().addClass('modal-header');
+            });
+        };
+
+        NioApp.coms.docReady.push(NioApp.Calendar);
+        }(NioApp, jQuery);
+
+        
+    </script>
+
+    <script>
+        // Creamos array con los meses del año
+        const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+        // Creamos array con los días de la semana
+        const dias_semana = ['Domingo', 'Lunes', 'martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+        // Creamos el objeto fecha instanciándolo con la clase Date
+        const fecha = new Date();
+        // Construimos el formato de salida
+        var fechaHoystr = (dias_semana[fecha.getDay()] + ', ' + fecha.getDate() + ' de ' + meses[fecha.getMonth()] + ' de ' + fecha.getUTCFullYear());
+        var fechaHoy = document.getElementById("fechaHoy");
+        fechaHoy.innerHTML = fechaHoystr.toString();
+    </script>
+
+    <script language="JavaScript">
+        function mueveReloj(){
+            momentoActual = new Date()
+            hora = momentoActual.getHours()
+            minuto = momentoActual.getMinutes()
+            segundo = momentoActual.getSeconds()
+
+            str_segundo = new String (segundo)
+            if (str_segundo.length == 1)
+               segundo = "0" + segundo
+        
+            str_minuto = new String (minuto)
+            if (str_minuto.length == 1)
+               minuto = "0" + minuto
+        
+            str_hora = new String (hora)
+            if (str_hora.length == 1)
+               hora = "0" + hora
+            
+            if (hora > 12 && hora <= 24)
+            
+                horaImprimible = hora + " : " + minuto + " : " + segundo + "  " + "PM"
+            else{
+                if (hora >= 01 && hora <= 12)
+            
+                horaImprimible = hora + " : " + minuto + " : " + segundo + "  " + "AM"
+
+            }
+            
+            var spanReloj = document.getElementById("spanReloj");
+            spanReloj.innerHTML = horaImprimible
+
+            var spanReloj2 = document.getElementById("spanReloj2");
+            spanReloj2.innerHTML = horaImprimible 
+        
+            setTimeout("mueveReloj()",1000)
+        }
+
+        
+    </script>
+
+    
+
+    {% block relojJS %}
+
+    {% endblock %}
+</body>
+
+</html>

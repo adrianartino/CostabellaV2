@@ -1,0 +1,1466 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Ventas | Costabella
+{% endblock %}
+
+{% block estilos %}
+<style>
+    @media screen and (max-width: 320px) {
+        table {
+          display: block!important;
+          overflow-x: auto!important;
+        }
+   }
+</style>
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    <h3 class="nk-block-title page-title color-texto-seleccion">LISTADO DE VENTAS COSTABELLA</h3>
+                    <div class="nk-block-des text-soft">
+                        <p>Total de ventas: {{contadorVentasEfectivo}} efectivo - {{contadorVentasTarjeta}} tarjeta- {{contadorVentasTransferencia}} transferencia.</p>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+                <div class="nk-block-head-content">
+                    <div class="toggle-wrap nk-block-tools-toggle">
+                        <a href="#" class="btn btn-icon btn-trigger toggle-expand mr-n1" data-target="more-options"><em class="icon ni ni-more-v"></em></a>
+                        <div class="toggle-expand-content" data-content="more-options">
+                            <ul class="nk-block-tools g-3">
+                                <li>
+                                    <div class="drodown">
+                                        <a href="#" class="dropdown-toggle dropdown-indicator btn btn-outline-light btn-white" data-toggle="dropdown">Filtro tipo de venta</a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <ul class="link-list-opt no-bdr">
+                                                <li style="cursor: pointer!important;"><a onclick="mostrarVentasTotales()"><span>Ventas totales</span></a></li>
+                                                <li style="cursor: pointer!important;"><a onclick="mostrarVentasEfectivo()"><span>Ventas en efectivo</span></a></li>
+                                                <li style="cursor: pointer!important;"> <a onclick="mostrarVentasTarjeta()"><span>Ventas por tarjeta</span></a></li>
+                                                <li style="cursor: pointer!important;"> <a onclick="mostrarVentasTransferencia()"><span>Ventas por transferencia</span></a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Ventas" %}
+                                {% if permiso.agregar == "Si" %}
+                                <li class="nk-block-tools-opt">
+                                    <a href="#" class="btn btn-icon btn-primary d-md-none"><em class="icon ni ni-plus"></em></a>
+                                    <a href="/seleccionarSucursalVentas/" class="btn btn-primary d-none d-md-inline-flex"><em class="icon ni ni-plus"></em><span>Realizar venta</span></a>
+                                </li>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                               
+
+                            </ul>
+                        </div>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        <!-- Div empleados todos -->
+        <div  id="divVentasTotales">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Ventas totales</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de todas las ventas realizadas en el sistema.</p>
+                    </div>
+                
+                </div>
+               
+                
+            </div>
+        
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #325288 !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha/Hora Venta</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Información</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Concepto</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco">Vendedor</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco">Sucursal</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Cliente</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Productos</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Servicios corporales</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Servicios faciales</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Tratamiento</span></th>
+                                <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Paquete Tratamiento</span></th>
+                                <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Crédito <em class="icon ni ni-question" data-toggle="tooltip" data-placement="right" title="Si la venta fue a crédito, el monto total no se toma como ingreso, sino los pagos del mismo."></em></span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Descuento</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto total</span></th>
+                              
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for venta,quienVendio,cliente, sucursal, booleanDescuento, costoReal, descuento, datoDescueto, boolProducto, productos, boolServCorporal, servicioCorporal, boolServFacial, servicioFacial, boolCredito, idCredito, pagadoCredito, concepto,boolTratamientos, datosTratamientos, boolPaquetesTratamientos, datosPaquetesTratamientos in listaVentas %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{venta.id_venta}}</span>
+                                </td>
+                               
+                                <td class="nk-tb-col">
+                                    <center>
+                                        <div>
+                                            <span class="badge badge-outline-secondary">{{venta.fecha_venta}}</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-dark">{{venta.hora_venta}} hrs.</span>
+                                        </div>
+                                    </center>
+                                    
+                                    
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <div>
+                                        <form action="/infoVenta/" method="POST">{% csrf_token %}
+                                            <input type="hidden" name="idVenta" value="{{venta.id_venta}}">
+                                            <center>
+                                            <button type="submit" data-toggle="tooltip" data-placement="right" title="Ver información de venta completa"   class="btn btn-icon btn-sm bg-indigo text-white"><em class="icon ni ni-eye" ></em></button>
+                                            </center>
+    
+                                        </form>
+                                    </div>
+                                    <center>
+                                        <div>
+                                            <p class="fs-12px fw-bold text-pink" style="cursor: pointer;" data-toggle="tooltip" data-placement="right" title="{{venta.comentariosVenta}}">Comentarios</p> 
+                                        </div>
+
+                                    </center>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <div style="white-space:nowrap!important;">
+                                        {% if concepto == "Venta" %}
+                                        <span class="badge badge-outline-danger" >{{concepto}}</span> 
+                                        {% else %}
+                                        <span class="badge badge-outline-success" >{{concepto}}</span> 
+                                        {% endif %}
+                                    </div>
+                                      
+                                </td>
+                                <td class="nk-tb-col">
+                                        <div style="white-space:nowrap!important;">
+                                            <span class="badge badge-dark text-white" >{{quienVendio.0}}</span> <a href=""><span class="badge badge-dark text-white">{{quienVendio.1}}</span></a> 
+                                        </div>
+                                          
+                                </td>
+                                <td class="nk-tb-col">
+                                    <div style="white-space:nowrap!important;">
+                                        <span class="badge badge-primary text-white">{{sucursal}}</span>
+                                    </div>
+                                      
+                            </td>
+
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span class="tb-amount">{{cliente}}</span>
+                                </td>
+
+                                <td class="nk-tb-col" >
+                                    {% if boolProducto == "Sin productos comprados" %}
+                                    <span class="badge badge-dot badge-gray">Sin productos.</span>
+                                    {% else %}
+                                    <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                                       {% for p in productos %}
+                                                       <div> 
+                                                           <h6> <span class='text-primary fs-11px'> {{p.0}} -</span> <span class='text-soft fs-11px'> {{p.1}}  </span> <span class='text-info fs-11px'> - {{p.2}} unidades. </span>   </h6>
+                                                       </div>
+                                                       
+                                                       {% endfor %}"><span>Ver productos</span></button>
+                                    {% endif %}
+                                </td>
+                          
+                         
+                                <td class="nk-tb-col">
+                                    {% if boolServCorporal == "Sin servicios coorporales" %}
+                                    <span class="badge badge-dot badge-gray">Sin servicios corporales.</span>
+                                    {% else %}
+                                    <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                                       {% for sc in servicioCorporal %}
+                                                       <div> 
+                                                           <h6> <span class='text-primary fs-11px'> {{sc.0}} -</span> <span class='text-soft fs-11px'> {{sc.1}}  </span> <span class='text-info fs-11px'> - {{sc.2}} unidades. </span>   </h6>
+                                                       </div>
+                                                       
+                                                       {% endfor %}"><span>Ver servicios Corporales</span></button>
+                                    {% endif %}
+                                </td>
+                    
+                             
+                                
+                                <td class="nk-tb-col" >
+                                    {% if boolServFacial == "Sin servicios faciales" %}
+                                     <span class="badge badge-dot badge-gray">Sin servicios faciales.</span>
+                                    {% else %}
+                                    <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                                       {% for sf in servicioFacial %}
+                                                       <div> 
+                                                           <h6> <span class='text-primary fs-11px'> {{sf.0}} -</span> <span class='text-soft fs-11px'> {{sf.1}}  </span> <span class='text-info fs-11px'> - {{sf.2}} unidades. </span>   </h6>
+                                                       </div>
+                                                       
+                                                       {% endfor %}"><span>Ver servicios Corporales</span></button>
+                                    {% endif %}
+                                </td>
+                                <!-- AQUI VA LO NUEVOOOOOO -->
+                                <td class="nk-tb-col" >
+                                    {% if boolTratamientos == "Sin tratamiento" %}
+                                     <span class="badge badge-dot badge-gray">Sin tratamiento.</span>
+                                    {% else %}
+                                    <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                                       {% for sf in datosTratamientos %}
+                                                       <div> 
+                                                           <h6> <span class='text-primary fs-11px'> {{sf.0}} -</span> <span class='text-soft fs-11px'> {{sf.1}}  </span> <span class='text-info fs-11px'> - {{sf.2}} </span>   </h6>
+                                                       </div>
+                                                       
+                                                       {% endfor %}"><span>Ver Tratamiento</span></button>
+                                    {% endif %}
+                                </td>
+                                <td class="nk-tb-col" >
+                                    {% if boolPaquetesTratamientos == "Sin paquete de tratamientos" %}
+                                     <span class="badge badge-dot badge-gray">Sin paquete tratamiento.</span>
+                                    {% else %}
+                                    <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                                       {% for sf in datosPaquetesTratamientos %}
+                                                       <div> 
+                                                           <h6> <span class='text-primary fs-11px'> {{sf.0}} -</span> <span class='text-soft fs-11px'> {{sf.1}} sesiones  </span> <span class='text-teal fs-11px'> - ${{sf.2}} MXN. </span>   </h6>
+                                                       </div>
+                                                       
+                                                       {% endfor %}"><span>Ver paquete</span></button>
+                                    {% endif %}
+                                </td>
+                                <!-- AQUIA TERMINA LO NUEVO -->
+
+                                <td class="nk-tb-col" >
+                                    {% if boolCredito == "Si" %}
+                                    <span class="badge badge-danger">Si, con crédito</span>
+                                      {% if idCredito == "error" %}
+            
+                                      {% else %}
+                                      <div>
+                                        <span class="badge badge-outline-secondary">Crédito #{{idCredito}}</span>
+                                      </div>
+                                        {% if boolPagado == "Si" %}
+                                        <span class="fw-bold text-teal">Saldado</span>
+                                        {% else %}
+                                        <span class="fw-bold text-danger">No saldado</span>
+                                        {% endif %}
+                                      {% endif %}
+            
+                                    
+            
+                                    
+                                    {% else %}
+                                    <span class="badge badge-success">No, venta directa</span>
+                                    {% endif %}
+                                    
+                                </td>
+                                <td class="nk-tb-col" >
+                                    {% if booleanDescuento == "Sin descuento" %}
+                                    
+                                    <span class="fw-bold text-teal">Sin descuento</span>
+                                    {% else %}
+                                    <div>
+                                        <span class="badge badge-dot badge-warning">Se aplicó descuento</span>
+                                    </div>
+                                    <div>
+                                        <p class="fs-12px">Del <span class="fw-bold text-dark">{{datoDescueto.0}}% - {{datoDescueto.1}}</span>:</p>
+                                    </div>
+                                    <div>
+                                        <p class="fs-12px">Total: <span class="fw-bold text-teal">${{costoReal}} MXN.</span>:</p>
+                                    </div>
+                                    <div>
+                                        <p class="fs-12px">Desc: <span class="fw-bold text-pink">-${{descuento}} MXN.</span>:</p>
+                                    </div>
+                                    {% endif %}
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-success text-dark"> $ {{venta.monto_pagar}} MXN.</span>
+                                </td>
+                               
+
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+
+                    {% for y in listaReversaEfectivo %}
+                    <h1>{{y.id_venta}}</h1>
+                    {% endfor %}
+                
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+        <!-- Div empleados todos -->
+        <div  id="divVentasEfectivo">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Ventas por efectivo</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de ventas realizadas en <span class="coloralta">efectivo</span> en el sistema.</p>
+                    </div>
+                
+                </div>
+                
+                
+            </div>
+        
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #FFAB4C !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha/Hora Venta</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Información</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco" >Vendedor</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco" >Sucursal</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Cliente</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Productos</span></th>
+                                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Servicios corporales</span></th>
+                            
+                            
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Servicios faciales</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Tratamiento</span></th>
+                                <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Paquete Tratamiento</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Descuento</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto total</span></th>
+                              
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for venta,quienVendio,cliente, sucursal, booleanDescuento, costoReal, descuento, datoDescueto, boolProducto, productos, boolServCorporal, servicioCorporal, boolServFacial, servicioFacial, boolTratamientosEfectivo,datosTratamientosEfectivo,boolPaquetesTratamientosEfectivo,datosPaquetesTratamientosEfectivo in listaEfectivo %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{venta.id_venta}}</span>
+                                </td>
+                               
+                                <td class="nk-tb-col">
+                                    <center>
+                                        <div>
+                                            <span class="badge badge-outline-secondary">{{venta.fecha_venta}}</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-dark">{{venta.hora_venta}} hrs.</span>
+                                        </div>
+                                    </center>
+                                    
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <div>
+                                        <form action="/infoVenta/" method="POST">{% csrf_token %}
+                                            <input type="hidden" name="idVenta" value="{{venta.id_venta}}">
+                                            <center>
+                                            <button type="submit"   class="btn btn-icon btn-sm bg-indigo text-white"><em class="icon ni ni-eye" ></em></button>
+                                            </center>
+    
+                                        </form>
+                                    </div>
+                                    <center>
+                                        <div>
+                                            <p class="fs-12px fw-bold text-pink" style="cursor: pointer;" data-toggle="tooltip" data-placement="right" title="{{venta.comentariosVenta}}">Comentarios</p> 
+                                        </div>
+
+                                    </center>
+                                    
+                                </td>
+
+                                <td class="nk-tb-col">
+                                        <div style="white-space:nowrap!important;">
+                                            <span class="badge badge-dark text-white" >{{quienVendio.0}}</span> <a href=""><span class="badge badge-dark text-white">{{quienVendio.1}}</span></a> 
+                                        </div>
+                                          
+                                </td>
+                                <td class="nk-tb-col">
+                                    <div style="white-space:nowrap!important;">
+                                        <span class="badge badge-primary text-white">{{sucursal}}</span>
+                                    </div>
+                                      
+                            </td>
+
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span class="tb-amount">{{cliente}}</span>
+                                </td>
+
+                                <td class="nk-tb-col" >
+                                    {% if boolProducto == "Sin productos comprados" %}
+                                    <span class="badge badge-dot badge-gray">Sin productos.</span>
+                                    {% else %}
+                                    <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                                       {% for p in productos %}
+                                                       <div> 
+                                                           <h6> <span class='text-primary fs-11px'> {{p.0}} -</span> <span class='text-soft fs-11px'> {{p.1}}  </span> <span class='text-info fs-11px'> - {{p.2}} unidades. </span>   </h6>
+                                                       </div>
+                                                       
+                                                       {% endfor %}"><span>Ver productos</span></button>
+                                    {% endif %}
+                                </td>
+                          
+                         
+                                <td class="nk-tb-col">
+                                    {% if boolServCorporal == "Sin servicios coorporales" %}
+                                    <span class="badge badge-dot badge-gray">Sin servicios corporales.</span>
+                                    {% else %}
+                                    <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                                       {% for sc in servicioCorporal %}
+                                                       <div> 
+                                                           <h6> <span class='text-primary fs-11px'> {{sc.0}} -</span> <span class='text-soft fs-11px'> {{sc.1}}  </span> <span class='text-info fs-11px'> - {{sc.2}} unidades. </span>   </h6>
+                                                       </div>
+                                                       
+                                                       {% endfor %}"><span>Ver servicios Corporales</span></button>
+                                    {% endif %}
+                                </td>
+                    
+                             
+                                
+                                <td class="nk-tb-col" >
+                                    {% if boolServFacial == "Sin servicios faciales" %}
+                                     <span class="badge badge-dot badge-gray">Sin servicios faciales.</span>
+                                    {% else %}
+                                    <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                                       {% for sf in servicioFacial %}
+                                                       <div> 
+                                                           <h6> <span class='text-primary fs-11px'> {{sf.0}} -</span> <span class='text-soft fs-11px'> {{sf.1}}  </span> <span class='text-info fs-11px'> - {{sf.2}} unidades. </span>   </h6>
+                                                       </div>
+                                                       
+                                                       {% endfor %}"><span>Ver servicios Corporales</span></button>
+                                    {% endif %}
+                                </td>
+                                <!-- AQUI VA LO NUEVOOOOOO -->
+                                <td class="nk-tb-col" >
+                                    {% if boolTratamientosEfectivo == "Sin tratamiento" %}
+                                     <span class="badge badge-dot badge-gray">Sin tratamiento.</span>
+                                    {% else %}
+                                    <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                                       {% for sf in datosTratamientosEfectivo %}
+                                                       <div> 
+                                                           <h6> <span class='text-primary fs-11px'> {{sf.0}} -</span> <span class='text-soft fs-11px'> {{sf.1}}  </span> <span class='text-info fs-11px'> - {{sf.2}} </span>   </h6>
+                                                       </div>
+                                                       
+                                                       {% endfor %}"><span>Ver Tratamiento</span></button>
+                                    {% endif %}
+                                </td>
+                                <td class="nk-tb-col" >
+                                    {% if boolPaquetesTratamientosEfectivo == "Sin paquete de tratamientos" %}
+                                     <span class="badge badge-dot badge-gray">Sin paquete tratamiento.</span>
+                                    {% else %}
+                                    <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                                       {% for sf in datosPaquetesTratamientosEfectivo %}
+                                                       <div> 
+                                                           <h6> <span class='text-primary fs-11px'> {{sf.0}} -</span> <span class='text-soft fs-11px'> {{sf.1}} sesiones  </span> <span class='text-teal fs-11px'> - ${{sf.2}} MXN. </span>   </h6>
+                                                       </div>
+                                                       
+                                                       {% endfor %}"><span>Ver paquete</span></button>
+                                    {% endif %}
+                                </td>
+                                <!-- AQUIA TERMINA LO NUEVO -->
+
+                                
+                                <td class="nk-tb-col" >
+                                    {% if booleanDescuento == "Sin descuento" %}
+                                    
+                                    <span class="fw-bold text-teal">Sin descuento</span>
+                                    {% else %}
+                                    <div>
+                                        <span class="badge badge-dot badge-warning">Se aplicó descuento</span>
+                                    </div>
+                                    <div>
+                                        <p class="fs-12px">Del <span class="fw-bold text-dark">{{datoDescueto.0}}% - {{datoDescueto.1}}</span>:</p>
+                                    </div>
+                                    <div>
+                                        <p class="fs-12px">Total: <span class="fw-bold text-teal">${{costoReal}} MXN.</span>:</p>
+                                    </div>
+                                    <div>
+                                        <p class="fs-12px">Desc: <span class="fw-bold text-pink">-${{descuento}} MXN.</span>:</p>
+                                    </div>
+                                    {% endif %}
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-success text-dark"> $ {{venta.monto_pagar}} MXN.</span>
+                                </td>
+                               
+
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+
+                    {% for y in listaReversaEfectivo %}
+                    <h1>{{y.id_venta}}</h1>
+                    {% endfor %}
+                
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+        <!-- DIV EMPLEADOS ACTIVOS -->
+        <div  id="divVentasTarjeta">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Ventas por tarjeta</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de ventas realizadas por <span class="coloralta">tarjeta</span> en el sistema.</p>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #24A19C !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha/Hora Venta</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Información</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Tipo Tarjeta</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Referencia</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco">Vendedor</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco">Sucursal</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Cliente</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Productos</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Servicios corporales</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Servicios faciales</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Tratamiento</span></th>
+                                <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Paquete Tratamiento</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Descuento</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto total</span></th>
+                              
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for venta,quienVendio,cliente, sucursal,tipoTarjeta,referencia, booleanDescuento, costoReal, descuento, datosDescuento, boolProducto, productost, boolServCorporal, servicioCorporal, boolServFacial, servicioFacial, boolTratamientosTarjeta, datosTratamientosTarjeta, boolPaquetesTratamientosTarjeta, datosPaquetesTratamientosTarjeta in listatarjeta %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{venta.id_venta}}</span>
+                                </td>
+                                
+                                <td class="nk-tb-col">
+                                    <center>
+                                        <div>
+                                            <span class="badge badge-outline-secondary">{{venta.fecha_venta}}</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-dark">{{venta.hora_venta}} hrs.</span>
+                                        </div>
+                                    </center>
+                                    
+                                </td>
+                                      
+                                <td class="nk-tb-col">
+                                    
+                                    <form action="/infoVenta/" method="POST">{% csrf_token %}
+                                        <input type="hidden" name="idVenta" value="{{venta.id_venta}}">
+                                        <center>
+                                        <button type="submit"   class="btn btn-icon btn-sm bg-indigo text-white"><em class="icon ni ni-eye" ></em></button>
+                                        </center>
+
+                                    </form>
+                                    <center>
+                                        <div>
+                                            <p class="fs-12px fw-bold text-pink" style="cursor: pointer;" data-toggle="tooltip" data-placement="right" title="{{venta.comentariosVenta}}">Comentarios</p> 
+                                        </div>
+
+                                    </center>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-outline-secondary">{{tipoTarjeta}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-outline-secondary">{{referencia}}</span>
+                                </td>
+
+                                <td class="nk-tb-col">
+                                        <div style="white-space:nowrap!important;">
+                                            <span class="badge badge-dark text-white" >{{quienVendio.0}}</span> <span class="badge badge-dark text-white">{{quienVendio.1}}</span>
+                                        </div>
+                                          
+                                </td>
+                                <td class="nk-tb-col">
+                                    <div style="white-space:nowrap!important;">
+                                        <span class="badge badge-primary text-white">{{sucursal}}</span>
+                                    </div>
+                                      
+                            </td>
+
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span class="tb-amount">{{cliente}}</span>
+                                </td>
+
+                                <td class="nk-tb-col" >
+                                    {% if boolProducto == "Sin productos comprados" %}
+                                    <span class="badge badge-dot badge-gray">Sin productos.</span>
+                                    {% else %}
+                                    <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                                       {% for pt in productost %}
+                                                       <div> 
+                                                           <h6> <span class='text-primary fs-11px'> {{pt.0}} -</span> <span class='text-soft fs-11px'> {{pt.1}}  </span> <span class='text-info fs-11px'> - {{pt.2}} unidades. </span>   </h6>
+                                                       </div>
+                                                       
+                                                       {% endfor %}"><span>Ver productos</span></button>
+                                    {% endif %}
+                                </td>
+                          
+                         
+                                <td class="nk-tb-col">
+                                    {% if boolServCorporal == "Sin servicios coorporales" %}
+                                    <span class="badge badge-dot badge-gray">Sin servicios corporales.</span>
+                                    {% else %}
+                                    <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                                       {% for sc in servicioCorporal %}
+                                                       <div> 
+                                                           <h6> <span class='text-primary fs-11px'> {{sc.0}} -</span> <span class='text-soft fs-11px'> {{sc.1}}  </span> <span class='text-info fs-11px'> - {{sc.2}} unidades. </span>   </h6>
+                                                       </div>
+                                                       
+                                                       {% endfor %}"><span>Ver servicios Corporales</span></button>
+                                    {% endif %}
+                                </td>
+                    
+                             
+                                
+                                <td class="nk-tb-col" >
+                                    {% if boolServFacial == "Sin servicios faciales" %}
+                                     <span class="badge badge-dot badge-gray">Sin servicios faciales.</span>
+                                    {% else %}
+                                    <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                                       {% for sf in servicioFacial %}
+                                                       <div> 
+                                                           <h6> <span class='text-primary fs-11px'> {{sf.0}} -</span> <span class='text-soft fs-11px'> {{sf.1}}  </span> <span class='text-info fs-11px'> - {{sf.2}} unidades. </span>   </h6>
+                                                       </div>
+                                                       
+                                                       {% endfor %}"><span>Ver servicios Corporales</span></button>
+                                    {% endif %}
+                                </td>
+
+                                <!-- AQUI VA LO NUEVOOOOOO -->
+                                <td class="nk-tb-col" >
+                                    {% if boolTratamientosTarjeta == "Sin tratamiento" %}
+                                     <span class="badge badge-dot badge-gray">Sin tratamiento.</span>
+                                    {% else %}
+                                    <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                                       {% for sf in datosTratamientosTarjeta %}
+                                                       <div> 
+                                                           <h6> <span class='text-primary fs-11px'> {{sf.0}} -</span> <span class='text-soft fs-11px'> {{sf.1}}  </span> <span class='text-info fs-11px'> - {{sf.2}} </span>   </h6>
+                                                       </div>
+                                                       
+                                                       {% endfor %}"><span>Ver Tratamiento</span></button>
+                                    {% endif %}
+                                </td>
+                                <td class="nk-tb-col" >
+                                    {% if boolPaquetesTratamientosTarjeta == "Sin paquete de tratamientos" %}
+                                     <span class="badge badge-dot badge-gray">Sin paquete tratamiento.</span>
+                                    {% else %}
+                                    <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                                       {% for sf in datosPaquetesTratamientosTarjeta %}
+                                                       <div> 
+                                                           <h6> <span class='text-primary fs-11px'> {{sf.0}} -</span> <span class='text-soft fs-11px'> {{sf.1}} sesiones  </span> <span class='text-teal fs-11px'> - ${{sf.2}} MXN. </span>   </h6>
+                                                       </div>
+                                                       
+                                                       {% endfor %}"><span>Ver paquete</span></button>
+                                    {% endif %}
+                                </td>
+                                <!-- AQUIA TERMINA LO NUEVO -->
+
+                                
+                                <td class="nk-tb-col">
+                                    {% if booleanDescuento == "Sin descuento" %}
+                                    
+                                    <span class="fw-bold text-teal">Sin descuento</span>
+                                    {% else %}
+                                    <div>
+                                        <span class="badge badge-dot badge-warning">Se aplicó descuento</span>
+                                    </div>
+                                    <div>
+                                        <p class="fs-12px">Del <span class="fw-bold text-dark">{{datosDescuento.0}}% - {{datosDescuento.1}}</span>:</p>
+                                    </div>
+                                    <div>
+                                        <p class="fs-12px">Total: <span class="fw-bold text-teal">${{costoReal}} MXN.</span>:</p>
+                                    </div>
+                                    <div>
+                                        <p class="fs-12px">Desc: <span class="fw-bold text-pink">-${{descuento}} MXN.</span>:</p>
+                                    </div>
+                                    {% endif %}
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-success text-dark"> $ {{venta.monto_pagar}} MXN.</span>
+                                </td>
+                               
+
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+        <!-- DIV EMPLEADOS INACTIVOS -->
+        <div id="divVentasTransferencia">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Ventas por transferencia</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de ventas realizadas por <span class="colorbaja">transferencia</span> en el sistema.</p>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #6F69AC !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha/Hora Venta</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Información</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Clave Rastreo</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco">Vendedor</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco">Sucursal</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Cliente</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Productos</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Servicios corporales</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Servicios faciales</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Tratamiento</span></th>
+                                <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Paquete Tratamiento</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Descuento</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto total</span></th>
+                              
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for venta,quienVendio,cliente, sucursal,claveRastreo, booleanDescuento, costoReal, descuento, datosDescuento,boolProducto, productost, boolServCorporal, servicioCorporal, boolServFacial, servicioFacial, boolTratamientosTransferencia,datosTratamientosTransferencia,boolPaquetesTratamientosTransferencia,datosPaquetesTratamientosTransferencia in listaTransferencia %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{venta.id_venta}}</span>
+                                </td>
+                               
+                                <td class="nk-tb-col">
+                                    <center>
+                                        <div>
+                                            <span class="badge badge-outline-secondary">{{venta.fecha_venta}}</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-dark">{{venta.hora_venta}} hrs.</span>
+                                        </div>
+                                    </center>
+                                    
+                                    
+                                </td>
+                                <td class="nk-tb-col">
+                                    <form action="/infoVenta/" method="POST">{% csrf_token %}
+                                        <input type="hidden" name="idVenta" value="{{venta.id_venta}}">
+                                        <center>
+                                        <button type="submit"   class="btn btn-icon btn-sm bg-indigo text-white"><em class="icon ni ni-eye" ></em></button>
+                                        </center>
+
+                                    </form>
+                                    <center>
+                                        <div>
+                                            <p class="fs-12px fw-bold text-pink" style="cursor: pointer;" data-toggle="tooltip" data-placement="right" title="{{venta.comentariosVenta}}">Comentarios</p> 
+                                        </div>
+
+                                    </center>
+                                </td>
+                                
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-outline-secondary">{{claveRastreo}}</span>
+                                </td>
+
+                                <td class="nk-tb-col">
+                                        <div style="white-space:nowrap!important;">
+                                            <span class="badge badge-dark text-white" >{{quienVendio.0}}</span> <span class="badge badge-dark text-white">{{quienVendio.1}}</span>
+                                        </div>
+                                          
+                                </td>
+                                <td class="nk-tb-col">
+                                    <div style="white-space:nowrap!important;">
+                                        <span class="badge badge-primary text-white">{{sucursal}}</span>
+                                    </div>
+                                      
+                            </td>
+
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span class="tb-amount">{{cliente}}</span>
+                                </td>
+
+                                <td class="nk-tb-col" >
+                                    {% if boolProducto == "Sin productos comprados" %}
+                                    <span class="badge badge-dot badge-gray">Sin productos.</span>
+                                    {% else %}
+                                    <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                                       {% for pt in productost %}
+                                                       <div> 
+                                                           <h6> <span class='text-primary fs-11px'> {{pt.0}} -</span> <span class='text-soft fs-11px'> {{pt.1}}  </span> <span class='text-info fs-11px'> - {{pt.2}} unidades. </span>   </h6>
+                                                       </div>
+                                                       
+                                                       {% endfor %}"><span>Ver productos</span></button>
+                                    {% endif %}
+                                </td>
+                          
+                         
+                                <td class="nk-tb-col">
+                                    {% if boolServCorporal == "Sin servicios coorporales" %}
+                                    <span class="badge badge-dot badge-gray">Sin servicios corporales.</span>
+                                    {% else %}
+                                    <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                                       {% for sc in servicioCorporal %}
+                                                       <div> 
+                                                           <h6> <span class='text-primary fs-11px'> {{sc.0}} -</span> <span class='text-soft fs-11px'> {{sc.1}}  </span> <span class='text-info fs-11px'> - {{sc.2}} unidades. </span>   </h6>
+                                                       </div>
+                                                       
+                                                       {% endfor %}"><span>Ver servicios Corporales</span></button>
+                                    {% endif %}
+                                </td>
+                    
+                             
+                                
+                                <td class="nk-tb-col" >
+                                    {% if boolServFacial == "Sin servicios faciales" %}
+                                     <span class="badge badge-dot badge-gray">Sin servicios faciales.</span>
+                                    {% else %}
+                                    <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                                       {% for sf in servicioFacial %}
+                                                       <div> 
+                                                           <h6> <span class='text-primary fs-11px'> {{sf.0}} -</span> <span class='text-soft fs-11px'> {{sf.1}}  </span> <span class='text-info fs-11px'> - {{sf.2}} unidades. </span>   </h6>
+                                                       </div>
+                                                       
+                                                       {% endfor %}"><span>Ver servicios Corporales</span></button>
+                                    {% endif %}
+                                </td>
+                                <!-- AQUI VA LO NUEVOOOOOO -->
+                                <td class="nk-tb-col" >
+                                    {% if boolTratamientosTransferencia == "Sin tratamiento" %}
+                                     <span class="badge badge-dot badge-gray">Sin tratamiento.</span>
+                                    {% else %}
+                                    <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                                       {% for sf in datosTratamientosTransferencia %}
+                                                       <div> 
+                                                           <h6> <span class='text-primary fs-11px'> {{sf.0}} -</span> <span class='text-soft fs-11px'> {{sf.1}}  </span> <span class='text-info fs-11px'> - {{sf.2}} </span>   </h6>
+                                                       </div>
+                                                       
+                                                       {% endfor %}"><span>Ver Tratamiento</span></button>
+                                    {% endif %}
+                                </td>
+                                <td class="nk-tb-col" >
+                                    {% if boolPaquetesTratamientosTransferencia == "Sin paquete de tratamientos" %}
+                                     <span class="badge badge-dot badge-gray">Sin paquete tratamiento.</span>
+                                    {% else %}
+                                    <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                                       {% for sf in datosPaquetesTratamientosTransferencia %}
+                                                       <div> 
+                                                           <h6> <span class='text-primary fs-11px'> {{sf.0}} -</span> <span class='text-soft fs-11px'> {{sf.1}} sesiones  </span> <span class='text-teal fs-11px'> - ${{sf.2}} MXN. </span>   </h6>
+                                                       </div>
+                                                       
+                                                       {% endfor %}"><span>Ver paquete</span></button>
+                                    {% endif %}
+                                </td>
+                                <!-- AQUIA TERMINA LO NUEVO -->
+
+                                
+                                <td class="nk-tb-col">
+                                    {% if booleanDescuento == "Sin descuento" %}
+                                    
+                                    <span class="fw-bold text-teal">Sin descuento</span>
+                                    {% else %}
+                                    <div>
+                                        <span class="badge badge-dot badge-warning">Se aplicó descuento</span>
+                                    </div>
+                                    <div>
+                                        <p class="fs-12px">Del <span class="fw-bold text-dark">{{datosDescuento.0}}% - {{datosDescuento.1}}</span>:</p>
+                                    </div>
+                                    <div>
+                                        <p class="fs-12px">Total: <span class="fw-bold text-teal">${{costoReal}} MXN.</span>:</p>
+                                    </div>
+                                    <div>
+                                        <p class="fs-12px">Desc: <span class="fw-bold text-pink">-${{descuento}} MXN.</span>:</p>
+                                    </div>
+                                    {% endif %}
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-success text-dark"> $ {{venta.monto_pagar}} MXN.</span>
+                                </td>
+                               
+
+                            </tr>
+                            {% endfor %}
+                            
+                            
+                        </tbody>
+                    </table>
+                </div>
+                
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+    </div>
+</div>
+
+
+
+
+<!-- MODAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALSSSS VENTAAASSSSSSSSSS   -->
+
+{% for productoVentaEditar, usuario, sucursal in listaProductosVentaEditar %}
+<!-- Modal de editar producto -->
+<div class="modal fade" tabindex="-1" role="dialog" id="editarProductoVenta{{productoVentaEditar.id_producto}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center ">EDITAR PRODUCTO</h3>
+                <center>
+                    {% if productoVentaEditar.imagen_producto %}
+                    <img src="{{productoVentaEditar.imagen_producto.url}}" width="20%" alt="lap">
+                    {% else %}
+                    <img src="{% static 'images/accesos/editarProducto.png' %} " alt="personal">
+                    {% endif %}
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/actualizarProductoV/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <h3 class="title text-center ">Información del producto</h3>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            <input type="hidden" value="{{productoVentaEditar.id_producto}}" name="idProductoVentaEditar">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #24A19C !important; color:white !important">
+                                                <th scope="col">Id</th>
+                                                <th scope="col">Código</th>
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Cantidad en existencia</th>
+                                                <th scope="col">Costo de compra</th>
+                                                <th scope="col">Margen de ganancia</th>
+                                                <th scope="col">Costo de venta actualizado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row" > <span  class="badge-pill badge-info">{{productoVentaEditar.id_producto}}</span> </th>
+                                                <td><span  class="badge-pill badge-warning">{{productoVentaEditar.codigo_producto}}</span></td>
+                                                <td>{{productoVentaEditar.nombre_producto}}</td>
+                                                <td>{{productoVentaEditar.cantidad}}</td>
+                                                <td> <input  type="number" class="form-control" min="0.00" max="10000.00" step="0.01" placeholder="Ingresar precio de compra"  name="costoGastoActualizado" value="{{productoVentaEditar.costo_compra}}" onkeyup="calcularPrecioVenta{{productoVentaEditar.id_producto}}()" id="costoCompra{{productoVentaEditar.id_producto}}"></td>
+                                                <td><input id="margenCompra{{productoVentaEditar.id_producto}}" type="number" min="0" max="100" step="1" class="form-control" id="default-01" placeholder="Ingresar margen de ganancia" maxlength="3"  name="margenActualizado" value="{{productoVentaEditar.margen_ganancia_producto}}" onkeyup="calcularPrecioVenta{{productoVentaEditar.id_producto}}()"></td>
+                                                <td><input id="inputCostoVenta{{productoVentaEditar.id_producto}}" type="text readonly" value="{{productoVentaEditar.costo_venta}}" style="border: none!important;" name="costoVentaActualizado"></td>
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row gy-4">
+                            <div class="col-12">
+                                <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                    <li>
+                                        <button type="submit" class="btn btn-lg btn-primary">Actualizar producto</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+
+                    </div><!-- .tab-pane -->
+                    </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+{% for productoVentaComprar, usuario, sucursal in listaProductosVentaComprar %}
+<!-- Modal de editar producto -->
+<div class="modal fade" tabindex="-1" role="dialog" id="comprarProductoVenta{{productoVentaComprar.id_producto}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center ">COMPRAR PRODUCTO</h3>
+                <center>
+                    {% if productoVentaComprar.imagen_producto %}
+                    <img src="{{productoVentaComprar.imagen_producto.url}}" width="20%" alt="lap">
+                    {% else %}
+                    <img src="{% static 'images/accesos/editarProducto.png' %} " alt="personal">
+                    {% endif %}
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/actualizarProductoVentaCompra/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <h3 class="title text-center ">Información del producto</h3>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            <input type="hidden" value="{{productoVentaComprar.id_producto}}" name="idProductoVentaComprar">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #24A19C !important; color:white !important">
+                                                <th scope="col">Id</th>
+                                                <th scope="col">Código</th>
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Cantidad actual en existencia</th>
+                                                <th scope="col">Cantidad a comprar</th>
+                                                <th scope="col">Costo de compra guardado <em class="icon ni ni-question" data-toggle="tooltip" data-placement="right" title="Se puede editar el costo de compra, al guardar, se actualizará este dato."></em></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row" > <span  class="badge-pill badge-info">{{productoVentaComprar.id_producto}}</span> </th>
+                                                <td><span  class="badge-pill badge-warning">{{productoVentaComprar.codigo_producto}}</span></td>
+                                                <td>{{productoVentaComprar.nombre_producto}}</td>
+                                                <td>{{productoVentaComprar.cantidad}}</td>
+                                                <td> <input type="number" value="1" class="form-control" min="1" max="100" step="1" name="cantidadComprarProducto"></td>
+                                                <td><input  type="number" class="form-control" min="0.00" max="10000.00" step="0.01" placeholder="Ingresar precio de compra"  name="costoGastoActualizado" value="{{productoVentaComprar.costo_compra}}" ></td>
+                                                
+
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row gy-4">
+                            <div class="col-12">
+                                <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                    <li>
+                                        <button type="submit" class="btn btn-lg btn-primary">Comprar producto</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+
+                    </div><!-- .tab-pane -->
+                    </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+<!-- Modal de editar producto Gasto -->
+
+{% for productoGastoEditar, usuario, sucursal in listaProductosGastoEditar %}
+<!-- Modal de editar producto -->
+<div class="modal fade" tabindex="-1" role="dialog" id="editarProductoGasto{{productoGastoEditar.id_producto}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center ">EDITAR PRODUCTO</h3>
+                <center>
+                    {% if productoGastoEditar.imagen_producto %}
+                    <img src="{{productoGastoEditar.imagen_producto.url}}" width="20%" alt="lap">
+                    {% else %}
+                    <img src="{% static 'images/accesos/editarProducto.png' %} " alt="personal">
+                    {% endif %}
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/actualizarProductoGasto/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <h3 class="title text-center ">Información del producto</h3>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            <input type="hidden" value="{{productoGastoEditar.id_producto}}" name="idProductoGastoEditar">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #24A19C !important; color:white !important">
+                                                <th scope="col">Id</th>
+                                                <th scope="col">Código</th>
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Cantidad en existencia</th>
+                                                <th scope="col">Costo de compra</th>
+                                              
+                                                <th scope="col">Sucursal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row" > <span  class="badge-pill badge-info">{{productoGastoEditar.id_producto}}</span> </th>
+                                                <td><span  class="badge-pill badge-warning">{{productoGastoEditar.codigo_producto}}</span></td>
+                                                <td>{{productoGastoEditar.nombre_producto}}</td>
+                                                <td><input  type="number" class="form-control" min="0" max="{{productoGastoEditar.cantidad}}" step="1"   name="cantidadActualizado" value="{{productoGastoEditar.cantidad}}"  ></td>
+                                                <td> <input  type="number" class="form-control" min="0.00" max="10000.00" step="0.01" placeholder="Ingresar precio de compra"  name="costoGastoActualizado" value="{{productoGastoEditar.costo_compra}}"  id="costoCompra{{productoGastoEditar.id_producto}}"></td>
+                                                <td>{{sucursal}}</td>
+                                        
+                                              
+                                             
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row gy-4">
+                            <div class="col-12">
+                                <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                    <li>
+                                        <button type="submit" class="btn btn-lg btn-primary">Actualizar producto</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+
+                    </div><!-- .tab-pane -->
+                    </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+
+
+{% for productoGastoComprar, usuario, sucursal in listaProductosGastoComprar %}
+<!-- Modal de editar producto -->
+<div class="modal fade" tabindex="-1" role="dialog" id="comprarProductoGasto{{productoGastoComprar.id_producto}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center ">COMPRAR PRODUCTO</h3>
+                <center>
+                    {% if productoVentaComprar.imagen_producto %}
+                    <img src="{{productoGastoComprar.imagen_producto.url}}" width="20%" alt="lap">
+                    {% else %}
+                    <img src="{% static 'images/accesos/editarProducto.png' %} " alt="personal">
+                    {% endif %}
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/actualizarProductoGastoCompra/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <h3 class="title text-center ">Información del producto</h3>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            <input type="hidden" value="{{productoGastoComprar.id_producto}}" name="idProductoGastoComprar">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #24A19C !important; color:white !important">
+                                                <th scope="col">Id</th>
+                                                <th scope="col">Código</th>
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Cantidad actual en existencia</th>
+                                                <th scope="col">Cantidad a comprar</th>
+                                                <th scope="col">Costo de compra guardado <em class="icon ni ni-question" data-toggle="tooltip" data-placement="right" title="Se puede editar el costo de compra, al guardar, se actualizará este dato."></em></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row" > <span  class="badge-pill badge-info">{{productoGastoComprar.id_producto}}</span> </th>
+                                                <td><span  class="badge-pill badge-warning">{{productoGastoComprar.codigo_producto}}</span></td>
+                                                <td>{{productoGastoComprar.nombre_producto}}</td>
+                                                <td>{{productoGastoComprar.cantidad}}</td>
+                                                <td> <input type="number" value="1" class="form-control" min="1" max="100" step="1" name="cantidadComprarProducto"></td>
+                                                <td><input  type="number" class="form-control" min="0.00" max="10000.00" step="0.01" placeholder="Ingresar precio de compra"  name="costoGastoActualizado" value="{{productoGastoComprar.costo_compra}}" ></td>
+                                                
+
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row gy-4">
+                            <div class="col-12">
+                                <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                    <li>
+                                        <button type="submit" class="btn btn-lg btn-primary">Comprar producto</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+
+                    </div><!-- .tab-pane -->
+                    </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+
+<!-- Fin  Modal de editar producto Gasto-->
+
+<!-- Modal de editar producto renta -->
+
+{% for productoRentaEditar, usuario, sucursal in listaProductosRentaEditar %}
+<!-- Modal de editar producto -->
+<div class="modal fade" tabindex="-1" role="dialog" id="editarProductoRenta{{productoRentaEditar.id_producto}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center ">EDITAR PRODUCTO</h3>
+                <center>
+                    {% if productoRentaEditar.imagen_producto %}
+                    <img src="{{productoGastoEditar.imagen_producto.url}}" width="20%" alt="lap">
+                    {% else %}
+                    <img src="{% static 'images/accesos/editarProducto.png' %} " alt="personal">
+                    {% endif %}
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/actualizarProductoRenta/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <h3 class="title text-center ">Información del producto</h3>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            <input type="hidden" value="{{productoRentaEditar.id_producto}}" name="idProductoRentaEditar">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #24A19C !important; color:white !important">
+                                                <th scope="col">Id</th>
+                                                <th scope="col">Código</th>
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Cantidad en existencia</th>
+                                                <th scope="col">Costo de compra</th>
+                                                <th scope="col">Costo de renta</th>
+                                              
+                                                <th scope="col">Sucursal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row" > <span  class="badge-pill badge-info">{{productoRentaEditar.id_producto}}</span> </th>
+                                                <td><span  class="badge-pill badge-warning">{{productoRentaEditar.codigo_producto}}</span></td>
+                                                <td>{{productoRentaEditar.nombre_producto}}</td>
+                                                <td>{{productoRentaEditar.cantidad}}</td>
+                                                <td> <input  type="number" class="form-control" min="0.00" max="10000.00" step="0.01" placeholder="Ingresar precio de compra"  name="costoPrecioCompraActualizado" value="{{productoRentaEditar.costo_de_compra}}"  id="costoCompra{{productoRentaEditar.id_producto}}"></td>
+                                                <td> <input  type="number" class="form-control" min="0.00" max="10000.00" step="0.01" placeholder="Ingresar precio de renta"  name="costoRentaActualizado" value="{{productoRentaEditar.costo_renta}}"  id="costoRenta{{productoRentaEditar.id_producto}}"></td>
+                                                <td>{{sucursal}}</td>
+                                        
+                                              
+                                             
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row gy-4">
+                            <div class="col-12">
+                                <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                    <li>
+                                        <button type="submit" class="btn btn-lg btn-primary">Actualizar producto</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+
+                    </div><!-- .tab-pane -->
+                    </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+<!-- Fin  Modal de editar producto Gasto-->
+
+<script>
+    {% for productoVentaEditar, usuario, sucursal in listaProductosVentaEditar2 %}
+    function calcularPrecioVenta{{productoVentaEditar.id_producto}}() {
+        const valorCosto = document.getElementById("costoCompra{{productoVentaEditar.id_producto}}").value;
+        const valorMargen = document.getElementById("margenCompra{{productoVentaEditar.id_producto}}").value;
+        const inputCostoVenta = document.getElementById("inputCostoVenta{{productoVentaEditar.id_producto}}");
+
+        margenFloat = parseFloat(valorMargen);
+        margenEntero = margenFloat.toFixed();
+        margenString = "1."+margenEntero.toString();
+        margenIntFinal = parseFloat(margenString);
+
+        const costoVentaNuevo = valorCosto * margenIntFinal;
+        costoVentaNuevoChido =costoVentaNuevo.toFixed(2);
+        inputCostoVenta.value = costoVentaNuevoChido;
+        console.log(costoVentaNuevoChido);
+
+    }
+    {% endfor %}
+
+   
+</script>
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<script>
+
+    {% if ventaAgregada %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{ventaAgregada}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    {% if ventaNoAgregada %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'error',
+            title: 'Ups..!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{ventaNoAgregada}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    
+    {% if ventaCancelacionCita %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{ventaCancelacionCita}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+</script>
+
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+        var divVentasTotales = document.getElementById("divVentasTotales");
+        var divVentasEfectivo = document.getElementById("divVentasEfectivo");
+        var divVentasTarjeta = document.getElementById("divVentasTarjeta");
+        var divVentasTransferencia = document.getElementById("divVentasTransferencia");
+        divVentasTotales.style.display = "block";
+        divVentasEfectivo.style.display = "none";
+        divVentasTarjeta.style.display = "none";
+        divVentasTransferencia.style.display = "none";
+
+        window.onload= mueveReloj ();
+        
+    };
+
+    
+    function mostrarVentasTotales(){
+        divVentasTotales.style.display = "block";
+        divVentasEfectivo.style.display = "none";
+        divVentasTarjeta.style.display = "none";
+        divVentasTransferencia.style.display = "none";
+    };
+
+    function mostrarVentasEfectivo(){
+        divVentasTotales.style.display = "none";
+        divVentasEfectivo.style.display = "block";
+        divVentasTarjeta.style.display = "none";
+        divVentasTransferencia.style.display = "none";
+    };
+
+    function mostrarVentasTarjeta(){
+        divVentasTotales.style.display = "none";
+        divVentasEfectivo.style.display = "none";
+        divVentasTarjeta.style.display = "block";
+        divVentasTransferencia.style.display = "none";
+    };
+
+    function mostrarVentasTransferencia(){
+        divVentasTotales.style.display = "none";
+        divVentasEfectivo.style.display = "none";
+        divVentasTarjeta.style.display = "none";
+        divVentasTransferencia.style.display = "block";
+    };
+</script>
+{% endblock %}

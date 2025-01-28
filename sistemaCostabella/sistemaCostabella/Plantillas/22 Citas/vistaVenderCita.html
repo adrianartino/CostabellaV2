@@ -1,0 +1,1154 @@
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Vender Cita | Costabella
+{% endblock %}
+
+{% block estilos %}
+
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block" >
+            <form action="/guardarVentaCita/" method="POST">{% csrf_token %}
+            <input type="hidden" value="{{totalRestante}}" name="totalRestante">
+            <input type="hidden" value="{{tipoCita}}" name="tipoCita">
+            <div class="row g-gs" >
+                <!--Encabezado Venta-->
+                <div class="col-xxl-12">
+                    <input type="hidden" name="idSucursal" value="{{idSucursal}}" readonly>
+                    <input type="hidden" name="idCita" value="{{idCita}}" readonly>
+                    <input type="hidden" name="clienteSeleccionado" value="{{idCliente}}" readonly>
+                    <input type="hidden" name="tipoDeCita" value="{{tipoDeCita}}" readonly>
+                    <input type="hidden" name="idServTratPaq" value="{{idServTratPaq}}" readonly>
+                    <div class="card h-150 animate__animated animate__slideInDown" id="div1">
+                        <div class="card-inner animate__animated animate__slideInDown">
+                            <center>
+                                <h2 class="fuenteTitulo">VENDER CITA</h2>
+                                <img src="{% static 'images/iconosMenu/citaRealizar.png' %}" width="50px" alt="spa"> 
+                            </center>
+                            <hr class="preview-hr" style="border-color:  #FA4EAB   !important;">
+                            <div class="row gy-4">
+
+                                <div class="col-sm-2" >
+                                   
+                                    <div class="form-group">
+                                        
+                                       
+                                            <div class="form-control-wrap ">
+                                           
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #FF7396   !important;">FECHA: <h6><script type="text/javascript"> var meses = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+                                                     var f=new Date(); document.write(f.getDate() + " " + meses[f.getMonth()] + " " + f.getFullYear()); </script></h6></span>
+                                                <span class="preview-title-lg overline-title text-pink" style="color:#FF7396   !important;" onload="time1()" >HORA: <h6 id="reloj"> </h6></span>
+                                       
+                                            </div>
+                                   
+                                        
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4">
+                                   
+                                    <div class="form-group">
+                                        <div class="form-control-wrap ">
+                                            {% for vendedor in consultaEmpleadoVendedor %}
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #FF7396   !important;">Vendedora: <h6>{{vendedor.nombres}}</h6></span>
+                                                <span class="preview-title-lg overline-title text-pink" style="color:#FF7396   !important;" >Puesto: <h6>{{vendedor.puesto}} </h6></span>
+                                                
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-2">
+                                       
+                                    <div class="form-group">
+                                        <div class="form-control-wrap ">
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #FF7396   !important;">Sucursal: <h6>{{nombreSucursal}}</h6></span>
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #FF7396   !important;">Hora de cita: <h6>{{horaPactada}}</h6></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <div class="form-control-wrap ">
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #FF7396   !important;">Cliente: <h6>{{nombreCompletoCliente}}</h6></span>
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #FF7396   !important;">Duración de cita: <h6>{{duracion}} minutos</h6></span>
+                                        </div>
+                                    </div>
+                                </div>
+                           
+                                </div>
+                        
+                   
+                        
+                        
+                            
+                            </div>
+                        </div><!-- .card -->
+                    </div>
+                </div><!-- .col -->
+            </div><!-- .row -->
+        
+            
+            <div class="row g-gs" >
+      
+
+
+                <div class="col-xxl-6" >
+
+                    
+                    <div class="card h-100" >
+                        <div class="card-inner animate__animated animate__zoomInLeft">
+                            <div class="card-title-group align-start mb-2">
+                                <div class="card-title">
+                                    <center>      
+                                        <h6 class="title">DATOS DEL {{tipoDeCita}} SOLICITADO</h6>
+                                        <img src="{% static 'images/iconosMenu/citita.png' %}" alt="producto" width="50px">
+                                       
+                                    </center>
+                                  
+                                  
+                                </div>
+                               
+                            </div>
+                            
+                          
+                            <hr style="border-color:  #A6CF98   !important;">
+
+                            <div class="nk-block nk-block-lg text-center">
+                                {% if tipoDeCita == "SERVICIO" %}
+                                    {% for datoTipoCita in datosTipoCita %}
+                                    <h3 class="fuenteTitulo">{{datoTipoCita.1}}</h3>
+                                    <small class="text-azure">Descripción:</small>
+                                    <p class="text-center">{{datoTipoCita.3}}</p>
+                                    <small class="text-azure">Complementos:</small>
+                                    <p class="text-center">{{datoTipoCita.4}}</p>
+                                    <h5 class="fw-bold text-azure">Precio de venta</h5>
+                                    <h4 class="fw-bold text-dark">$ <span class="text-teal">{{datoTipoCita.2}}</span> MXN</h4>
+                                    {% endfor %}
+                                {% elif tipoDeCita == "SESIÓN DE TRATAMIENTO" %}
+                                    {% for datoTipoCita in datosTipoCita %}
+                                    <h3 class="fuenteTitulo">{{datoTipoCita.0}} - {{datoTipoCita.1}}</h3>
+                                    <small class="text-azure">Tipo de tratamiento:</small>
+                                    <p class="text-center">{{datoTipoCita.3}}</p>
+                                    <small class="text-azure">Descripción:</small>
+                                    <p class="text-center">{{datoTipoCita.4}}</p>
+                                    <small class="text-azure">Complementos:</small>
+                                    <p class="text-center">{{datoTipoCita.5}}</p>
+                                    <h5 class="fw-bold text-azure">Precio de venta</h5>
+                                    <h4 class="fw-bold text-dark">$ <span class="text-teal">{{datoTipoCita.2}}</span> MXN</h4>
+                                    {% endfor %}
+                                {% elif tipoDeCita == "PAQUETE/PROMOCIÓN TRATAMIENTO" %}
+                                    {% for datoTipoCita in datosTipoCita %}
+                                    <h3 class="fuenteTitulo">{{datoTipoCita.0}} <br> {{datoTipoCita.1}} sesiones.</h3>
+                                    <small class="text-azure">Descuento:</small>
+                                    {% if datoTipoCita.2 == "Sin descuento" %}
+                                        <p class="text-center">Sin descuento aplicado.</p>
+                                    {% else %}
+                                        <p class="text-center">- {{datoTipoCita.3}} %.</p>
+                                    {% endif %}
+                                    <small class="text-azure">Tratamiento aplicado:</small>
+                                    <h5 class="fw-bold text-azure">Tratamiento {{datoTipoCita.7}} - {{datoTipoCita.5}}</h5>
+                                    <small class="text-azure">Precio del paquete:</small>
+                                    <h4 class="fw-bold text-dark">$ <span class="text-teal">{{datoTipoCita.4}}</span> MXN</h4>
+                                    {% endfor %}
+                                {% endif %}
+                                    
+                                             
+                                
+                            </div> <!-- nk-block -->
+                           
+                            <hr class="preview-hr" style="border-color:  #A6CF98   !important;">
+                            {% if tipoCita == "PaqueteTratamiento" %}
+                            <center>
+                                <h6 class="title">ESTATUS DE PAGO</h6>
+                                {% if estatusPago == "Pendiente" %}
+                                <div class="row gy-4">
+                                    <div class="col-sm-4">
+                                        <p class="fw-bold text-dark">Abonado: $<span class="fw-bold text-teal">{{totalAbonado}}</span> MXN. </p>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <p class="fw-bold text-dark">Restante: $<span class="fw-bold text-danger">{{totalRestante}}</span> MXN. </p>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <p class="fw-bold text-dark">Estatus: <span class="fw-bold text-warning">Pendiente de saldar.</span></p>
+                                    </div>
+                                </div>
+                                
+                                {% else %}
+                                <p class="fw-bold text-teal">Ya ha sido saldado/pagado en su totalidad!</p>
+                                {% endif %}
+                            </center>
+                            {% endif %}
+
+                        
+                        
+                   
+                        </div>
+                    </div><!-- .card -->
+                </div><!-- .col -->
+                <div class="col-xxl-6" >
+
+                    <div class="card h-100 animate__animated animate__zoomInRight" id="div3">
+                        <div class="card-inner">
+                       
+                       
+                            {% if tipoCita == "PaqueteTratamiento" %}
+                            <center>
+                                <h6 class="title">ESTATUS DE PAGO</h6>
+                                {% if estatusPago == "Pendiente" %}
+                                <div class="row gy-4">
+
+                                    <div class="col-sm-2" >
+                                        <div class="form-group">
+                                            
+                                            {% if tipoCita == "PaqueteTratamiento" %}
+                                            {% if primerPago %}
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Abono:</span>
+                                            
+                                            {% else %}
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Abono:</span>
+                                            {% endif %}
+    
+                                            {% else %}
+                                            
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Crédito:</span>
+                                            {% endif %}
+                                            
+                                                <div class="preview-block"  >
+                                                    {% if tipoCita == "PaqueteTratamiento" %}
+                                                    {% if primerPago %}
+                                                    <input type="number"  id="abonoCliente" class="form-control"  maxlength="6" max="10000" min="1" value="{{mitad}}" step=".5" name="abonoCliente" onchange="cambiarAbono();">
+                                                    
+                                                    {% else %}
+                                                    <input type="number"  id="abonoCliente" class="form-control"  maxlength="6" max="10000" min="1" value="1" step=".5" name="abonoCliente" onchange="cambiarAbono();">
+                                                    {% endif %}
+    
+                                                    {% else %}
+                                                    
+                                                    <div class="custom-control custom-checkbox">
+                                                       
+                                                        <input type="checkbox"  class="custom-control-input"  id="checkbox" name="checkboxCredito" >
+                                                        <label class="custom-control-label" for="checkbox">SI</label>
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                       
+                                          
+                                        </div>
+                                            <div class="form-control-wrap " id="creditoAceptado" style="display: none;">
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important; font-size:10px!important;">Aceptado:</span>
+                                                <h6><span id="spanAceptado" >SI</span></h6>
+                                            </div>
+                                            <br>
+                                            <div class="form-control-wrap" id="conceptoCredito" style="display: none;">
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Pago:</span>
+                                                <p class="fs-12px"><span>4 quincenas</span></p>
+                                            </div>
+                                    </div>
+    
+                                    <div class="col-sm-3"   >
+                                        <div class="form-group">
+                                            <div class="form-control-wrap " id="formaPago">
+                                           
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Forma de pago:</span>
+                                                <div class="form-control-select">
+                                                    <select class="form-control" id="selectTipoPago" name="tipoPago" onchange="cambioTipoPago()">
+                                                        <option value="Efectivo">Efectivo</option>
+                                                        <option value="Tarjeta">Tarjeta</option>
+                                                        <option value="Transferencia">Transferencia</option>
+                                                    </select>
+                                                </div>
+                                                <br>
+                                            </div>
+                                            <div class="form-control-wrap" id="cantidadEfectivo">
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Cantidad:</span>
+                                                <input type="number"class="form-control"   placeholder="Ingresar efectivo" maxlength="4" max="10000" min="5" value="5" step="1" id="efectivoPagoCliente" onkeyup="calcularFeriaAbono()"> 
+                                            </div>
+                                            <div class="form-control-wrap " id="divSelectTipoTarjeta">
+                                           
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Tipo tarjeta:</span>
+                                                <div class="form-control-select">
+                                                    <select class="form-control" id="default-06" name="tipoTarjeta">
+                                                        <option value="Credito">Crédito</option>
+                                                        <option value="Debito">Débito</option>
+                                                    </select>
+                                                </div>
+                                       
+                                            </div>
+                                            <div class="form-control-wrap " id="divClaveRastreoTransferencia">
+                                           
+                                                <div class="form-group">
+                                                    <label class="form-label" for="default-01">Clave de rastreo Transferencia:</label>
+                                                    <div class="form-control-wrap">
+                                                        
+                                                        <input type="text"class="form-control" placeholder="Ingresar Clave" maxlength="50" name="claveRastreoTransferencia"> 
+                                                    </div>
+                                                </div>
+                                       
+                                            </div>
+                                                <div class="form-control-wrap " id="fechaCreditoNuevo" style="display: none;">
+                                                    <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Fecha inicio:</span>
+                                                    <h6><span id="spanFechaCreditoInicio">{{fechaInicioDePago}}</span></h6>
+                                                </div>
+                                                <br>
+                                                <div class="form-control-wrap " id="fechaCreditoTermino" style="display: none;">
+                                                    <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Fecha final:</span>
+                                                    <h6><span id="spanFechaCreditoFinal">{{fechaFinalDePago}}</span></h6>
+                                                    <br>
+                                                </div>
+                                                <div class="form-control-wrap " id="divCreditoLibre" style="display: none;">
+                                                    <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Crédito Libre:</span>
+                                                    <h6><span>$ <span id="spanCreditoLibre" >{{creditoLibreCliente}}</span> MXN. </span></h6>
+                                                </div>
+                                            
+                                        </div>
+                                        
+                                        
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <div class="form-group">
+                                            <div class="form-control-wrap " style="padding-bottom: 10px!important;">
+                                           
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Descuento:</span>
+                                                <div class="form-control-select">
+                                                    <select class="form-control" id="descuento" name="descuento" onchange="seleccionDescuento()">
+                                                        <option value="SinDescuento">No aplica</option>
+                                                        
+                                                    </select>
+                                                </div>
+                                       
+                                            </div>
+                                            
+                                            <div class="form-control-wrap " id="divCreditoSucursal" style="display: none;">
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important; font-size:10px!important;">Límite Crédito:</span>
+                                                <h6><span>$ <span >{{montoLimite}}</span> MXN. </span></h6>
+                                            </div>
+                                            <br>
+                                            <div class="form-control-wrap " id="divCreditoUsado" style="display: none;">
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Crédito usado:</span>
+                                                <h6><span>$ <span id="spanCreditoUsado" >{{creditoFaltantePorPagar}}</span> MXN. </span></h6>
+                                            </div>
+    
+                                            <div class="form-control-wrap " id="divReferenciaBancaria">
+                                           
+                                                <div class="form-group">
+                                                    <label class="form-label" for="default-01">Referencia de pago:</label>
+                                                    <div class="form-control-wrap">
+                                                        
+                                                        <input type="text"class="form-control" placeholder="Ingresar referencia Vouncher" maxlength="50" name="referenciaTarjeta"> 
+                                                    </div>
+                                                </div>
+                                       
+                                            </div>
+                                           
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4" >
+                                       
+                                        <div class="form-group">
+                                            <div class="form-control-wrap ">
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Total a pagar:</span>
+                                                <h6>$<input id="costoTotal" type="text" value="{{precioCita}}" size="10" readonly style="border: none;" name="costoTotalAPagar" ></input> MXN.</h6>
+                                            </div>
+                                            <br>
+                                            <div class="form-control-wrap ">
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Abono:</span>
+                                                <h6>$<input id="abonoTotal" type="text" value="{{mitad}}" size="10" readonly style="border: none;"></input> MXN.</h6>
+                                            </div> 
+                                            <div id="infoDescuento">
+                                                <div class="form-control-wrap ">
+                                                    
+                                                    <h6>-$<span id="spanResta">0</span> MXN Descuento</h6>
+                                                </div>
+                                                <br>
+                                                <div class="form-control-wrap ">
+                                                    <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Total con descuento:</span>
+                                                    <h6>$<span id="spanTotalConDescuento">0</span> MXN.</h6>
+                                                </div>
+                                            </div>
+                                            <div class="form-control-wrap" id="spanCambio">
+                                                
+                                                <h6>Cambio: $<span id="spanCambioChico">0</span> MXN.</h6>
+                                            </div>  
+                                            <br>
+                                            <div class="form-control-wrap" id="abono" style="display: none;">
+                                                
+                                                <h6>Abono: $<span id="spanAbono">0</span> MXN.</h6>
+                                            </div>  
+                                            <br>
+                                           
+                                            
+                                        </div>
+                                    </div>
+    
+                                    
+                                    
+                                </div>
+                                
+                                {% else %}
+                                <p class="fw-bold text-teal">Ya ha sido saldado/pagado en su totalidad! Dar clic en Vender para Guardar la cita.</p>
+                                {% endif %}
+                            </center>
+                            {% else %}
+                                {% if estatusPago == "sinCanjear" %}
+                                <div class="row gy-4">
+
+                                    <div class="col-sm-2" >
+                                        <div class="form-group">
+                                            
+                                            {% if tipoCita == "PaqueteTratamiento" %}
+                                            {% if primerPago %}
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Abono:</span>
+                                            
+                                            {% else %}
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Abono:</span>
+                                            {% endif %}
+    
+                                            {% else %}
+                                            
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Crédito:</span>
+                                            {% endif %}
+                                            
+                                                <div class="preview-block"  >
+                                                    {% if tipoCita == "PaqueteTratamiento" %}
+                                                    {% if primerPago %}
+                                                    <input type="number"  id="abonoCliente" class="form-control"  maxlength="6" max="10000" min="1" value="{{mitad}}" step=".5" name="abonoCliente" onchange="cambiarAbono();">
+                                                    
+                                                    {% else %}
+                                                    <input type="number"  id="abonoCliente" class="form-control"  maxlength="6" max="10000" min="1" value="1" step=".5" name="abonoCliente" onchange="cambiarAbono();">
+                                                    {% endif %}
+    
+                                                    {% else %}
+                                                    
+                                                    <div class="custom-control custom-checkbox">
+                                                       
+                                                        <input type="checkbox"  class="custom-control-input"  id="checkbox" name="checkboxCredito" >
+                                                        <label class="custom-control-label" for="checkbox">SI</label>
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                       
+                                          
+                                        </div>
+                                            <div class="form-control-wrap " id="creditoAceptado" style="display: none;">
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important; font-size:10px!important;">Aceptado:</span>
+                                                <h6><span id="spanAceptado" >SI</span></h6>
+                                            </div>
+                                            <br>
+                                            <div class="form-control-wrap" id="conceptoCredito" style="display: none;">
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Pago:</span>
+                                                <p class="fs-12px"><span>4 quincenas</span></p>
+                                            </div>
+                                    </div>
+    
+                                    <div class="col-sm-3"   >
+                                        <div class="form-group">
+                                            <div class="form-control-wrap " id="formaPago">
+                                           
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Forma de pago:</span>
+                                                <div class="form-control-select">
+                                                    <select class="form-control" id="selectTipoPago" name="tipoPago" onchange="cambioTipoPago()">
+                                                        <option value="Efectivo">Efectivo</option>
+                                                        <option value="Tarjeta">Tarjeta</option>
+                                                        <option value="Transferencia">Transferencia</option>
+                                                    </select>
+                                                </div>
+                                                <br>
+                                            </div>
+                                            <div class="form-control-wrap" id="cantidadEfectivo">
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Cantidad:</span>
+                                                <input type="number"class="form-control"   placeholder="Ingresar efectivo" maxlength="4" max="10000" min="5" value="5" step="1" id="efectivoPagoCliente" onkeyup="calcularFeria()"> 
+                                            </div>
+                                            <div class="form-control-wrap " id="divSelectTipoTarjeta">
+                                           
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Tipo tarjeta:</span>
+                                                <div class="form-control-select">
+                                                    <select class="form-control" id="default-06" name="tipoTarjeta">
+                                                        <option value="Credito">Crédito</option>
+                                                        <option value="Debito">Débito</option>
+                                                    </select>
+                                                </div>
+                                       
+                                            </div>
+                                            <div class="form-control-wrap " id="divClaveRastreoTransferencia">
+                                           
+                                                <div class="form-group">
+                                                    <label class="form-label" for="default-01">Clave de rastreo Transferencia:</label>
+                                                    <div class="form-control-wrap">
+                                                        
+                                                        <input type="text"class="form-control" placeholder="Ingresar Clave" maxlength="50" name="claveRastreoTransferencia"> 
+                                                    </div>
+                                                </div>
+                                       
+                                            </div>
+                                                <div class="form-control-wrap " id="fechaCreditoNuevo" style="display: none;">
+                                                    <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Fecha inicio:</span>
+                                                    <h6><span id="spanFechaCreditoInicio">{{fechaInicioDePago}}</span></h6>
+                                                </div>
+                                                <br>
+                                                <div class="form-control-wrap " id="fechaCreditoTermino" style="display: none;">
+                                                    <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Fecha final:</span>
+                                                    <h6><span id="spanFechaCreditoFinal">{{fechaFinalDePago}}</span></h6>
+                                                    <br>
+                                                </div>
+                                                <div class="form-control-wrap " id="divCreditoLibre" style="display: none;">
+                                                    <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Crédito Libre:</span>
+                                                    <h6><span>$ <span id="spanCreditoLibre" >{{creditoLibreCliente}}</span> MXN. </span></h6>
+                                                </div>
+                                            
+                                        </div>
+                                        
+                                        
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <div class="form-group">
+                                            <div class="form-control-wrap " style="padding-bottom: 10px!important;">
+                                           
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Descuento:</span>
+                                                <div class="form-control-select">
+                                                    <select class="form-control" id="descuento" name="descuento" onchange="seleccionDescuento()">
+                                                        <option value="SinDescuento">No aplica</option>
+                                                        
+                                                    </select>
+                                                </div>
+                                       
+                                            </div>
+                                            
+                                            <div class="form-control-wrap " id="divCreditoSucursal" style="display: none;">
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important; font-size:10px!important;">Límite Crédito:</span>
+                                                <h6><span>$ <span >{{montoLimite}}</span> MXN. </span></h6>
+                                            </div>
+                                            <br>
+                                            <div class="form-control-wrap " id="divCreditoUsado" style="display: none;">
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Crédito usado:</span>
+                                                <h6><span>$ <span id="spanCreditoUsado" >{{creditoFaltantePorPagar}}</span> MXN. </span></h6>
+                                            </div>
+    
+                                            <div class="form-control-wrap " id="divReferenciaBancaria">
+                                           
+                                                <div class="form-group">
+                                                    <label class="form-label" for="default-01">Referencia de pago:</label>
+                                                    <div class="form-control-wrap">
+                                                        
+                                                        <input type="text"class="form-control" placeholder="Ingresar referencia Vouncher" maxlength="50" name="referenciaTarjeta"> 
+                                                    </div>
+                                                </div>
+                                       
+                                            </div>
+                                           
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4" >
+                                       
+                                        <div class="form-group">
+                                            <div class="form-control-wrap ">
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Total a pagar:</span>
+                                                <h6>$<input id="costoTotal" type="text" value="{{precioCita}}" size="10" readonly style="border: none;" name="costoTotalAPagar" ></input> MXN.</h6>
+                                            </div>
+                                            <br>
+                                            
+                                            <div id="infoDescuento">
+                                                <div class="form-control-wrap ">
+                                                    
+                                                    <h6>-$<span id="spanResta">0</span> MXN Descuento</h6>
+                                                </div>
+                                                <br>
+                                                <div class="form-control-wrap ">
+                                                    <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Total con descuento:</span>
+                                                    <h6>$<span id="spanTotalConDescuento">0</span> MXN.</h6>
+                                                </div>
+                                            </div>
+                                            <div class="form-control-wrap" id="spanCambio">
+                                                
+                                                <h6>Cambio: $<span id="spanCambioChico">0</span> MXN.</h6>
+                                            </div>  
+                                            <br>
+                                            <div class="form-control-wrap" id="abono" style="display: none;">
+                                                
+                                                <h6>Abono: $<span id="spanAbono">0</span> MXN.</h6>
+                                            </div>  
+                                            <br>
+                                           
+                                            
+                                        </div>
+                                    </div>
+    
+                                    
+                                    
+                                </div>
+                                {% endif %}
+                            {% endif %}
+
+                            
+                            
+                            
+                            
+                           
+                        
+                        
+                   
+                        </div>
+                        
+                    </div>
+
+                    <div class="card h-100 animate__animated animate__zoomInRight" id="div3">
+                        <div class="card-inner animate__animated animate__zoomInRight">
+                       
+                            
+                         
+                            <div class="row gy-4">
+                                <div class="col-sm-8" >
+                                    <div class="form-group">
+                                        <div class="form-control-wrap ">
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Comentarios de venta:</span>
+                                            <textarea class="form-control form-control-sm" id="cf-default-textarea" placeholder="Ingresar comentarios de la venta" name="comentarios"></textarea>
+                                                
+                                        </div> 
+                                    </div>
+                                        
+                                </div>
+                                <div class="col-sm-4" >
+                                    <div class="form-group">
+                                        <center>
+                                            <br>
+                                            <br>
+                                            <br>
+                                            
+                                        <button type="submit" class="btn btn-dim btn-primary" id="botonGuardarVenta">Vender</button>
+                                        </center>
+                                    </div>
+                                        
+                                </div>
+                            </div>
+                                
+                        </div>
+                    </div>  
+
+                       
+                </div><!-- .card -->
+                    
+
+
+                    
+                </div><!-- .col -->
+            </div><!-- .row -->
+
+          
+        </form>        
+                
+           
+        </div><!-- .nk-block -->
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<script>
+    {% if bienvenida %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: '{{bienvenida}}',
+            footer: '<span style="color: #EB99E0!important"> Empieza a navegar por el sistema! </span>',
+            showConfirmButton: false,
+            timer: 2000
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+</script>
+
+<script>
+
+    function cambiarAbono(){
+        var inputAbono = document.getElementById("abonoCliente");
+        var valorInputAbono = inputAbono.value;
+        //Cambiar string de abono y calcular cambio
+        document.getElementById("abonoTotal").value = valorInputAbono;
+    }
+
+    function doSearch()
+
+    {
+
+        const tableReg = document.getElementById('datos');
+
+        const searchText = document.getElementById('searchTerm').value.toLowerCase();
+
+        let total = 0;
+
+
+
+        // Recorremos todas las filas con contenido de la tabla
+
+        for (let i = 1; i < tableReg.rows.length; i++) {
+
+            // Si el td tiene la clase "noSearch" no se busca en su cntenido
+
+            if (tableReg.rows[i].classList.contains("noSearch")) {
+
+                continue;
+
+            }
+
+
+
+            let found = false;
+
+            const cellsOfRow = tableReg.rows[i].getElementsByTagName('td');
+
+            // Recorremos todas las celdas
+
+            for (let j = 0; j < cellsOfRow.length && !found; j++) {
+
+                const compareWith = cellsOfRow[j].innerHTML.toLowerCase();
+
+                // Buscamos el texto en el contenido de la celda
+
+                if (searchText.length == 0 || compareWith.indexOf(searchText) > -1) {
+
+                    found = true;
+
+                    total++;
+
+                }
+
+            }
+
+            if (found) {
+
+                tableReg.rows[i].style.display = '';
+
+            } else {
+
+                // si no ha encontrado ninguna coincidencia, esconde la
+
+                // fila de la tabla
+
+                tableReg.rows[i].style.display = 'none';
+
+            }
+
+        }
+
+
+
+        // mostramos las coincidencias
+
+        const lastTR=tableReg.rows[tableReg.rows.length-1];
+
+        const td=lastTR.querySelector("td");
+
+        lastTR.classList.remove("hide", "red");
+
+        if (searchText == "") {
+
+            lastTR.classList.add("hide");
+
+        } else if (total) {
+
+            td.innerHTML="Se ha encontrado "+total+" coincidencia"+((total>1)?"s":"");
+
+        } else {
+
+            lastTR.classList.add("red");
+
+            td.innerHTML="No se han encontrado coincidencias";
+
+        }
+
+    }
+</script>
+
+<script type="text/javascript">
+    showTime();
+    function showTime(){
+    myDate = new Date();
+    hours = myDate.getHours();
+    minutes = myDate.getMinutes();
+    seconds = myDate.getSeconds();
+    if (hours < 10) hours = 0 + hours;
+    
+    if (minutes < 10) minutes = "0" + minutes;
+    
+    if (seconds < 10) seconds = "0" + seconds;
+    
+    $("#reloj").text(hours+ ":" +minutes+ ":" +seconds);
+    setTimeout("showTime()", 1000);
+    } 
+    </script> 
+
+<script>
+    
+    var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+    botonGuardarVenta.disabled = false;
+</script>
+
+<script>
+    var divSelectTipoTarjeta = document.getElementById('divSelectTipoTarjeta');
+    var divReferenciaBancaria = document.getElementById('divReferenciaBancaria');
+    var divClaveRastreoTransferencia = document.getElementById('divClaveRastreoTransferencia');
+    var infoDescuento = document.getElementById('infoDescuento');
+
+
+    var tipoCita = "{{tipoCita}}"
+    if (tipoCita === "PaqueteTratamiento"){
+        
+        divSelectTipoTarjeta.style.display = "none";
+        divReferenciaBancaria.style.display = "none";
+        divClaveRastreoTransferencia.style.display = "none";
+        infoDescuento.style.display = "none";
+    }
+
+    window.onload = function(){
+      
+        var creditoAceptado = document.getElementById('creditoAceptado');
+        var conceptoCredito = document.getElementById('conceptoCredito');
+        var fechaCreditoNuevo = document.getElementById('fechaCreditoNuevo');
+        var fechaCreditoTermino = document.getElementById('fechaCreditoTermino');
+        var divCreditoLibre = document.getElementById('divCreditoLibre');
+        var spanCreditoLibre = document.getElementById('spanCreditoLibre');
+        var abono = document.getElementById('abono');
+        var divCreditoSucursal = document.getElementById('divCreditoSucursal')
+        var divCreditoUsado = document.getElementById('divCreditoUsado');
+        var spanCreditoUsado = document.getElementById('spanCreditoUsado')
+
+
+        var divSelectTipoTarjeta = document.getElementById('divSelectTipoTarjeta');
+        var divReferenciaBancaria = document.getElementById('divReferenciaBancaria');
+        var divClaveRastreoTransferencia = document.getElementById('divClaveRastreoTransferencia');
+        var infoDescuento = document.getElementById('infoDescuento');
+        var divCantidadEfectivo = document.getElementById('cantidadEfectivo');
+        var spanCambio = document.getElementById('spanCambio');
+        var formaPago = document.getElementById('formaPago');
+
+        {% if boolCreditoLibreCliente %}
+        checkbox.disabled=false;
+        {% else %}
+        checkbox.disabled=true;
+        {% endif %}
+
+        
+
+        divSelectTipoTarjeta.style.display = "none";
+        divReferenciaBancaria.style.display = "none";
+        divClaveRastreoTransferencia.style.display = "none";
+    
+        infoDescuento.style.display = "none";
+        divCantidadEfectivo.style.display = "block";
+    
+
+        creditoAceptado.style.display = "none";
+        conceptoCredito.style.display = "none";
+        fechaCreditoNuevo.style.display = "none";
+        fechaCreditoTermino.style.display = "none";
+        abono.style.display = "none";
+        divCreditoLibre.style.display = "none";
+        divCreditoSucursal.style.display = "none";
+        divCreditoUsado.style.display = "none";
+      
+        checkbox.addEventListener("change", validarCheckBox, false);
+
+        function validarCheckBox(){
+           
+            if(checkbox.checked){
+                var contadorCkeckbox = 1;
+                divSelectTipoTarjeta.style.display = "none";
+                divReferenciaBancaria.style.display = "none";
+                divClaveRastreoTransferencia.style.display = "none";
+                divCantidadEfectivo.style.display = "none";
+                spanCambio.style.display = "none";
+                formaPago.style.display = "none";
+
+             
+                creditoAceptado.style.display = "block";
+                conceptoCredito.style.display = "block";
+                fechaCreditoNuevo.style.display = "block";
+                fechaCreditoTermino.style.display = "block";
+                abono.style.display = "block";
+                divCreditoLibre.style.display = "block";
+                divCreditoSucursal.style.display = "block";
+                divCreditoUsado.style.display = "block";
+
+
+                //Obtener valor del select del cliente..
+
+                //Validar si hay o no un descuento 
+                var descuentoSeleccionado = document.getElementById('descuento').value;
+                var costoTotal = document.getElementById('costoTotal').value;
+                var spanResta = document.getElementById('spanResta');
+                var spanTotalConDescuento = document.getElementById('spanTotalConDescuento');
+                if (descuentoSeleccionado == "SinDescuento"){
+                    infoDescuento.style.display = "none";
+                    var efectivoPagoCliente = document.getElementById("efectivoPagoCliente");
+                    var spanCambioChico = document.getElementById("spanCambioChico");
+                    var valorInput = efectivoPagoCliente.value;
+
+                    if (valorInput == ""){
+                        spanCambioChico.innerHTML = "0";
+                    }
+                    else{
+                        var cambio = parseFloat(valorInput) - costoTotal;
+            
+                        spanCambioChico.innerHTML = cambio.toString();
+                    }
+                    var spanAbono = document.getElementById("spanAbono");
+                    var abonito = costoTotal / 4;
+                    if (contadorCkeckbox >=1 ){
+                        
+                        spanAbono.innerHTML = abonito.toString();
+                    }else{
+                        spanAbono.innerHTML = "0";
+                    }
+                    
+                }else{
+                    infoDescuento.style.display = "block";
+                    //15
+                    var decimal = "."+descuentoSeleccionado.toString()
+                    var decimalFloat = parseFloat(decimal)  //.15
+                    var resta = costoTotal * decimalFloat
+        
+                    var restaConDosDecimales = resta.toFixed(2); 
+                    var restaConDosDecimalesRedondeada = Math.round(restaConDosDecimales);
+        
+                    var restaDescuento = costoTotal - restaConDosDecimales
+                    var restaDescuentoDosDecimales = restaDescuento.toFixed(2);
+                    var restaDescuentoDosDecimalesRedondeada = Math.round(restaDescuentoDosDecimales);
+        
+                    spanResta.innerHTML = restaConDosDecimalesRedondeada.toString();
+                    spanTotalConDescuento.innerHTML = restaDescuentoDosDecimalesRedondeada.toString();
+                    //Tomar el valor del span del total a pagar.. 
+                    var efectivoPagoCliente = document.getElementById("efectivoPagoCliente");
+                    var spanCambioChico = document.getElementById("spanCambioChico");
+                    var valorInput = efectivoPagoCliente.value;
+        
+                    if (valorInput == ""){
+                        spanCambioChico.innerHTML = "0";
+                    }
+                    else{
+                        var cambio = parseFloat(valorInput) - restaDescuentoDosDecimalesRedondeada;
+            
+                        spanCambioChico.innerHTML = cambio.toString();
+                    }
+                    var spanAbono = document.getElementById("spanAbono");
+                    var abonito = restaDescuentoDosDecimalesRedondeada / 4;
+                    if (contadorCkeckbox >=1 ){
+                        
+                        spanAbono.innerHTML = abonito.toString();
+                    }else{
+                        spanAbono.innerHTML = "0";
+                    }
+
+                    
+                }
+                
+
+                
+
+
+                
+                
+         
+               
+            }else{
+              
+                divSelectTipoTarjeta.style.display = "none";
+                divReferenciaBancaria.style.display = "none";
+                divClaveRastreoTransferencia.style.display = "none";
+                divCantidadEfectivo.style.display = "block";
+                spanCambio.style.display = "block";
+                formaPago.style.display = "block";
+
+             
+                creditoAceptado.style.display = "none";
+                conceptoCredito.style.display = "none";
+                fechaCreditoNuevo.style.display = "none";
+                fechaCreditoTermino.style.display = "none";
+                abono.style.display = "none";
+                divCreditoLibre.style.display = "none";
+                divCreditoSucursal.style.display = "none";
+                divCreditoUsado.style.display = "none";
+            
+               
+                
+            }
+        }
+        window.onload= mueveReloj ();
+
+
+
+    }
+    
+
+    function cambioTipoPago(){
+        var tipoPagoSeleccionado = document.getElementById('selectTipoPago').value;
+        var divCantidadEfectivo = document.getElementById('cantidadEfectivo');
+        var spanCambio = document.getElementById('spanCambio');
+        if (tipoPagoSeleccionado == 'Efectivo'){
+            divCantidadEfectivo.style.display = "block";
+            divSelectTipoTarjeta.style.display = "none";
+            divReferenciaBancaria.style.display = "none";
+            divClaveRastreoTransferencia.style.display = "none";
+            spanCambio.style.display = "block";
+            
+        }
+        else if(tipoPagoSeleccionado == 'Tarjeta'){
+            divCantidadEfectivo.style.display = "none";
+            divSelectTipoTarjeta.style.display = "block";
+            divReferenciaBancaria.style.display = "block";
+            divClaveRastreoTransferencia.style.display = "none";
+            spanCambio.style.display = "none";
+        }
+        else if(tipoPagoSeleccionado == 'Transferencia'){
+            divCantidadEfectivo.style.display = "none";
+            divSelectTipoTarjeta.style.display = "none";
+            divReferenciaBancaria.style.display = "none";
+            
+            divClaveRastreoTransferencia.style.display = "block";
+            spanCambio.style.display = "none";
+        
+        }
+   
+    }
+
+    function seleccionDescuento(){
+        var descuentoSeleccionado = document.getElementById('descuento').value;
+        var spanResta = document.getElementById('spanResta');
+        var spanTotalConDescuento = document.getElementById('spanTotalConDescuento');
+        if (descuentoSeleccionado == "SinDescuento"){
+            infoDescuento.style.display = "none";
+            var costoTotal = document.getElementById("costoTotal").value;
+            var efectivoPagoCliente = document.getElementById("efectivoPagoCliente");
+            var spanCambioChico = document.getElementById("spanCambioChico");
+            var valorInput = efectivoPagoCliente.value;
+
+            if (valorInput == ""){
+                spanCambioChico.innerHTML = "0";
+            }
+            else{
+                var cambio = parseFloat(valorInput) - costoTotal;
+    
+                spanCambioChico.innerHTML = cambio.toString();
+            }
+            var spanAbono = document.getElementById("spanAbono");
+            var abonito = costoTotal / 4;
+            spanAbono.innerHTML = abonito.toString();
+            
+        }
+        else{
+            infoDescuento.style.display = "block";
+            //15
+            var costoTotal = document.getElementById("costoTotal").value;
+            var decimal = "."+descuentoSeleccionado.toString()
+            var decimalFloat = parseFloat(decimal)  //.15
+            var resta = costoTotal * decimalFloat
+
+            var restaConDosDecimales = resta.toFixed(2); 
+            var restaConDosDecimalesRedondeada = Math.round(restaConDosDecimales);
+
+            var restaDescuento = costoTotal - restaConDosDecimales
+            var restaDescuentoDosDecimales = restaDescuento.toFixed(2);
+            var restaDescuentoDosDecimalesRedondeada = Math.round(restaDescuentoDosDecimales);
+
+            spanResta.innerHTML = restaConDosDecimalesRedondeada.toString();
+            spanTotalConDescuento.innerHTML = restaDescuentoDosDecimalesRedondeada.toString();
+            //Tomar el valor del span del total a pagar.. 
+            var efectivoPagoCliente = document.getElementById("efectivoPagoCliente");
+            var spanCambioChico = document.getElementById("spanCambioChico");
+            var valorInput = efectivoPagoCliente.value;
+
+            if (valorInput == ""){
+                spanCambioChico.innerHTML = "0";
+            }
+            else{
+                var cambio = parseFloat(valorInput) - restaDescuentoDosDecimalesRedondeada;
+    
+                spanCambioChico.innerHTML = cambio.toString();
+            }
+            var spanAbono = document.getElementById("spanAbono");
+            var abonito = restaDescuentoDosDecimalesRedondeada / 4;
+            spanAbono.innerHTML = abonito.toString();
+            
+        }
+       
+    }
+
+    function calcularFeriaAbono(){
+        var efectivoPagoCliente = document.getElementById("efectivoPagoCliente");
+        var spanCambioChico = document.getElementById("spanCambioChico");
+        var valorInput = efectivoPagoCliente.value;
+        var abonoTotal = document.getElementById("abonoCliente").value;
+
+        if (valorInput == ""){
+            spanCambioChico.innerHTML = "0";
+        }
+        else{
+            var valorDeSelectDeDescuento = document.getElementById("descuento").value;
+            if (valorDeSelectDeDescuento == "SinDescuento"){
+                var cambio = parseFloat(valorInput) - abonoTotal;
+            }else{
+                var decimal = "."+valorDeSelectDeDescuento.toString()
+                var decimalFloat = parseFloat(decimal)  //.15
+                var resta = abonoTotal * decimalFloat
+                var restaConDosDecimales = resta.toFixed(2); 
+                var restaConDosDecimalesRedondeada = Math.round(restaConDosDecimales);
+
+                var restaDescuento = abonoTotal - restaConDosDecimales
+                var restaDescuentoDosDecimales = restaDescuento.toFixed(2);
+                var restaDescuentoDosDecimalesRedondeada = Math.round(restaDescuentoDosDecimales);
+                var cambio = parseFloat(valorInput) - restaDescuentoDosDecimalesRedondeada;
+            }
+
+            
+
+            spanCambioChico.innerHTML = cambio.toString();
+        }
+        
+
+
+    }
+
+    function calcularFeria(){
+        var efectivoPagoCliente = document.getElementById("efectivoPagoCliente");
+        var spanCambioChico = document.getElementById("spanCambioChico");
+        var valorInput = efectivoPagoCliente.value;
+        var costoTotal = document.getElementById("costoTotal").value;
+
+        if (valorInput == ""){
+            spanCambioChico.innerHTML = "0";
+        }
+        else{
+            var valorDeSelectDeDescuento = document.getElementById("descuento").value;
+            if (valorDeSelectDeDescuento == "SinDescuento"){
+                var cambio = parseFloat(valorInput) - costoTotal;
+            }else{
+                var decimal = "."+valorDeSelectDeDescuento.toString()
+                var decimalFloat = parseFloat(decimal)  //.15
+                var resta = costoTotal * decimalFloat
+                var restaConDosDecimales = resta.toFixed(2); 
+                var restaConDosDecimalesRedondeada = Math.round(restaConDosDecimales);
+
+                var restaDescuento = costoTotal - restaConDosDecimales
+                var restaDescuentoDosDecimales = restaDescuento.toFixed(2);
+                var restaDescuentoDosDecimalesRedondeada = Math.round(restaDescuentoDosDecimales);
+                var cambio = parseFloat(valorInput) - restaDescuentoDosDecimalesRedondeada;
+            }
+
+            
+
+            spanCambioChico.innerHTML = cambio.toString();
+        }
+        
+
+
+    }
+
+    
+</script>
+{% endblock %}

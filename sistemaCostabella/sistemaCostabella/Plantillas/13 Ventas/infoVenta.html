@@ -1,0 +1,454 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Info de venta | Costabella
+{% endblock %}
+
+{% block estilos %}
+
+{% endblock %}
+
+{% block contenido%}        
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="content-page wide-md m-auto">
+            <div class="nk-block-head nk-block-head-lg wide-xs mx-auto">
+                <div class="nk-block-head-content text-center">
+                    <h1 class="nk-block-title fw-bold fuenteTitulo">INFORMACIÓN DE VENTA #{{idVenta}}</h1>
+                    <img src="{% static 'images/accesos/infoVenta.png' %}" alt="iconoVenta">
+                </div>
+            </div><!-- .nk-block-head -->
+            <div class="nk-block">
+                <div class="row g-gs">
+                    <div class="col-xxl-6">
+                        <div class="row g-gs">
+                            <div class="col-lg-6 col-xxl-12">
+                                <div class="card">
+                                    <div class="card-inner">
+                                        <div class="nk-sale-data-group">
+                                            <div class="card-title">
+                                                <h2 class="nk-block-title fw-normal">Lugar y fechas.</h2>
+                                                <span>Sucursal y fecha donde se efectuó la venta</span>
+                                            </div>
+                                            
+                                        </div>
+
+                                        <div class="nk-sale-data-group flex-md-nowrap g-4">
+                                            <div class="nk-sale-data">
+                                                <img src="{% static 'images/accesos/iconoSucursalVenta.png' %}" alt="sucursal" width="60">
+                                                
+                                            </div>
+                                            <div class="nk-sale-data">
+                                                <span class="amount">{{nombreSucursal}}</span>
+                                                <span class="sub-title">{{direccionSucursal}}</span>
+                                            </div>
+                                            
+                                            
+                                        </div>
+                                        <br>
+                                        <div class="nk-sale-data-group flex-md-nowrap g-4">
+                                            <div class="nk-sale-data">
+                                                <img src="{% static 'images/accesos/iconoVendedorVenta.png' %}" alt="sucursal" width="60">
+                                                
+                                            </div>
+                                            <div class="nk-sale-data">
+                                                <span class="amount">{{nombreCompletoEmpleadoVendedor}}</span>
+                                                <span class="sub-title"><span class="fw-bold text-pink">Vendedora</span> - {{puestoEmpleado}}.</span>
+                                            </div>
+                                           
+                                        </div>
+                                        <br>
+                                        <div class="nk-sale-data-group flex-md-nowrap g-4">
+                                            <div class="nk-sale-data">
+                                                <img src="{% static 'images/accesos/iconoFechaVenta.png' %}" alt="sucursal" width="60">
+                                                
+                                            </div>
+                                            <div class="nk-sale-data">
+                                                <span class="amount">{{fechaVenta}}</span>
+                                                <span class="sub-title"><span class="fw-bold text-pink">Hora de venta:</span> {{horaVenta}} hrs.</span>
+                                            </div>
+                                            
+                                        </div>
+                                        
+                                        
+                                    </div>
+                                </div>
+                            </div><!-- .col -->
+                            
+                        </div><!-- .row -->
+                    </div><!-- .col -->
+                    
+                    <div class="col-xxl-6">
+                        <div class="row g-gs">
+                            <div class="col-lg-6 col-xxl-12">
+                                <div class="card">
+                                    <div class="card-inner">
+                                        <div class="nk-sale-data-group">
+                                            <div class="card-title">
+                                                <h2 class="nk-block-title fw-normal">Cliente.</h2>
+                                                <span>Datos del cliente costabella.</span>
+                                            </div>
+                                            {% if nombreCliente == "Sin cliente"%}
+                                            <div class="nk-sale-data-group flex-md-nowrap g-4">
+                                                <div class="nk-sale-data">
+                                                    <img src="{% static 'images/accesos/iconoClienteVenta.png' %}" alt="sucursal" width="60">
+                                                    
+                                                </div>
+                                                <div class="nk-sale-data">
+                                                    <span class="amount">Cliente Momentaneo</span>
+                                                    
+                                                </div>
+                                                
+                                            </div>
+                                            {% else %}
+                                            <div class="nk-sale-data-group flex-md-nowrap g-4">
+                                                <div class="nk-sale-data">
+                                                    <img src="{% static 'images/accesos/iconoClienteVenta.png' %}" alt="sucursal" width="60">
+                                                    
+                                                </div>
+                                                <div class="nk-sale-data">
+                                                    <span class="amount">{{nombreCliente}}</span>
+                                                    <span class="sub-title">Tipo de cliente: <span class="fw-bold text-pink">{{tipoCliente}}</span></span>
+                                                </div>
+                                                
+                                            </div>
+                                            {% endif %}
+                                            
+                                            
+                                                                                       
+                                        </div>
+                                        {% if nombreCliente == "Sin cliente"%}
+                                            
+                                        {% else %}
+                                        <div class="nk-sale-data-group flex-md-nowrap g-4">
+                                                
+                                            <div class="nk-sale-data">
+                                                <span class="fs-20px ">
+                                                    <button class="btn btn-icon btn-sm btn-secondary"><em class="icon ni ni-call"></em></button>
+                                                    {{telefonoCliente}}</span>
+                                            </div>
+                                            
+                                        </div>
+                                        <br>
+                                        <div class="nk-sale-data-group flex-md-nowrap g-4">
+                                            
+                                            <div class="nk-sale-data">
+                                                <span class="fs-20px ">
+                                                    <button class="btn btn-icon btn-sm btn-secondary"><em class="icon ni ni-mail"></em></button>
+                                                    {{correoCliente}}</span>
+                                            </div>
+                                            
+                                        </div>
+                                        {% endif %}
+                                        
+                                       
+                                        
+                                    </div>
+                                </div>
+                            </div><!-- .col -->
+                            
+                        </div><!-- .row -->
+                    </div><!-- .col -->
+     
+                      <div class="col-md-6 col-xxl-12">
+                        <div class="card card-full">
+                            <div class="card-inner">
+                                <div class="nk-sale-data-group">
+                                    <div class="card-title">
+                                        {% if boolProductoRenta %}
+                                        <h6 class="title text-left"><em class="card-hint icon ni ni-help-fill" data-toggle="tooltip" data-placement="left" title="Tabla con la información de los productos de la venta."></em> PRODUCTOS RENTADOS.</h6>
+                                        <p>Lista de productos rentados por el cliente.</p>
+                                        {% else %}
+                                        <h6 class="title text-left"><em class="card-hint icon ni ni-help-fill" data-toggle="tooltip" data-placement="left" title="Tabla con la información de los productos de la venta."></em> PRODUCTOS VENDIDOS.</h6>
+                                        <p>Lista de productos comprados por el cliente.</p>
+                                        {% endif %}
+                                        
+                                    </div>
+                                    
+                                </div>  
+                            
+                                <div class="card card-preview">
+                                    {% if boolVentaProductos %}
+                                    <div class="card-inner table-responsive">
+                                        <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                                            <thead>
+                                                <tr class="nk-tb-item nk-tb-head" style="background-color: #1F4690 !important; color:white !important">
+                                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Código</span></th>
+                                                    <th class="nk-tb-col" ><span class="sub-text textoBlanco">Nombre</span></th>
+                                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Imagen</span></th>
+                                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Costo Unitario</span></th>
+                                                    {% if boolProductoRenta %}
+                                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Cantidades Rentadas</span></th>
+                                                    {% else %}
+                                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Cantidades Vendidas</span></th>
+                                                    {% endif %}
+                                                    
+                                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Subtotal</span></th> 
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for productoVenta in infoProductos %}
+                                                <tr class="nk-tb-item">
+                                                    <td class="nk-tb-col">
+                                                        <span class="badge-pill badge-info">{{productoVenta.0}}</span>
+                                                    </td>
+                                                   
+                                                    <td class="nk-tb-col">
+                                                        <span class="badge badge-outline-secondary">{{productoVenta.1}}</span>
+                                                    </td>
+                                                    <td class="nk-tb-col">
+                                                        <span class="tb-amount">{{productoVenta.2}}</span>
+                                                    </td>
+                                                    <td class="nk-tb-col">
+                                                        <center>
+                                                            {% if productoVenta.3 %}
+                                                            <img src="{{productoVenta.3.url}}" width="40%" alt="lap">
+                                                            {% else %}
+                                                            <span class="tb-amount">Sin imagen</span>
+                                                            {% endif %}
+                                                        </center>
+                                                    </td>
+                                                    <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                                        <p class="tb-amount text-orange fw-bold">${{productoVenta.4}} MXN</p>
+                                                    </td>
+                                              
+                                             
+                                                    <td class="nk-tb-col">
+                                                        <span class="tb-amount ">{{productoVenta.5}} unidades</span>
+                                                    </td>
+                                                    <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                                        <p class="tb-amount text-teal fw-bold">${{productoVenta.6}} MXN</p>
+                                                    </td>
+                                                    
+                                                
+                                                 
+                    
+                                                </tr>
+                                                {% endfor %}
+                                                
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    {% else %}
+                                    <p class="fw-bold text-dark fs-22px">Sin productos vendidos.</p>
+                                    {% endif %}
+                                </div><!-- .card-preview -->
+                            </div>
+                          
+                        </div><!-- .card -->
+                    </div><!-- .col -->
+                 
+                    
+               
+                    <div class="col-lg-6 col-xxl-12">
+                      <div class="card h-100">
+                        <div class="card-inner">
+                            <div class="nk-sale-data-group mb-2">
+                                <div class="card-title">
+                                    <h6 class="title text-left"><em class="card-hint icon ni ni-help-fill" data-toggle="tooltip" data-placement="left" title="Tabla que muestra información sobre los servicios vendidos."></em>&nbsp;SERVICIOS VENDIDOS.</h6>
+                                    <p>Listado de servicios solicitados por el cliente.</p>
+                                </div>
+                        
+                            </div>
+                          <div class="card card-preview">
+                            {% if boolProductoRenta %}
+                            <p class="fw-bold text-dark fs-22px">Sin servicios vendidos.</p>
+                            {% else %}
+
+                                {% if boolVentaServicios %}
+                                <div class="card-inner table-responsive">
+                                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                                        <thead>
+                                            <tr class="nk-tb-item nk-tb-head" style="background-color: #14C38E !important; color:white !important">
+                                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Tipo</span></th>
+                                                <th class="nk-tb-col" ><span class="sub-text textoBlanco">Nombre</span></th>
+                                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Descripción</span></th>
+                                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Costo Unitario</span></th>
+                                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Cantidad solicitada</span></th>
+                                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Subtotal</span></th>
+    
+                                             
+                                                
+                                                
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for servicio in infoServicios %}
+                                            <tr class="nk-tb-item">
+                                                <td class="nk-tb-col">
+                                                    <span class="badge-pill badge-info">{{servicio.0}}</span>
+                                                </td>
+                                               
+                                                <td class="nk-tb-col" >
+                                                    <span class="badge badge-primary" >{{servicio.1}}</span>
+                                                </td>
+                                                <td class="nk-tb-col">
+                                                    <span class="badge badge-dim badge-outline-primary" style="color: black !important;">{{servicio.2}}</span>
+                                                </td>
+                                                <td class="nk-tb-col">
+                                                    <center>
+                                                        <button type="button" class="btn btn-sm btn-warning" data-container="body" 
+                                                        data-toggle="popover" data-placement="bottom" 
+                                                        data-content="{{servicio.3}}">
+                                                        <span><em class="icon ni ni-eye"></em></span>
+                                                    </button>
+                                                    </center>
+                                                    
+                                                </td>
+                                                <td class="nk-tb-col" >
+                                                    <span class="fw-bold text-orange">$ {{servicio.4}} MXN</span>
+                                                </td>
+                                                <td class="nk-tb-col">
+                                                    <span class="fw-bold text-dark">{{servicio.5}} unidades</span>
+                                                </td>
+                                                <td class="nk-tb-col" >
+                                                    <span class="fw-bold text-teal">$ {{servicio.6}} MXN</span>
+                                                </td>
+                                                
+                                            
+                                            
+                                             
+                
+                                            </tr>
+                                            {% endfor %}
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% else %}
+                                <p class="fw-bold text-dark fs-22px">Sin servicios vendidos.</p>
+                                {% endif %}
+                            
+                            {% endif %}
+                            
+                        </div><!-- .card-preview -->
+                         
+                        </div><!-- .card-inner -->
+                    </div><!-- .card -->
+                    </div><!-- .col -->
+
+                    <div class="col-lg-6 col-xxl-12">
+                        <div class="card h-100">
+                          <div class="card-inner">
+                            <div class="nk-sale-data-group mb-2">
+                              <div class="card-title">
+                                  <h6 class="title text-left"><em class="card-hint icon ni ni-help-fill" data-toggle="tooltip" data-placement="left" title="Se muestran los totales y comentarios de la venta."></em>&nbsp;Información complementaria.</h6>
+                                  <p>Información complementaria de venta.</p>
+                              </div>
+                            </div>
+                            <div class="card card-preview">
+                                <div class="row gy-4">
+                                    <div class="col-sm-4">
+                                        <div class="nk-sale-data">
+                                            <span class="amount">Tipo de pago</span>
+                                            {% if tipoPago == "Efectivo" %}
+                                            <p class="text-dark fs-22px"><img src="{% static 'images/iconosVenta/efectivo.png' %}" alt="icono" width="30">  Efectivo.</p>
+                                            {% elif tipoPago == "Tarjeta" %}
+                                            <p class="text-dark fs-22px"><img src="{% static 'images/iconosVenta/tarjeta.png' %}" alt="icono" width="30">  Tarjeta.</p>
+                                            {% elif tipoPago == "Transferencia" %}
+                                            <p class="text-dark fs-22px"><img src="{% static 'images/iconosVenta/transferencia.png' %}" alt="icono" width="30">  Transferencia.</p>
+                                            {% endif %}
+                                            
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="nk-sale-data">
+                                            {% if tipoPago == "Efectivo" %}
+                                            
+                                            {% elif tipoPago == "Tarjeta" %}
+                                            <span class="amount">Tipo de tarjeta:</span>
+                                            <p class="text-dark fs-16px">{{tipo_tarjeta}}</p>
+                                            <span class="amount">Referencia bancaria:</span>
+                                            <p class="text-dark fs-16px">{{referencia_pago_tarjeta}}</p>
+                                            {% elif tipoPago == "Transferencia" %}
+                                            <span class="amount">Clave de rastreo:</span>
+                                            <p class="text-dark fs-16px">{{clave_rastreo_transferencia}}</p>
+                                            {% endif %}
+                                            
+                                           
+                                            
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="nk-sale-data text-right">
+                                            <span class="amount">Totales generales</span>
+                                            
+                                            {% if boolDescuento %}
+                                            <p class="text-dark fs-18px">Subtotal: <span class="fw-bold text-teal">${{totalSinDescuento}} MXN.</span></p>
+                                            <p class="text-dark fs-14px">Descuento: <span class="fw-bold text-azure">{{nombreDescuento}}</span></p>
+                                            <p class="text-dark fs-18px">Monto Descuento: <span class="fw-bold text-azure">- ${{totalDescuento}} MXN.</span></p>
+                                            {% else %}
+                                            <p class="text-dark fs-18px">Subtotal: <span class="fw-bold text-teal">${{totalPagado}} MXN.</span></p>
+                                            <p class="text-dark fs-18px">Descuento: <span class="fw-bold text-danger">No aplica.</span></p>
+                                            {% endif %}
+
+                                            <p class="text-dark fs-20px">Total: <span class="fw-bold text-teal">${{totalPagado}} MXN.</span></p>
+                                            
+                                            
+                                            
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="nk-sale-data">
+                                    <span class="amount">Comentarios</span>
+                                    {% if comentarios == "Sin comentarios" %}
+                                    <p class="text-dark">Sin comentarios de venta.</p>
+                                    {% else %}
+                                    <p class="text-dark">{{comentarios}}</p>
+                                    {% endif %}
+                                    
+                                    
+                                </div>
+                                
+                                
+                                
+                            </div>
+                          </div><!-- .card-inner -->
+                      </div><!-- .card -->
+                      </div><!-- .col -->
+                  
+                   
+                    
+                   
+                </div><!-- .row -->
+            
+            </div><!-- .nk-block -->
+        </div><!-- .content-page -->
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<script>
+    {% if bienvenida %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: '{{bienvenida}}',
+            footer: '<span style="color: #EB99E0!important"> Empieza a navegar por el sistema! </span>',
+            showConfirmButton: false,
+            timer: 2000
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+</script>
+
+{% endblock %}
+
+{% block relojJS %}
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+
+        window.onload= mueveReloj ();
+
+        
+    };
+</script>
+{% endblock %}

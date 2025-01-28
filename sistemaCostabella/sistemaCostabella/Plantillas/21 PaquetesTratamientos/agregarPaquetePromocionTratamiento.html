@@ -1,0 +1,446 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Promoción Tratamiento | Costabella
+{% endblock %}
+
+{% block estilos %}
+
+{% endblock %}
+
+{% block contenido %}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    {% for permiso in consultaPermisos %}
+                    {% if permiso.tabla_modulo == "Certificado" %}
+                    {% if permiso.ver == "Si" %}
+    
+                    <div class="nk-block-head-sub"><a class="back-to" href="/verTratamientos/"><em class="icon ni ni-arrow-left"></em><span>Ver promociones de tratamientos.</span></a></div>
+
+                    {% endif %}
+                    {% endif %}
+                    {% endfor %}
+                        <h2 class="overline-title text-purple fs-20px animate__animated animate__slideInLeft">ALTA DE PROMOCIÓN.</h2>
+                        <div class="nk-block-des animate__animated animate__fadeIn">
+                            <p class="fs-15px">En este módulo se darán de alta las promociones de los tratamientos que ofrece Costabella. Es necesario contar con la información necesaria.</p>
+                        </div>
+                </div><!-- .nk-block-head-content -->
+             
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        <div class="nk-block nk-block-lg">
+            <div class="card card-preview animate__animated animate__zoomIn" >
+                <div class="card-inner animate__animated animate__zoomIn">
+                    <div class="preview-block">
+                        <form action="/guardarPromocionTratamiento/" enctype="multipart/form-data" method="POST">{% csrf_token %}
+                            <span class="preview-title-lg overline-title text-pink">Información del tratamiento.</span>
+                            <div class="row gy-4">
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span> Escoger Tratamiento:</label>
+                                        <div class="form-control-wrap">
+                                            <div class="form-control-select">
+                                                <select class="form-control" data-placeholder="Seleccionar sucursal" id="tratamientoSeleccionado" name="tratamientoSeleccionado"  onchange="seleccionTratamiento();" required >
+                                                    <option value="Todas">Seleccionar tratamiento.</option>
+                                                    {% for tratamiento in listaTratamientosSelectMultiple %}
+                                                        {% for datoTratamiento in tratamiento %}
+                                                            <option value="{{datoTratamiento.1}}">{{datoTratamiento.1}}</option>
+                                                        {% endfor %}
+                                                    
+                                                    {% endfor %}
+                                                    
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                               
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span> Sucursales en donde se encuentra:</label>
+                                        <div class="form-control-wrap">
+                                            <input type="text" class="form-control"  placeholder="Sucursales Tratamiento" id="sucursalesTratamiento" readonly> 
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span> Costos por sucursal:</label>
+                                        <div class="form-control-wrap">
+                                            <input type="text" class="form-control"  placeholder="Costos Tratamiento" id="costosTratamiento" readonly> 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span> Nombre de paquete:</label>
+                                        <div class="form-control-wrap">
+                                            <input type="text" class="form-control"  placeholder="Ingresar nombre de paquete" name="nombrePaquete" required> 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class="form-label" for="selectTipoProducto"><span style="color: #dd2e2e;">* </span> Sesiones del paquete: </label>
+                                        <div class="form-control-wrap ">
+                                            <div class="form-control-select">
+                                                <select class="form-control"  name="sesionesPaquete" id="valorSelectSesiones">
+                                                    <option value="1">1 sesión</option>
+                                                    <option value="2">2 sesiones</option>
+                                                    <option value="3">3 sesiones</option>
+                                                    <option value="4">4 sesiones</option>
+                                                    <option value="5">5 sesiones</option>
+                                                    <option value="6">6 sesiones</option>
+                                                    <option value="7">7 sesiones</option>
+                                                    <option value="8">8 sesiones</option>
+                                                    <option value="9">9 sesiones</option>
+                                                    <option value="10">10 sesiones</option>
+                                                    <option value="11">11 sesiones</option>
+                                                    <option value="12">12 sesiones</option>
+                                                    <option value="13">13 sesiones</option>
+                                                    <option value="14">14 sesiones</option>
+                                                    <option value="15">15 sesiones</option>
+                                                    <option value="16">16 sesiones</option>
+                                                    <option value="17">17 sesiones</option>
+                                                    <option value="18">18 sesiones</option>
+                                                    <option value="19">19 sesiones</option>
+                                                    <option value="20">20 sesiones</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <hr class="preview-hr">
+                            <span class="preview-title-lg overline-title text-pink">Información de venta del paquete de tratamiento</span>
+                            <div class="row gy-4" id="divInfoVenta">
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span> Descuento / Precio fijo:</label>
+                                        <div class="form-control-wrap">
+                                            <div class="custom-control custom-switch">
+                                                <input type="checkbox" class="custom-control-input" id="switchDescuento" name="switchDescuento" onclick="validarDescuento()">
+                                                <label class="custom-control-label" for="switchDescuento" id="labelCheckBox">Sin descuento/Precio fijo</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-sm-2" id="precioFijoPaquete">
+                                    <div class="form-group" >
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span>Precio fijo del paquete:</label>
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-left">
+                                                <em class="icon ni ni-sign-usd-alt"></em>
+                                            </div>
+                                            <input type="number" class="form-control" value="1.00" min="0.00" max="50000.00" step="1"  maxlength="8" placeholder="Ingresar precio de compra" required name="precioFijo">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2" id="precioPorSesionActual">
+                                    <div class="form-group" >
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span>Precio por sesión promedio actual:</label>
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-left">
+                                                <em class="icon ni ni-sign-usd-alt"></em>
+                                            </div>
+                                            
+                                                <input type="number" class="form-control" value="1" id="inputCostoPromedio"  readonly>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2" id="precioXTodasLasSesiones">
+                                    <div class="form-group" >
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span>Precio por sesiones seleccionadas:</label>
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-left">
+                                                <em class="icon ni ni-sign-usd-alt"></em>
+                                            </div>
+                                            
+                                                <input type="number" class="form-control" value="1" id="inputCostoTotalSinDescuento"  readonly>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2" id="seleccionDescuento">
+                                    <div class="form-group" >
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span>Seleccionar descuento:</label>
+                                        <div class="form-control-wrap ">
+                                            <div class="form-control-select">
+                                                <select class="form-control"  name="descuentoPromo" id="valorSelectDescuento" onchange="cambiarDescuento();">
+                                                    <option value="5">5%</option>
+                                                    <option value="10">10%</option>
+                                                    <option value="15">15%</option>
+                                                    <option value="20">20%</option>
+                                                    <option value="25">25%</option>
+                                                    <option value="30">30%</option>
+                                                    <option value="35">35%</option>
+                                                    <option value="40">40%</option>
+                                                    <option value="45">45%</option>
+                                                    <option value="50">50%</option>
+                                                    <option value="55">55%</option>
+                                                    <option value="60">60%</option>
+                                                    
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2" id="precioYaConDescuento">
+                                    <div class="form-group" >
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span>Precio con descuento:</label>
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-left">
+                                                <em class="icon ni ni-sign-usd-alt"></em>
+                                            </div>
+                                            
+                                                <input type="number" class="form-control" value="1" id="inputCostoTotalConDescuento" name="precioConDescuento"  readonly>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                
+                            </div>
+                            
+                            <br>
+                            <button type="submit" class="btn btn-dim btn-primary">Crear promoción</button>
+                        </form>
+                    </div>
+                </div>
+            </div><!-- .card-preview -->
+        </div>
+    </div>
+</div>
+
+{% block relojJS %}
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+
+        window.onload= mueveReloj ();
+
+        
+    };
+</script>
+{% endblock %}
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<script>
+    var divInfoVenta = document.getElementById("divInfoVenta");
+    divInfoVenta.style.display = "none";
+
+    {% if tratamientoAgregado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{tratamientoAgregado}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    {% if tratamientoNoAgregado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'error',
+            title: 'Ups..!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{tratamientoNoAgregado}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    {% if tratamientoNoSeleccionado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'error',
+            title: 'Ups..!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{tratamientoNoSeleccionado}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    {% if promocionAgregada %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{promocionAgregada}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    {% if promocionNoAgregada %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'error',
+            title: 'Ups..!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{promocionNoAgregada}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    var costoPromedioTratamiento
+    var costoTotalPorSesiones
+    function seleccionTratamiento()
+            {
+
+                
+                var tratamientoSeleccionado = document.getElementById("tratamientoSeleccionado").value;
+                
+                if (tratamientoSeleccionado == "Todas"){
+                    divInfoVenta.style.display="none"
+                }else{
+                    divInfoVenta.style.display="block"
+                }
+                {% for tratamiento in listaTratamientosSelectMultipleJS %}
+                    {% for datoTratamiento in tratamiento %}
+                        var nombreTratamiento = "{{datoTratamiento.1}}";
+                        var sucursalesTratamiento = "{{datoTratamiento.4}}"
+                        costoPromedioTratamiento = "{{datoTratamiento.5}}"
+                        if (tratamientoSeleccionado == nombreTratamiento){
+                            var sucursales = "";
+                            var costos = ""
+                            var contadorSucursales = 0
+                            var contadorSucursales2 = 0
+                            {% for sucursal in datoTratamiento.4 %}
+                            contadorSucursales = contadorSucursales + 1;
+                            var sucursal = "{{sucursal}}";
+                            if (contadorSucursales === 1){
+                                sucursales = sucursal;
+                            }else{
+                                sucursales = sucursales +", "+sucursal;
+                            }
+                            {% endfor %}
+
+                            {% for costo in datoTratamiento.2 %}
+                            contadorSucursales2 = contadorSucursales2 + 1;
+                            var costo = "{{costo}}";
+                            if (contadorSucursales2 === 1){
+                                costos = "$"+costo.toString();
+                            }else{
+                                costos = costos +", $"+costo.toString();
+                            }
+                            {% endfor %}
+
+
+                            var sucursalesTratamiento = document.getElementById("sucursalesTratamiento");
+                            sucursalesTratamiento.value = sucursales;
+
+                            var costosTratamiento = document.getElementById("costosTratamiento");
+                            costosTratamiento.value = costos;
+
+                            var inputCostoPromedio = document.getElementById("inputCostoPromedio");
+                            inputCostoPromedio.value = costoPromedioTratamiento;
+                        }else{
+                            var sucursalesTratamiento = document.getElementById("sucursalesTratamiento");
+                            sucursalesTratamiento.value = "";
+                            var costosTratamiento = document.getElementById("costosTratamiento");
+                            costosTratamiento.value = "";
+
+                            var inputCostoPromedio = document.getElementById("inputCostoPromedio");
+                            inputCostoPromedio.value = "1";
+                        }
+                    {% endfor %}
+                {% endfor %}
+                
+            }
+    
+    var precioFijoPaquete = document.getElementById("precioFijoPaquete");
+    precioFijoPaquete.style.display = "block";
+
+    var precioPorSesionActual = document.getElementById("precioPorSesionActual");
+    precioPorSesionActual.style.display = "none";
+
+    var precioXTodasLasSesiones = document.getElementById("precioXTodasLasSesiones");
+    precioXTodasLasSesiones.style.display = "none";
+
+    var seleccionDescuento = document.getElementById("seleccionDescuento");
+    seleccionDescuento.style.display = "none";
+
+    var precioYaConDescuento = document.getElementById("precioYaConDescuento");
+    precioYaConDescuento.style.display = "none";
+
+    function validarDescuento(){
+        var labelCheckBox = document.getElementById("labelCheckBox");
+        if (document.getElementById('switchDescuento').checked) {
+            labelCheckBox.innerHTML="Con descuento";
+            precioFijoPaquete.style.display = "none";
+            precioPorSesionActual.style.display = "block";
+            var valorSelectSesiones = parseFloat(document.getElementById("valorSelectSesiones").value);
+            var costoPromedioTratamientoFloat = parseFloat(costoPromedioTratamiento);
+
+            costoTotalPorSesiones = valorSelectSesiones * costoPromedioTratamientoFloat
+            var inputCostoTotalSinDescuento = document.getElementById("inputCostoTotalSinDescuento");
+            inputCostoTotalSinDescuento.value = costoTotalPorSesiones.toString();
+            precioXTodasLasSesiones.style.display = "block";
+
+
+            seleccionDescuento.style.display = "block";
+
+            var inputCostoTotalConDescuento = document.getElementById("inputCostoTotalConDescuento");
+            var valorInputCostoTotalConDescuento = costoTotalPorSesiones * .95;
+            valorInputCostoTotalConDescuento = Math.round(valorInputCostoTotalConDescuento);
+            inputCostoTotalConDescuento.value = valorInputCostoTotalConDescuento.toString();
+            precioYaConDescuento.style.display = "block";
+
+            
+
+        } else {
+            labelCheckBox.innerHTML="Sin descuento/Precio fijo";
+            precioFijoPaquete.style.display = "block";
+            precioPorSesionActual.style.display = "none";
+            precioXTodasLasSesiones.style.display = "none";
+            seleccionDescuento.style.display = "none";
+            precioYaConDescuento.style.display = "none";
+        }
+    }
+
+    function cambiarDescuento(){
+        var valorSelectDescuento = document.getElementById("valorSelectDescuento").value;
+        var resta = 100 - parseFloat(valorSelectDescuento)
+        resta = "0."+resta.toString()
+        resta = parseFloat(resta)
+        var inputCostoTotalConDescuento = document.getElementById("inputCostoTotalConDescuento");
+        var valorInputCostoTotalConDescuento = costoTotalPorSesiones * resta;
+        valorInputCostoTotalConDescuento = Math.round(valorInputCostoTotalConDescuento);
+        inputCostoTotalConDescuento.value = valorInputCostoTotalConDescuento.toString();
+        
+    }
+
+
+    
+
+    
+        
+    
+
+    
+
+    
+         
+        
+</script>
+{% endblock %}

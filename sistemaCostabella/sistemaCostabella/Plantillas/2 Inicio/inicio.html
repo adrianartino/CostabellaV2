@@ -1,0 +1,515 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Inicio | Costabella
+{% endblock %}
+
+{% block estilos %}
+
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+            
+                <div class="nk-block-head-content">
+                    <h3 class="nk-block-title page-title">Panel de accesos directos</h3>
+                </div><!-- .nk-block-head-content -->
+             
+              
+             
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        <div class="nk-block">
+            <div class="row g-gs">
+                {% for permiso in consultaPermisos %}
+                {% if permiso.tabla_modulo == "Ventas" %}
+                {% if permiso.agregar == "Si" %}
+                <div class="col-xxl-2 col-6 col-sm-6 ">
+                  
+                    <div class="card animate__animated animate__fadeInDown">
+                        <div class="nk-ecwg nk-ecwg6 " id="zoom1">
+                            <a  class="enlace-sincolor" href="/seleccionarSucursalVentas/">
+                                <div class="card-inner">
+                                    <div class="card-title-group">
+                                        <div class="card-title ">
+                                            <center>
+                                            <h6 class="title">Realizar una venta</h6>
+                                            </center>
+                                        </div>
+                                    </div>
+                                    <div class="data">
+                                        <div class="data-group">
+                                            <div class="amount">
+                                               
+                                                    <img src="{% static 'images/accesos/1.png' %}" alt="acceso1" width="150" height="150">
+                                            
+                                                
+                                            </div>
+                                            
+                                        </div>
+                                        <center>
+                                            <div class="info"><span>Realizar una venta según el tipo de pago que aplique: al contado o a crédito.</span></div>
+                                        </center>
+                                      
+                                    </div>
+                                </div><!-- .card-inner -->
+
+                            </a>
+                         
+                        </div><!-- .nk-ecwg -->
+                    </div><!-- .card -->
+
+               
+             
+                </div><!-- .col -->
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+                
+
+                {% for permiso in consultaPermisos %}
+                {% if permiso.tabla_modulo == "Productos" %}
+                {% if permiso.ver == "Si" %}
+                <div class="col-xxl-2 col-6 col-sm-6">
+                    <div class="card animate__animated animate__fadeInDown">
+                        <div class="nk-ecwg nk-ecwg6" id="zoom1">
+                            <a class="enlace-sincolor" href="/inventarioProductos/">
+                                <div class="card-inner">
+                                    <div class="card-title-group">
+                                        <div class="card-title">
+                                            <h6 class="title">Productos</h6>
+                                        </div>
+                                    </div>
+                                    <div class="data">
+                                        <div class="data-group">
+                                            <div class="amount">
+                                                <img src="{% static 'images/accesos/productos.png' %}" alt="acceso1" width="150" height="150">
+                                            </div>
+                                           
+                                        </div>
+                                        <center>
+                                            <div class="info"><span>Visualizar, registrar, eliminar o modificar detalles de productos.</span></div>
+                                        </center>
+                                        
+                                    </div>
+                                </div><!-- .card-inner -->
+
+                            </a>
+                         
+                        </div><!-- .nk-ecwg -->
+                    </div><!-- .card -->
+                </div><!-- .col -->
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+                
+                {% for permiso in consultaPermisos %}
+                {% if permiso.tabla_modulo == "Servicios" %}
+                {% if permiso.ver == "Si" %}
+                <div class="col-xxl-2 col-6 col-sm-6">
+                    <div class="card animate__animated animate__fadeInDown">
+                        <div class="nk-ecwg nk-ecwg6" id="zoom1">
+                            <a class="enlace-sincolor" href="/inventarioServicios/">
+                                <div class="card-inner">
+                                    <div class="card-title-group">
+                                        <div class="card-title">
+                                            <h6 class="title">Servicios</h6>
+                                        </div>
+                                    </div>
+                                    <div class="data">
+                                        <div class="data-group">
+                                            <div class="amount">
+                                                <img src="{% static 'images/accesos/servicios.png' %}" alt="acceso1" width="150" height="150">
+                                            </div>
+                                           
+                                        </div>
+                                        <center>
+                                            <div class="info"><span> Visualizar, registrar, eliminar o modificar detalles de servicios.</span></div>
+                                        </center>
+                                        
+                                    </div>
+                                </div><!-- .card-inner -->
+
+                            </a>
+                            
+                        </div><!-- .nk-ecwg -->
+                    </div><!-- .card -->
+                </div><!-- .col -->
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+
+                {% for permiso in consultaPermisos %}
+                {% if permiso.tabla_modulo == "Sucursales" %}
+                {% if permiso.ver == "Si" %}
+                <div class="col-xxl-2 col-6 col-sm-6">
+                    <div class="card animate__animated animate__fadeInDown">
+                        <div class="nk-ecwg nk-ecwg6" id="zoom1">
+                            <a class="enlace-sincolor" href="/verSucursales/">
+                                <div class="card-inner">
+                                    <div class="card-title-group">
+                                        <div class="card-title">
+                                            <h6 class="title">Sucursales</h6>
+                                        </div>
+                                    </div>
+                                    <div class="data">
+                                        <div class="data-group">
+                                            <div class="amount">
+                                                <img src="{% static 'images/accesos/5.png' %}" alt="acceso1" width="150" height="150">
+                                            </div>
+                                         
+                                        </div>
+                                        <center>
+                                            <div class="info"><span>Visualizar, registrar, eliminar o modificar detalles de sucursales.</span></div>
+                                        </center>
+                                        
+                                    </div>
+                                </div><!-- .card-inner -->
+
+                            </a>
+                           
+                        </div><!-- .nk-ecwg -->
+                    </div><!-- .card -->
+                </div><!-- .col -->
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+                
+                {% for permiso in consultaPermisos %}
+                {% if permiso.tabla_modulo == "Clientes" %}
+                {% if permiso.ver == "Si" %}
+                <div class="col-xxl-2 col-6 col-sm-6">
+                    <div class="card animate__animated animate__fadeInDown">
+                        <div class="nk-ecwg nk-ecwg6" id="zoom1">
+                            <a class="enlace-sincolor" href="/verClientes/">
+                                <div class="card-inner">
+                                    <div class="card-title-group">
+                                        <div class="card-title">
+                                            <h6 class="title">Mis clientes</h6>
+                                        </div>
+                                    </div>
+                                    <div class="data">
+                                        <div class="data-group">
+                                            <div class="amount">
+                                                <img src="{% static 'images/accesos/4.png' %}" alt="acceso1" width="150" height="150">
+                                            </div>
+                                          
+                                        </div>
+                                        <center>
+                                            <div class="info"><span> Visualizar, registrar, eliminar o modificar detalles de clientes.</span></div>
+                                        </center>
+                                        
+                                    </div>
+                                </div><!-- .card-inner -->
+
+                            </a>
+                            
+                        </div><!-- .nk-ecwg -->
+                    </div><!-- .card -->
+                </div><!-- .col -->
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+
+                {% for permiso in consultaPermisos %}
+                {% if permiso.tabla_modulo == "Pagos creditos" %}
+                {% if permiso.ver == "Si" %}
+                
+                <div class="col-xxl-2 col-6 col-sm-6">
+                    <div class="card animate__animated animate__fadeInDown">
+                        <div class="nk-ecwg nk-ecwg6" id="zoom1">
+                            <a class="enlace-sincolor" href="/pagosCreditosClientes/">
+                                <div class="card-inner">
+                                    <div class="card-title-group">
+                                        <div class="card-title">
+                                            <h6 class="title">Abonos</h6>
+                                        </div>
+                                    </div>
+                                    <div class="data">
+                                        <div class="data-group">
+                                            <div class="amount">
+                                                <img src="{% static 'images/accesos/6.png' %}" alt="acceso1" width="150" height="150">
+                                            </div>
+                                         
+                                        </div>
+                                        <center>
+                                            <div class="info"><span>Visualizar, registrar o modificar detalles de abonos de productos y servicios.</span></div>
+                                        </center>
+                                       
+                                    </div>
+                                </div><!-- .card-inner -->
+
+                            </a>
+                            
+                        </div><!-- .nk-ecwg -->
+                    </div><!-- .card -->
+                </div><!-- .col -->
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+
+                {% for permiso in consultaPermisos %}
+                {% if permiso.tabla_modulo == "Rentas" %}
+                {% if permiso.ver == "Si" %}
+                <div class="col-xxl-2 col-6 col-sm-6">
+                    <div class="card animate__animated animate__fadeInUp">
+                        <div class="nk-ecwg nk-ecwg6" id="zoom1">
+                            <a class="enlace-sincolor" href="/rentas/">
+                                <div class="card-inner">
+                                    <div class="card-title-group">
+                                        <div class="card-title">
+                                            <h6 class="title">Rentas</h6>
+                                        </div>
+                                    </div>
+                                    <div class="data">
+                                        <div class="data-group">
+                                            <div class="amount">
+                                                <img src="{% static 'images/accesos/8.png' %}" alt="acceso1" width="150" height="150">
+                                            </div>
+                                          
+                                        </div>
+                                        <center>
+                                            <div class="info"><span> Visualizar, registrar,eliminar o modificar detalles de rentas de vestidos.</span></div>
+                                        </center>
+                                        
+                                    </div>
+                                </div><!-- .card-inner -->
+
+                            </a>
+                            
+                        </div><!-- .nk-ecwg -->
+                    </div><!-- .card -->
+                </div><!-- .col -->
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+
+                {% for permiso in consultaPermisos %}
+                {% if permiso.tabla_modulo == "Movimiento semanal" %}
+                {% if permiso.ver == "Si" %}
+                <div class="col-xxl-2 col-6 col-sm-6">
+                    <div class="card animate__animated animate__fadeInUp">
+                        <div class="nk-ecwg nk-ecwg6" id="zoom1">
+                            <a class="enlace-sincolor" href="/seleccionarSucursalMovimientosDia/">
+                                <div class="card-inner">
+                                    <div class="card-title-group">
+                                        <div class="card-title">
+                                            <h6 class="title">Caja</h6>
+                                        </div>
+                                    </div>
+                                    <div class="data">
+                                        <div class="data-group">
+                                            <div class="amount">
+                                                <img src="{% static 'images/accesos/7.png' %}" alt="acceso1" width="150" height="150">
+                                            </div>
+                                      
+                                        </div>
+                                        <center>
+                                            <div class="info"><span>Visualizar, registrar o modificar detalles de entrada o salida de efectivo.</span></div>
+                                        </center>
+                                   
+                                    </div>
+                                </div><!-- .card-inner -->
+
+                            </a>
+                        
+                        </div><!-- .nk-ecwg -->
+                    </div><!-- .card -->
+                </div><!-- .col -->
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+
+                {% for permiso in consultaPermisos %}
+                {% if permiso.tabla_modulo == "Empleados" %}
+                {% if permiso.ver == "Si" %}
+                <div class="col-xxl-2 col-6 col-sm-6">
+                    <div class="card animate__animated animate__fadeInUp">
+                        <div class="nk-ecwg nk-ecwg6" id="zoom1">
+                            <a class="enlace-sincolor" href="/verEmpleados/">
+                                <div class="card-inner">
+                                    <div class="card-title-group">
+                                        <div class="card-title">
+                                            <h6 class="title">Empleados</h6>
+                                        </div>
+                                    </div>
+                                    <div class="data">
+                                        <div class="data-group">
+                                            <div class="amount">
+                                                <img src="{% static 'images/accesos/empleados.png' %}" alt="acceso1" width="150" height="150">
+                                            </div>
+                                          
+                                        </div>
+                                        <center>
+                                            <div class="info"><span>Visualizar, registrar, eliminar o modificar detalles de información de empleados.</span></div>
+                                        </center>
+                                        
+                                    </div>
+                                </div><!-- .card-inner -->
+
+                            </a>
+                           
+                        </div><!-- .nk-ecwg -->
+                    </div><!-- .card -->
+                </div><!-- .col -->
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+
+                {% for permiso in consultaPermisos %}
+                {% if permiso.tabla_modulo == "Tratamientos" %}
+                {% if permiso.ver == "Si" %}
+                <div class="col-xxl-2 col-6 col-sm-6">
+                    <div class="card animate__animated animate__fadeInUp">
+                        <div class="nk-ecwg nk-ecwg6" id="zoom1">
+                            <a class="enlace-sincolor" href="/verTratamientos/">
+                                <div class="card-inner">
+                                    <div class="card-title-group">
+                                        <div class="card-title">
+                                            <h6 class="title">Tratamientos</h6>
+                                        </div>
+                                    </div>
+                                    <div class="data">
+                                        <div class="data-group">
+                                            <div class="amount">
+                                                <img src="{% static 'images/accesos/masajito.png' %}" alt="acceso1" width="150" height="150">
+                                            </div>
+                                        
+                                        </div>
+                                        <center>
+                                            <div class="info"><span>Ver, agregar y gestionar los paquetes de tratamientos para el cliente.</span></div>
+                                        </center>
+                                        
+                                    </div>
+                                </div><!-- .card-inner -->
+
+                            </a>
+                            
+                        </div><!-- .nk-ecwg -->
+                    </div><!-- .card -->
+                </div><!-- .col -->
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+
+                {% for permiso in consultaPermisos %}
+                {% if permiso.tabla_modulo == "Certificado" %}
+                {% if permiso.ver == "Si" %}
+                <div class="col-xxl-2 col-6 col-sm-6">
+                    <div class="card animate__animated animate__fadeInUp">
+                        <div class="nk-ecwg nk-ecwg6" id="zoom1">
+                            <a class="enlace-sincolor" href="/verCertificadosProgramados/">
+                                <div class="card-inner">
+                                    <div class="card-title-group">
+                                        <div class="card-title">
+                                            <h6 class="title">Certificados de regalo</h6>
+                                        </div>
+                                    </div>
+                                    <div class="data">
+                                        <div class="data-group">
+                                            <div class="amount">
+                                                <img src="{% static 'images/accesos/regalito.png' %}" alt="acceso1" width="150" height="150">
+                                            </div>
+                                     
+                                        </div>
+                                        <center>
+                                            <div class="info"><span>Gestiónar y agregar nuevas tarjetas de regalo para una persona especial.</span></div>
+                                        </center>
+                                    
+                                    </div>
+                                </div><!-- .card-inner -->
+
+                            </a>
+                            
+                        </div><!-- .nk-ecwg -->
+                    </div><!-- .card -->
+                </div><!-- .col -->
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+
+                {% for permiso in consultaPermisos %}
+                {% if permiso.tabla_modulo == "Citas" %}
+                {% if permiso.ver == "Si" %}
+                <div class="col-xxl-2 col-6 col-sm-6">
+                    <div class="card animate__animated animate__fadeInUp">
+                        <div class="nk-ecwg nk-ecwg6" id="zoom1">
+                            <a class="enlace-sincolor" href="/citas/">
+                                <div class="card-inner">
+                                    <div class="card-title-group">
+                                        <div class="card-title">
+                                            <h6 class="title">Citas</h6>
+                                        </div>
+                                    </div>
+                                    <div class="data">
+                                        <div class="data-group">
+                                            <div class="amount">
+                                                <img src="{% static 'images/accesos/citas.png' %}" alt="acceso1" width="150" height="150">
+                                            </div>
+                                           
+                                        </div>
+                                        <center>
+                                            <div class="info"><span>Visualizar, registrar, eliminar o modificar informacion de citas. </span></div>
+                                        </center>
+                                       
+                                    </div>
+                                </div><!-- .card-inner -->
+
+                            </a>
+                           
+                        </div><!-- .nk-ecwg -->
+                    </div><!-- .card -->
+                </div><!-- .col -->
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+                
+                
+                
+                
+                
+                
+
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<script>
+    {% if bienvenida %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: '{{bienvenida}}',
+            footer: '<span style="color: #EB99E0!important"> Empieza a navegar por el sistema! </span>',
+            showConfirmButton: false,
+            timer: 2000
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+</script>
+
+
+
+{% endblock %}
+
+{% block relojJS %}
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+
+        window.onload= mueveReloj ();
+
+        
+    };
+</script>
+{% endblock %}

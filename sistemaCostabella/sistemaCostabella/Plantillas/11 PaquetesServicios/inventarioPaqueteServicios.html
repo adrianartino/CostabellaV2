@@ -1,0 +1,811 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Inventario paquetes | Costabella
+{% endblock %}
+
+{% block estilos %}
+<style>
+    @media screen and (max-width: 320px) {
+        table {
+          display: block!important;
+          overflow-x: auto!important;
+        }
+   }
+</style>
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    <h3 class="nk-block-title page-title color-texto-seleccion">LISTADO DE PAQUETES DE SERVICIOS</h3>
+                    <div class="nk-block-des text-soft">
+                        <p>Total de paquetes por tipo de servico: {{contadorProductosVentas}} Servicios Corporales - {{contadorProductosRentas}} Servicios Faciales.</p>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+                <div class="nk-block-head-content">
+                    <div class="toggle-wrap nk-block-tools-toggle">
+                        <a href="#" class="btn btn-icon btn-trigger toggle-expand mr-n1" data-target="more-options"><em class="icon ni ni-more-v"></em></a>
+                        <div class="toggle-expand-content" data-content="more-options">
+                            <ul class="nk-block-tools g-3">
+                                <li>
+                                    <div class="drodown">
+                                        <a href="#" class="dropdown-toggle dropdown-indicator btn btn-outline-light btn-white" data-toggle="dropdown">Filtro tipo de servicios</a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <ul class="link-list-opt no-bdr">
+                                                <li style="cursor: pointer!important;"><a onclick="mostrarPaquetesCorporales()"><span>Paquetes Tipo Corporales</span></a></li>
+                                                <li style="cursor: pointer!important;"> <a onclick="mostrarPaquetesFaciales()"><span>Paquetes Tipo Faciales</span></a></li>
+                                                
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                               
+                               
+
+                            </ul>
+                        </div>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        
+        <!-- Div paquetes corporales -->
+        <div  id="divPaquetesServiciosCorporales">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Paquetes de servicios corporales</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de <span class="coloralta">paquetes tipo corporales para venta</span> en el sistema.</p>
+                    </div>
+                
+                </div>
+       
+                
+            </div>
+        
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #900C3F !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id servicio</span></th>
+                                
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco" >Servicio</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Productos Gasto</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Complementos</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                               
+                             
+                              
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ser,pro,suc  in lista %}
+                           
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge-pill badge-info">{{ser.id_servicio}}</span>
+                                </td>
+                               
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-dim badge-primary" style="color: black !important;">{{ser.nombre_servicio}}</span>
+                                </td>
+                              
+                               
+                             
+                                <td class="nk-tb-col text-center">
+                                    
+                                    <center>
+                                        <button type="button" id="verProductosBoton{{ser.id_servicio}}"  data-toggle="modal" data-target="#verProductos{{ser.id_servicio}}" class="btn btn-icon btn-sm btn-success"><em class="icon ni ni-eye" data-toggle="tooltip" data-placement="bottom" title="Clic para ver la lista de productos del servicio."></em></button>
+                                    </center>
+                                    
+                                    
+                                
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-dot badge-primary" style="color: black !important;">{{ser.complementos_servicio}}</span>
+                                </td>
+                                
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-pill badge-dark">{{suc}}</span>
+                                </td>
+                        
+           
+                             
+
+                            </tr>
+                            
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                 
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+        <!-- DIV paquetes faciales -->
+        <div  id="divPaquetesServiciosFaciales">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Paquetes de servicios faciales</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de paquetes <span class="coloralta"> faciales para venta</span> en el sistema.</p>
+                    </div>
+                </div>
+            
+            </div>
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #24A19C !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id servicio</span></th>
+                                
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco" >Servicio</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Productos Gasto</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Complementos</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                              
+                              
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for servicio,producto,sucursal  in listaFaciales %}
+                           
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge-pill badge-info">{{servicio.id_servicio}}</span>
+                                </td>
+                               
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-dim badge-primary" style="color: black !important;">{{servicio.nombre_servicio}}</span>
+                                </td>
+                              
+                               
+                             
+                                <td class="nk-tb-col text-center">
+                                    
+                                    <center>
+                                        <button type="button" data-toggle="modal" data-target="#verProductosFaciales{{servicio.id_servicio}}" class="btn btn-icon btn-sm btn-success"><em class="icon ni ni-eye" data-toggle="tooltip" data-placement="bottom" title="Clic para ver la lista de productos del servicio."></em></button>
+                                    </center>
+                                    
+                                    
+                                
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-dot badge-primary" style="color: black !important;">{{servicio.complementos_servicio}}</span>
+                                </td>
+                                
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-pill badge-dark">{{sucursal}}</span>
+                                </td>
+                        
+                             
+
+                            </tr>
+                            
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                 
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+    </div>
+</div>
+
+
+
+
+
+<!-- Modal de editar servicios corporales -->
+
+{% for producto in productosServicio %}
+<!-- Modal de editar producto -->
+<div class="modal fade" tabindex="-1" role="dialog" id="editarProductosPaquete{{producto.0}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center ">EDITAR PAQUETE SERVICIO CORPORAL</h3>
+               
+                <center>
+                    <span class="badge badge-dim badge-info"><h5  style="color: rgb(18, 13, 13) !important;">{{servicio.nombre_servicio}}</h5></span> <br>
+                    <img src="{% static 'images/iconosMenu/editarpaquete.png' %} " alt="personal">
+               
+                </center>
+
+           
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/actualizarPaquete/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                            <div class="col-md-12">
+                         
+                                    <div class="form-group">
+                                        <span class="badge badge-dim badge-danger"><h6  style="color: rgb(180, 10, 10) !important;">Productos del paquete:</h6></span>
+                                    </div>
+                             
+                                
+                            </div>
+                        </div>
+                      
+                        <div class="row gy-4">
+                            <input type="hidden" value="{{producto.0}}" name="idPaqueteServicioCorporalEditar">
+                           
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #6224a1 !important; color:white !important">
+                                                <th scope="col">Id</th>
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Editar cantidad</th>
+                                                <th scope="col">Eliminar de la lista</th>
+                                               
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                         
+                                            
+                                            <tr>
+                                              
+                                                <th scope="row" > <span  class="badge-pill badge-info">{{prod.0}}</span> </th>
+                                             
+                                                <th scope="row" > <span  class="badge-pill badge-info">{{prod.1}}</span> </th>
+                                                <td>
+                                                    <input type="hidden" value="{{prod.0}}" name="idProductoCantidadEditar">
+                                                    <input  type="number" class="form-control" min="0" max="{{prod.5}}" step="1"   name="cantidadRequerida" value="{{prod.4}}"  ></td>
+                                                <td> 
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" class="custom-control-input"  id="checkbox{{prod.0}}" >
+                                                        <label class="custom-control-label" for="checkbox{{prod.0}}">Eliminar</label>
+                                                    </div>
+                                                </td>
+                                           
+                                        
+                                              
+                                             
+                                            </tr>
+                                        
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                        </div>
+           
+                        <div class="row gy-4">
+                            <div class="col-12">
+                                <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                    <li>
+                                        <button type="submit" class="btn btn-sm btn-primary">Actualizar paquete</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+
+                    </div><!-- .tab-pane -->
+
+
+                    </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+
+<!-- Modal ver paquetes de servicio corporal-->
+
+{% for servicios,productos,sucursales in listaModal %}
+<!-- Modal de editar producto -->
+<div class="modal fade" tabindex="-1" role="dialog" id="verProductos{{servicios.id_servicio}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center ">PAQUETE DE PRODUCTOS DE SERVICIO CORPORAL</h3>
+                <center>
+                  
+                    <img src="{% static 'images/iconosMenu/paquetes.png' %} " alt="personal">
+               
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                   
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <center>
+                                        <div class="form-group">
+                                            <span class="badge badge-dim badge-danger"><h3  style="color: rgb(180, 10, 10) !important;">{{servicios.nombre_servicio}}</h3></span>
+                                        </div>
+                                    </center>
+                                    
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            <input type="hidden" value="{{servicio.0}}" name="idPaqueteProductos">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #24A19C !important; color:white !important">
+                                               
+                                             
+                                                <th scope="col">Id Producto</th>
+                                              
+                                                <th scope="col">Codigo</th>
+                                                <th scope="col">SKU</th>
+                                              
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Cantidad</th>
+                                                {% for permiso in consultaPermisos %}
+                                                {% if permiso.tabla_modulo == "Paquetes" %}
+                                                {% if permiso.editar == "Si" %}
+                                
+                                                <th scope="col">Editar</th>
+                                                {% endif %}
+                                                {% endif %}
+                                                {% endfor %}
+                                               
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for p in productos %}
+                                            <tr>
+                                                
+                                                <th scope="row" > <span  class="badge-pill badge-dark">{{p.0}}</span> </th>
+                                                <th scope="row" > <span  class="badge badge-dim badge-pill badge-primary">{{p.1}}</span> </th>
+                                                <th scope="row" > <span  class="badge-pill badge-danger">{{p.2}}</span> </th>
+                                                <th scope="row" > <span  class="badge badge-dim badge-pill badge-info">{{p.3}}</span> </th>
+                                        
+                                                <th scope="row" > <span  class="badge badge-outline-warning" style="color: black !important;">{{p.4}}</span> </th>
+                                                {% for permiso in consultaPermisos %}
+                                                {% if permiso.tabla_modulo == "Paquetes" %}
+                                                {% if permiso.editar == "Si" %}
+                                
+                                                <th>
+                                                    <form action="/verProductoDePaqueteCorporalEditar/" method="POST">{% csrf_token %}
+                                                        <input type="hidden" name="idProductoEditarPaquete" value="{{p.0}}">
+                                                        <input type="hidden" name="cantidadEnPaquete" value="{{p.4}}">
+                                                        <center>
+                                                        <button type="submit"   class="btn btn-dim bg-primary  btn-sm text-white"><em class="icon ni ni-edit" data-toggle="tooltip" data-placement="right" title="Clic para agregar productos de venta al paquete del servicio."></em></button>
+                                                        </center>
+                                
+                                                        </form>
+                                                </th>
+                                                {% endif %}
+                                                {% endif %}
+                                                {% endfor %}
+                                              
+                                            
+                                              
+                                             
+                                            </tr>
+                                            {% endfor %}
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                
+                        
+
+                    </div><!-- .tab-pane -->
+               
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+
+
+<!-- Modal de editar servicios faciales -->
+
+{% for facial, sucursal in listaFacialesEditar %}
+<!-- Modal de editar producto -->
+<div class="modal fade" tabindex="-1" role="dialog" id="editarServicioFacial{{facial.id_servicio}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center ">EDITAR SERVICIO FACIAL</h3>
+                <center>
+                  
+                    <img src="{% static 'images/iconosMenu/9.png' %} " alt="personal">
+               
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/actualizarServiciosFaciales/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <h3 class="title text-center ">Información del servicio</h3>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            <input type="hidden" value="{{facial.id_servicio}}" name="idServicioFacialEditar">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #24A19C !important; color:white !important">
+                                                <th scope="col">Id</th>
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Descripción</th>
+                                                <th scope="col">Costo venta</th>
+                                                <th scope="col">Tiempo mínimo</th>
+                                                <th scope="col">Tiempo máximo</th>
+                                              
+                                                <th scope="col">Sucursal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row" > <span  class="badge-pill badge-info">{{facial.id_servicio}}</span> </th>
+                                                <td><input  type="text" class="form-control"   name="nombreActualizado" value="{{facial.nombre_servicio}}"  ></td>
+                                                <td><input  class="form-control"   name="descripcionActualizado" value="{{facial.descripcion_servicio}}"  ></td>
+                                                <td><input  type="number" class="form-control" min="0.00" max="10000.00" step="0.01"   name="precioActualizado" value="{{facial.precio_venta}}"  ></td>
+                                                <td><input  type="number" class="form-control" min="0" max="10000" step="1"   name="minimoActualizado" value="{{facial.tiempo_minimo}}"  ></td>
+                                                <td> <input  type="number" class="form-control"  min="0" max="10000" step="1" name="maximoActualizado" value="{{facial.tiempo_maximo}}"  ></td>
+                                                <td>   
+                                                            <div class="form-control-select">
+                                                                <select class="form-control" id="default-06" name="idSucursal">
+                                                                   
+                                                                  
+                                                                   
+                                                                    <option value="{{sucursal.0}}" selected>{{sucursal.1}}</option>
+                                                                    {% for sucFalt in sucursalesTotalesEditat %}
+                                                                    <option value="{{sucFalt.0}}">{{sucFalt.1}}</option>
+                                                                    {% endfor %}
+                    
+                                                              
+                                                                </select>
+                                                            </div>
+                                                        
+                                                   
+                                               </td>
+                                        
+                                              
+                                             
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row gy-4">
+                            <div class="col-12">
+                                <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                    <li>
+                                        <button type="submit" class="btn btn-lg btn-primary">Actualizar producto</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+
+                    </div><!-- .tab-pane -->
+                    </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+
+
+<!-- Modal ver paquetes servicios faciales -->
+
+{% for servicio,producto,sucursal in listaModalFaciales %}
+<!-- Modal de editar producto -->
+<div class="modal fade" tabindex="-1" role="dialog" id="verProductosFaciales{{servicio.id_servicio}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center ">PAQUETE DE PRODUCTOS DE SERVICIO CORPORAL</h3>
+                <center>
+                  
+                    <img src="{% static 'images/iconosMenu/paquetes.png' %} " alt="personal">
+               
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                  
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <center>
+                                        <div class="form-group">
+                                            <span class="badge badge-dim badge-danger"><h3  style="color: rgb(180, 10, 10) !important;">{{servicios.nombre_servicio}}</h3></span>
+                                        </div>
+                                    </center>
+                                    
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            <input type="hidden" value="{{servicio.0}}" name="idPaqueteProductos">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #24A19C !important; color:white !important">
+                                               
+                                             
+                                                <th scope="col">Id Producto</th>
+                                              
+                                                <th scope="col">Codigo</th>
+                                                <th scope="col">SKU</th>
+                                              
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Cantidad</th>
+                                                {% for permiso in consultaPermisos %}
+                                                {% if permiso.tabla_modulo == "Paquetes" %}
+                                                {% if permiso.editar == "Si" %}
+                                
+                                                <th scope="col">Editar</th>
+                                                {% endif %}
+                                                {% endif %}
+                                                {% endfor %}
+                                              
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for p in producto %}
+                                            <tr>
+                                                
+                                                <th scope="row" > <span  class="badge-pill badge-dark">{{p.0}}</span> </th>
+                                                <th scope="row" > <span  class="badge badge-dim badge-pill badge-primary">{{p.1}}</span> </th>
+                                                <th scope="row" > <span  class="badge-pill badge-danger">{{p.2}}</span> </th>
+                                                <th scope="row" > <span  class="badge badge-dim badge-pill badge-info">{{p.3}}</span> </th>
+                                        
+                                                <th scope="row" > <span  class="badge badge-outline-warning" style="color: black !important;">{{p.4}}</span> </th>
+                                                {% for permiso in consultaPermisos %}
+                                                {% if permiso.tabla_modulo == "Paquetes" %}
+                                                {% if permiso.editar == "Si" %}
+                                
+                                                <th>
+                                                    <form action="/verProductoDePaqueteFacialEditar/" method="POST">{% csrf_token %}
+                                                        <input type="hidden" name="idProductoEditarPaqueteFacial" value="{{p.0}}">
+                                                        <input type="hidden" name="cantidadEnPaqueteFacial" value="{{p.4}}">
+                                                        <center>
+                                                        <button type="submit"   class="btn btn-dim bg-primary  btn-sm text-white"><em class="icon ni ni-edit" data-toggle="tooltip" data-placement="right" title="Clic para agregar productos de venta al paquete del servicio."></em></button>
+                                                        </center>
+                                
+                                                        </form>
+                                                </th>
+                                                {% endif %}
+                                                {% endif %}
+                                                {% endfor %}
+                                              
+                                                
+                                            
+                                              
+                                             
+                                            </tr>
+                                            {% endfor %}
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                
+                        
+
+                    </div><!-- .tab-pane -->
+               
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+
+
+
+<script>
+    {% for productoVentaEditar, usuario, sucursal in listaProductosVentaEditar2 %}
+    function calcularPrecioVenta{{productoVentaEditar.id_producto}}() {
+        const valorCosto = document.getElementById("costoCompra{{productoVentaEditar.id_producto}}").value;
+        const valorMargen = document.getElementById("margenCompra{{productoVentaEditar.id_producto}}").value;
+        const inputCostoVenta = document.getElementById("inputCostoVenta{{productoVentaEditar.id_producto}}");
+
+        margenFloat = parseFloat(valorMargen);
+        margenEntero = margenFloat.toFixed();
+        margenString = "1."+margenEntero.toString();
+        margenIntFinal = parseFloat(margenString);
+
+        const costoVentaNuevo = valorCosto * margenIntFinal;
+        costoVentaNuevoChido =costoVentaNuevo.toFixed(2);
+        inputCostoVenta.value = costoVentaNuevoChido;
+        console.log(costoVentaNuevoChido);
+
+    }
+    {% endfor %}
+
+
+
+
+   
+</script>
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+
+<script>
+    {% for serv,prod,suc in listaModalJavaScript %}
+    $(document).on('click', '#verProductosBoton{{serv.id_servicio}}', function() {
+        $('#verProductos{{serv.id_servicio}}').modal('show');
+    });
+
+ 
+    {% endfor %}
+
+    {% for x in productosServicioJS %}
+    $(document).on('click', '#editarProductosPaqueteBoton{{x.0}}', function() {
+        $('#editarProductosPaquete{{x.0}}').modal('show');
+    });
+    {% endfor %}
+
+</script>
+
+
+
+<script>
+
+    {% if servicioCorporalActualizado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{servicioCorporalActualizado}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    {% if paquetecreado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{paquetecreado}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    {% if paqueteProductoActualizado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{paqueteProductoActualizado}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    {% if paqueteProductoBorrado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'error',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{paqueteProductoBorrado}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+
+</script>
+
+
+
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+        var divPaquetesServiciosCorporales = document.getElementById("divPaquetesServiciosCorporales");
+        var divPaquetesServiciosFaciales = document.getElementById("divPaquetesServiciosFaciales");
+     
+        divPaquetesServiciosCorporales.style.display = "block";
+        divPaquetesServiciosFaciales.style.display = "none";
+        
+        window.onload= mueveReloj ();
+     
+      
+
+        
+    };
+    var ninguno = true;
+    function displayValores3(){
+        var valoresSelect = $("#productosVenta3").val() || [];
+        
+        if (ninguno && valoresSelect.includes('Ninguno')){
+            console.log('hay mas de uno');
+            //desmarcar ninguno
+            $("#productosVenta3 option[value=Ninguno]").removeAttr("selected");
+          
+            //actualizar los nuevos valores seleccionados
+            valoresSelect = $("#productosVenta3").val();
+            console.log(valoresSelect);
+            //indicar que niniguno ya no esta marcado
+            ninguno = false;
+        }
+        else if (!ninguno && valoresSelect.indexOf('Ninguno') > -1 ){
+            //dejar a ninguno como unico valor
+            $("#productosVenta3").val("Ninguno");
+            //actualizar los nuevos valores seleccionads
+            valoresSelect = $("#productosVenta3").val();
+            ninguno = true;
+        }
+    }
+
+    
+
+    function mostrarPaquetesCorporales(){
+        divPaquetesServiciosCorporales.style.display = "block";
+        divPaquetesServiciosFaciales.style.display = "none";
+       
+        console.log("Todos los divs");
+    };
+
+    function mostrarPaquetesFaciales(){
+        divPaquetesServiciosCorporales.style.display = "none";
+        divPaquetesServiciosFaciales.style.display = "block";
+        
+        console.log("activos");
+    };
+
+
+</script>
+{% endblock %}

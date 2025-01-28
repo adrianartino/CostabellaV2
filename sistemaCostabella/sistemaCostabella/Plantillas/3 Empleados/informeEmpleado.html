@@ -1,0 +1,2419 @@
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Informe Empleado | Costabella
+{% endblock %}
+
+{% block estilos %}
+
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+  <div class="nk-content-body">
+    <div class="nk-block">
+      <div class="card">
+        <div class="card-aside-wrap">
+          <div class="card-inner card-inner-lg">
+            <div class="nk-block-head nk-block-head-lg">
+              <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                  <h4 class="nk-block-title">Informe de ventas de empleado.</h4>
+                  <div class="nk-block-des">
+                    <p>Información las ventas que ha realizado el empleado en el sistema.</p>
+                  </div>
+                </div>
+                
+              </div>
+
+            </div><!-- .nk-block-head -->
+            <div class="nk-block">
+              <ul class="nav nav-tabs">
+                {% if rangoFechasEmpleado %}
+                <li class="nav-item">
+                  <a class="nav-link" data-toggle="tab" href="#mesactual">Mes Actual</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-toggle="tab" href="#añoactual">Año Actual</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link active" data-toggle="tab" href="#rangofechas">Rango de fechas</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                  <a class="nav-link active" data-toggle="tab" href="#mesactual">Mes Actual</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-toggle="tab" href="#añoactual">Año Actual</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link " data-toggle="tab" href="#rangofechas">Rango de fechas</a>
+                </li>
+                {% endif %}
+              </ul>
+              <div class="tab-content">
+                {% if rangoFechasEmpleado %}
+                <div class="tab-pane " id="mesactual">
+                  <div class="row gy-4">
+                    <div class="col-sm-8">
+                      <div class="card-title">
+                        <h4 class="nk-block-title">Del 01 al {{diadehoy}} de {{mesdehoy}}.</h4>
+                        <h6 class="title text-left">Ventas del empleado por mes.</h6>
+                        <p>Ventas directas, rentas y créditos.</p>
+                      </div>
+                      <div class="nk-sale-data-group flex-md-nowrap g-4">
+                        <div class="nk-sale-data">
+                          {% if ventasEnElMesEsMayorAlMesAnterior %}
+                          <span class="amount">{{ventasEnElMesActual}} Ventas <span style="cursor: pointer;"
+                              class="change up text-success" data-toggle="tooltip" data-placement="bottom"
+                              title="{{ventasEnElMesAnterior}} ventas el mes de {{mesAnteriorTexto}}."><em
+                                class="icon ni ni-arrow-long-up"></em>{{porcentajeVentasMes}}%</span></span>
+                          {% else %}
+                          <span class="amount">{{ventasEnElMesActual}} Ventas <span style="cursor: pointer;"
+                              class="change down text-danger" data-toggle="tooltip" data-placement="bottom"
+                              title="{{ventasEnElMesAnterior}} ventas el mes de {{mesAnteriorTexto}}."><em
+                                class="icon ni ni-arrow-long-down"></em>{{porcentajeVentasMes}}%</span></span>
+                          {% endif %}
+                          <span class="sub-title">Este mes</span>
+                        </div>
+                        <div class="nk-sale-data">
+                          {% if ventasEnLaSemanaEsMayorALaSemanaAnterior %}
+                          <span class="amount">{{ventasEnEnLaSemana}} Ventas <span style="cursor: pointer;"
+                              class="change up text-success" data-toggle="tooltip" data-placement="bottom"
+                              title="{{ventasEnEnLaSemanaAnterior}} ventas el MXN la semana anterior."><em
+                                class="icon ni ni-arrow-long-up"></em>{{porcentajeVentasSemanal}}%</span></span>
+                          {% else %}
+                          <span class="amount">{{ventasEnEnLaSemana}} Ventas <span style="cursor: pointer;"
+                              class="change down text-danger" data-toggle="tooltip" data-placement="bottom"
+                              title="{{ventasEnEnLaSemanaAnterior}} ventas el MXN la semana anterior."><em
+                                class="icon ni ni-arrow-long-down"></em>{{porcentajeVentasSemanal}}%</span></span>
+                          {% endif %}
+                          <span class="sub-title">Esta semana</span>
+                          <div>
+                            <span class="sub-title">{{fechaLunesAnterior}}</span>
+                          </div>
+                          <div>
+                            <span class="sub-title">{{fechaDomingoAnterior}}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="nk-ck-sm animate__animated animate__fadeIn">
+                        <canvas class="line-chart " id="filledLineChart"></canvas>
+                        <center>
+                          <div class="nk-sale-data">
+                            <span class="sub-title ">Gráfico de ventas por mes.</span>
+                          </div>
+                        </center>
+                      </div>
+                    </div>
+                    <div class="col-sm-4">
+                      <div class="card-title">
+                        <h6 class="title text-left">Ventas totales de costabella al mes.</h6>
+                        {% if sucursalEmpleado == "Todas" %}
+                        <p>Comparativo de ventas del empleado con las ventas en todas las sucursales de Costabella.</p>
+                        {% else %}
+                        <p>Comparativo de ventas del empleado con las ventas en la sucursal {{sucursal}} de Costabella.
+                        </p>
+                        {% endif %}
+                      </div>
+                      <div class="nk-ck-sm animate__animated animate__fadeIn">
+                        <canvas class="analytics-doughnut" id="TrafficChannelDoughnutData"></canvas>
+                        <center>
+                          <div class="nk-sale-data">
+                            <span class="sub-title ">Porcentaje de ventas del empleado.</span>
+
+                          </div>
+                        </center>
+                      </div>
+                      <div class="traffic-channel-group g-2">
+                        <div class="traffic-channel-data">
+                          <div class="title"><span class="dot dot-lg sq" data-bg="#FD5D5D"></span><span>
+                              {{numeroVentas}} Ventas del empleado</span></div>
+                          <div class="amount"><span class="fw-bold text-teal">{{ventasEnElMesActual}} <span
+                                class="text-dark">Ventas</span></span></div>
+                        </div>
+                        <div class="traffic-channel-data">
+                          {% if tipo == "Administrador" %}
+                          <div class="title"><span class="dot dot-lg sq" data-bg="#55D8C1"></span><span>{{numeroRentas}}
+                              Ventas totales</span></div>
+                          {% else %}
+                          <div class="title"><span class="dot dot-lg sq" data-bg="#55D8C1"></span><span>{{numeroRentas}}
+                              Ventas sucursal</span></div>
+                          {% endif %}
+                          <div class="amount"><span class="fw-bold text-teal">{{contadorVentasTotalesMes}} <span
+                                class="text-dark">Ventas</span></span></div>
+                        </div>
+                      </div><!-- .traffic-channel-group -->
+                    </div>
+                  </div>
+                  <br>
+                  <div class="nk-block nk-block-lg">
+                    <div class="nk-block-head">
+                      <div class="nk-block-head-content">
+                        <h4 class="nk-block-title">Totales generales de ventas del mes</h4>
+                        <div class="nk-block-des">
+                          <p>Total general de lo que ha vendido el empleado.</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card card-preview animate__animated animate__fadeIn">
+                      <div class="row gy-4">
+                        <div class="col-sm-12">
+                          <center>
+                            <h2><span class="text-teal">${{montoVentasEnElMesActual}}</span> MXN.</h2>
+                            <p>En el periodo del mes (Del 01 al {{diadehoy}} de {{mesdehoy}})</p>
+                            {% if esteMesVendioMas %}
+                            <p class="fw-bold text-dark">El mes pasado vendió ${{montoTotalDeVentaMesAnterior}} MXN. - <span class="text-teal">Un {{porcentajeMontoVentas}}% más.</span></p>
+                            {% else %}
+                            <p class="fw-bold text-dark">El mes pasado vendió ${{montoTotalDeVentaMesAnterior}} MXN. - <span class="text-danger">Un {{porcentajeMontoVentas}}% menos.</span></p>
+                            {% endif %}
+                            
+                          </center>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="nk-block-head">
+                      <div class="nk-block-head-content">
+                        <div class="nk-block-des">
+                          <p>Lista de ventas <span class="coloralta">realizadas</span> por el empleado.</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card card-preview">
+                      <div class="card-inner table-responsive">
+                        <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false" >
+                            <thead>
+                                <tr class="nk-tb-item nk-tb-head" style="background-color: #937DC2 !important; color:white !important">
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Concepto</span></th>
+                                    <th class="nk-tb-col" ><span class="sub-text textoBlanco">Sucursal/Fecha</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Cliente</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Productos/Servicios</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Crédito?</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Descuento?</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto Total</span></th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for venta, sucursal, clientes, boolProductos,productos,boolServCorporal,servicioCorporal,boolServFacial, servicioFacial, boolCredito, idsCreditos, boolPagado, montos, boolDescuentos, datoDescuento, descuentos, costoReal, tipoVenta  in listaVentasMes %}
+                                <tr class="nk-tb-item">
+                                    <td class="nk-tb-col nk-tb-col-check">
+                                      <center>
+                                        <div>
+                                          <span class="badge badge-dark">{{venta.id_venta}}</span>
+
+                                        </div>
+                                        <br>
+                                        <div>
+                                          <form action="/infoVenta/" method="POST">{% csrf_token %}
+                                              <input type="hidden" name="idVenta" value="{{venta.id_venta}}">
+                                              <center>
+                                              <button type="submit"   class="btn btn-icon btn-sm bg-indigo text-white"><em class="icon ni ni-eye" ></em></button>
+                                              </center>
+      
+                                          </form>
+                                      </div>
+                                      </center>
+                                        
+                                    </td>
+                                    <td class="nk-tb-col nk-tb-col-check">
+                                      <center>
+                                        {% if tipoVenta == "Venta" %}
+                                        
+                                        <span class="badge badge-outline-danger" >{{tipoVenta}}</span> 
+                                        {% else %}
+                                        <span class="badge badge-outline-success" >{{tipoVenta}}</span> 
+
+                                        {% endif %}
+                                      </center>
+                                      
+                                      
+                                    </td>
+                                  <td class="nk-tb-col nk-tb-col-check" style="white-space:nowrap!important;">
+                                    <center>
+                                      <span class="badge badge-primary">{{sucursal}}</span>
+                                      <div>
+                                        <div>
+                                          <span class="badge badge-outline-secondary">{{venta.fecha_venta}}</span>
+                                        </div>
+                                      </div>
+                                      <div>
+                                        
+                                      <span class="text-dark">{{venta.hora_venta}} hrs.</span>
+                                      </div>
+                                    </center>
+                                    
+                                </td>
+                                
+                              <td class="nk-tb-col nk-tb-col-check" style="white-space:nowrap!important;">
+                                {% if clientes.0 == "x" %}
+                                <span class="fw-bold text-danger">Cliente momentaneo</span>
+                                {% else %}
+                                <span class="fw-bold text-dark"><span class="badge badge-dark">{{clientes.0}}</span> - <span class="badge badge-info">{{clientes.1}}</span></span>
+                                {% endif %}
+                              </td>
+                              <td class="nk-tb-col nk-tb-col-check">
+                                {% if boolProductos == "Sin productos comprados" and boolServCorporal == "Sin servicios coorporales" and boolServFacial == "Sin servicios faciales" %}
+                                <span class="badge badge-dot badge-gray">Sin productos.</span>
+                                {% else %}
+                                <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                  
+                                                  {% for p in productos %}
+                                                    {% if p.0 == 'x' %}
+                                                    {% else %}
+                                                    <div> 
+                                                      <h6>  <span class='text-dark fs-11px'> Producto:</span> <span class='text-primary fs-11px'> {{p.0}} -</span> <span class='text-soft fs-11px'> {{p.1}}  </span> <span class='text-info fs-11px'> - {{p.2}} unidades. </span>   </h6>
+                                                    </div>
+                                                    {% endif %}
+                                                  {% endfor %}
+
+                                                  {% for sc in servicioCorporal %}
+                                                    {% if sc.0 == 'x' %}
+                                                    {% else %}
+                                                    <div> 
+                                                      <h6> <span class='text-dark fs-11px'> Servicio:</span><span class='text-primary fs-11px'> {{sc.0}} -</span> <span class='text-soft fs-11px'> {{sc.1}}  </span> <span class='text-info fs-11px'> - {{sc.2}} unidades. </span>   </h6>
+                                                    </div>
+                                                    {% endif %}
+                                                  {% endfor %}
+
+                                                  {% for sf in servicioFacial %}
+                                                    {% if sf.0 == 'x' %}
+                                                    {% else %}
+                                                    <div> 
+                                                      <h6> <span class='text-dark fs-11px'> Servicio:</span><span class='text-primary fs-11px'> {{sf.0}} -</span> <span class='text-soft fs-11px'> {{sf.1}}  </span> <span class='text-info fs-11px'> - {{sf.2}} unidades. </span>   </h6>
+                                                    </div>
+                                                    {% endif %}
+                                                  
+                                                  
+                                                  {% endfor %}"><span>Ver productos</span></button>
+                                {% endif %}
+                              </td>
+                              
+                      <td class="nk-tb-col nk-tb-col-check">
+                        {% if boolCredito == "Si" %}
+                        <span class="badge badge-danger">Si</span>
+                          {% if idsCreditos == "error" %}
+
+                          {% else %}
+                          <div>
+                            <span class="badge badge-outline-secondary">Crédito #{{idsCreditos}}</span>
+                          </div>
+                            {% if boolPagado == "Si" %}
+                            <span class="fw-bold text-teal">Saldado</span>
+                            {% else %}
+                            <span class="fw-bold text-danger">No saldado</span>
+                            {% endif %}
+                          {% endif %}
+
+                        
+
+                        
+                        {% else %}
+                        <span class="badge badge-dim badge-outline-primary">No</span>
+                        {% endif %}
+                    </td>
+                    <td class="nk-tb-col nk-tb-col-check" style="white-space:nowrap!important;">
+                        {% if boolDescuentos == "Con descuento" %}
+                        
+                        <div>
+                          <p class="badge badge-gray">Del &nbsp;<span class="fw-bold text-white"> {{datoDescuento.0}}% - {{datoDescuento.1}}</span>:</p>
+                        </div>
+                        <div>
+                            <p class="fw-bold text-dark">Total: <span class="fw-bold text-teal">${{costoReal}} MXN.</span>:</p>
+                        </div>
+                        <div>
+                            <p class="fw-bold text-dark">Desc: <span class="fw-bold text-pink">-${{descuentos}} MXN.</span>:</p>
+                        </div>
+                            
+
+                        
+
+                        
+                        {% else %}
+                        <span class="fw-bold text-dark">Sin descuento</span>
+                        {% endif %}
+                  </td>
+                  <td class="nk-tb-col nk-tb-col-check">
+                    <span class="badge badge-success">${{montos}} <span class="fs-5px">MXN.</span></span>
+                </td>
+                                    
+                                    
+                                </tr><!-- .nk-tb-item  -->
+                                {% endfor %}
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                    </div><!-- .card-preview -->
+                  </div> <!-- nk-block -->
+                </div>
+                <div class="tab-pane" id="añoactual">
+                  <div class="row gy-4">
+                    <div class="col-sm-8">
+                      <div class="card-title">
+                        <h4 class="nk-block-title">Del 01 de Enero al 31 de diciembre del {{añoHoy}}.</h4>
+                        <h6 class="title text-left">Ventas del empleado en el año.</h6>
+                        <p>Ventas directas, rentas y créditos.</p>
+                      </div>
+                      <div class="nk-sale-data-group flex-md-nowrap g-4">
+                        <div class="nk-sale-data">
+                          {% if ventasMayores %}
+                          <span class="amount">{{contadorVentasEnElAño}} Ventas {{añoAnterior}} <span style="cursor: pointer;"
+                              class="change up text-success" data-toggle="tooltip" data-placement="bottom"
+                              title="{{contadorVentasEnElAñoAnterior}} ventas el año pasado."><em
+                                class="icon ni ni-arrow-long-up"></em>{{porcentajeVentaAnual}}%</span></span>
+                          {% else %}
+                          <span class="amount">{{contadorVentasEnElAño}} Ventas {{añoAnterior}} <span style="cursor: pointer;"
+                              class="change down text-danger" data-toggle="tooltip" data-placement="bottom"
+                              title="{{contadorVentasEnElAñoAnterior}} ventas el año pasado."><em
+                                class="icon ni ni-arrow-long-down"></em>{{porcentajeVentaAnual}}%</span></span>
+                          {% endif %}
+                          <span class="sub-title">Este año</span>
+                        </div>
+                        
+                      </div>
+                      <div class="nk-ck-sm animate__animated animate__fadeIn">
+                        <canvas class="line-chart" id="ventasAnuales"></canvas>
+                        <center>
+                          <div class="nk-sale-data">
+                            <span class="sub-title ">Gráfico de ventas por mes.</span>
+                          </div>
+                        </center>
+                      </div>
+                    </div>
+                    <div class="col-sm-4">
+                      <div class="card-title">
+                        <h6 class="title text-left">Ventas totales de costabella al año.</h6>
+                        {% if sucursalEmpleado == "Todas" %}
+                        <p>Comparativo de ventas del empleado con las ventas en todas las sucursales de Costabella.</p>
+                        {% else %}
+                        <p>Comparativo de ventas del empleado con las ventas en la sucursal {{sucursal}} de Costabella.
+                        </p>
+                        {% endif %}
+                      </div>
+                      <div class="nk-ck-sm animate__animated animate__fadeIn">
+                        <canvas class="analytics-doughnut" id="ventasAnualesPie"></canvas>
+                        <center>
+                          <div class="nk-sale-data">
+                            <span class="sub-title ">Porcentaje de ventas del empleado.</span>
+
+                          </div>
+                        </center>
+                      </div>
+                      <div class="traffic-channel-group g-2">
+                        <div class="traffic-channel-data">
+                          <div class="title"><span class="dot dot-lg sq" data-bg="#FD5D5D"></span><span>
+                              {{numeroVentas}} Ventas del empleado</span></div>
+                          <div class="amount"><span class="fw-bold text-teal">{{ventasEnElMesActual}} <span
+                                class="text-dark">Ventas</span></span></div>
+                        </div>
+                        <div class="traffic-channel-data">
+                          {% if tipo == "Administrador" %}
+                          <div class="title"><span class="dot dot-lg sq" data-bg="#55D8C1"></span><span>{{numeroRentas}}
+                              Ventas totales</span></div>
+                          {% else %}
+                          <div class="title"><span class="dot dot-lg sq" data-bg="#55D8C1"></span><span>{{numeroRentas}}
+                              Ventas sucursal</span></div>
+                          {% endif %}
+                          <div class="amount"><span class="fw-bold text-teal">{{contadorVentasTotalesMes}} <span
+                                class="text-dark">Ventas</span></span></div>
+                        </div>
+                      </div><!-- .traffic-channel-group -->
+                    </div>
+                  </div>
+                  <br>
+                  <div class="nk-block nk-block-lg">
+                    <div class="nk-block-head">
+                      <div class="nk-block-head-content">
+                        <h4 class="nk-block-title">Totales generales de ventas en el año</h4>
+                        <div class="nk-block-des">
+                          <p>Total general de lo que ha vendido el empleado.</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card card-preview animate__animated animate__fadeIn">
+                      <div class="row gy-4">
+                        <div class="col-sm-12">
+                          <center>
+                            <h2><span class="text-teal">${{montoVentaEnElAño}}</span> MXN.</h2>
+                            <p>En el periodo del año (Del 01 de Enero de 31 de Diciembre del {{añoHoy}})</p>
+                            {% if esteAñoVendioMas %}
+                            <p class="fw-bold text-dark">El año pasado vendió ${{montoVentaEnElAñoAnterior}} MXN. - <span class="text-teal">Un {{porcentajeMontoVentaAnual}}% más.</span></p>
+                            {% else %}
+                            <p class="fw-bold text-dark">El año pasado vendió ${{montoVentaEnElAñoAnterior}} MXN. - <span class="text-danger">Un {{porcentajeMontoVentaAnual}}% menos.</span></p>
+                            {% endif %}
+                            
+                          </center>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="nk-block-head">
+                      <div class="nk-block-head-content">
+                        <div class="nk-block-des">
+                          <p>Lista de ventas <span class="coloralta">realizadas</span> por el empleado.</p>
+                          
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card card-preview">
+                      <div class="card-inner table-responsive">
+                        <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false" >
+                            <thead>
+                                <tr class="nk-tb-item nk-tb-head" style="background-color: #FFC93C !important; color:white !important">
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Concepto</span></th>
+                                    <th class="nk-tb-col" ><span class="sub-text textoBlanco">Sucursal/Fecha</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Cliente</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Productos/Servicios</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Crédito?</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Descuento?</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto Total</span></th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for venta, sucursal, clientes, boolProductos,productos,boolServCorporal,servicioCorporal,boolServFacial, servicioFacial, boolCredito, idsCreditos, boolPagado, montos, boolDescuentos, datoDescuento, descuentos, costoReal, tipoVenta  in listaVentasAño %}
+                                <tr class="nk-tb-item">
+                                    <td class="nk-tb-col nk-tb-col-check">
+                                      <center>
+                                        <div>
+                                          <span class="badge badge-dark">{{venta.id_venta}}</span>
+
+                                        </div>
+                                        <br>
+                                        <div>
+                                          <form action="/infoVenta/" method="POST">{% csrf_token %}
+                                              <input type="hidden" name="idVenta" value="{{venta.id_venta}}">
+                                              <center>
+                                              <button type="submit"   class="btn btn-icon btn-sm bg-indigo text-white"><em class="icon ni ni-eye" ></em></button>
+                                              </center>
+      
+                                          </form>
+                                      </div>
+                                      </center>
+                                        
+                                    </td>
+                                    <td class="nk-tb-col nk-tb-col-check">
+                                      <center>
+                                        {% if tipoVenta == "Venta" %}
+                                        
+                                        <span class="badge badge-outline-danger" >{{tipoVenta}}</span> 
+                                        {% else %}
+                                        <span class="badge badge-outline-success" >{{tipoVenta}}</span> 
+
+                                        {% endif %}
+                                      </center>
+                                      
+                                      
+                                    </td>
+                                  <td class="nk-tb-col nk-tb-col-check" style="white-space:nowrap!important;">
+                                    <center>
+                                      <span class="badge badge-primary">{{sucursal}}</span>
+                                      <div>
+                                        <div>
+                                          <span class="badge badge-outline-secondary">{{venta.fecha_venta}}</span>
+                                        </div>
+                                      </div>
+                                      <div>
+                                        
+                                      <span class="text-dark">{{venta.hora_venta}} hrs.</span>
+                                      </div>
+                                    </center>
+                                    
+                                </td>
+                                
+                              <td class="nk-tb-col nk-tb-col-check" style="white-space:nowrap!important;">
+                                {% if clientes.0 == "x" %}
+                                <span class="fw-bold text-danger">Cliente momentaneo</span>
+                                {% else %}
+                                <span class="fw-bold text-dark"><span class="badge badge-dark">{{clientes.0}}</span> - <span class="badge badge-info">{{clientes.1}}</span></span>
+                                {% endif %}
+                              </td>
+                              <td class="nk-tb-col nk-tb-col-check">
+                                {% if boolProductos == "Sin productos comprados" and boolServCorporal == "Sin servicios coorporales" and boolServFacial == "Sin servicios faciales" %}
+                                <span class="badge badge-dot badge-gray">Sin productos.</span>
+                                {% else %}
+                                <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                  
+                                                  {% for p in productos %}
+                                                    {% if p.0 == 'x' %}
+                                                    {% else %}
+                                                    <div> 
+                                                      <h6>  <span class='text-dark fs-11px'> Producto:</span> <span class='text-primary fs-11px'> {{p.0}} -</span> <span class='text-soft fs-11px'> {{p.1}}  </span> <span class='text-info fs-11px'> - {{p.2}} unidades. </span>   </h6>
+                                                    </div>
+                                                    {% endif %}
+                                                  {% endfor %}
+
+                                                  {% for sc in servicioCorporal %}
+                                                    {% if sc.0 == 'x' %}
+                                                    {% else %}
+                                                    <div> 
+                                                      <h6> <span class='text-dark fs-11px'> Servicio:</span><span class='text-primary fs-11px'> {{sc.0}} -</span> <span class='text-soft fs-11px'> {{sc.1}}  </span> <span class='text-info fs-11px'> - {{sc.2}} unidades. </span>   </h6>
+                                                    </div>
+                                                    {% endif %}
+                                                  {% endfor %}
+
+                                                  {% for sf in servicioFacial %}
+                                                    {% if sf.0 == 'x' %}
+                                                    {% else %}
+                                                    <div> 
+                                                      <h6> <span class='text-dark fs-11px'> Servicio:</span><span class='text-primary fs-11px'> {{sf.0}} -</span> <span class='text-soft fs-11px'> {{sf.1}}  </span> <span class='text-info fs-11px'> - {{sf.2}} unidades. </span>   </h6>
+                                                    </div>
+                                                    {% endif %}
+                                                  
+                                                  
+                                                  {% endfor %}"><span>Ver productos</span></button>
+                                {% endif %}
+                              </td>
+                              
+                      <td class="nk-tb-col nk-tb-col-check">
+                        {% if boolCredito == "Si" %}
+                        <span class="badge badge-danger">Si</span>
+                          {% if idsCreditos == "error" %}
+
+                          {% else %}
+                          <div>
+                            <span class="badge badge-outline-secondary">Crédito #{{idsCreditos}}</span>
+                          </div>
+                            {% if boolPagado == "Si" %}
+                            <span class="fw-bold text-teal">Saldado</span>
+                            {% else %}
+                            <span class="fw-bold text-danger">No saldado</span>
+                            {% endif %}
+                          {% endif %}
+
+                        
+
+                        
+                        {% else %}
+                        <span class="badge badge-dim badge-outline-primary">No</span>
+                        {% endif %}
+                    </td>
+                    <td class="nk-tb-col nk-tb-col-check">
+                        {% if boolDescuentos == "Con descuento" %}
+                        <div>
+                          <p class="badge badge-gray">Del &nbsp;<span class="fw-bold text-white">{{datoDescuento.0}}% - {{datoDescuento.1}}</span>:</p>
+                        </div>
+                        <div>
+                            <p class="fw-bold text-dark">Total: <span class="fw-bold text-teal">${{costoReal}} MXN.</span>:</p>
+                        </div>
+                        <div>
+                            <p class="fw-bold text-dark">Desc: <span class="fw-bold text-pink">-${{descuentos}} MXN.</span>:</p>
+                        </div>
+                            
+
+                        
+
+                        
+                        {% else %}
+                        <span class="fw-bold text-dark">Sin descuento</span>
+                        {% endif %}
+                  </td>
+                  <td class="nk-tb-col nk-tb-col-check">
+                    <span class="badge badge-success">${{montos}} <span class="fs-5px">MXN.</span></span>
+                </td>
+                                    
+                                    
+                                </tr><!-- .nk-tb-item  -->
+                                {% endfor %}
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                    </div><!-- .card-preview -->
+                  </div> <!-- nk-block -->
+                </div>
+                <div class="tab-pane active" id="rangofechas">
+                  {% if rangoFechasEmpleado %}
+                  <div class="row gy-4">
+                    <div class="col-sm-8">
+                      <div class="card-title">
+                        <h4 class="nk-block-title">Del {{fefchaCompletaInicio}} al {{fefchaCompletaFinal}}.</h4>
+                        <h6 class="title text-left">Ventas del empleado en el periodo.</h6>
+                        <p>Ventas directas, rentas y créditos.</p>
+                      </div>
+                      <div class="nk-sale-data-group flex-md-nowrap g-4">
+                        <div class="nk-sale-data">
+                          {% if ventasMayoresPeriodo %}
+                          <span class="amount">{{contadorVentasPeriodo}} Ventas <span style="cursor: pointer;"
+                              class="change up text-success" data-toggle="tooltip" data-placement="bottom"
+                              title="{{contadorVentasPeriodoAnterior}} ventas en el periodo de {{fechaTextoInicioPeriodoAnterior}} al {{fefchaCompletaInicio}}."><em
+                                class="icon ni ni-arrow-long-up"></em>{{porcentajeVentaPeriodo}}%</span></span>
+                          {% else %}
+                          <span class="amount">{{contadorVentasPeriodo}} Ventas <span style="cursor: pointer;"
+                              class="change down text-danger" data-toggle="tooltip" data-placement="bottom"
+                              title="{{contadorVentasPeriodoAnterior}} ventas en el periodo de {{fechaTextoInicioPeriodoAnterior}} al {{fefchaCompletaInicio}}."><em
+                                class="icon ni ni-arrow-long-down"></em>{{porcentajeVentaPeriodo}}%</span></span>
+                          {% endif %}
+                          <span class="sub-title">En el periodo.</span>
+                        </div>
+                      </div>
+                      <div class="nk-ck-sm animate__animated animate__fadeIn">
+                        <canvas class="line-chart " id="filledLineChartPeriodo"></canvas>
+                        <center>
+                          <div class="nk-sale-data">
+                            <span class="sub-title ">Gráfico de ventas del periodo.</span>
+                          </div>
+                        </center>
+                      </div>
+                    </div>
+                    <div class="col-sm-4">
+                      <div class="card-title">
+                        <h6 class="title text-left">Ventas totales de costabella en el periodo.</h6>
+                        {% if sucursalEmpleado == "Todas" %}
+                        <p>Comparativo de ventas del empleado con las ventas en todas las sucursales de Costabella.</p>
+                        {% else %}
+                        <p>Comparativo de ventas del empleado con las ventas en la sucursal {{sucursal}} de Costabella.
+                        </p>
+                        {% endif %}
+                      </div>
+                      <div class="nk-ck-sm animate__animated animate__fadeIn">
+                        <canvas class="analytics-doughnut" id="TrafficChannelDoughnutDataPeriodoInforme"></canvas>
+                        <center>
+                          <div class="nk-sale-data">
+                            <span class="sub-title ">Porcentaje de ventas del empleado.</span>
+
+                          </div>
+                        </center>
+                      </div>
+                      <div class="traffic-channel-group g-2">
+                        <div class="traffic-channel-data">
+                          <div class="title"><span class="dot dot-lg sq" data-bg="#FD5D5D"></span><span>
+                              Ventas del empleado</span></div>
+                          <div class="amount"><span class="fw-bold text-teal">{{contadorVentasPeriodo}} <span
+                                class="text-dark">Ventas</span></span></div>
+                        </div>
+                        <div class="traffic-channel-data">
+                          {% if tipo == "Administrador" %}
+                          <div class="title"><span class="dot dot-lg sq" data-bg="#55D8C1"></span><span>
+                              Ventas totales</span></div>
+                          {% else %}
+                          <div class="title"><span class="dot dot-lg sq" data-bg="#55D8C1"></span><span>
+                              Ventas sucursal</span></div>
+                          {% endif %}
+                          <div class="amount"><span class="fw-bold text-teal">{{contadorVentasTotalesDelPeriodo}} <span
+                                class="text-dark">Ventas</span></span></div>
+                        </div>
+                      </div><!-- .traffic-channel-group -->
+                    </div>
+                  </div>
+                  <br>
+                  <div class="nk-block nk-block-lg">
+                    <div class="nk-block-head">
+                      <div class="nk-block-head-content">
+                        <h4 class="nk-block-title">Totales generales de ventas del periodo.</h4>
+                        <div class="nk-block-des">
+                          <p>Total general de lo que ha vendido el empleado.</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card card-preview animate__animated animate__fadeIn">
+                      <div class="row gy-4">
+                        <div class="col-sm-12">
+                          <center>
+                            <h2><span class="text-teal">${{montoVentaPeriodo}}</span> MXN.</h2>
+                            <p>En el periodo del mes (Del {{fefchaCompletaInicio}} al {{fefchaCompletaFinal}}.)</p>
+                            {% if esteMesVendioMas %}
+                            <p class="fw-bold text-dark">El mes pasado vendió ${{montoVentaPeriodoAnterior}} MXN. - <span class="text-teal">Un {{porcentajeVentaPeriodo}}% más.</span></p>
+                            {% else %}
+                            <p class="fw-bold text-dark">El mes pasado vendió ${{montoVentaPeriodoAnterior}} MXN. - <span class="text-danger">Un {{porcentajeVentaPeriodo}}% menos.</span></p>
+                            {% endif %}
+                            
+                          </center>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="nk-block-head">
+                      <div class="nk-block-head-content">
+                        <div class="nk-block-des">
+                          <p>Lista de ventas <span class="coloralta">realizadas</span> por el empleado.</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card card-preview">
+                      <div class="card-inner table-responsive">
+                        <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false" >
+                            <thead>
+                                <tr class="nk-tb-item nk-tb-head" style="background-color: #069A8E !important; color:white !important">
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Concepto</span></th>
+                                    <th class="nk-tb-col" ><span class="sub-text textoBlanco">Sucursal/Fecha</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Cliente</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Productos/Servicios</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Crédito?</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Descuento?</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto Total</span></th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for venta, sucursal, clientes, boolProductos,productos,boolServCorporal,servicioCorporal,boolServFacial, servicioFacial, boolCredito, idsCreditos, boolPagado, montos, boolDescuentos, datoDescuento, descuentos, costoReal, tipoVenta  in listaVentasPeriodo %}
+                                <tr class="nk-tb-item">
+                                    <td class="nk-tb-col nk-tb-col-check">
+                                      <center>
+                                        <div>
+                                          <span class="badge badge-dark">{{venta.id_venta}}</span>
+
+                                        </div>
+                                        <br>
+                                        <div>
+                                          <form action="/infoVenta/" method="POST">{% csrf_token %}
+                                              <input type="hidden" name="idVenta" value="{{venta.id_venta}}">
+                                              <center>
+                                              <button type="submit"   class="btn btn-icon btn-sm bg-indigo text-white"><em class="icon ni ni-eye" ></em></button>
+                                              </center>
+      
+                                          </form>
+                                      </div>
+                                      </center>
+                                        
+                                    </td>
+                                    <td class="nk-tb-col nk-tb-col-check">
+                                      <center>
+                                        {% if tipoVenta == "Venta" %}
+                                        
+                                        <span class="badge badge-outline-danger" >{{tipoVenta}}</span> 
+                                        {% else %}
+                                        <span class="badge badge-outline-success" >{{tipoVenta}}</span> 
+
+                                        {% endif %}
+                                      </center>
+                                      
+                                      
+                                    </td>
+                                  <td class="nk-tb-col nk-tb-col-check" style="white-space:nowrap!important;">
+                                    <center>
+                                      <span class="badge badge-primary">{{sucursal}}</span>
+                                      <div>
+                                        <div>
+                                          <span class="badge badge-outline-secondary">{{venta.fecha_venta}}</span>
+                                        </div>
+                                      </div>
+                                      <div>
+                                        
+                                      <span class="text-dark">{{venta.hora_venta}} hrs.</span>
+                                      </div>
+                                    </center>
+                                    
+                                </td>
+                                
+                              <td class="nk-tb-col nk-tb-col-check" style="white-space:nowrap!important;">
+                                {% if clientes.0 == "x" %}
+                                <span class="fw-bold text-danger">Cliente momentaneo</span>
+                                {% else %}
+                                <span class="fw-bold text-dark"><span class="badge badge-dark">{{clientes.0}}</span> - <span class="badge badge-info">{{clientes.1}}</span></span>
+                                {% endif %}
+                              </td>
+                              <td class="nk-tb-col nk-tb-col-check">
+                                {% if boolProductos == "Sin productos comprados" and boolServCorporal == "Sin servicios coorporales" and boolServFacial == "Sin servicios faciales" %}
+                                <span class="badge badge-dot badge-gray">Sin productos.</span>
+                                {% else %}
+                                <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                  
+                                                  {% for p in productos %}
+                                                    {% if p.0 == 'x' %}
+                                                    {% else %}
+                                                    <div> 
+                                                      <h6>  <span class='text-dark fs-11px'> Producto:</span> <span class='text-primary fs-11px'> {{p.0}} -</span> <span class='text-soft fs-11px'> {{p.1}}  </span> <span class='text-info fs-11px'> - {{p.2}} unidades. </span>   </h6>
+                                                    </div>
+                                                    {% endif %}
+                                                  {% endfor %}
+
+                                                  {% for sc in servicioCorporal %}
+                                                    {% if sc.0 == 'x' %}
+                                                    {% else %}
+                                                    <div> 
+                                                      <h6> <span class='text-dark fs-11px'> Servicio:</span><span class='text-primary fs-11px'> {{sc.0}} -</span> <span class='text-soft fs-11px'> {{sc.1}}  </span> <span class='text-info fs-11px'> - {{sc.2}} unidades. </span>   </h6>
+                                                    </div>
+                                                    {% endif %}
+                                                  {% endfor %}
+
+                                                  {% for sf in servicioFacial %}
+                                                    {% if sf.0 == 'x' %}
+                                                    {% else %}
+                                                    <div> 
+                                                      <h6> <span class='text-dark fs-11px'> Servicio:</span><span class='text-primary fs-11px'> {{sf.0}} -</span> <span class='text-soft fs-11px'> {{sf.1}}  </span> <span class='text-info fs-11px'> - {{sf.2}} unidades. </span>   </h6>
+                                                    </div>
+                                                    {% endif %}
+                                                  
+                                                  
+                                                  {% endfor %}"><span>Ver productos</span></button>
+                                {% endif %}
+                              </td>
+                              
+                      <td class="nk-tb-col nk-tb-col-check">
+                        {% if boolCredito == "Si" %}
+                        <span class="badge badge-danger">Si</span>
+                          {% if idsCreditos == "error" %}
+
+                          {% else %}
+                          <div>
+                            <span class="badge badge-outline-secondary">Crédito #{{idsCreditos}}</span>
+                          </div>
+                            {% if boolPagado == "Si" %}
+                            <span class="fw-bold text-teal">Saldado</span>
+                            {% else %}
+                            <span class="fw-bold text-danger">No saldado</span>
+                            {% endif %}
+                          {% endif %}
+
+                        
+
+                        
+                        {% else %}
+                        <span class="badge badge-dim badge-outline-primary">No</span>
+                        {% endif %}
+                    </td>
+                    <td class="nk-tb-col nk-tb-col-check">
+                        {% if boolDescuentos == "Con descuento" %}
+                        <div>
+                          <p class="badge badge-gray">Del &nbsp;<span class="fw-bold text-white">{{datoDescuento.0}}% - {{datoDescuento.1}}</span>:</p>
+                        </div>
+                        <div>
+                            <p class="fw-bold text-dark fs-12px">Total: <span class="fw-bold text-teal">${{costoReal}} MXN.</span>:</p>
+                        </div>
+                        <div>
+                            <p class="fw-bold text-dark fs-12px">Desc: <span class="fw-bold text-pink">-${{descuentos}} MXN.</span>:</p>
+                        </div>
+                            
+
+                        
+
+                        
+                        {% else %}
+                        <span class="fw-bold text-dark">Sin descuento</span>
+                        {% endif %}
+                  </td>
+                  <td class="nk-tb-col nk-tb-col-check">
+                    <span class="badge badge-success">${{montos}} <span class="fs-5px">MXN.</span></span>
+                </td>
+                                    
+                                    
+                                </tr><!-- .nk-tb-item  -->
+                                {% endfor %}
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                    </div><!-- .card-preview -->
+                  </div> <!-- nk-block -->
+                  {% else %}
+                  <div class="card-title">
+                    <h4 class="nk-block-title">Elegir rango de fechas.</h4>
+                    <p>Rango de fechas para informe de ventas del empleado.</p>
+                  </div>
+                  
+                    <form action="/informeDeVentasRangoFechasEmpleado/" method="POST"> {% csrf_token %}
+                      <div class="row gy-4">
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label class="form-label">Fecha de inicio</label>
+                            <div class="form-control-wrap">
+                                <div class="form-icon form-icon-left">
+                                    <em class="icon ni ni-calendar"></em>
+                                </div>
+                                <input type="text" name="fechaInicio" class="form-control date-picker" required data-date-format="yyyy-mm-dd">
+                            </div>
+                            <div class="form-note">Formato de fecha <code>año-mes-dia</code></div>
+                        </div>
+                          
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label class="form-label">Fecha Final</label>
+                            <div class="form-control-wrap">
+                                <div class="form-icon form-icon-left">
+                                    <em class="icon ni ni-calendar"></em>
+                                </div>
+                                <input type="text" name="fechaFinal" class="form-control date-picker" required data-date-format="yyyy-mm-dd">
+                            </div>
+                            <div class="form-note">Formato de fecha <code>año-mes-dia</code></div>
+                          </div>
+                          
+                        </div>
+                      </div>
+                      <br>
+                      <div class="text-right">
+                        <input type="hidden" name="idEmpleadoInforme" value="{{idEmpleado}}">
+                        
+                        <button type="submit" class="btn btn-dim btn-primary">Generar informe de ventas</button>
+                      </div>
+                    </form>
+                  {% endif %}
+                  
+                </div>
+                {% else %}
+                <div class="tab-pane active" id="mesactual">
+                  <div class="row gy-4">
+                    <div class="col-sm-8">
+                      <div class="card-title">
+                        <h4 class="nk-block-title">Del 01 al {{diadehoy}} de {{mesdehoy}}.</h4>
+                        <h6 class="title text-left">Ventas del empleado por mes.</h6>
+                        <p>Ventas directas, rentas y créditos.</p>
+                      </div>
+                      <div class="nk-sale-data-group flex-md-nowrap g-4">
+                        <div class="nk-sale-data">
+                          {% if ventasEnElMesEsMayorAlMesAnterior %}
+                          <span class="amount">{{ventasEnElMesActual}} Ventas <span style="cursor: pointer;"
+                              class="change up text-success" data-toggle="tooltip" data-placement="bottom"
+                              title="{{ventasEnElMesAnterior}} ventas el mes de {{mesAnteriorTexto}}."><em
+                                class="icon ni ni-arrow-long-up"></em>{{porcentajeVentasMes}}%</span></span>
+                          {% else %}
+                          <span class="amount">{{ventasEnElMesActual}} Ventas <span style="cursor: pointer;"
+                              class="change down text-danger" data-toggle="tooltip" data-placement="bottom"
+                              title="{{ventasEnElMesAnterior}} ventas el mes de {{mesAnteriorTexto}}."><em
+                                class="icon ni ni-arrow-long-down"></em>{{porcentajeVentasMes}}%</span></span>
+                          {% endif %}
+                          <span class="sub-title">Este mes</span>
+                        </div>
+                        <div class="nk-sale-data">
+                          {% if ventasEnLaSemanaEsMayorALaSemanaAnterior %}
+                          <span class="amount">{{ventasEnEnLaSemana}} Ventas <span style="cursor: pointer;"
+                              class="change up text-success" data-toggle="tooltip" data-placement="bottom"
+                              title="{{ventasEnEnLaSemanaAnterior}} ventas el MXN la semana anterior."><em
+                                class="icon ni ni-arrow-long-up"></em>{{porcentajeVentasSemanal}}%</span></span>
+                          {% else %}
+                          <span class="amount">{{ventasEnEnLaSemana}} Ventas <span style="cursor: pointer;"
+                              class="change down text-danger" data-toggle="tooltip" data-placement="bottom"
+                              title="{{ventasEnEnLaSemanaAnterior}} ventas el MXN la semana anterior."><em
+                                class="icon ni ni-arrow-long-down"></em>{{porcentajeVentasSemanal}}%</span></span>
+                          {% endif %}
+                          <span class="sub-title">Esta semana</span>
+                          <div>
+                            <span class="sub-title">{{fechaLunesAnterior}}</span>
+                          </div>
+                          <div>
+                            <span class="sub-title">{{fechaDomingoAnterior}}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="nk-ck-sm animate__animated animate__fadeIn">
+                        <canvas class="line-chart " id="filledLineChart"></canvas>
+                        <center>
+                          <div class="nk-sale-data">
+                            <span class="sub-title ">Gráfico de ventas por mes.</span>
+                          </div>
+                        </center>
+                      </div>
+                    </div>
+                    <div class="col-sm-4">
+                      <div class="card-title">
+                        <h6 class="title text-left">Ventas totales de costabella al mes.</h6>
+                        {% if sucursalEmpleado == "Todas" %}
+                        <p>Comparativo de ventas del empleado con las ventas en todas las sucursales de Costabella.</p>
+                        {% else %}
+                        <p>Comparativo de ventas del empleado con las ventas en la sucursal {{sucursal}} de Costabella.
+                        </p>
+                        {% endif %}
+                      </div>
+                      <div class="nk-ck-sm animate__animated animate__fadeIn">
+                        <canvas class="analytics-doughnut" id="TrafficChannelDoughnutData"></canvas>
+                        <center>
+                          <div class="nk-sale-data">
+                            <span class="sub-title ">Porcentaje de ventas del empleado.</span>
+
+                          </div>
+                        </center>
+                      </div>
+                      <div class="traffic-channel-group g-2">
+                        <div class="traffic-channel-data">
+                          <div class="title"><span class="dot dot-lg sq" data-bg="#FD5D5D"></span><span>
+                              {{numeroVentas}} Ventas del empleado</span></div>
+                          <div class="amount"><span class="fw-bold text-teal">{{ventasEnElMesActual}} <span
+                                class="text-dark">Ventas</span></span></div>
+                        </div>
+                        <div class="traffic-channel-data">
+                          {% if tipo == "Administrador" %}
+                          <div class="title"><span class="dot dot-lg sq" data-bg="#55D8C1"></span><span>{{numeroRentas}}
+                              Ventas totales</span></div>
+                          {% else %}
+                          <div class="title"><span class="dot dot-lg sq" data-bg="#55D8C1"></span><span>{{numeroRentas}}
+                              Ventas sucursal</span></div>
+                          {% endif %}
+                          <div class="amount"><span class="fw-bold text-teal">{{contadorVentasTotalesMes}} <span
+                                class="text-dark">Ventas</span></span></div>
+                        </div>
+                      </div><!-- .traffic-channel-group -->
+                    </div>
+                  </div>
+                  <br>
+                  <div class="nk-block nk-block-lg">
+                    <div class="nk-block-head">
+                      <div class="nk-block-head-content">
+                        <h4 class="nk-block-title">Totales generales de ventas del mes</h4>
+                        <div class="nk-block-des">
+                          <p>Total general de lo que ha vendido el empleado.</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card card-preview animate__animated animate__fadeIn">
+                      <div class="row gy-4">
+                        <div class="col-sm-12">
+                          <center>
+                            <h2><span class="text-teal">${{montoVentasEnElMesActual}}</span> MXN.</h2>
+                            <p>En el periodo del mes (Del 01 al {{diadehoy}} de {{mesdehoy}})</p>
+                            {% if esteMesVendioMas %}
+                            <p class="fw-bold text-dark">El mes pasado vendió ${{montoTotalDeVentaMesAnterior}} MXN. - <span class="text-teal">Un {{porcentajeMontoVentas}}% más.</span></p>
+                            {% else %}
+                            <p class="fw-bold text-dark">El mes pasado vendió ${{montoTotalDeVentaMesAnterior}} MXN. - <span class="text-danger">Un {{porcentajeMontoVentas}}% menos.</span></p>
+                            {% endif %}
+                            
+                          </center>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="nk-block-head">
+                      <div class="nk-block-head-content">
+                        <div class="nk-block-des">
+                          <p>Lista de ventas <span class="coloralta">realizadas</span> por el empleado.</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card card-preview">
+                      <div class="card-inner table-responsive">
+                        <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false" >
+                            <thead>
+                                <tr class="nk-tb-item nk-tb-head" style="background-color: #937DC2 !important; color:white !important">
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Concepto</span></th>
+                                    <th class="nk-tb-col" ><span class="sub-text textoBlanco">Sucursal/Fecha</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Cliente</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Productos/Servicios</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Crédito?</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Descuento?</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto Total</span></th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for venta, sucursal, clientes, boolProductos,productos,boolServCorporal,servicioCorporal,boolServFacial, servicioFacial, boolCredito, idsCreditos, boolPagado, montos, boolDescuentos, datoDescuento, descuentos, costoReal, tipoVenta  in listaVentasMes %}
+                                <tr class="nk-tb-item">
+                                    <td class="nk-tb-col nk-tb-col-check">
+                                      <center>
+                                        <div>
+                                          <span class="badge badge-dark">{{venta.id_venta}}</span>
+
+                                        </div>
+                                        <br>
+                                        <div>
+                                          <form action="/infoVenta/" method="POST">{% csrf_token %}
+                                              <input type="hidden" name="idVenta" value="{{venta.id_venta}}">
+                                              <center>
+                                              <button type="submit"   class="btn btn-icon btn-sm bg-indigo text-white"><em class="icon ni ni-eye" ></em></button>
+                                              </center>
+      
+                                          </form>
+                                      </div>
+                                      </center>
+                                        
+                                    </td>
+                                    <td class="nk-tb-col nk-tb-col-check">
+                                      <center>
+                                        {% if tipoVenta == "Venta" %}
+                                        
+                                        <span class="badge badge-outline-danger" >{{tipoVenta}}</span> 
+                                        {% else %}
+                                        <span class="badge badge-outline-success" >{{tipoVenta}}</span> 
+
+                                        {% endif %}
+                                      </center>
+                                      
+                                      
+                                    </td>
+                                  <td class="nk-tb-col nk-tb-col-check" style="white-space:nowrap!important;">
+                                    <center>
+                                      <span class="badge badge-primary">{{sucursal}}</span>
+                                      <div>
+                                        <div>
+                                          <span class="badge badge-outline-secondary">{{venta.fecha_venta}}</span>
+                                        </div>
+                                      </div>
+                                      <div>
+                                        
+                                      <span class="text-dark">{{venta.hora_venta}} hrs.</span>
+                                      </div>
+                                    </center>
+                                    
+                                </td>
+                                
+                              <td class="nk-tb-col nk-tb-col-check" style="white-space:nowrap!important;">
+                                {% if clientes.0 == "x" %}
+                                <span class="fw-bold text-danger">Cliente momentaneo</span>
+                                {% else %}
+                                <span class="fw-bold text-dark"><span class="badge badge-dark">{{clientes.0}}</span> - <span class="badge badge-info">{{clientes.1}}</span></span>
+                                {% endif %}
+                              </td>
+                              <td class="nk-tb-col nk-tb-col-check">
+                                {% if boolProductos == "Sin productos comprados" and boolServCorporal == "Sin servicios coorporales" and boolServFacial == "Sin servicios faciales" %}
+                                <span class="badge badge-dot badge-gray">Sin productos.</span>
+                                {% else %}
+                                <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                  
+                                                  {% for p in productos %}
+                                                    {% if p.0 == 'x' %}
+                                                    {% else %}
+                                                    <div> 
+                                                      <h6>  <span class='text-dark fs-11px'> Producto:</span> <span class='text-primary fs-11px'> {{p.0}} -</span> <span class='text-soft fs-11px'> {{p.1}}  </span> <span class='text-info fs-11px'> - {{p.2}} unidades. </span>   </h6>
+                                                    </div>
+                                                    {% endif %}
+                                                  {% endfor %}
+
+                                                  {% for sc in servicioCorporal %}
+                                                    {% if sc.0 == 'x' %}
+                                                    {% else %}
+                                                    <div> 
+                                                      <h6> <span class='text-dark fs-11px'> Servicio:</span><span class='text-primary fs-11px'> {{sc.0}} -</span> <span class='text-soft fs-11px'> {{sc.1}}  </span> <span class='text-info fs-11px'> - {{sc.2}} unidades. </span>   </h6>
+                                                    </div>
+                                                    {% endif %}
+                                                  {% endfor %}
+
+                                                  {% for sf in servicioFacial %}
+                                                    {% if sf.0 == 'x' %}
+                                                    {% else %}
+                                                    <div> 
+                                                      <h6> <span class='text-dark fs-11px'> Servicio:</span><span class='text-primary fs-11px'> {{sf.0}} -</span> <span class='text-soft fs-11px'> {{sf.1}}  </span> <span class='text-info fs-11px'> - {{sf.2}} unidades. </span>   </h6>
+                                                    </div>
+                                                    {% endif %}
+                                                  
+                                                  
+                                                  {% endfor %}"><span>Ver productos</span></button>
+                                {% endif %}
+                              </td>
+                              
+                      <td class="nk-tb-col nk-tb-col-check">
+                        {% if boolCredito == "Si" %}
+                        <span class="badge badge-danger">Si</span>
+                          {% if idsCreditos == "error" %}
+
+                          {% else %}
+                          <div>
+                            <span class="badge badge-outline-secondary">Crédito #{{idsCreditos}}</span>
+                          </div>
+                            {% if boolPagado == "Si" %}
+                            <span class="fw-bold text-teal">Saldado</span>
+                            {% else %}
+                            <span class="fw-bold text-danger">No saldado</span>
+                            {% endif %}
+                          {% endif %}
+
+                        
+
+                        
+                        {% else %}
+                        <span class="badge badge-dim badge-outline-primary">No</span>
+                        {% endif %}
+                    </td>
+                    <td class="nk-tb-col nk-tb-col-check" style="white-space:nowrap!important;">
+                        {% if boolDescuentos == "Con descuento" %}
+                        <div>
+                          <p class="badge badge-gray">Del &nbsp;<span class="fw-bold text-white"> {{datoDescuento.0}}% - {{datoDescuento.1}}</span>:</p>
+                        </div>
+                        <div>
+                            <p class="fw-bold text-dark">Total: <span class="fw-bold text-teal">${{costoReal}} MXN.</span>:</p>
+                        </div>
+                        <div>
+                            <p class="fw-bold text-dark">Desc: <span class="fw-bold text-pink">-${{descuentos}} MXN.</span>:</p>
+                        </div>
+                            
+
+                        
+
+                        
+                        {% else %}
+                        <span class="fw-bold text-dark">Sin descuento</span>
+                        {% endif %}
+                  </td>
+                  <td class="nk-tb-col nk-tb-col-check">
+                    <span class="badge badge-success">${{montos}} <span class="fs-5px">MXN.</span></span>
+                </td>
+                                    
+                                    
+                                </tr><!-- .nk-tb-item  -->
+                                {% endfor %}
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                    </div><!-- .card-preview -->
+                  </div> <!-- nk-block -->
+                </div>
+                <div class="tab-pane" id="añoactual">
+                  <div class="row gy-4">
+                    <div class="col-sm-8">
+                      <div class="card-title">
+                        <h4 class="nk-block-title">Del 01 de Enero al 31 de diciembre del {{añoHoy}}.</h4>
+                        <h6 class="title text-left">Ventas del empleado en el año.</h6>
+                        <p>Ventas directas, rentas y créditos.</p>
+                      </div>
+                      <div class="nk-sale-data-group flex-md-nowrap g-4">
+                        <div class="nk-sale-data">
+                          {% if ventasMayores %}
+                          <span class="amount">{{contadorVentasEnElAño}} Ventas {{añoAnterior}} <span style="cursor: pointer;"
+                              class="change up text-success" data-toggle="tooltip" data-placement="bottom"
+                              title="{{contadorVentasEnElAñoAnterior}} ventas el año pasado."><em
+                                class="icon ni ni-arrow-long-up"></em>{{porcentajeVentaAnual}}%</span></span>
+                          {% else %}
+                          <span class="amount">{{contadorVentasEnElAño}} Ventas {{añoAnterior}} <span style="cursor: pointer;"
+                              class="change down text-danger" data-toggle="tooltip" data-placement="bottom"
+                              title="{{contadorVentasEnElAñoAnterior}} ventas el año pasado."><em
+                                class="icon ni ni-arrow-long-down"></em>{{porcentajeVentaAnual}}%</span></span>
+                          {% endif %}
+                          <span class="sub-title">Este año</span>
+                        </div>
+                        
+                      </div>
+                      <div class="nk-ck-sm animate__animated animate__fadeIn">
+                        <canvas class="line-chart" id="ventasAnuales"></canvas>
+                        <center>
+                          <div class="nk-sale-data">
+                            <span class="sub-title ">Gráfico de ventas por mes.</span>
+                          </div>
+                        </center>
+                      </div>
+                    </div>
+                    <div class="col-sm-4">
+                      <div class="card-title">
+                        <h6 class="title text-left">Ventas totales de costabella al año.</h6>
+                        {% if sucursalEmpleado == "Todas" %}
+                        <p>Comparativo de ventas del empleado con las ventas en todas las sucursales de Costabella.</p>
+                        {% else %}
+                        <p>Comparativo de ventas del empleado con las ventas en la sucursal {{sucursal}} de Costabella.
+                        </p>
+                        {% endif %}
+                      </div>
+                      <div class="nk-ck-sm animate__animated animate__fadeIn">
+                        <canvas class="analytics-doughnut" id="ventasAnualesPie"></canvas>
+                        <center>
+                          <div class="nk-sale-data">
+                            <span class="sub-title ">Porcentaje de ventas del empleado.</span>
+
+                          </div>
+                        </center>
+                      </div>
+                      <div class="traffic-channel-group g-2">
+                        <div class="traffic-channel-data">
+                          <div class="title"><span class="dot dot-lg sq" data-bg="#FD5D5D"></span><span>
+                              {{numeroVentas}} Ventas del empleado</span></div>
+                          <div class="amount"><span class="fw-bold text-teal">{{ventasEnElMesActual}} <span
+                                class="text-dark">Ventas</span></span></div>
+                        </div>
+                        <div class="traffic-channel-data">
+                          {% if tipo == "Administrador" %}
+                          <div class="title"><span class="dot dot-lg sq" data-bg="#55D8C1"></span><span>{{numeroRentas}}
+                              Ventas totales</span></div>
+                          {% else %}
+                          <div class="title"><span class="dot dot-lg sq" data-bg="#55D8C1"></span><span>{{numeroRentas}}
+                              Ventas sucursal</span></div>
+                          {% endif %}
+                          <div class="amount"><span class="fw-bold text-teal">{{contadorVentasTotalesMes}} <span
+                                class="text-dark">Ventas</span></span></div>
+                        </div>
+                      </div><!-- .traffic-channel-group -->
+                    </div>
+                  </div>
+                  <br>
+                  <div class="nk-block nk-block-lg">
+                    <div class="nk-block-head">
+                      <div class="nk-block-head-content">
+                        <h4 class="nk-block-title">Totales generales de ventas en el año</h4>
+                        <div class="nk-block-des">
+                          <p>Total general de lo que ha vendido el empleado.</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card card-preview animate__animated animate__fadeIn">
+                      <div class="row gy-4">
+                        <div class="col-sm-12">
+                          <center>
+                            <h2><span class="text-teal">${{montoVentaEnElAño}}</span> MXN.</h2>
+                            <p>En el periodo del año (Del 01 de Enero de 31 de Diciembre del {{añoHoy}})</p>
+                            {% if esteAñoVendioMas %}
+                            <p class="fw-bold text-dark">El año pasado vendió ${{montoVentaEnElAñoAnterior}} MXN. - <span class="text-teal">Un {{porcentajeMontoVentaAnual}}% más.</span></p>
+                            {% else %}
+                            <p class="fw-bold text-dark">El año pasado vendió ${{montoVentaEnElAñoAnterior}} MXN. - <span class="text-danger">Un {{porcentajeMontoVentaAnual}}% menos.</span></p>
+                            {% endif %}
+                            
+                          </center>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="nk-block-head">
+                      <div class="nk-block-head-content">
+                        <div class="nk-block-des">
+                          <p>Lista de ventas <span class="coloralta">realizadas</span> por el empleado.</p>
+                          
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card card-preview">
+                      <div class="card-inner table-responsive">
+                        <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false" >
+                            <thead>
+                                <tr class="nk-tb-item nk-tb-head" style="background-color: #FFC93C !important; color:white !important">
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Concepto</span></th>
+                                    <th class="nk-tb-col" ><span class="sub-text textoBlanco">Sucursal/Fecha</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Cliente</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Productos/Servicios</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Crédito?</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Descuento?</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto Total</span></th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for venta, sucursal, clientes, boolProductos,productos,boolServCorporal,servicioCorporal,boolServFacial, servicioFacial, boolCredito, idsCreditos, boolPagado, montos, boolDescuentos, datoDescuento, descuentos, costoReal, tipoVenta  in listaVentasAño %}
+                                <tr class="nk-tb-item">
+                                    <td class="nk-tb-col nk-tb-col-check">
+                                      <center>
+                                        <div>
+                                          <span class="badge badge-dark">{{venta.id_venta}}</span>
+
+                                        </div>
+                                        <br>
+                                        <div>
+                                          <form action="/infoVenta/" method="POST">{% csrf_token %}
+                                              <input type="hidden" name="idVenta" value="{{venta.id_venta}}">
+                                              <center>
+                                              <button type="submit"   class="btn btn-icon btn-sm bg-indigo text-white"><em class="icon ni ni-eye" ></em></button>
+                                              </center>
+      
+                                          </form>
+                                      </div>
+                                      </center>
+                                        
+                                    </td>
+                                    <td class="nk-tb-col nk-tb-col-check">
+                                      <center>
+                                        {% if tipoVenta == "Venta" %}
+                                        
+                                        <span class="badge badge-outline-danger" >{{tipoVenta}}</span> 
+                                        {% else %}
+                                        <span class="badge badge-outline-success" >{{tipoVenta}}</span> 
+
+                                        {% endif %}
+                                      </center>
+                                      
+                                      
+                                    </td>
+                                  <td class="nk-tb-col nk-tb-col-check" style="white-space:nowrap!important;">
+                                    <center>
+                                      <span class="badge badge-primary">{{sucursal}}</span>
+                                      <div>
+                                        <div>
+                                          <span class="badge badge-outline-secondary">{{venta.fecha_venta}}</span>
+                                        </div>
+                                      </div>
+                                      <div>
+                                        
+                                      <span class="text-dark">{{venta.hora_venta}} hrs.</span>
+                                      </div>
+                                    </center>
+                                    
+                                </td>
+                                
+                              <td class="nk-tb-col nk-tb-col-check" style="white-space:nowrap!important;">
+                                {% if clientes.0 == "x" %}
+                                <span class="fw-bold text-danger">Cliente momentaneo</span>
+                                {% else %}
+                                <span class="fw-bold text-dark"><span class="badge badge-dark">{{clientes.0}}</span> - <span class="badge badge-info">{{clientes.1}}</span></span>
+                                {% endif %}
+                              </td>
+                              <td class="nk-tb-col nk-tb-col-check">
+                                {% if boolProductos == "Sin productos comprados" and boolServCorporal == "Sin servicios coorporales" and boolServFacial == "Sin servicios faciales" %}
+                                <span class="badge badge-dot badge-gray">Sin productos.</span>
+                                {% else %}
+                                <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                  
+                                                  {% for p in productos %}
+                                                    {% if p.0 == 'x' %}
+                                                    {% else %}
+                                                    <div> 
+                                                      <h6>  <span class='text-dark fs-11px'> Producto:</span> <span class='text-primary fs-11px'> {{p.0}} -</span> <span class='text-soft fs-11px'> {{p.1}}  </span> <span class='text-info fs-11px'> - {{p.2}} unidades. </span>   </h6>
+                                                    </div>
+                                                    {% endif %}
+                                                  {% endfor %}
+
+                                                  {% for sc in servicioCorporal %}
+                                                    {% if sc.0 == 'x' %}
+                                                    {% else %}
+                                                    <div> 
+                                                      <h6> <span class='text-dark fs-11px'> Servicio:</span><span class='text-primary fs-11px'> {{sc.0}} -</span> <span class='text-soft fs-11px'> {{sc.1}}  </span> <span class='text-info fs-11px'> - {{sc.2}} unidades. </span>   </h6>
+                                                    </div>
+                                                    {% endif %}
+                                                  {% endfor %}
+
+                                                  {% for sf in servicioFacial %}
+                                                    {% if sf.0 == 'x' %}
+                                                    {% else %}
+                                                    <div> 
+                                                      <h6> <span class='text-dark fs-11px'> Servicio:</span><span class='text-primary fs-11px'> {{sf.0}} -</span> <span class='text-soft fs-11px'> {{sf.1}}  </span> <span class='text-info fs-11px'> - {{sf.2}} unidades. </span>   </h6>
+                                                    </div>
+                                                    {% endif %}
+                                                  
+                                                  
+                                                  {% endfor %}"><span>Ver productos</span></button>
+                                {% endif %}
+                              </td>
+                              
+                      <td class="nk-tb-col nk-tb-col-check">
+                        {% if boolCredito == "Si" %}
+                        <span class="badge badge-danger">Si</span>
+                          {% if idsCreditos == "error" %}
+
+                          {% else %}
+                          <div>
+                            <span class="badge badge-outline-secondary">Crédito #{{idsCreditos}}</span>
+                          </div>
+                            {% if boolPagado == "Si" %}
+                            <span class="fw-bold text-teal">Saldado</span>
+                            {% else %}
+                            <span class="fw-bold text-danger">No saldado</span>
+                            {% endif %}
+                          {% endif %}
+
+                        
+
+                        
+                        {% else %}
+                        <span class="badge badge-dim badge-outline-primary">No</span>
+                        {% endif %}
+                    </td>
+                    <td class="nk-tb-col nk-tb-col-check">
+                        {% if boolDescuentos == "Con descuento" %}
+                        <div>
+                          <p class="badge badge-gray">Del &nbsp;<span class="fw-bold text-white">{{datoDescuento.0}}% - {{datoDescuento.1}}</span>:</p>
+                        </div>
+                        <div>
+                            <p class="fw-bold text-dark">Total: <span class="fw-bold text-teal">${{costoReal}} MXN.</span>:</p>
+                        </div>
+                        <div>
+                            <p class="fw-bold text-dark">Desc: <span class="fw-bold text-pink">-${{descuentos}} MXN.</span>:</p>
+                        </div>
+                            
+
+                        
+
+                        
+                        {% else %}
+                        <span class="fw-bold text-dark">Sin descuento</span>
+                        {% endif %}
+                  </td>
+                  <td class="nk-tb-col nk-tb-col-check">
+                    <span class="badge badge-success">${{montos}} <span class="fs-5px">MXN.</span></span>
+                </td>
+                                    
+                                    
+                                </tr><!-- .nk-tb-item  -->
+                                {% endfor %}
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                    </div><!-- .card-preview -->
+                  </div> <!-- nk-block -->
+                </div>
+                <div class="tab-pane" id="rangofechas">
+                  <div class="card-title">
+                    <h4 class="nk-block-title">Elegir rango de fechas.</h4>
+                    <p>Rango de fechas para informe de ventas del empleado.</p>
+                  </div>
+                  
+                    <form action="/informeDeVentasRangoFechasEmpleado/" method="POST"> {% csrf_token %}
+                      <div class="row gy-4">
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label class="form-label">Fecha de inicio</label>
+                            <div class="form-control-wrap">
+                                <div class="form-icon form-icon-left">
+                                    <em class="icon ni ni-calendar"></em>
+                                </div>
+                                <input type="text" name="fechaInicio" class="form-control date-picker" required data-date-format="yyyy-mm-dd">
+                            </div>
+                            <div class="form-note">Formato de fecha <code>año-mes-dia</code></div>
+                        </div>
+                          
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label class="form-label">Fecha Final</label>
+                            <div class="form-control-wrap">
+                                <div class="form-icon form-icon-left">
+                                    <em class="icon ni ni-calendar"></em>
+                                </div>
+                                <input type="text" name="fechaFinal" class="form-control date-picker" required data-date-format="yyyy-mm-dd">
+                            </div>
+                            <div class="form-note">Formato de fecha <code>año-mes-dia</code></div>
+                          </div>
+                          
+                        </div>
+                      </div>
+                      <br>
+                      <div class="text-right">
+                        <input type="hidden" name="idEmpleadoInforme" value="{{idEmpleadoConfigurar}}">
+                        
+                        <button type="submit" class="btn btn-dim btn-primary">Generar informe de ventas</button>
+                      </div>
+                    </form>
+                </div>
+                {% endif %}
+
+              </div>
+
+            </div>
+            
+
+            
+
+
+
+          </div>
+          <div class="card-aside card-aside-left user-aside toggle-slide toggle-slide-left toggle-break-lg"
+            data-content="userAside" data-toggle-screen="lg" data-toggle-overlay="true">
+            <div class="card-inner-group" data-simplebar>
+              <div class="card-inner">
+                <div class="user-card">
+                  <div class="user-avatar bg-primary">
+                    <span>{{letrasEmpleado}}</span>
+                  </div>
+                  <div class="user-info">
+                    <span class="lead-text">{{nombres}} {{apellidoPaterno}} {{apellidoMaterno}}</span>
+                    <span class="sub-text">Nombre usuario: {{nombreUsuario}}</span>
+                  </div>
+
+                </div><!-- .user-card -->
+              </div><!-- .card-inner -->
+              <div class="card-inner">
+                <div class="user-account-info py-0">
+                  <h6 class="overline-title-alt">Balance de ventas</h6>
+                  <div class="user-balance">$ {{totalVentas}} <small class="currency currency-btc">MXN</small></div>
+                  <div class="user-balance-sub"><span>En {{contadorVentas}} ventas realizadas</span></div>
+                </div>
+              </div><!-- .card-inner -->
+              <div class="card-inner p-0">
+                <ul class="link-list-menu">
+                  <form action="/editarEmpleado/" method="POST" id="formActualizar">{% csrf_token %}
+                    <input type="hidden" value="{{idEmpleadoEditar3}}" name="idEmpleadoEditar">
+                    <div class="data-head" style="background-color:#f56d91!important;">
+                      <h6 class="overline-title"><button class="btn btn-md btn-primary"><em
+                            class="icon ni ni-user-fill-c"></em><span>Información Personal</span></button></h6>
+                    </div>
+
+                  </form>
+                  <br>
+                  <form action="/editarConfiguracionEmpleado/" method="POST" id="formConfig">{% csrf_token %}
+                    <input type="hidden" value="{{idEmpleadoEditar4}}" name="idEmpleadoConfigurar">
+                    <div class="data-head" style="background-color:#f56d91!important;">
+                      <h6 class="overline-title"><button class="btn btn-md btn-primary"><em
+                            class="icon ni ni-lock-alt-fill"></em><span>Configuración de acceso</span></button></h6>
+                    </div>
+
+                  </form>
+                  <br>
+                  <form action="/informeEmpleado/" method="POST" id="formConfig">{% csrf_token %}
+                    <input type="hidden" value="{{idEmpleadoEditar4}}" name="idEmpleadoInforme">
+                    <div class="data-head" style="background-color:#95DAC1!important;">
+                      <h6 class="overline-title"><button class="btn btn-md btn-primary"
+                          style="background-color: #95DAC1!important; border: none !important;"><em
+                            class="icon ni ni-file"></em><span>Informe de empleado</span></button></h6>
+                    </div>
+
+                  </form>
+
+
+                </ul>
+              </div><!-- .card-inner -->
+            </div><!-- .card-inner-group -->
+          </div><!-- card-aside -->
+        </div><!-- .card-aside-wrap -->
+      </div><!-- .card -->
+    </div><!-- .nk-block -->
+  </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="modalDefault">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+              <em class="icon ni ni-cross"></em>
+          </a>
+          <div class="modal-header">
+              <h5 class="modal-title">Modal Title</h5>
+          </div>
+          <div class="modal-body">
+              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem similique earum necessitatibus nesciunt! Quia id expedita asperiores voluptatem odit quis fugit sapiente assumenda sunt voluptatibus atque facere autem, omnis explicabo.</p>
+          </div>
+          <div class="modal-footer bg-light">
+              <span class="sub-text">Modal Footer Text</span>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+
+
+{% endblock %}
+
+{% block codigojschart %}
+<script>
+  "use strict";
+
+  ! function (NioApp, $) {
+    "use strict"; //////// for developer - barchart //////// 
+    // Avilable options to pass from outside 
+    // labels: array,
+    // stacked: false - boolean,
+    // legend: false - boolean,
+    // dataUnit: string, (Used in tooltip or other section for display) 
+    // datasets: [{label : string, color: string (color code with # or other format), data: array}]
+
+    var montoIngresoMesActual = parseFloat("{{montoIngresoMesActual}}");
+    var sumaTotalesCompras = parseFloat("{{sumaTotalesCompras}}");
+    var barChartData = {
+      labels: ["Ingresos", "Compras"],
+      dataUnit: '$MXN',
+      datasets: [{
+        color: ["#F76E11", "#5FD068"],
+        data: [montoIngresoMesActual, sumaTotalesCompras]
+      }]
+    };
+    var barChartMultiple = {
+      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      dataUnit: 'USD',
+      datasets: [{
+        label: "Income",
+        color: "#b695ff",
+        data: [110, 80, 125, 55, 95, 75, 90, 110, 80, 125, 55, 95]
+      }, {
+        label: "Expense",
+        color: "#f4aaa4",
+        data: [75, 90, 110, 80, 125, 55, 95, 75, 90, 110, 80, 125]
+      }]
+    };
+    var barChartStacked = {
+      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      stacked: true,
+      dataUnit: 'USD',
+      datasets: [{
+        label: "Income",
+        color: "#b695ff",
+        data: [110, 80, 125, 55, 95, 75, 90, 110, 80, 125, 55, 95]
+      }, {
+        label: "Expense",
+        color: "#f4aaa4",
+        data: [75, 90, 110, 80, 125, 55, 95, 75, 90, 110, 80, 125]
+      }]
+    };
+
+    function barChart(selector, set_data) {
+      var $selector = selector ? $(selector) : $('.bar-chart');
+      $selector.each(function () {
+        var $self = $(this),
+          _self_id = $self.attr('id'),
+          _get_data = typeof set_data === 'undefined' ? eval(_self_id) : set_data,
+          _d_legend = typeof _get_data.legend === 'undefined' ? false : _get_data.legend;
+
+        var selectCanvas = document.getElementById(_self_id).getContext("2d");
+        var chart_data = [];
+
+        for (var i = 0; i < _get_data.datasets.length; i++) {
+          chart_data.push({
+            label: _get_data.datasets[i].label,
+            data: _get_data.datasets[i].data,
+            // Styles
+            backgroundColor: _get_data.datasets[i].color,
+            borderWidth: 2,
+            borderColor: 'transparent',
+            hoverBorderColor: 'transparent',
+            borderSkipped: 'bottom',
+            barPercentage: .6,
+            categoryPercentage: .7
+          });
+        }
+
+        var chart = new Chart(selectCanvas, {
+          type: 'bar',
+          data: {
+            labels: _get_data.labels,
+            datasets: chart_data
+          },
+          options: {
+            legend: {
+              display: _get_data.legend ? _get_data.legend : false,
+              rtl: NioApp.State.isRTL,
+              labels: {
+                boxWidth: 30,
+                padding: 20,
+                fontColor: '#6783b8'
+              }
+            },
+            maintainAspectRatio: false,
+            tooltips: {
+              enabled: true,
+              rtl: NioApp.State.isRTL,
+              callbacks: {
+                title: function title(tooltipItem, data) {
+                  return data.datasets[tooltipItem[0].datasetIndex].label;
+                },
+                label: function label(tooltipItem, data) {
+                  return data.datasets[tooltipItem.datasetIndex]['data'][tooltipItem['index']] + ' ' +
+                    _get_data.dataUnit;
+                }
+              },
+              backgroundColor: '#eff6ff',
+              titleFontSize: 13,
+              titleFontColor: '#6783b8',
+              titleMarginBottom: 6,
+              bodyFontColor: '#9eaecf',
+              bodyFontSize: 12,
+              bodySpacing: 4,
+              yPadding: 10,
+              xPadding: 10,
+              footerMarginTop: 0,
+              displayColors: false
+            },
+            scales: {
+              yAxes: [{
+                display: true,
+                stacked: _get_data.stacked ? _get_data.stacked : false,
+                position: NioApp.State.isRTL ? "right" : "left",
+                ticks: {
+                  beginAtZero: true,
+                  fontSize: 12,
+                  fontColor: '#9eaecf'
+                },
+                gridLines: {
+                  color: NioApp.hexRGB("#526484", .2),
+                  tickMarkLength: 0,
+                  zeroLineColor: NioApp.hexRGB("#526484", .2)
+                }
+              }],
+              xAxes: [{
+                display: true,
+                stacked: _get_data.stacked ? _get_data.stacked : false,
+                ticks: {
+                  fontSize: 12,
+                  fontColor: '#9eaecf',
+                  source: 'auto',
+                  reverse: NioApp.State.isRTL
+                },
+                gridLines: {
+                  color: "transparent",
+                  tickMarkLength: 10,
+                  zeroLineColor: 'transparent'
+                }
+              }]
+            }
+          }
+        });
+      });
+    } // init bar chart
+
+
+    barChart(); //////// for developer - linechart //////// 
+    // Avilable options to pass from outside 
+    // labels: array,
+    // legend: false - boolean,
+    // dataUnit: string, (Used in tooltip or other section for display) 
+    // datasets: [{label : string, color: string (color code with # or other format), data: array}]
+
+    var solidLineChart = {
+      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      dataUnit: 'BTC',
+      lineTension: .4,
+      legend: true,
+      datasets: [{
+        label: "Total Received",
+        color: "#5ce0aa",
+        background: 'transparent',
+        data: [110, 80, 125, 55, 95, 75, 90, 110, 80, 125, 55, 95]
+      }, {
+        label: "Total Send",
+        color: "#9d72ff",
+        background: 'transparent',
+        data: [80, 54, 105, 120, 82, 85, 60, 80, 54, 105, 120, 82]
+      }]
+    };
+
+    var contadorVentasEnero = parseInt("{{contadorVentasEnero}}")
+    var contadorVentasFebrero = parseInt("{{contadorVentasFebrero}}")
+    var contadorVentasMarzo = parseInt("{{contadorVentasMarzo}}")
+    var contadorVentasAbril = parseInt("{{contadorVentasAbril}}")
+    var contadorVentasMayo = parseInt("{{contadorVentasMayo}}")
+    var contadorVentasJunio = parseInt("{{contadorVentasJunio}}")
+    var contadorVentasJulio = parseInt("{{contadorVentasJulio}}")
+    var contadorVentasAgosto = parseInt("{{contadorVentasAgosto}}")
+    var contadorVentasSeptiembre = parseInt("{{contadorVentasSeptiembre}}")
+    var contadorVentasOctubre = parseInt("{{contadorVentasOctubre}}")
+    var contadorVentasNoviembre = parseInt("{{contadorVentasNoviembre}}")
+    var contadorVentasDiciembre = parseInt("{{contadorVentasDiciembre}}")
+    var filledLineChart = {
+      labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre",
+        "Noviembre", "Diciembre"
+      ],
+      dataUnit: 'ventas',
+      lineTension: .4,
+      datasets: [{
+        label: "Total Received",
+        color: "#9d72ff",
+        background: NioApp.hexRGB('#9d72ff', .4),
+        data: [contadorVentasEnero, contadorVentasFebrero, contadorVentasMarzo, contadorVentasAbril,
+          contadorVentasMayo, contadorVentasJunio, contadorVentasJulio,
+          contadorVentasAgosto, contadorVentasSeptiembre, contadorVentasOctubre, contadorVentasNoviembre,
+          contadorVentasDiciembre
+        ]
+      }]
+    };
+    
+    var montoVentaPeriodo = parseInt("{{montoVentaPeriodo}}");
+    var montoVentaPeriodoAnterior = parseInt("{{montoVentaPeriodoAnterior}}");
+    var montoVentaPeriodoSiguiente = parseInt("{{montoVentaPeriodoSiguiente}}");
+
+
+
+    var filledLineChartPeriodo = {
+      labels: ["{{fechaTextoInicioPeriodoAnterior}} al {{fefchaCompletaInicio}}.", "{{fefchaCompletaInicio}} al {{fefchaCompletaFinal}}.", "{{fefchaCompletaFinal}} al {{fechaTextoFinalPeriodoDespues}}.", 
+      ],
+      dataUnit: 'ventas',
+      lineTension: .4,
+      datasets: [{
+        label: "Total Received",
+        color: "#9d72ff",
+        background: NioApp.hexRGB('#9d72ff', .4),
+        data: [montoVentaPeriodoAnterior,montoVentaPeriodo,montoVentaPeriodoSiguiente
+        ]
+      }]
+    };
+
+    var contadorVentasEnElAño = parseInt("{{contadorVentasEnElAño}}");
+    var contadorVentasEnElAñoAnterior = parseInt("{{contadorVentasEnElAñoAnterior}}");
+    var contadorVentasHaceDosAños = parseInt("{{contadorVentasHaceDosAños}}");
+    var contadorVentasHaceTresAños = parseInt("{{contadorVentasHaceTresAños}}");
+
+    var ventasAnuales = {
+      labels: [  "{{tercerAñoAntes}}","{{segundoAñoAntes}}","{{primerAñoAntes}}", "{{añoHoy}}"
+      ],
+      dataUnit: 'ventas',
+      lineTension: .4,
+      datasets: [{
+        label: "Total Received",
+        color: "#9d72ff",
+        background: NioApp.hexRGB('#9D72FF', .4),
+        data: [contadorVentasHaceTresAños,contadorVentasHaceDosAños,contadorVentasEnElAñoAnterior, contadorVentasEnElAño]
+      }]
+    };
+    var straightLineChart = {
+      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      dataUnit: 'BTC',
+      lineTension: 0,
+      datasets: [{
+        label: "Total Received",
+        color: "#9d72ff",
+        background: NioApp.hexRGB('#9d72ff', .3),
+        data: [110, 80, 125, 55, 95, 75, 90, 110, 80, 125, 55, 95]
+      }]
+    };
+
+    function lineChart(selector, set_data) {
+      var $selector = selector ? $(selector) : $('.line-chart');
+      $selector.each(function () {
+        var $self = $(this),
+          _self_id = $self.attr('id'),
+          _get_data = typeof set_data === 'undefined' ? eval(_self_id) : set_data;
+
+        var selectCanvas = document.getElementById(_self_id).getContext("2d");
+        var chart_data = [];
+
+        for (var i = 0; i < _get_data.datasets.length; i++) {
+          chart_data.push({
+            label: _get_data.datasets[i].label,
+            tension: _get_data.lineTension,
+            backgroundColor: _get_data.datasets[i].background,
+            borderWidth: 2,
+            borderColor: _get_data.datasets[i].color,
+            pointBorderColor: _get_data.datasets[i].color,
+            pointBackgroundColor: '#fff',
+            pointHoverBackgroundColor: "#fff",
+            pointHoverBorderColor: _get_data.datasets[i].color,
+            pointBorderWidth: 2,
+            pointHoverRadius: 4,
+            pointHoverBorderWidth: 2,
+            pointRadius: 4,
+            pointHitRadius: 4,
+            data: _get_data.datasets[i].data
+          });
+        }
+
+        var chart = new Chart(selectCanvas, {
+          type: 'line',
+          data: {
+            labels: _get_data.labels,
+            datasets: chart_data
+          },
+          options: {
+            legend: {
+              display: _get_data.legend ? _get_data.legend : false,
+              rtl: NioApp.State.isRTL,
+              labels: {
+                boxWidth: 12,
+                padding: 20,
+                fontColor: '#6783b8'
+              }
+            },
+            maintainAspectRatio: false,
+            tooltips: {
+              enabled: true,
+              rtl: NioApp.State.isRTL,
+              callbacks: {
+                title: function title(tooltipItem, data) {
+                  return data['labels'][tooltipItem[0]['index']];
+                },
+                label: function label(tooltipItem, data) {
+                  return data.datasets[tooltipItem.datasetIndex]['data'][tooltipItem['index']] + ' ' +
+                    _get_data.dataUnit;
+                }
+              },
+              backgroundColor: '#eff6ff',
+              titleFontSize: 13,
+              titleFontColor: '#6783b8',
+              titleMarginBottom: 6,
+              bodyFontColor: '#9eaecf',
+              bodyFontSize: 12,
+              bodySpacing: 4,
+              yPadding: 10,
+              xPadding: 10,
+              footerMarginTop: 0,
+              displayColors: false
+            },
+            scales: {
+              yAxes: [{
+                display: true,
+                position: NioApp.State.isRTL ? "right" : "left",
+                ticks: {
+                  beginAtZero: false,
+                  fontSize: 12,
+                  fontColor: '#9eaecf',
+                  padding: 10
+                },
+                gridLines: {
+                  color: NioApp.hexRGB("#526484", .2),
+                  tickMarkLength: 0,
+                  zeroLineColor: NioApp.hexRGB("#526484", .2)
+                }
+              }],
+              xAxes: [{
+                display: true,
+                ticks: {
+                  fontSize: 12,
+                  fontColor: '#9eaecf',
+                  source: 'auto',
+                  padding: 5,
+                  reverse: NioApp.State.isRTL
+                },
+                gridLines: {
+                  color: "transparent",
+                  tickMarkLength: 10,
+                  zeroLineColor: NioApp.hexRGB("#526484", .2),
+                  offsetGridLines: true
+                }
+              }]
+            }
+          }
+        });
+      });
+    } // init line chart
+
+
+    lineChart(); //////// for developer - pieChart //////// 
+    // Avilable options to pass from outside 
+    // labels: array,
+    // legend: false - boolean,
+    // dataUnit: string, (Used in tooltip or other section for display) 
+    // datasets: [{label : string, color: string (color code with # or other format), data: array}]
+
+    var porcentajeVentasDelEmpleado = parseInt("{{porcentajeVentasDelEmpleado}}");
+    var porcentajeDemasEmpleados = parseInt("{{porcentajeDemasEmpleados}}");
+
+    var pieChartData = {
+      labels: ["Ventas de empleado", "Ventas totales Costabella"],
+      dataUnit: 'MXN',
+      legend: false,
+      datasets: [{
+        borderColor: "#F9F3F3",
+        background: ["#FD5D5D", "#AB46D2"],
+        data: [porcentajeVentasDelEmpleado, porcentajeDemasEmpleados]
+      }]
+    };
+
+    function pieChart(selector, set_data) {
+      var $selector = selector ? $(selector) : $('.pie-chart');
+      $selector.each(function () {
+        var $self = $(this),
+          _self_id = $self.attr('id'),
+          _get_data = typeof set_data === 'undefined' ? eval(_self_id) : set_data;
+
+        var selectCanvas = document.getElementById(_self_id).getContext("2d");
+        var chart_data = [];
+
+        for (var i = 0; i < _get_data.datasets.length; i++) {
+          chart_data.push({
+            backgroundColor: _get_data.datasets[i].background,
+            borderWidth: 2,
+            borderColor: _get_data.datasets[i].borderColor,
+            hoverBorderColor: _get_data.datasets[i].borderColor,
+            data: _get_data.datasets[i].data
+          });
+        }
+
+        var chart = new Chart(selectCanvas, {
+          type: 'pie',
+          data: {
+            labels: _get_data.labels,
+            datasets: chart_data
+          },
+          options: {
+            legend: {
+              display: _get_data.legend ? _get_data.legend : false,
+              rtl: NioApp.State.isRTL,
+              labels: {
+                boxWidth: 12,
+                padding: 20,
+                fontColor: '#6783b8'
+              }
+            },
+            rotation: -.2,
+            maintainAspectRatio: false,
+            tooltips: {
+              enabled: true,
+              rtl: NioApp.State.isRTL,
+              callbacks: {
+                title: function title(tooltipItem, data) {
+                  return data['labels'][tooltipItem[0]['index']];
+                },
+                label: function label(tooltipItem, data) {
+                  return data.datasets[tooltipItem.datasetIndex]['data'][tooltipItem['index']] + ' ' +
+                    _get_data.dataUnit;
+                }
+              },
+              backgroundColor: '#eff6ff',
+              titleFontSize: 13,
+              titleFontColor: '#6783b8',
+              titleMarginBottom: 6,
+              bodyFontColor: '#9eaecf',
+              bodyFontSize: 12,
+              bodySpacing: 4,
+              yPadding: 10,
+              xPadding: 10,
+              footerMarginTop: 0,
+              displayColors: false
+            }
+          }
+        });
+      });
+    } // init pie chart
+
+
+    pieChart();
+    var doughnutChartData = {
+      labels: ["Send", "Receive", "Withdraw"],
+      dataUnit: 'BTC',
+      legend: false,
+      datasets: [{
+        borderColor: "#fff",
+        background: ["#b695ff", "#f4aaa4", "#8feac5"],
+        data: [110, 80, 125]
+      }]
+    };
+
+    function doughnutChart(selector, set_data) {
+      var $selector = selector ? $(selector) : $('.doughnut-chart');
+      $selector.each(function () {
+        var $self = $(this),
+          _self_id = $self.attr('id'),
+          _get_data = typeof set_data === 'undefined' ? eval(_self_id) : set_data;
+
+        var selectCanvas = document.getElementById(_self_id).getContext("2d");
+        var chart_data = [];
+
+        for (var i = 0; i < _get_data.datasets.length; i++) {
+          chart_data.push({
+            backgroundColor: _get_data.datasets[i].background,
+            borderWidth: 2,
+            borderColor: _get_data.datasets[i].borderColor,
+            hoverBorderColor: _get_data.datasets[i].borderColor,
+            data: _get_data.datasets[i].data
+          });
+        }
+
+        var chart = new Chart(selectCanvas, {
+          type: 'doughnut',
+          data: {
+            labels: _get_data.labels,
+            datasets: chart_data
+          },
+          options: {
+            legend: {
+              display: _get_data.legend ? _get_data.legend : false,
+              rtl: NioApp.State.isRTL,
+              labels: {
+                boxWidth: 12,
+                padding: 20,
+                fontColor: '#6783b8'
+              }
+            },
+            rotation: 1,
+            cutoutPercentage: 40,
+            maintainAspectRatio: false,
+            tooltips: {
+              enabled: true,
+              rtl: NioApp.State.isRTL,
+              callbacks: {
+                title: function title(tooltipItem, data) {
+                  return data['labels'][tooltipItem[0]['index']];
+                },
+                label: function label(tooltipItem, data) {
+                  return data.datasets[tooltipItem.datasetIndex]['data'][tooltipItem['index']] + ' ' +
+                    _get_data.dataUnit;
+                }
+              },
+              backgroundColor: '#eff6ff',
+              titleFontSize: 13,
+              titleFontColor: '#6783b8',
+              titleMarginBottom: 6,
+              bodyFontColor: '#9eaecf',
+              bodyFontSize: 12,
+              bodySpacing: 4,
+              yPadding: 10,
+              xPadding: 10,
+              footerMarginTop: 0,
+              displayColors: false
+            }
+          }
+        });
+      });
+    } // init doughnut chart
+
+
+    doughnutChart();
+    var polarChartData = {
+      labels: ["Send", "Receive", "Withdraw"],
+      dataUnit: 'BTC',
+      legend: false,
+      datasets: [{
+        borderColor: "#fff",
+        background: [NioApp.hexRGB("#b695ff", .8), NioApp.hexRGB("#f4aaa4", .8), NioApp.hexRGB("#8feac5", .8)],
+        data: [110, 80, 125]
+      }]
+    };
+
+    function polarAreaChart(selector, set_data) {
+      var $selector = selector ? $(selector) : $('.polar-chart');
+      $selector.each(function () {
+        var $self = $(this),
+          _self_id = $self.attr('id'),
+          _get_data = typeof set_data === 'undefined' ? eval(_self_id) : set_data;
+
+        var selectCanvas = document.getElementById(_self_id).getContext("2d");
+        var chart_data = [];
+
+        for (var i = 0; i < _get_data.datasets.length; i++) {
+          chart_data.push({
+            backgroundColor: _get_data.datasets[i].background,
+            borderWidth: 2,
+            borderColor: _get_data.datasets[i].borderColor,
+            hoverBorderColor: _get_data.datasets[i].borderColor,
+            data: _get_data.datasets[i].data
+          });
+        }
+
+        var chart = new Chart(selectCanvas, {
+          type: 'polarArea',
+          data: {
+            labels: _get_data.labels,
+            datasets: chart_data
+          },
+          options: {
+            legend: {
+              display: _get_data.legend ? _get_data.legend : false,
+              rtl: NioApp.State.isRTL,
+              labels: {
+                boxWidth: 12,
+                padding: 20,
+                fontColor: '#6783b8'
+              }
+            },
+            maintainAspectRatio: false,
+            tooltips: {
+              enabled: true,
+              rtl: NioApp.State.isRTL,
+              callbacks: {
+                title: function title(tooltipItem, data) {
+                  return data['labels'][tooltipItem[0]['index']];
+                },
+                label: function label(tooltipItem, data) {
+                  return data.datasets[tooltipItem.datasetIndex]['data'][tooltipItem['index']] + ' ' +
+                    _get_data.dataUnit;
+                }
+              },
+              backgroundColor: '#eff6ff',
+              titleFontSize: 13,
+              titleFontColor: '#6783b8',
+              titleMarginBottom: 6,
+              bodyFontColor: '#9eaecf',
+              bodyFontSize: 12,
+              bodySpacing: 4,
+              yPadding: 10,
+              xPadding: 10,
+              footerMarginTop: 0,
+              displayColors: false
+            }
+          }
+        });
+      });
+    } // init line chart
+
+
+    polarAreaChart();
+
+    var porcentajeVentasDelEmpleadoEnElAño = parseFloat("{{porcentajeVentasDelEmpleadoEnElAño}}");
+    var porcentajeDemasEmpleadosEnElAño = parseFloat("{{porcentajeDemasEmpleadosEnElAño}}");
+
+    var porcentajeVentasDelEmpleadoEnElAñoRedondeado = porcentajeVentasDelEmpleadoEnElAño.toFixed(2);
+    var porcentajeDemasEmpleadosEnElAñoRedondeado = porcentajeDemasEmpleadosEnElAño.toFixed(2);
+
+
+    var TrafficChannelDoughnutData = {
+      labels: ["Ventas del empleado", "Ventas totales Costabella"],
+      dataUnit: '% de ventas',
+      legend: false,
+      datasets: [{
+        borderColor: "#fff",
+        background: ["#FD5D5D", "#55D8C1"],
+        data: [porcentajeVentasDelEmpleadoEnElAñoRedondeado, porcentajeDemasEmpleadosEnElAñoRedondeado]
+      }]
+    };
+
+    var porcentajeVentasDelEmpleado = parseFloat("{{porcentajeVentasDelEmpleado}}");
+    var porcentajeDemasEmpleados = parseFloat("{{porcentajeDemasEmpleados}}");
+
+    var porcentajeVentasDelEmpleadoRedondeado = porcentajeVentasDelEmpleado.toFixed(2);
+    var porcentajeDemasEmpleadosRedondeado = porcentajeDemasEmpleados.toFixed(2);
+
+    var ventasAnualesPie = {
+      labels: ["Ventas del empleado", "Ventas totales Costabella"],
+      dataUnit: '% de ventas',
+      legend: false,
+      datasets: [{
+        borderColor: "#fff",
+        background: ["#FD5D5D", "#55D8C1"],
+        data: [porcentajeVentasDelEmpleadoRedondeado, porcentajeDemasEmpleadosRedondeado]
+      }]
+    };
+
+    var porcentajeVentasDelEmpleadoEnElPeriodo = parseFloat("{{porcentajeVentasDelEmpleadoEnElPeriodo}}");
+    var porcentajeDemasEmpleadosEnElPeriodo = parseFloat("{{porcentajeDemasEmpleadosEnElPeriodo}}");
+
+    var porcentajeVentasDelEmpleadoEnElPeriodoRedondeado = porcentajeVentasDelEmpleadoEnElPeriodo.toFixed(2);
+    var porcentajeDemasEmpleadosEnElPeriodoRedondeado = porcentajeDemasEmpleadosEnElPeriodo.toFixed(2);
+
+    var TrafficChannelDoughnutDataPeriodoInforme = {
+      labels: ["Ventas del empleado", "Ventas totales Costabella"],
+      dataUnit: '% de ventas',
+      legend: false,
+      datasets: [{
+        borderColor: "#fff",
+        background: ["#FD5D5D", "#55D8C1"],
+        data: [porcentajeVentasDelEmpleadoEnElPeriodoRedondeado, porcentajeDemasEmpleadosEnElPeriodoRedondeado]
+      }]
+    };
+
+    function analyticsDoughnut(selector, set_data) {
+      var $selector = selector ? $(selector) : $('.analytics-doughnut');
+      $selector.each(function () {
+        var $self = $(this),
+          _self_id = $self.attr('id'),
+          _get_data = typeof set_data === 'undefined' ? eval(_self_id) : set_data;
+
+        var selectCanvas = document.getElementById(_self_id).getContext("2d");
+        var chart_data = [];
+
+        for (var i = 0; i < _get_data.datasets.length; i++) {
+          chart_data.push({
+            backgroundColor: _get_data.datasets[i].background,
+            borderWidth: 2,
+            borderColor: _get_data.datasets[i].borderColor,
+            hoverBorderColor: _get_data.datasets[i].borderColor,
+            data: _get_data.datasets[i].data
+          });
+        }
+
+        var chart = new Chart(selectCanvas, {
+          type: 'doughnut',
+          data: {
+            labels: _get_data.labels,
+            datasets: chart_data
+          },
+          options: {
+            legend: {
+              display: _get_data.legend ? _get_data.legend : false,
+              rtl: NioApp.State.isRTL,
+              labels: {
+                boxWidth: 12,
+                padding: 20,
+                fontColor: '#6783b8'
+              }
+            },
+            rotation: -1.5,
+            cutoutPercentage: 70,
+            maintainAspectRatio: false,
+            tooltips: {
+              enabled: true,
+              rtl: NioApp.State.isRTL,
+              callbacks: {
+                title: function title(tooltipItem, data) {
+                  return data['labels'][tooltipItem[0]['index']];
+                },
+                label: function label(tooltipItem, data) {
+                  return data.datasets[tooltipItem.datasetIndex]['data'][tooltipItem['index']] + ' ' +
+                    _get_data.dataUnit;
+                }
+              },
+              backgroundColor: '#1c2b46',
+              titleFontSize: 13,
+              titleFontColor: '#fff',
+              titleMarginBottom: 6,
+              bodyFontColor: '#fff',
+              bodyFontSize: 12,
+              bodySpacing: 4,
+              yPadding: 10,
+              xPadding: 10,
+              footerMarginTop: 0,
+              displayColors: false
+            }
+          }
+        });
+      });
+    } // init chart
+
+
+    NioApp.coms.docReady.push(function () {
+      analyticsDoughnut();
+    });
+  }(NioApp, jQuery);
+</script>
+{% endblock %}
+
+{% block relojJS %}
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+
+        window.onload= mueveReloj ();
+
+        
+    };
+</script>
+{% endblock %}

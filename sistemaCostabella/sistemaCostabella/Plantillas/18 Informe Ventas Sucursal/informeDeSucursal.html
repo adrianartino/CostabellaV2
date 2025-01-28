@@ -1,0 +1,2383 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Informe de sucursal | Costabella
+{% endblock %}
+
+{% block estilos %}
+<style>
+    #map{
+        height: 300px;
+        width: 100%;
+    }
+</style>
+{% endblock %}
+
+{% block contenido%}
+
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    <h3 class="nk-block-title page-title color-texto-seleccion">INFORME DE VENTAS DE SUCURSAL</h3>
+                    <div class="nk-block-des text-soft">
+                        <p>Informe de ventas totales en sucursal de <span class="fw-bold text-pink">Costabella.</span></p>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+               
+                
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+        <div class="nk-block">
+            <div class="row g-gs">
+                <div class="col-xxl-12">
+                    <div class="card card-full">
+                        <div class="nk-ecwg nk-ecwg8 h-100">
+                            <div class="card-inner animate__animated animate__fadeIn">
+                                <blockquote class="blockquote text-center">
+                                    <h3>{{nombreSucursal}}</h3>
+                                    <img src="{% static 'images/accesos/spa-care.png' %}" alt="icono" width="50">
+                                    <br><br>
+
+                                    <p class="mb-0">{{direccion}}</p>
+                                    <footer class="blockquote-footer">Sucursal Costabella.</footer>
+                                  </blockquote>
+                            </div><!-- .card-inner -->
+                        </div>
+                    </div><!-- .card -->
+                </div><!-- .col -->
+                <div class="col-xxl-8">
+                    <div class="card card-full">
+                        <div class="nk-ecwg nk-ecwg8 h-100">
+                            <div class="card-inner animate__animated animate__fadeIn">
+                                <h2 class="nk-block-title fw-normal">Ventas de sucursal.</h2>
+                                <div class="nk-block-des">
+                                    <p class="fs-12px">Informe del total de ventas de la sucursal de <code class="code-class">{{nombreSucursal}}</code>.</p>
+                                </div>
+                                <ul class="nav nav-tabs nav-tabs-s2">
+                                  {% if rangoFechaRecibida %}
+                                    <li class="nav-item">
+                                        <a class="nav-link " data-toggle="tab" href="#mesActual">Mes actual</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#añoActual">Año actual</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link active" data-toggle="tab" href="#rangoFechas">Rango de fechas</a>
+                                    </li>
+                                    {% else %}
+                                    <li class="nav-item">
+                                      <a class="nav-link active" data-toggle="tab" href="#mesActual">Mes actual</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#añoActual">Año actual</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#rangoFechas">Rango de fechas</a>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                                <div class="tab-content">
+                                  {% if rangoFechaRecibida %}
+                                    <div class="tab-pane " id="mesActual">
+                                        <div class="row g-gs">
+                                            <div class="col-xxl-8">
+                                                <div class="nk-block-des">
+                                                    <h4 class="nk-block-title">Del 01 al {{diadehoy}} de {{mesdehoy}} del {{añoHoy}}.</h4>
+                                                </div>
+                                                <br>
+                                                <div class="nk-sale-data-group">
+                                                    <div class="card-title">
+                                                        <h6 class="title text-left"><em class="card-hint icon ni ni-help-fill" data-toggle="tooltip" data-placement="left" title="Los ingresos por ventas son las entradas de dinero consecuente de una venta, renta o pagos de créditos en cualquier forma de pago."></em> Ingresos por venta</h6>
+                                                        <p>Ingresos por venta, renta y pagos de créditos.</p>
+                                                    </div>
+                                                    
+                                                </div>
+                                                <div class="align-end gy-3 gx-5 flex-wrap flex-md-nowrap flex-lg-wrap flex-xxl-nowrap">
+                                                    <div class="nk-sale-data-group flex-md-nowrap g-4">
+                                                        <div class="nk-sale-data">
+                                                            {% if esMayor %}
+                                                            <span class="amount">${{montoIngresoSucursalMes}} <span style="cursor: pointer;" class="change up text-success"  data-toggle="tooltip" data-placement="bottom" title="${{montoIngresoMesSucursalAnterior}} MXN el mes de {{mesHaceUnMesLetra}}."><em class="icon ni ni-arrow-long-up"></em>{{porcentajeIngresosSucursalMes}}%</span></span>
+                                                            {% else %}
+                                                            <span class="amount">${{montoIngresoSucursalMes}} <span style="cursor: pointer;" class="change down text-danger"  data-toggle="tooltip" data-placement="bottom" title="${{montoIngresoMesSucursalAnterior}} MXN el mes de {{mesHaceUnMesLetra}}."><em class="icon ni ni-arrow-long-down"></em>{{porcentajeIngresosSucursalMes}}%</span></span>
+                                                            {% endif %}
+                                                            <span class="sub-title">En el mes actual</span>
+                                                            
+                                                           
+                                                        </div>
+                                                        
+                                                    </div>
+                                                    
+                                                   
+                                               
+                                                </div>
+                                                <div class="nk-ck-sm">
+                                                    <canvas class="line-chart" id="filledLineChart"></canvas>
+                                                    <center>
+                                                        <div class="nk-sale-data">
+                                                            <span class="sub-title ">Gráfico de ingresos por mes.</span>
+                                                        </div>
+                                                    </center>
+                                                    
+                                                </div>
+                                            </div>
+                                            <br><br>
+                                            <div class="col-xxl-4">
+                                              <div class="nk-sale-data-group mb-2">
+                                                <div class="card-title">
+                                                    <h6 class="title text-left"><em class="card-hint icon ni ni-help-fill" data-toggle="tooltip" data-placement="left" title="Las compras efectuadas van desde productos para gasto y productos para venta."></em>&nbsp;Compras efectuadas. <a  data-toggle="modal" data-target="#modalComprasDelMes"><small class="badge badge-warning text-dark"> Ver todas.</small></a></h6>
+                                                    <p>Compras de productos realizadas en mes actual.</p>
+                                                </div>
+                                           
+                                              </div>
+                                              <div class="analytic-au">
+                                                  <div class="analytic-data-group analytic-au-group g-3">
+                                                      <div class="analytic-data analytic-au-data">
+                                                          <div class="title">Productos Gasto</div>
+                                                          <div class="amount"><span class="fs-12px">${{totalComprasMesGasto}} MXN.</span> </div>
+                                                          <p class="fw-bold text-azure fs-10px">{{numeroComprasGasto}} unidades</p>
+                                                      </div>
+                                                      <div class="analytic-data analytic-au-data">
+                                                          <div class="title">Productos Venta</div>
+                                                          <div class="amount"><span class="fs-12px">${{totalComprasMesVenta}} MXN.</span></div>
+                                                          <p class="fw-bold text-azure fs-10px">{{numeroComprasVenta}} unidades</p>
+                                                      </div>
+                                                      <div class="analytic-data analytic-au-data">
+                                                          <div class="title">Productos Renta</div>
+                                                          <div class="amount"><span class="fs-12px">${{totalComprasMesRenta}} MXN.</span></div>
+                                                          <p class="fw-bold text-azure fs-10px">{{numeroComprasRenta}} unidades</p>
+                                                      </div>
+                                                  </div>
+                                                  <br>
+                                                  <center>
+                                                      <p class="title fw-bold fs-20px">Total de compras en el mes</p>
+                                                      <br>
+                                                      <div class="amount fw-bold text-teal"><span class="fs-30px">${{sumaTotalesCompras}} MXN.</span></div>
+                                                      
+                                                  </center>
+                                                  
+                                              </div>
+                                            </div>
+                                            <br>
+                                            <div class="col-xxl-4">
+                                              
+                                              <br>
+                                              <div class="nk-sale-data-group">
+                                                  <div class="card-title">
+                                                      <h6 class="title text-left"><em class="card-hint icon ni ni-help-fill" data-toggle="tooltip" data-placement="left" title="Tabla comparativa de los ingresos y compras realizadas en el mes actual."></em> Relación ingresos y compras.</h6>
+                                                      <p>Gráfico comparativo de ventas efectuadas y compras realizadas.</p>
+                                                  </div>
+                                                  
+                                              </div>
+                                              <br>
+                                              <div class="nk-ck">
+                                                  <canvas class="bar-chart" id="barChartData"></canvas>
+                                              </div>
+                                              <div>
+                                                <center>
+                                                  {% if utilidadMayor %}
+                                                  <h3 class="fs-40px">Utilidad: <span class="fw-bold text-teal">{{utilidadSucursalMes}}</span> MXN.</h3>
+                                                  {% else %}
+                                                  <h3 class="fs-40px">Utilidad:  <span class="fw-bold text-danger">{{utilidadSucursalMes}}</span> MXN.</h3>
+                                                  {% endif %}
+                                                </center>
+                                              </div>
+                                            </div>
+                                            <div class="col-xxl-8">
+                                              
+                                              <br>
+                                              <div class="nk-sale-data-group">
+                                                  <div class="card-title">
+                                                      <h6 class="title text-left"><em class="card-hint icon ni ni-help-fill" data-toggle="tooltip" data-placement="left" title="La utilidad/ganancia se calcula restando lo que se vendió contra lo que se compró."></em> Comparación Ganancias con otras sucursales.</h6>
+                                                      <p>Tabla comparativa de sucursales.</p>
+                                                  </div>
+                                                  
+                                              </div>
+                                              <br>
+                                              <table class="table responsive">
+                                                <thead class="thead-dark">
+                                                  <tr>
+                                                    <th scope="col">Id</th>
+                                                    <th scope="col">Sucursal</th>
+                                                    <th scope="col">Total de ingresos</th>
+                                                    <th scope="col">Todal de egresos</th>
+                                                    <th scope="col">Ganancia</th>
+                                                    <th scope="col">Margen</th>
+                                                  </tr>
+                                                </thead>
+                                                <tbody>
+                                                  {% for sucursal, montosVenta, montosCompras, gananciaSucursales, margenDeGanancia in listaComparativaSucursalesMes %}
+                                                  <tr>
+                                                    <th>
+                                                      <span class="badge badge-dim badge-pill badge-outline-primary">{{sucursal.0}}</span>
+                                                    </th>
+                                                    <td>
+                                                      {% if sucursal.1 == nombreSucursal %}
+                                                      <span class="badge badge-danger">{{sucursal.1}}</span>
+                                                      {% else %}
+                                                      <span>{{sucursal.1}}</span>
+                                                      {% endif %}
+                                                    </td>
+                                                    <td style="white-space:nowrap!important;">
+                                                      <span class="fw-bold text-azure">${{montosVenta}} <span class="text-dark fs-12px">MXN.</span></span>
+                                                    </td>
+                                                    <td style="white-space:nowrap!important;">
+                                                      <span class="fw-bold text-orange">${{montosCompras}} <span class="text-dark fs-12px">MXN.</span></span>
+                                                    </td>
+                                                    <td style="white-space:nowrap!important;">
+                                                      {% if gananciaSucursales.1 == "+" %}
+                                                      <span class="fw-bold text-teal">+ ${{gananciaSucursales.0}} <span class="text-dark fs-12px">MXN.</span></span>
+                                                      {% else %}
+                                                      <span class="fw-bold text-danger">- ${{gananciaSucursales.0}} <span class="text-dark fs-12px">MXN.</span></span>
+                                                      {% endif %}
+                                                    </td>
+                                                    <td  style="white-space:nowrap!important;">
+                                                      {% if gananciaSucursales.1 == "+" %}
+                                                      <span class="fw-bold text-teal">+{{margenDeGanancia}}%</span>
+                                                      {% else %}
+                                                      <span class="fw-bold text-danger">-{{margenDeGanancia}}%</span>
+                                                      {% endif %}
+                                                      
+                                                    </td>
+                                                  </tr>
+                                                  {% endfor %}
+                                                  
+                                                </tbody>
+                                              </table>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="tab-pane" id="añoActual">
+                                      <div class="row g-gs">
+                                        <div class="col-xxl-8">
+                                            <div class="nk-block-des">
+                                                <h4 class="nk-block-title">Del 01 de Enero al 31 de Diciembre del {{añoHoy}}.</h4>
+                                            </div>
+                                            <br>
+                                            <div class="nk-sale-data-group">
+                                                <div class="card-title">
+                                                    <h6 class="title text-left"><em class="card-hint icon ni ni-help-fill" data-toggle="tooltip" data-placement="left" title="Los ingresos por ventas son las entradas de dinero consecuente de una venta, renta o pagos de créditos en cualquier forma de pago."></em> Ingresos por venta</h6>
+                                                    <p>Ingresos por venta, renta y pagos de créditos.</p>
+                                                </div>
+                                                
+                                            </div>
+                                            <div class="align-end gy-3 gx-5 flex-wrap flex-md-nowrap flex-lg-wrap flex-xxl-nowrap">
+                                                <div class="nk-sale-data-group flex-md-nowrap g-4">
+                                                    <div class="nk-sale-data">
+                                                        {% if esMayorAñoSucursal %}
+                                                        <span class="amount">${{montoIngresoSucursalAño}} <span style="cursor: pointer;" class="change up text-success"  data-toggle="tooltip" data-placement="bottom" title="${{contadorVentasHaceUnAño}} MXN año pasado {{añoMenosUno}}."><em class="icon ni ni-arrow-long-up"></em>{{porcentajeIngresosSucursalAño}}%</span></span>
+                                                        {% else %}
+                                                        <span class="amount">${{montoIngresoSucursalAño}} <span style="cursor: pointer;" class="change down text-danger"  data-toggle="tooltip" data-placement="bottom" title="${{contadorVentasHaceUnAño}} MXN el año pasado {{añoMenosUno}}."><em class="icon ni ni-arrow-long-down"></em>{{porcentajeIngresosSucursalAño}}%</span></span>
+                                                        {% endif %}
+                                                        <span class="sub-title">En el año actual actual</span>
+                                                        
+                                                       
+                                                    </div>
+                                                    
+                                                </div>
+                                                
+                                               
+                                           
+                                            </div>
+                                            <div class="nk-ck-sm">
+                                                <canvas class="line-chart" id="filledLineChartSucursalAño"></canvas>
+                                                <center>
+                                                    <div class="nk-sale-data">
+                                                        <span class="sub-title ">Gráfico de ingresos del año actual comparado con años anteriores.</span>
+                                                    </div>
+                                                </center>
+                                                
+                                            </div>
+                                        </div>
+                                        <br><br>
+                                        <div class="col-xxl-4">
+                                          <div class="nk-sale-data-group mb-2">
+                                            <div class="card-title">
+                                                <h6 class="title text-left"><em class="card-hint icon ni ni-help-fill" data-toggle="tooltip" data-placement="left" title="Las compras efectuadas van desde productos para gasto y productos para venta."></em>&nbsp;Compras efectuadas. <a  data-toggle="modal" data-target="#modalComprasDelAño"><small class="badge badge-warning text-dark"> Ver todas.</small></a></h6>
+                                                <p>Compras de productos realizadas en mes actual.</p>
+                                            </div>
+                                       
+                                          </div>
+                                          <div class="analytic-au">
+                                              <div class="analytic-data-group analytic-au-group g-3">
+                                                  <div class="analytic-data analytic-au-data">
+                                                      <div class="title">Productos Gasto</div>
+                                                      <div class="amount"><span class="fs-12px">${{totalComprasAñoGasto}} MXN.</span> </div>
+                                                      <p class="fw-bold text-azure fs-10px">{{numeroComprasGastoAño}} unidades</p>
+                                                  </div>
+                                                  <div class="analytic-data analytic-au-data">
+                                                      <div class="title">Productos Venta</div>
+                                                      <div class="amount"><span class="fs-12px">${{totalComprasAñoVenta}} MXN.</span></div>
+                                                      <p class="fw-bold text-azure fs-10px">{{numeroComprasVentaAño}} unidades</p>
+                                                  </div>
+                                                  <div class="analytic-data analytic-au-data">
+                                                      <div class="title">Productos Renta</div>
+                                                      <div class="amount"><span class="fs-12px">${{totalComprasAñoRenta}} MXN.</span></div>
+                                                      <p class="fw-bold text-azure fs-10px">{{numeroComprasRentaAño}} unidades</p>
+                                                  </div>
+                                              </div>
+                                              <br>
+                                              <center>
+                                                  <p class="title fw-bold fs-20px">Total de compras en el año</p>
+                                                  <br>
+                                                  <div class="amount fw-bold text-teal"><span class="fs-30px">${{sumaTotalesComprasDelAño}} MXN.</span></div>
+                                                  
+                                              </center>
+                                              
+                                          </div>
+                                        </div>
+                                        <br>
+                                        <div class="col-xxl-4">
+                                          
+                                          <br>
+                                          <div class="nk-sale-data-group">
+                                              <div class="card-title">
+                                                  <h6 class="title text-left"><em class="card-hint icon ni ni-help-fill" data-toggle="tooltip" data-placement="left" title="Tabla comparativa de los ingresos y compras realizadas en el mes actual."></em> Relación ingresos y compras.</h6>
+                                                  <p>Gráfico comparativo de ventas efectuadas y compras realizadas.</p>
+                                              </div>
+                                              
+                                          </div>
+                                          <br>
+                                          <div class="nk-ck">
+                                              <canvas class="bar-chart" id="barChartDataSucursalAnio"></canvas>
+                                          </div>
+                                          <div>
+                                            <center>
+                                              {% if utilidadMayorAño %}
+                                              <h3 class="fs-40px">Utilidad: <span class="fw-bold text-teal">{{utilidadSucursalAño}}</span> MXN.</h3>
+                                              {% else %}
+                                              <h3 class="fs-40px">Utilidad:  <span class="fw-bold text-danger">{{utilidadSucursalAño}}</span> MXN.</h3>
+                                              {% endif %}
+                                            </center>
+                                          </div>
+                                        </div>
+                                        <div class="col-xxl-8">
+                                          
+                                          <br>
+                                          <div class="nk-sale-data-group">
+                                              <div class="card-title">
+                                                  <h6 class="title text-left"><em class="card-hint icon ni ni-help-fill" data-toggle="tooltip" data-placement="left" title="La utilidad/ganancia se calcula restando lo que se vendió contra lo que se compró."></em> Comparación Ganancias con otras sucursales.</h6>
+                                                  <p>Tabla comparativa de sucursales.</p>
+                                              </div>
+                                              
+                                          </div>
+                                          <br>
+                                          <table class="table responsive">
+                                            <thead class="thead-dark">
+                                              <tr>
+                                                <th scope="col">Id</th>
+                                                <th scope="col">Sucursal</th>
+                                                <th scope="col">Total de ingresos</th>
+                                                <th scope="col">Todal de egresos</th>
+                                                <th scope="col">Ganancia</th>
+                                                <th scope="col">Margen</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              {% for sucursal, montosVenta, montosCompras, gananciaSucursales, margenDeGanancia in listaComparativaSucursalesAño %}
+                                              <tr>
+                                                <th>
+                                                  <span class="badge badge-dim badge-pill badge-outline-primary">{{sucursal.0}}</span>
+                                                </th>
+                                                <td>
+                                                  {% if sucursal.1 == nombreSucursal %}
+                                                  <span class="badge badge-danger">{{sucursal.1}}</span>
+                                                  {% else %}
+                                                  <span>{{sucursal.1}}</span>
+                                                  {% endif %}
+                                                </td>
+                                                <td style="white-space:nowrap!important;">
+                                                  <span class="fw-bold text-azure">${{montosVenta}} <span class="text-dark fs-12px">MXN.</span></span>
+                                                </td>
+                                                <td style="white-space:nowrap!important;">
+                                                  <span class="fw-bold text-orange">${{montosCompras}} <span class="text-dark fs-12px">MXN.</span></span>
+                                                </td>
+                                                <td style="white-space:nowrap!important;">
+                                                  {% if gananciaSucursales.1 == "+" %}
+                                                  <span class="fw-bold text-teal">+ ${{gananciaSucursales.0}} <span class="text-dark fs-12px">MXN.</span></span>
+                                                  {% else %}
+                                                  <span class="fw-bold text-danger">${{gananciaSucursales.0}} <span class="text-dark fs-12px">MXN.</span></span>
+                                                  {% endif %}
+                                                </td>
+                                                <td  style="white-space:nowrap!important;">
+                                                  {% if gananciaSucursales.1 == "+" %}
+                                                  <span class="fw-bold text-teal">+{{margenDeGanancia}}%</span>
+                                                  {% else %}
+                                                  <span class="fw-bold text-danger">-{{margenDeGanancia}}%</span>
+                                                  {% endif %}
+                                                  
+                                                </td>
+                                              </tr>
+                                              {% endfor %}
+                                              
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                    </div>
+                                    </div>
+                                    <div class="tab-pane active" id="rangoFechas">
+                                      
+                                      <div class="row g-gs">
+                                        <div class="col-xxl-8">
+                                            <div class="nk-block-des">
+                                                <h4 class="nk-block-title">Del Del {{stringFechaInicioRango}} al <br> {{stringFechaFinalRango}}</h4>
+                                            </div>
+                                            <br>
+                                            <div class="nk-sale-data-group">
+                                                <div class="card-title">
+                                                    <h6 class="title text-left"><em class="card-hint icon ni ni-help-fill" data-toggle="tooltip" data-placement="left" title="Los ingresos por ventas son las entradas de dinero consecuente de una venta, renta o pagos de créditos en cualquier forma de pago."></em> Ingresos por venta</h6>
+                                                    <p>Ingresos por venta, renta y pagos de créditos en rango de fecha.</p>
+                                                </div>
+                                                
+                                            </div>
+                                            <div class="align-end gy-3 gx-5 flex-wrap flex-md-nowrap flex-lg-wrap flex-xxl-nowrap">
+                                                <div class="nk-sale-data-group flex-md-nowrap g-4">
+                                                    <div class="nk-sale-data">
+                                                        {% if esMayorPeriodoSucursal %}
+                                                        <span class="amount">${{montoIngresoSucursalRango}} <span style="cursor: pointer;" class="change up text-success"  data-toggle="tooltip" data-placement="bottom" title="${{contadorVentasPeriodoAnterior}} MXN el periodo anterior del {{fechaTextoInicioPeriodoAnterior}} al {{stringFechaInicioRango}}."><em class="icon ni ni-arrow-long-up"></em>{{porcentajeIngresosSucursalRango}}%</span></span>
+                                                        {% else %}
+                                                        <span class="amount">${{montoIngresoSucursalRango}} <span style="cursor: pointer;" class="change down text-danger"  data-toggle="tooltip" data-placement="bottom" title="${{contadorVentasPeriodoAnterior}} MXN el periodo anterior del {{fechaTextoInicioPeriodoAnterior}} al {{stringFechaInicioRango}}."><em class="icon ni ni-arrow-long-down"></em>{{porcentajeIngresosSucursalRango}}%</span></span>
+                                                        {% endif %}
+                                                        <span class="sub-title">En el rango de fechas</span>
+                                                        
+                                                       
+                                                    </div>
+                                                    
+                                                </div>
+                                                
+                                               
+                                           
+                                            </div>
+                                            <div class="nk-ck-sm">
+                                                <canvas class="line-chart" id="filledLineChartSucursalRango"></canvas>
+                                                <center>
+                                                    <div class="nk-sale-data">
+                                                        <span class="sub-title ">Gráfico de ingresos del año actual comparado con años anteriores.</span>
+                                                    </div>
+                                                </center>
+                                                
+                                            </div>
+                                        </div>
+                                        <br><br>
+                                        <div class="col-xxl-4">
+                                          <div class="nk-sale-data-group mb-2">
+                                            <div class="card-title">
+                                                <h6 class="title text-left"><em class="card-hint icon ni ni-help-fill" data-toggle="tooltip" data-placement="left" title="Las compras efectuadas van desde productos para gasto y productos para venta."></em>&nbsp;Compras efectuadas. <a  data-toggle="modal" data-target="#modalComprasDelAño"><small class="badge badge-warning text-dark"> Ver todas.</small></a></h6>
+                                                <p>Compras de productos realizadas en mes actual.</p>
+                                            </div>
+                                       
+                                          </div>
+                                          <div class="analytic-au">
+                                              <div class="analytic-data-group analytic-au-group g-3">
+                                                  <div class="analytic-data analytic-au-data">
+                                                      <div class="title">Productos Gasto</div>
+                                                      <div class="amount"><span class="fs-12px">${{totalComprasRangoGasto}} MXN.</span> </div>
+                                                      <p class="fw-bold text-azure fs-10px">{{numeroComprasGastoRango}} unidades</p>
+                                                  </div>
+                                                  <div class="analytic-data analytic-au-data">
+                                                      <div class="title">Productos Venta</div>
+                                                      <div class="amount"><span class="fs-12px">${{totalComprasRangoVenta}} MXN.</span></div>
+                                                      <p class="fw-bold text-azure fs-10px">{{numeroComprasVentaRango}} unidades</p>
+                                                  </div>
+                                                  <div class="analytic-data analytic-au-data">
+                                                      <div class="title">Productos Renta</div>
+                                                      <div class="amount"><span class="fs-12px">${{totalComprasRangoenta}} MXN.</span></div>
+                                                      <p class="fw-bold text-azure fs-10px">{{numeroComprasRentaRango}} unidades</p>
+                                                  </div>
+                                              </div>
+                                              <br>
+                                              <center>
+                                                  <p class="title fw-bold fs-20px">Total de compras en el año</p>
+                                                  <br>
+                                                  <div class="amount fw-bold text-teal"><span class="fs-30px">${{sumaTotalesComprasDelRango}} MXN.</span></div>
+                                                  
+                                              </center>
+                                              
+                                          </div>
+                                        </div>
+                                        <br>
+                                        <div class="col-xxl-4">
+                                          
+                                          <br>
+                                          <div class="nk-sale-data-group">
+                                              <div class="card-title">
+                                                  <h6 class="title text-left"><em class="card-hint icon ni ni-help-fill" data-toggle="tooltip" data-placement="left" title="Tabla comparativa de los ingresos y compras realizadas en el mes actual."></em> Relación ingresos y compras.</h6>
+                                                  <p>Gráfico comparativo de ventas efectuadas y compras realizadas.</p>
+                                              </div>
+                                              
+                                          </div>
+                                          <br>
+                                          <div class="nk-ck">
+                                              <canvas class="bar-chart" id="barChartDataSucursalRango"></canvas>
+                                          </div>
+                                          <div>
+                                            <center>
+                                              {% if utilidadMayorRango %}
+                                              <h3 class="fs-40px">Utilidad: <span class="fw-bold text-teal">{{utilidadSucursalRango}}</span> MXN.</h3>
+                                              {% else %}
+                                              <h3 class="fs-40px">Utilidad:  <span class="fw-bold text-danger">{{utilidadSucursalRango}}</span> MXN.</h3>
+                                              {% endif %}
+                                            </center>
+                                          </div>
+                                        </div>
+                                        <div class="col-xxl-8">
+                                          
+                                          <br>
+                                          <div class="nk-sale-data-group">
+                                              <div class="card-title">
+                                                  <h6 class="title text-left"><em class="card-hint icon ni ni-help-fill" data-toggle="tooltip" data-placement="left" title="La utilidad/ganancia se calcula restando lo que se vendió contra lo que se compró."></em> Comparación Ganancias con otras sucursales.</h6>
+                                                  <p>Tabla comparativa de sucursales.</p>
+                                              </div>
+                                              
+                                          </div>
+                                          <br>
+                                          <table class="table responsive">
+                                            <thead class="thead-dark">
+                                              <tr>
+                                                <th scope="col">Id</th>
+                                                <th scope="col">Sucursal</th>
+                                                <th scope="col">Total de ingresos</th>
+                                                <th scope="col">Todal de egresos</th>
+                                                <th scope="col">Ganancia</th>
+                                                <th scope="col">Margen</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              {% for sucursal, montosVenta, montosCompras, gananciaSucursales, margenDeGanancia in listaComparativaSucursalesRango %}
+                                              <tr>
+                                                <th>
+                                                  <span class="badge badge-dim badge-pill badge-outline-primary">{{sucursal.0}}</span>
+                                                </th>
+                                                <td>
+                                                  {% if sucursal.1 == nombreSucursal %}
+                                                  <span class="badge badge-danger">{{sucursal.1}}</span>
+                                                  {% else %}
+                                                  <span>{{sucursal.1}}</span>
+                                                  {% endif %}
+                                                </td>
+                                                <td style="white-space:nowrap!important;">
+                                                  <span class="fw-bold text-azure">${{montosVenta}} <span class="text-dark fs-12px">MXN.</span></span>
+                                                </td>
+                                                <td style="white-space:nowrap!important;">
+                                                  <span class="fw-bold text-orange">${{montosCompras}} <span class="text-dark fs-12px">MXN.</span></span>
+                                                </td>
+                                                <td style="white-space:nowrap!important;">
+                                                  {% if gananciaSucursales.1 == "+" %}
+                                                  <span class="fw-bold text-teal">+ ${{gananciaSucursales.0}} <span class="text-dark fs-12px">MXN.</span></span>
+                                                  {% else %}
+                                                  <span class="fw-bold text-danger">${{gananciaSucursales.0}} <span class="text-dark fs-12px">MXN.</span></span>
+                                                  {% endif %}
+                                                </td>
+                                                <td  style="white-space:nowrap!important;">
+                                                  {% if gananciaSucursales.1 == "+" %}
+                                                  <span class="fw-bold text-teal">+{{margenDeGanancia}}%</span>
+                                                  {% else %}
+                                                  <span class="fw-bold text-danger">-{{margenDeGanancia}}%</span>
+                                                  {% endif %}
+                                                  
+                                                </td>
+                                              </tr>
+                                              {% endfor %}
+                                              
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                    </div>
+                                      
+                                       
+                                    </div>
+                                  {% else %}
+                                    <div class="tab-pane active" id="mesActual">
+                                    <div class="row g-gs">
+                                        <div class="col-xxl-8">
+                                            <div class="nk-block-des">
+                                                <h4 class="nk-block-title">Del 01 al {{diadehoy}} de {{mesdehoy}} del {{añoHoy}}.</h4>
+                                            </div>
+                                            <br>
+                                            <div class="nk-sale-data-group">
+                                                <div class="card-title">
+                                                    <h6 class="title text-left"><em class="card-hint icon ni ni-help-fill" data-toggle="tooltip" data-placement="left" title="Los ingresos por ventas son las entradas de dinero consecuente de una venta, renta o pagos de créditos en cualquier forma de pago."></em> Ingresos por venta</h6>
+                                                    <p>Ingresos por venta, renta y pagos de créditos.</p>
+                                                </div>
+                                                
+                                            </div>
+                                            <div class="align-end gy-3 gx-5 flex-wrap flex-md-nowrap flex-lg-wrap flex-xxl-nowrap">
+                                                <div class="nk-sale-data-group flex-md-nowrap g-4">
+                                                    <div class="nk-sale-data">
+                                                        {% if esMayor %}
+                                                        <span class="amount">${{montoIngresoSucursalMes}} <span style="cursor: pointer;" class="change up text-success"  data-toggle="tooltip" data-placement="bottom" title="${{montoIngresoMesSucursalAnterior}} MXN el mes de {{mesHaceUnMesLetra}}."><em class="icon ni ni-arrow-long-up"></em>{{porcentajeIngresosSucursalMes}}%</span></span>
+                                                        {% else %}
+                                                        <span class="amount">${{montoIngresoSucursalMes}} <span style="cursor: pointer;" class="change down text-danger"  data-toggle="tooltip" data-placement="bottom" title="${{montoIngresoMesSucursalAnterior}} MXN el mes de {{mesHaceUnMesLetra}}."><em class="icon ni ni-arrow-long-down"></em>{{porcentajeIngresosSucursalMes}}%</span></span>
+                                                        {% endif %}
+                                                        <span class="sub-title">En el mes actual</span>
+                                                        
+                                                       
+                                                    </div>
+                                                    
+                                                </div>
+                                                
+                                               
+                                           
+                                            </div>
+                                            <div class="nk-ck-sm">
+                                                <canvas class="line-chart" id="filledLineChart"></canvas>
+                                                <center>
+                                                    <div class="nk-sale-data">
+                                                        <span class="sub-title ">Gráfico de ingresos por mes.</span>
+                                                    </div>
+                                                </center>
+                                                
+                                            </div>
+                                        </div>
+                                        <br><br>
+                                        <div class="col-xxl-4">
+                                          <div class="nk-sale-data-group mb-2">
+                                            <div class="card-title">
+                                                <h6 class="title text-left"><em class="card-hint icon ni ni-help-fill" data-toggle="tooltip" data-placement="left" title="Las compras efectuadas van desde productos para gasto y productos para venta."></em>&nbsp;Compras efectuadas. <a  data-toggle="modal" data-target="#modalComprasDelMes"><small class="badge badge-warning text-dark"> Ver todas.</small></a></h6>
+                                                <p>Compras de productos realizadas en mes actual.</p>
+                                            </div>
+                                       
+                                          </div>
+                                          <div class="analytic-au">
+                                              <div class="analytic-data-group analytic-au-group g-3">
+                                                  <div class="analytic-data analytic-au-data">
+                                                      <div class="title">Productos Gasto</div>
+                                                      <div class="amount"><span class="fs-12px">${{totalComprasMesGasto}} MXN.</span> </div>
+                                                      <p class="fw-bold text-azure fs-10px">{{numeroComprasGasto}} unidades</p>
+                                                  </div>
+                                                  <div class="analytic-data analytic-au-data">
+                                                      <div class="title">Productos Venta</div>
+                                                      <div class="amount"><span class="fs-12px">${{totalComprasMesVenta}} MXN.</span></div>
+                                                      <p class="fw-bold text-azure fs-10px">{{numeroComprasVenta}} unidades</p>
+                                                  </div>
+                                                  <div class="analytic-data analytic-au-data">
+                                                      <div class="title">Productos Renta</div>
+                                                      <div class="amount"><span class="fs-12px">${{totalComprasMesRenta}} MXN.</span></div>
+                                                      <p class="fw-bold text-azure fs-10px">{{numeroComprasRenta}} unidades</p>
+                                                  </div>
+                                              </div>
+                                              <br>
+                                              <center>
+                                                  <p class="title fw-bold fs-20px">Total de compras en el mes</p>
+                                                  <br>
+                                                  <div class="amount fw-bold text-teal"><span class="fs-30px">${{sumaTotalesCompras}} MXN.</span></div>
+                                                  
+                                              </center>
+                                              
+                                          </div>
+                                        </div>
+                                        <br>
+                                        <div class="col-xxl-4">
+                                          
+                                          <br>
+                                          <div class="nk-sale-data-group">
+                                              <div class="card-title">
+                                                  <h6 class="title text-left"><em class="card-hint icon ni ni-help-fill" data-toggle="tooltip" data-placement="left" title="Tabla comparativa de los ingresos y compras realizadas en el mes actual."></em> Relación ingresos y compras.</h6>
+                                                  <p>Gráfico comparativo de ventas efectuadas y compras realizadas.</p>
+                                              </div>
+                                              
+                                          </div>
+                                          <br>
+                                          <div class="nk-ck">
+                                              <canvas class="bar-chart" id="barChartData"></canvas>
+                                          </div>
+                                          <div>
+                                            <center>
+                                              {% if utilidadMayor %}
+                                              <h3 class="fs-40px">Utilidad: <span class="fw-bold text-teal">{{utilidadSucursalMes}}</span> MXN.</h3>
+                                              {% else %}
+                                              <h3 class="fs-40px">Utilidad:  <span class="fw-bold text-danger">{{utilidadSucursalMes}}</span> MXN.</h3>
+                                              {% endif %}
+                                            </center>
+                                          </div>
+                                        </div>
+                                        <div class="col-xxl-8">
+                                          
+                                          <br>
+                                          <div class="nk-sale-data-group">
+                                              <div class="card-title">
+                                                  <h6 class="title text-left"><em class="card-hint icon ni ni-help-fill" data-toggle="tooltip" data-placement="left" title="La utilidad/ganancia se calcula restando lo que se vendió contra lo que se compró."></em> Comparación Ganancias con otras sucursales.</h6>
+                                                  <p>Tabla comparativa de sucursales.</p>
+                                              </div>
+                                              
+                                          </div>
+                                          <br>
+                                          <table class="table responsive">
+                                            <thead class="thead-dark">
+                                              <tr>
+                                                <th scope="col">Id</th>
+                                                <th scope="col">Sucursal</th>
+                                                <th scope="col">Total de ingresos</th>
+                                                <th scope="col">Todal de egresos</th>
+                                                <th scope="col">Ganancia</th>
+                                                <th scope="col">Margen</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              {% for sucursal, montosVenta, montosCompras, gananciaSucursales, margenDeGanancia in listaComparativaSucursalesMes %}
+                                              <tr>
+                                                <th>
+                                                  <span class="badge badge-dim badge-pill badge-outline-primary">{{sucursal.0}}</span>
+                                                </th>
+                                                <td>
+                                                  {% if sucursal.1 == nombreSucursal %}
+                                                  <span class="badge badge-danger">{{sucursal.1}}</span>
+                                                  {% else %}
+                                                  <span>{{sucursal.1}}</span>
+                                                  {% endif %}
+                                                </td>
+                                                <td style="white-space:nowrap!important;">
+                                                  <span class="fw-bold text-azure">${{montosVenta}} <span class="text-dark fs-12px">MXN.</span></span>
+                                                </td>
+                                                <td style="white-space:nowrap!important;">
+                                                  <span class="fw-bold text-orange">${{montosCompras}} <span class="text-dark fs-12px">MXN.</span></span>
+                                                </td>
+                                                <td style="white-space:nowrap!important;">
+                                                  {% if gananciaSucursales.1 == "+" %}
+                                                  <span class="fw-bold text-teal">+ ${{gananciaSucursales.0}} <span class="text-dark fs-12px">MXN.</span></span>
+                                                  {% else %}
+                                                  <span class="fw-bold text-danger">- ${{gananciaSucursales.0}} <span class="text-dark fs-12px">MXN.</span></span>
+                                                  {% endif %}
+                                                </td>
+                                                <td  style="white-space:nowrap!important;">
+                                                  {% if gananciaSucursales.1 == "+" %}
+                                                  <span class="fw-bold text-teal">+{{margenDeGanancia}}%</span>
+                                                  {% else %}
+                                                  <span class="fw-bold text-danger">-{{margenDeGanancia}}%</span>
+                                                  {% endif %}
+                                                  
+                                                </td>
+                                              </tr>
+                                              {% endfor %}
+                                              
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                    </div>
+
+                                    </div>
+                                    <div class="tab-pane" id="añoActual">
+                                      <div class="row g-gs">
+                                        <div class="col-xxl-8">
+                                            <div class="nk-block-des">
+                                                <h4 class="nk-block-title">Del 01 de Enero al 31 de Diciembre del {{añoHoy}}.</h4>
+                                            </div>
+                                            <br>
+                                            <div class="nk-sale-data-group">
+                                                <div class="card-title">
+                                                    <h6 class="title text-left"><em class="card-hint icon ni ni-help-fill" data-toggle="tooltip" data-placement="left" title="Los ingresos por ventas son las entradas de dinero consecuente de una venta, renta o pagos de créditos en cualquier forma de pago."></em> Ingresos por venta</h6>
+                                                    <p>Ingresos por venta, renta y pagos de créditos.</p>
+                                                </div>
+                                                
+                                            </div>
+                                            <div class="align-end gy-3 gx-5 flex-wrap flex-md-nowrap flex-lg-wrap flex-xxl-nowrap">
+                                                <div class="nk-sale-data-group flex-md-nowrap g-4">
+                                                    <div class="nk-sale-data">
+                                                        {% if esMayorAñoSucursal %}
+                                                        <span class="amount">${{montoIngresoSucursalAño}} <span style="cursor: pointer;" class="change up text-success"  data-toggle="tooltip" data-placement="bottom" title="${{contadorVentasHaceUnAño}} MXN año pasado {{añoMenosUno}}."><em class="icon ni ni-arrow-long-up"></em>{{porcentajeIngresosSucursalAño}}%</span></span>
+                                                        {% else %}
+                                                        <span class="amount">${{montoIngresoSucursalAño}} <span style="cursor: pointer;" class="change down text-danger"  data-toggle="tooltip" data-placement="bottom" title="${{contadorVentasHaceUnAño}} MXN el año pasado {{añoMenosUno}}."><em class="icon ni ni-arrow-long-down"></em>{{porcentajeIngresosSucursalAño}}%</span></span>
+                                                        {% endif %}
+                                                        <span class="sub-title">En el año actual actual</span>
+                                                        
+                                                      
+                                                    </div>
+                                                    
+                                                </div>
+                                                
+                                              
+                                          
+                                            </div>
+                                            <div class="nk-ck-sm">
+                                                <canvas class="line-chart" id="filledLineChartSucursalAño"></canvas>
+                                                <center>
+                                                    <div class="nk-sale-data">
+                                                        <span class="sub-title ">Gráfico de ingresos del año actual comparado con años anteriores.</span>
+                                                    </div>
+                                                </center>
+                                                
+                                            </div>
+                                        </div>
+                                        <br><br>
+                                        <div class="col-xxl-4">
+                                          <div class="nk-sale-data-group mb-2">
+                                            <div class="card-title">
+                                                <h6 class="title text-left"><em class="card-hint icon ni ni-help-fill" data-toggle="tooltip" data-placement="left" title="Las compras efectuadas van desde productos para gasto y productos para venta."></em>&nbsp;Compras efectuadas. <a  data-toggle="modal" data-target="#modalComprasDelAño"><small class="badge badge-warning text-dark"> Ver todas.</small></a></h6>
+                                                <p>Compras de productos realizadas en mes actual.</p>
+                                            </div>
+                                      
+                                          </div>
+                                          <div class="analytic-au">
+                                              <div class="analytic-data-group analytic-au-group g-3">
+                                                  <div class="analytic-data analytic-au-data">
+                                                      <div class="title">Productos Gasto</div>
+                                                      <div class="amount"><span class="fs-12px">${{totalComprasAñoGasto}} MXN.</span> </div>
+                                                      <p class="fw-bold text-azure fs-10px">{{numeroComprasGastoAño}} unidades</p>
+                                                  </div>
+                                                  <div class="analytic-data analytic-au-data">
+                                                      <div class="title">Productos Venta</div>
+                                                      <div class="amount"><span class="fs-12px">${{totalComprasAñoVenta}} MXN.</span></div>
+                                                      <p class="fw-bold text-azure fs-10px">{{numeroComprasVentaAño}} unidades</p>
+                                                  </div>
+                                                  <div class="analytic-data analytic-au-data">
+                                                      <div class="title">Productos Renta</div>
+                                                      <div class="amount"><span class="fs-12px">${{totalComprasAñoRenta}} MXN.</span></div>
+                                                      <p class="fw-bold text-azure fs-10px">{{numeroComprasRentaAño}} unidades</p>
+                                                  </div>
+                                              </div>
+                                              <br>
+                                              <center>
+                                                  <p class="title fw-bold fs-20px">Total de compras en el año</p>
+                                                  <br>
+                                                  <div class="amount fw-bold text-teal"><span class="fs-30px">${{sumaTotalesComprasDelAño}} MXN.</span></div>
+                                                  
+                                              </center>
+                                              
+                                          </div>
+                                        </div>
+                                        <br>
+                                        <div class="col-xxl-4">
+                                          
+                                          <br>
+                                          <div class="nk-sale-data-group">
+                                              <div class="card-title">
+                                                  <h6 class="title text-left"><em class="card-hint icon ni ni-help-fill" data-toggle="tooltip" data-placement="left" title="Tabla comparativa de los ingresos y compras realizadas en el mes actual."></em> Relación ingresos y compras.</h6>
+                                                  <p>Gráfico comparativo de ventas efectuadas y compras realizadas.</p>
+                                              </div>
+                                              
+                                          </div>
+                                          <br>
+                                          <div class="nk-ck">
+                                              <canvas class="bar-chart" id="barChartDataSucursalAnio"></canvas>
+                                          </div>
+                                          <div>
+                                            <center>
+                                              {% if utilidadMayorAño %}
+                                              <h3 class="fs-40px">Utilidad: <span class="fw-bold text-teal">{{utilidadSucursalAño}}</span> MXN.</h3>
+                                              {% else %}
+                                              <h3 class="fs-40px">Utilidad:  <span class="fw-bold text-danger">{{utilidadSucursalAño}}</span> MXN.</h3>
+                                              {% endif %}
+                                            </center>
+                                          </div>
+                                        </div>
+                                        <div class="col-xxl-8">
+                                          
+                                          <br>
+                                          <div class="nk-sale-data-group">
+                                              <div class="card-title">
+                                                  <h6 class="title text-left"><em class="card-hint icon ni ni-help-fill" data-toggle="tooltip" data-placement="left" title="La utilidad/ganancia se calcula restando lo que se vendió contra lo que se compró."></em> Comparación Ganancias con otras sucursales.</h6>
+                                                  <p>Tabla comparativa de sucursales.</p>
+                                              </div>
+                                              
+                                          </div>
+                                          <br>
+                                          <table class="table responsive">
+                                            <thead class="thead-dark">
+                                              <tr>
+                                                <th scope="col">Id</th>
+                                                <th scope="col">Sucursal</th>
+                                                <th scope="col">Total de ingresos</th>
+                                                <th scope="col">Todal de egresos</th>
+                                                <th scope="col">Ganancia</th>
+                                                <th scope="col">Margen</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              {% for sucursal, montosVenta, montosCompras, gananciaSucursales, margenDeGanancia in listaComparativaSucursalesAño %}
+                                              <tr>
+                                                <th>
+                                                  <span class="badge badge-dim badge-pill badge-outline-primary">{{sucursal.0}}</span>
+                                                </th>
+                                                <td>
+                                                  {% if sucursal.1 == nombreSucursal %}
+                                                  <span class="badge badge-danger">{{sucursal.1}}</span>
+                                                  {% else %}
+                                                  <span>{{sucursal.1}}</span>
+                                                  {% endif %}
+                                                </td>
+                                                <td style="white-space:nowrap!important;">
+                                                  <span class="fw-bold text-azure">${{montosVenta}} <span class="text-dark fs-12px">MXN.</span></span>
+                                                </td>
+                                                <td style="white-space:nowrap!important;">
+                                                  <span class="fw-bold text-orange">${{montosCompras}} <span class="text-dark fs-12px">MXN.</span></span>
+                                                </td>
+                                                <td style="white-space:nowrap!important;">
+                                                  {% if gananciaSucursales.1 == "+" %}
+                                                  <span class="fw-bold text-teal">+ ${{gananciaSucursales.0}} <span class="text-dark fs-12px">MXN.</span></span>
+                                                  {% else %}
+                                                  <span class="fw-bold text-danger">${{gananciaSucursales.0}} <span class="text-dark fs-12px">MXN.</span></span>
+                                                  {% endif %}
+                                                </td>
+                                                <td  style="white-space:nowrap!important;">
+                                                  {% if gananciaSucursales.1 == "+" %}
+                                                  <span class="fw-bold text-teal">{{margenDeGanancia}}%</span>
+                                                  {% else %}
+                                                  <span class="fw-bold text-danger">{{margenDeGanancia}}%</span>
+                                                  {% endif %}
+                                                  
+                                                </td>
+                                              </tr>
+                                              {% endfor %}
+                                              
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                    </div>
+                                    </div>
+                                    <div class="tab-pane " id="rangoFechas">
+                                      <div class="card-title">
+                                        <h4 class="nk-block-title">Elegir rango de fechas.</h4>
+                                        <p>Rango de fechas para informe de ventas de la sucursal.</p>
+                                      </div>
+                                      
+                                        <form action="/informeDeSucursal/" method="POST"> {% csrf_token %}
+                                          <div class="row gy-4">
+                                            <div class="col-sm-6">
+                                              <div class="form-group">
+                                                <label class="form-label">Fecha de inicio</label>
+                                                <div class="form-control-wrap">
+                                                    <div class="form-icon form-icon-left">
+                                                        <em class="icon ni ni-calendar"></em>
+                                                    </div>
+                                                    <input type="text" name="fechaInicioRango" class="form-control date-picker" required data-date-format="yyyy-mm-dd">
+                                                </div>
+                                                <div class="form-note">Formato de fecha <code>año-mes-dia</code></div>
+                                            </div>
+                                              
+                                            </div>
+                                            <div class="col-sm-6">
+                                              <div class="form-group">
+                                                <label class="form-label">Fecha Final</label>
+                                                <div class="form-control-wrap">
+                                                    <div class="form-icon form-icon-left">
+                                                        <em class="icon ni ni-calendar"></em>
+                                                    </div>
+                                                    <input type="text" name="fechaFinalRango" class="form-control date-picker" required data-date-format="yyyy-mm-dd">
+                                                </div>
+                                                <div class="form-note">Formato de fecha <code>año-mes-dia</code></div>
+                                              </div>
+                                              
+                                            </div>
+                                          </div>
+                                          <br>
+                                          <div class="text-right">
+                                            <input type="hidden" name="idSucursalInforme" value="{{idSucursalInforme}}">
+                                            
+                                            <button type="submit" class="btn btn-dim btn-primary">Generar informe de ventas</button>
+                                          </div>
+                                        </form>
+                                    </div>  
+                                  {% endif %}
+                                </div>
+                            </div><!-- .card-inner -->
+                        </div>
+                    </div><!-- .card -->
+                </div><!-- .col -->
+                <div class="col-xxl-4">
+                    <div class="card card-full">
+                        <div class="nk-ecwg nk-ecwg8 h-100">
+                            <div class="card-inner animate__animated animate__fadeIn">
+                                <div class="card-title-group mb-3">
+                                    <div class="card-title">
+                                        <h6 class="title"><span><img src="{% static 'images/accesos/puntolocacion.gif' %}" alt="icono" width="20"></span>  Ubicación geográfica</h6>
+                                        
+                                    </div>
+                                </div>
+                                <div id="map"></div>
+                            </div><!-- .card-inner -->
+                            <div class="card-inner">
+                                <div class="card-title-group mb-3">
+                                    <div class="card-title">
+                                        <h6 class="title text-center"><span><img src="{% static 'images/accesos/phone.png' %}" alt="icono" width="25"></span>  Teléfono</h6>
+                                        <h4 class="text-center">{{telefono}}</h4>
+                                        <br>
+                                        <h6 class="title text-center"><span><img src="{% static 'images/accesos/map.png' %}" alt="icono" width="25"></span>  Dirección</h6>
+                                        <h5 class="text-center">{{direccion}}</h5>
+                                        
+                                    </div>
+                                </div>
+                            </div><!-- .card-inner -->
+                           
+                        </div>
+                    </div><!-- .card -->
+                </div><!-- .col -->
+                
+            </div>
+
+
+        </div>
+
+
+    </div>
+</div>
+
+<!-- Modal empleados del mes -->
+<div class="modal fade" tabindex="-1" id="modalComprasDelMes">
+  <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+          <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+              <em class="icon ni ni-cross"></em>
+          </a>
+          <div class="modal-header">
+              <p class="modal-title fw-bold text-dark fs-20px"><em class="icon ni ni-cart"></em> Tabla de compras efectuadas del mes de {{mesdehoy}}.</p>
+          </div>
+          <div class="modal-body">
+            <ul class="nav nav-tabs">
+              <li class="nav-item">
+                  <a class="nav-link active" data-toggle="tab" href="#productosGasto">Productos Gasto</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" data-toggle="tab" href="#productosVenta">Productos Venta</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" data-toggle="tab" href="#productosRenta">Productos Renta</a>
+              </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="productosGasto">
+                  {% if comprasProductosGastosSucursalMes %}
+                  <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #f19e9e !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco" style="white-space:nowrap!important;">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Producto</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Imagen</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Costo Compra</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Cantidad Comprada</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Total</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            {% for compra in comprasProductosGastosSucursalMes %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{compra.0}}</span>
+                                </td>
+                                
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                        <div>
+                                          <span class="badge badge-dark">{{compra.1}}</span>
+                                        </div>
+                                    
+                                    
+                                </td>
+                                <td class="nk-tb-col">
+                                  <div>
+                                    {% if compra.2 %}
+                                    <img src="{{compra.2.url}}" alt="imagenProducto" width="60">
+                                    {% else %}
+                                    <p class="fw-bold text-dark">Sin imagen</p>
+                                    {% endif %}
+                                  </div>
+                              
+                              
+                                </td>
+                                
+                                <td class="nk-tb-col">
+                                  <span class="badge badge-outline-dark">{{compra.3}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                  <span class="badge badge-warning">{{compra.4}}</span>
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                  <span class="fw-bold text-teal">${{compra.5}} MXN.</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                  {% if compra.6 == 1 %}
+                                  <span class="fw-bold text-dark">{{compra.6}} unidad</span>
+
+                                  {% else %}
+                                  <span class="fw-bold text-dark">{{compra.6}} unidades</span>
+
+                                  {% endif %}
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                  <span class="fw-bold text-teal">${{compra.7}} MXN.</span>
+                                </td>
+                               
+                                
+                                
+      
+                            </tr>
+                            {% endfor %}
+                            
+                            
+                            
+                        </tbody>
+                    </table>
+      
+                
+                  </div>
+                  {% else %}
+                  <p class="fw-bold text-danger">No se han comprado productos gasto en el mes.</p>
+                  {% endif %}
+                  
+                </div>
+                <div class="tab-pane" id="productosVenta">
+                  
+                  {% if comprasProductosVentasSucursalMes %}
+                  <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #FFC3C3 !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco" style="white-space:nowrap!important;">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Producto</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Imagen</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Costo Compra</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Cantidad Comprada</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Total</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            {% for compra in comprasProductosVentasSucursalMes %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{compra.0}}</span>
+                                </td>
+                                
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                        <div>
+                                          <span class="badge badge-dark">{{compra.1}}</span>
+                                        </div>
+                                    
+                                    
+                                </td>
+                                <td class="nk-tb-col">
+                                  <div>
+                                    {% if compra.2 %}
+                                    <img src="{{compra.2.url}}" alt="imagenProducto" width="60">
+                                    {% else %}
+                                    <p class="fw-bold text-dark">Sin imagen</p>
+                                    {% endif %}
+                                  </div>
+                              
+                              
+                                </td>
+                                
+                                <td class="nk-tb-col">
+                                  <span class="badge badge-outline-dark">{{compra.3}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                  <span class="badge badge-warning">{{compra.4}}</span>
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                  <span class="fw-bold text-teal">${{compra.5}} MXN.</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                  {% if compra.6 == 1 %}
+                                  <span class="fw-bold text-dark">{{compra.6}} unidad</span>
+
+                                  {% else %}
+                                  <span class="fw-bold text-dark">{{compra.6}} unidades</span>
+
+                                  {% endif %}
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                  <span class="fw-bold text-teal">${{compra.7}} MXN.</span>
+                                </td>
+                               
+                                
+                                
+      
+                            </tr>
+                            {% endfor %}
+                            
+                            
+                            
+                        </tbody>
+                    </table>
+      
+                
+                  </div>
+                  {% else %}
+                  <p class="fw-bold text-danger">No se han comprado productos para venta en el mes.</p>
+                  {% endif %}
+
+                            
+      
+                </div>
+                <div class="tab-pane" id="productosRenta">
+                  {% if comprasProductosRentasSucursalMes %}
+                  <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #FF5D5D !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco" style="white-space:nowrap!important;">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Producto</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Imagen</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Costo Compra</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Cantidad Comprada</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Total</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            {% for compra in comprasProductosRentasSucursalMes %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{compra.0}}</span>
+                                </td>
+                                
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                        <div>
+                                          <span class="badge badge-dark">{{compra.1}}</span>
+                                        </div>
+                                    
+                                    
+                                </td>
+                                <td class="nk-tb-col">
+                                  <div>
+                                    {% if compra.2 %}
+                                    <img src="{{compra.2.url}}" alt="imagenProducto" width="60">
+                                    {% else %}
+                                    <p class="fw-bold text-dark">Sin imagen</p>
+                                    {% endif %}
+                                  </div>
+                              
+                              
+                                </td>
+                                
+                                <td class="nk-tb-col">
+                                  <span class="badge badge-outline-dark">{{compra.3}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                  <span class="badge badge-warning">{{compra.4}}</span>
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                  <span class="fw-bold text-teal">${{compra.5}} MXN.</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                  {% if compra.6 == 1 %}
+                                  <span class="fw-bold text-dark">{{compra.6}} unidad</span>
+
+                                  {% else %}
+                                  <span class="fw-bold text-dark">{{compra.6}} unidades</span>
+
+                                  {% endif %}
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                  <span class="fw-bold text-teal">${{compra.7}} MXN.</span>
+                                </td>
+                               
+                                
+                                
+      
+                            </tr>
+                            {% endfor %}
+                            
+                            
+                            
+                        </tbody>
+                    </table>
+      
+                
+                  </div>
+                  {% else %}
+                  <p class="fw-bold text-danger">No se han comprado productos renta en el mes.</p>
+                  {% endif %}
+                  
+                  
+                
+                  </div>
+                </div>
+            </div>
+
+
+
+            
+          
+          <div class="modal-footer bg-light">
+              <span class="fw-bold text-pink">Costabella</span>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Modal empleados del mes -->
+<div class="modal fade" tabindex="-1" id="modalComprasDelAño">
+  <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+          <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+              <em class="icon ni ni-cross"></em> 
+          </a>
+          <div class="modal-header">
+              <p class="modal-title fw-bold text-dark fs-20px"><em class="icon ni ni-cart"></em> Tabla de compras efectuadas del {{añoHoy}}.</p>
+          </div>
+          <div class="modal-body">
+            <ul class="nav nav-tabs">
+              <li class="nav-item">
+                  <a class="nav-link active" data-toggle="tab" href="#productosGastoAño">Productos Gasto</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" data-toggle="tab" href="#productosVentaAño">Productos Venta</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" data-toggle="tab" href="#productosRentaAño">Productos Renta</a>
+              </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="productosGastoAño">
+                  {% if comprasProductosGastosSucursalAño %}
+                  <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #f19e9e !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco" style="white-space:nowrap!important;">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Producto</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Imagen</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Costo Compra</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Cantidad Comprada</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Total</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            {% for compra in comprasProductosGastosSucursalAño %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{compra.0}}</span>
+                                </td>
+                                
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                        <div>
+                                          <span class="badge badge-dark">{{compra.1}}</span>
+                                        </div>
+                                    
+                                    
+                                </td>
+                                <td class="nk-tb-col">
+                                  <div>
+                                    {% if compra.2 %}
+                                    <img src="{{compra.2.url}}" alt="imagenProducto" width="60">
+                                    {% else %}
+                                    <p class="fw-bold text-dark">Sin imagen</p>
+                                    {% endif %}
+                                  </div>
+                              
+                              
+                                </td>
+                                
+                                <td class="nk-tb-col">
+                                  <span class="badge badge-outline-dark">{{compra.3}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                  <span class="badge badge-warning">{{compra.4}}</span>
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                  <span class="fw-bold text-teal">${{compra.5}} MXN.</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                  {% if compra.6 == 1 %}
+                                  <span class="fw-bold text-dark">{{compra.6}} unidad</span>
+
+                                  {% else %}
+                                  <span class="fw-bold text-dark">{{compra.6}} unidades</span>
+
+                                  {% endif %}
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                  <span class="fw-bold text-teal">${{compra.7}} MXN.</span>
+                                </td>
+                               
+                                
+                                
+      
+                            </tr>
+                            {% endfor %}
+                            
+                            
+                            
+                        </tbody>
+                    </table>
+      
+                
+                  </div>
+                  {% else %}
+                  <p class="fw-bold text-danger">No se han comprado productos gasto en el {{añoHoy}}.</p>
+                  {% endif %}
+                  
+                </div>
+                <div class="tab-pane" id="productosVentaAño">
+                  
+                  {% if comprasProductosVentasSucursalAño %}
+                  <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #FFC3C3 !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco" style="white-space:nowrap!important;">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Producto</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Imagen</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Costo Compra</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Cantidad Comprada</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Total</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            {% for compra in comprasProductosVentasSucursalAño %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{compra.0}}</span>
+                                </td>
+                                
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                        <div>
+                                          <span class="badge badge-dark">{{compra.1}}</span>
+                                        </div>
+                                    
+                                    
+                                </td>
+                                <td class="nk-tb-col">
+                                  <div>
+                                    {% if compra.2 %}
+                                    <img src="{{compra.2.url}}" alt="imagenProducto" width="60">
+                                    {% else %}
+                                    <p class="fw-bold text-dark">Sin imagen</p>
+                                    {% endif %}
+                                  </div>
+                              
+                              
+                                </td>
+                                
+                                <td class="nk-tb-col">
+                                  <span class="badge badge-outline-dark">{{compra.3}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                  <span class="badge badge-warning">{{compra.4}}</span>
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                  <span class="fw-bold text-teal">${{compra.5}} MXN.</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                  {% if compra.6 == 1 %}
+                                  <span class="fw-bold text-dark">{{compra.6}} unidad</span>
+
+                                  {% else %}
+                                  <span class="fw-bold text-dark">{{compra.6}} unidades</span>
+
+                                  {% endif %}
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                  <span class="fw-bold text-teal">${{compra.7}} MXN.</span>
+                                </td>
+                               
+                                
+                                
+      
+                            </tr>
+                            {% endfor %}
+                            
+                            
+                            
+                        </tbody>
+                    </table>
+      
+                
+                  </div>
+                  {% else %}
+                  <p class="fw-bold text-danger">No se han comprado productos para venta en el {{añoHoy}}.</p>
+                  {% endif %}
+
+                            
+      
+                </div>
+                <div class="tab-pane" id="productosRentaAño">
+                  {% if comprasProductosRentasSucursalAño %}
+                  <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #FF5D5D !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco" style="white-space:nowrap!important;">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Producto</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Imagen</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Costo Compra</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Cantidad Comprada</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Total</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            {% for compra in comprasProductosRentasSucursalAño %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{compra.0}}</span>
+                                </td>
+                                
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                        <div>
+                                          <span class="badge badge-dark">{{compra.1}}</span>
+                                        </div>
+                                    
+                                    
+                                </td>
+                                <td class="nk-tb-col">
+                                  <div>
+                                    {% if compra.2 %}
+                                    <img src="{{compra.2.url}}" alt="imagenProducto" width="60">
+                                    {% else %}
+                                    <p class="fw-bold text-dark">Sin imagen</p>
+                                    {% endif %}
+                                  </div>
+                              
+                              
+                                </td>
+                                
+                                <td class="nk-tb-col">
+                                  <span class="badge badge-outline-dark">{{compra.3}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                  <span class="badge badge-warning">{{compra.4}}</span>
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                  <span class="fw-bold text-teal">${{compra.5}} MXN.</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                  {% if compra.6 == 1 %}
+                                  <span class="fw-bold text-dark">{{compra.6}} unidad</span>
+
+                                  {% else %}
+                                  <span class="fw-bold text-dark">{{compra.6}} unidades</span>
+
+                                  {% endif %}
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                  <span class="fw-bold text-teal">${{compra.7}} MXN.</span>
+                                </td>
+                               
+                                
+                                
+      
+                            </tr>
+                            {% endfor %}
+                            
+                            
+                            
+                        </tbody>
+                    </table>
+      
+                
+                  </div>
+                  {% else %}
+                  <p class="fw-bold text-danger">No se han comprado productos renta en el {{añoHoy}}.</p>
+                  {% endif %}
+                  
+                  
+                
+                  </div>
+                </div>
+            </div>
+
+
+
+            
+          
+          <div class="modal-footer bg-light">
+              <span class="fw-bold text-pink">Costabella</span>
+          </div>
+      </div>
+  </div>
+</div>
+{% block relojJS %}
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+
+        window.onload= mueveReloj ();
+
+        
+    };
+</script>
+{% endblock %}
+
+<script>
+        
+    function initMap(){
+        var latitud = parseFloat("{{latitud}}");
+        var longitud = parseFloat("{{longitud}}");
+
+        var location = {lat: latitud,lng:longitud}
+        var map = new google.maps.Map(document.getElementById('map'),{
+            zoom:15,
+            center: location
+        });
+        var marker = new google.maps.Marker({
+            position:location,
+            map:map
+        });
+    }
+</script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC7LMDCuG9qUgLU6-43LhstBh1o7vz-9Wk&callback=initMap"></script>
+
+
+<script>
+  function selectInforme()
+  {
+
+  var linkSelect = document.getElementById("selectInformeHtml").value;
+
+  if (linkSelect == "rangofechas"){
+    $('#modalRangoFechas').modal('show');
+  }else{
+    
+    var link = linkSelect+"/";
+    location.href=link
+  }
+
+  }
+</script>
+{% endblock %}
+
+
+{% block codigojschart %}
+<script>
+    "use strict";
+
+!function (NioApp, $) {
+  "use strict"; //////// for developer - barchart //////// 
+  // Avilable options to pass from outside 
+  // labels: array,
+  // stacked: false - boolean,
+  // legend: false - boolean,
+  // dataUnit: string, (Used in tooltip or other section for display) 
+  // datasets: [{label : string, color: string (color code with # or other format), data: array}]
+
+  var montoIngresoSucursalMes = parseFloat("{{montoIngresoSucursalMes}}");
+  var sumaTotalesCompras = parseFloat("{{sumaTotalesCompras}}");
+  var barChartData = {
+    labels: ["Ingresos", "Compras"],
+    dataUnit: '$MXN',
+    datasets: [{
+      color: ["#5FD068","#4CACBC"],
+      data: [montoIngresoSucursalMes, sumaTotalesCompras]
+    }]
+  };
+
+  var montoIngresoSucursalAño = parseFloat("{{montoIngresoSucursalAño}}");
+  var sumaTotalesComprasDelAño = parseFloat("{{sumaTotalesComprasDelAño}}");
+  var barChartDataSucursalAnio = {
+    labels: ["Ingresos", "Compras"],
+    dataUnit: '$MXN',
+    datasets: [{
+      color: ["#F4E06D","#C499BA"],
+      data: [montoIngresoSucursalAño, sumaTotalesComprasDelAño]
+    }]
+  };
+
+  var montoIngresoSucursalRango = parseFloat("{{montoIngresoSucursalRango}}");
+  var sumaTotalesComprasDelRango = parseFloat("{{sumaTotalesComprasDelRango}}");
+  var barChartDataSucursalRango = {
+    labels: ["Ingresos", "Compras"],
+    dataUnit: '$MXN',
+    datasets: [{
+      color: ["#3AB0FF","#F87474"],
+      data: [montoIngresoSucursalRango, sumaTotalesComprasDelRango]
+    }]
+  };
+  var barChartMultiple = {
+    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    dataUnit: 'USD',
+    datasets: [{
+      label: "Income",
+      color: "#b695ff",
+      data: [110, 80, 125, 55, 95, 75, 90, 110, 80, 125, 55, 95]
+    }, {
+      label: "Expense",
+      color: "#f4aaa4",
+      data: [75, 90, 110, 80, 125, 55, 95, 75, 90, 110, 80, 125]
+    }]
+  };
+  var barChartStacked = {
+    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    stacked: true,
+    dataUnit: 'USD',
+    datasets: [{
+      label: "Income",
+      color: "#b695ff",
+      data: [110, 80, 125, 55, 95, 75, 90, 110, 80, 125, 55, 95]
+    }, {
+      label: "Expense",
+      color: "#f4aaa4",
+      data: [75, 90, 110, 80, 125, 55, 95, 75, 90, 110, 80, 125]
+    }]
+  };
+
+  function barChart(selector, set_data) {
+    var $selector = selector ? $(selector) : $('.bar-chart');
+    $selector.each(function () {
+      var $self = $(this),
+          _self_id = $self.attr('id'),
+          _get_data = typeof set_data === 'undefined' ? eval(_self_id) : set_data,
+          _d_legend = typeof _get_data.legend === 'undefined' ? false : _get_data.legend;
+
+      var selectCanvas = document.getElementById(_self_id).getContext("2d");
+      var chart_data = [];
+
+      for (var i = 0; i < _get_data.datasets.length; i++) {
+        chart_data.push({
+          label: _get_data.datasets[i].label,
+          data: _get_data.datasets[i].data,
+          // Styles
+          backgroundColor: _get_data.datasets[i].color,
+          borderWidth: 2,
+          borderColor: 'transparent',
+          hoverBorderColor: 'transparent',
+          borderSkipped: 'bottom',
+          barPercentage: .6,
+          categoryPercentage: .7
+        });
+      }
+
+      var chart = new Chart(selectCanvas, {
+        type: 'bar',
+        data: {
+          labels: _get_data.labels,
+          datasets: chart_data
+        },
+        options: {
+          legend: {
+            display: _get_data.legend ? _get_data.legend : false,
+            rtl: NioApp.State.isRTL,
+            labels: {
+              boxWidth: 30,
+              padding: 20,
+              fontColor: '#6783b8'
+            }
+          },
+          maintainAspectRatio: false,
+          tooltips: {
+            enabled: true,
+            rtl: NioApp.State.isRTL,
+            callbacks: {
+              title: function title(tooltipItem, data) {
+                return data.datasets[tooltipItem[0].datasetIndex].label;
+              },
+              label: function label(tooltipItem, data) {
+                return data.datasets[tooltipItem.datasetIndex]['data'][tooltipItem['index']] + ' ' + _get_data.dataUnit;
+              }
+            },
+            backgroundColor: '#eff6ff',
+            titleFontSize: 13,
+            titleFontColor: '#6783b8',
+            titleMarginBottom: 6,
+            bodyFontColor: '#9eaecf',
+            bodyFontSize: 12,
+            bodySpacing: 4,
+            yPadding: 10,
+            xPadding: 10,
+            footerMarginTop: 0,
+            displayColors: false
+          },
+          scales: {
+            yAxes: [{
+              display: true,
+              stacked: _get_data.stacked ? _get_data.stacked : false,
+              position: NioApp.State.isRTL ? "right" : "left",
+              ticks: {
+                beginAtZero: true,
+                fontSize: 12,
+                fontColor: '#9eaecf'
+              },
+              gridLines: {
+                color: NioApp.hexRGB("#526484", .2),
+                tickMarkLength: 0,
+                zeroLineColor: NioApp.hexRGB("#526484", .2)
+              }
+            }],
+            xAxes: [{
+              display: true,
+              stacked: _get_data.stacked ? _get_data.stacked : false,
+              ticks: {
+                fontSize: 12,
+                fontColor: '#9eaecf',
+                source: 'auto',
+                reverse: NioApp.State.isRTL
+              },
+              gridLines: {
+                color: "transparent",
+                tickMarkLength: 10,
+                zeroLineColor: 'transparent'
+              }
+            }]
+          }
+        }
+      });
+    });
+  } // init bar chart
+
+
+  barChart(); //////// for developer - linechart //////// 
+  // Avilable options to pass from outside 
+  // labels: array,
+  // legend: false - boolean,
+  // dataUnit: string, (Used in tooltip or other section for display) 
+  // datasets: [{label : string, color: string (color code with # or other format), data: array}]
+
+  var solidLineChart = {
+    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    dataUnit: 'BTC',
+    lineTension: .4,
+    legend: true,
+    datasets: [{
+      label: "Total Received",
+      color: "#5ce0aa",
+      background: 'transparent',
+      data: [110, 80, 125, 55, 95, 75, 90, 110, 80, 125, 55, 95]
+    }, {
+      label: "Total Send",
+      color: "#9d72ff",
+      background: 'transparent',
+      data: [80, 54, 105, 120, 82, 85, 60, 80, 54, 105, 120, 82]
+    }]
+  };
+
+  var montoIngresoEnero = parseInt("{{montoIngresoEnero}}")
+  var montoIngresoFebrero = parseInt("{{montoIngresoFebrero}}")
+  var montoIngresoMarzo = parseInt("{{montoIngresoMarzo}}")
+  var montoIngresoAbril = parseInt("{{montoIngresoAbril}}")
+  var montoIngresoMayo = parseInt("{{montoIngresoMayo}}")
+  var montoIngresoJunio = parseInt("{{montoIngresoJunio}}")
+  var montoIngresoJulio = parseInt("{{montoIngresoJulio}}")
+  var montoIngresoAgosto = parseInt("{{montoIngresoAgosto}}")
+  var montoIngresoSeptiembre = parseInt("{{montoIngresoSeptiembre}}")
+  var montoIngresoOctubre = parseInt("{{montoIngresoOctubre}}")
+  var montoIngresoNoviembre = parseInt("{{montoIngresoNoviembre}}")
+  var montoIngresoDiciembre = parseInt("{{montoIngresoDiciembre}}")
+  var filledLineChart = {
+    labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+    dataUnit: 'MXN.',
+    lineTension: .4,
+    datasets: [{
+      label: "Total Received",
+      color: "#FFE372",
+      background: NioApp.hexRGB('#FFE372', .4),
+      data: [montoIngresoEnero, montoIngresoFebrero, montoIngresoMarzo, montoIngresoAbril, montoIngresoMayo, montoIngresoJunio, montoIngresoJulio,
+      montoIngresoAgosto, montoIngresoSeptiembre, montoIngresoOctubre, montoIngresoNoviembre, montoIngresoDiciembre]
+    }]
+  };
+
+  
+  var añoHoy = "{{añoHoy}}"
+  var añoMenosUno = "{{añoMenosUno}}"
+  var añoMenosDos = "{{añoMenosDos}}"
+  var añoMenosTes = "{{añoMenosTres}}"
+
+  var montoIngresoSucursalAño = parseInt("{{montoIngresoSucursalAño}}")
+  var contadorVentasHaceUnAño = parseInt("{{contadorVentasHaceUnAño}}")
+  var contadorVentasHaceDosAños = parseInt("{{contadorVentasHaceDosAños}}")
+  var contadorVentasHaceTresAños = parseInt("{{contadorVentasHaceTresAños}}")
+
+
+
+  var filledLineChartSucursalAño = {
+    labels: [añoMenosTes,añoMenosDos,añoMenosUno,añoHoy],
+    dataUnit: 'MXN.',
+    lineTension: .4,
+    datasets: [{
+      label: "Total Received",
+      color: "#FF7396",
+      background: NioApp.hexRGB('#FF7396', .4),
+      data: [contadorVentasHaceTresAños,contadorVentasHaceDosAños,contadorVentasHaceUnAño,montoIngresoSucursalAño]
+    }]
+  };
+
+
+  var stringFechaInicioRango = "{{stringFechaInicioRango}}";
+  var stringFechaFinalRango = "{{stringFechaFinalRango}}";
+  var fechaTextoInicioPeriodoAnterior = "{{fechaTextoInicioPeriodoAnterior}}";
+  var fechaTextoFinalPeriodoDespues = "{{fechaTextoFinalPeriodoDespues}}";
+  var montoIngresoSucursalRango = parseFloat("{{montoIngresoSucursalRango}}");
+  var contadorVentasPeriodoAnterior = parseFloat("{{contadorVentasPeriodoAnterior}}");
+  var contadorVentasPeriodoDespues = parseFloat("{{contadorVentasPeriodoDespues}}");
+
+
+  var filledLineChartSucursalRango = {
+    labels: ["Del "+fechaTextoInicioPeriodoAnterior+" al "+stringFechaInicioRango,"Del " +stringFechaInicioRango+ " al "+stringFechaFinalRango,"Del "+stringFechaFinalRango+ " al "+ fechaTextoFinalPeriodoDespues],
+    dataUnit: 'MXN.',
+    lineTension: .4,
+    datasets: [{
+      label: "Total Received",
+      color: "#66BFBF",
+      background: NioApp.hexRGB('#66BFBF', .4),
+      data: [contadorVentasPeriodoAnterior,montoIngresoSucursalRango,contadorVentasPeriodoDespues]
+    }]
+  };
+
+
+  var straightLineChart = {
+    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    dataUnit: 'BTC',
+    lineTension: 0,
+    datasets: [{
+      label: "Total Received",
+      color: "#9d72ff",
+      background: NioApp.hexRGB('#9d72ff', .3),
+      data: [110, 80, 125, 55, 95, 75, 90, 110, 80, 125, 55, 95]
+    }]
+  };
+
+  function lineChart(selector, set_data) {
+    var $selector = selector ? $(selector) : $('.line-chart');
+    $selector.each(function () {
+      var $self = $(this),
+          _self_id = $self.attr('id'),
+          _get_data = typeof set_data === 'undefined' ? eval(_self_id) : set_data;
+
+      var selectCanvas = document.getElementById(_self_id).getContext("2d");
+      var chart_data = [];
+
+      for (var i = 0; i < _get_data.datasets.length; i++) {
+        chart_data.push({
+          label: _get_data.datasets[i].label,
+          tension: _get_data.lineTension,
+          backgroundColor: _get_data.datasets[i].background,
+          borderWidth: 2,
+          borderColor: _get_data.datasets[i].color,
+          pointBorderColor: _get_data.datasets[i].color,
+          pointBackgroundColor: '#fff',
+          pointHoverBackgroundColor: "#fff",
+          pointHoverBorderColor: _get_data.datasets[i].color,
+          pointBorderWidth: 2,
+          pointHoverRadius: 4,
+          pointHoverBorderWidth: 2,
+          pointRadius: 4,
+          pointHitRadius: 4,
+          data: _get_data.datasets[i].data
+        });
+      }
+
+      var chart = new Chart(selectCanvas, {
+        type: 'line',
+        data: {
+          labels: _get_data.labels,
+          datasets: chart_data
+        },
+        options: {
+          legend: {
+            display: _get_data.legend ? _get_data.legend : false,
+            rtl: NioApp.State.isRTL,
+            labels: {
+              boxWidth: 12,
+              padding: 20,
+              fontColor: '#6783b8'
+            }
+          },
+          maintainAspectRatio: false,
+          tooltips: {
+            enabled: true,
+            rtl: NioApp.State.isRTL,
+            callbacks: {
+              title: function title(tooltipItem, data) {
+                return data['labels'][tooltipItem[0]['index']];
+              },
+              label: function label(tooltipItem, data) {
+                return data.datasets[tooltipItem.datasetIndex]['data'][tooltipItem['index']] + ' ' + _get_data.dataUnit;
+              }
+            },
+            backgroundColor: '#eff6ff',
+            titleFontSize: 13,
+            titleFontColor: '#6783b8',
+            titleMarginBottom: 6,
+            bodyFontColor: '#9eaecf',
+            bodyFontSize: 12,
+            bodySpacing: 4,
+            yPadding: 10,
+            xPadding: 10,
+            footerMarginTop: 0,
+            displayColors: false
+          },
+          scales: {
+            yAxes: [{
+              display: true,
+              position: NioApp.State.isRTL ? "right" : "left",
+              ticks: {
+                beginAtZero: false,
+                fontSize: 12,
+                fontColor: '#9eaecf',
+                padding: 10
+              },
+              gridLines: {
+                color: NioApp.hexRGB("#526484", .2),
+                tickMarkLength: 0,
+                zeroLineColor: NioApp.hexRGB("#526484", .2)
+              }
+            }],
+            xAxes: [{
+              display: true,
+              ticks: {
+                fontSize: 12,
+                fontColor: '#9eaecf',
+                source: 'auto',
+                padding: 5,
+                reverse: NioApp.State.isRTL
+              },
+              gridLines: {
+                color: "transparent",
+                tickMarkLength: 10,
+                zeroLineColor: NioApp.hexRGB("#526484", .2),
+                offsetGridLines: true
+              }
+            }]
+          }
+        }
+      });
+    });
+  } // init line chart
+
+
+  lineChart(); //////// for developer - pieChart //////// 
+  // Avilable options to pass from outside 
+  // labels: array,
+  // legend: false - boolean,
+  // dataUnit: string, (Used in tooltip or other section for display) 
+  // datasets: [{label : string, color: string (color code with # or other format), data: array}]
+
+  var ventasMes = parseInt("{{contadorVentasmesActual}}");
+  var rentasMes = parseInt("{{contadorRentasmesActual}}");
+  var creditosMes = parseInt("{{contadorCreditosmesActual}}");
+
+  var pieChartData = {
+    labels: ["Ventas", "Rentas", "Créditos"],
+    dataUnit: 'MXN',
+    legend: false,
+    datasets: [{
+      borderColor: "#F9F3F3",
+      background: ["#FD5D5D", "#AB46D2", "#FCF69C"],
+      data: [ventasMes, rentasMes, creditosMes]
+    }]
+  };
+
+  function pieChart(selector, set_data) {
+    var $selector = selector ? $(selector) : $('.pie-chart');
+    $selector.each(function () {
+      var $self = $(this),
+          _self_id = $self.attr('id'),
+          _get_data = typeof set_data === 'undefined' ? eval(_self_id) : set_data;
+
+      var selectCanvas = document.getElementById(_self_id).getContext("2d");
+      var chart_data = [];
+
+      for (var i = 0; i < _get_data.datasets.length; i++) {
+        chart_data.push({
+          backgroundColor: _get_data.datasets[i].background,
+          borderWidth: 2,
+          borderColor: _get_data.datasets[i].borderColor,
+          hoverBorderColor: _get_data.datasets[i].borderColor,
+          data: _get_data.datasets[i].data
+        });
+      }
+
+      var chart = new Chart(selectCanvas, {
+        type: 'pie',
+        data: {
+          labels: _get_data.labels,
+          datasets: chart_data
+        },
+        options: {
+          legend: {
+            display: _get_data.legend ? _get_data.legend : false,
+            rtl: NioApp.State.isRTL,
+            labels: {
+              boxWidth: 12,
+              padding: 20,
+              fontColor: '#6783b8'
+            }
+          },
+          rotation: -.2,
+          maintainAspectRatio: false,
+          tooltips: {
+            enabled: true,
+            rtl: NioApp.State.isRTL,
+            callbacks: {
+              title: function title(tooltipItem, data) {
+                return data['labels'][tooltipItem[0]['index']];
+              },
+              label: function label(tooltipItem, data) {
+                return data.datasets[tooltipItem.datasetIndex]['data'][tooltipItem['index']] + ' ' + _get_data.dataUnit;
+              }
+            },
+            backgroundColor: '#eff6ff',
+            titleFontSize: 13,
+            titleFontColor: '#6783b8',
+            titleMarginBottom: 6,
+            bodyFontColor: '#9eaecf',
+            bodyFontSize: 12,
+            bodySpacing: 4,
+            yPadding: 10,
+            xPadding: 10,
+            footerMarginTop: 0,
+            displayColors: false
+          }
+        }
+      });
+    });
+  } // init pie chart
+
+
+  pieChart();
+  var doughnutChartData = {
+    labels: ["Send", "Receive", "Withdraw"],
+    dataUnit: 'BTC',
+    legend: false,
+    datasets: [{
+      borderColor: "#fff",
+      background: ["#b695ff", "#f4aaa4", "#8feac5"],
+      data: [110, 80, 125]
+    }]
+  };
+
+  function doughnutChart(selector, set_data) {
+    var $selector = selector ? $(selector) : $('.doughnut-chart');
+    $selector.each(function () {
+      var $self = $(this),
+          _self_id = $self.attr('id'),
+          _get_data = typeof set_data === 'undefined' ? eval(_self_id) : set_data;
+
+      var selectCanvas = document.getElementById(_self_id).getContext("2d");
+      var chart_data = [];
+
+      for (var i = 0; i < _get_data.datasets.length; i++) {
+        chart_data.push({
+          backgroundColor: _get_data.datasets[i].background,
+          borderWidth: 2,
+          borderColor: _get_data.datasets[i].borderColor,
+          hoverBorderColor: _get_data.datasets[i].borderColor,
+          data: _get_data.datasets[i].data
+        });
+      }
+
+      var chart = new Chart(selectCanvas, {
+        type: 'doughnut',
+        data: {
+          labels: _get_data.labels,
+          datasets: chart_data
+        },
+        options: {
+          legend: {
+            display: _get_data.legend ? _get_data.legend : false,
+            rtl: NioApp.State.isRTL,
+            labels: {
+              boxWidth: 12,
+              padding: 20,
+              fontColor: '#6783b8'
+            }
+          },
+          rotation: 1,
+          cutoutPercentage: 40,
+          maintainAspectRatio: false,
+          tooltips: {
+            enabled: true,
+            rtl: NioApp.State.isRTL,
+            callbacks: {
+              title: function title(tooltipItem, data) {
+                return data['labels'][tooltipItem[0]['index']];
+              },
+              label: function label(tooltipItem, data) {
+                return data.datasets[tooltipItem.datasetIndex]['data'][tooltipItem['index']] + ' ' + _get_data.dataUnit;
+              }
+            },
+            backgroundColor: '#eff6ff',
+            titleFontSize: 13,
+            titleFontColor: '#6783b8',
+            titleMarginBottom: 6,
+            bodyFontColor: '#9eaecf',
+            bodyFontSize: 12,
+            bodySpacing: 4,
+            yPadding: 10,
+            xPadding: 10,
+            footerMarginTop: 0,
+            displayColors: false
+          }
+        }
+      });
+    });
+  } // init doughnut chart
+
+
+  doughnutChart();
+  var polarChartData = {
+    labels: ["Send", "Receive", "Withdraw"],
+    dataUnit: 'BTC',
+    legend: false,
+    datasets: [{
+      borderColor: "#fff",
+      background: [NioApp.hexRGB("#b695ff", .8), NioApp.hexRGB("#f4aaa4", .8), NioApp.hexRGB("#8feac5", .8)],
+      data: [110, 80, 125]
+    }]
+  };
+
+  function polarAreaChart(selector, set_data) {
+    var $selector = selector ? $(selector) : $('.polar-chart');
+    $selector.each(function () {
+      var $self = $(this),
+          _self_id = $self.attr('id'),
+          _get_data = typeof set_data === 'undefined' ? eval(_self_id) : set_data;
+
+      var selectCanvas = document.getElementById(_self_id).getContext("2d");
+      var chart_data = [];
+
+      for (var i = 0; i < _get_data.datasets.length; i++) {
+        chart_data.push({
+          backgroundColor: _get_data.datasets[i].background,
+          borderWidth: 2,
+          borderColor: _get_data.datasets[i].borderColor,
+          hoverBorderColor: _get_data.datasets[i].borderColor,
+          data: _get_data.datasets[i].data
+        });
+      }
+
+      var chart = new Chart(selectCanvas, {
+        type: 'polarArea',
+        data: {
+          labels: _get_data.labels,
+          datasets: chart_data
+        },
+        options: {
+          legend: {
+            display: _get_data.legend ? _get_data.legend : false,
+            rtl: NioApp.State.isRTL,
+            labels: {
+              boxWidth: 12,
+              padding: 20,
+              fontColor: '#6783b8'
+            }
+          },
+          maintainAspectRatio: false,
+          tooltips: {
+            enabled: true,
+            rtl: NioApp.State.isRTL,
+            callbacks: {
+              title: function title(tooltipItem, data) {
+                return data['labels'][tooltipItem[0]['index']];
+              },
+              label: function label(tooltipItem, data) {
+                return data.datasets[tooltipItem.datasetIndex]['data'][tooltipItem['index']] + ' ' + _get_data.dataUnit;
+              }
+            },
+            backgroundColor: '#eff6ff',
+            titleFontSize: 13,
+            titleFontColor: '#6783b8',
+            titleMarginBottom: 6,
+            bodyFontColor: '#9eaecf',
+            bodyFontSize: 12,
+            bodySpacing: 4,
+            yPadding: 10,
+            xPadding: 10,
+            footerMarginTop: 0,
+            displayColors: false
+          }
+        }
+      });
+    });
+  } // init line chart
+
+
+  polarAreaChart();
+
+  var totalVentaMes = parseFloat("{{contadorVentasmesActual}}");
+  var totalRentaMes = parseFloat("{{contadorRentasmesActual}}");
+  var totalCreditoMes = parseFloat("{{contadorCreditosmesActual}}");
+
+  var TrafficChannelDoughnutData = {
+    labels: ["Ventas", "Rentas", "Créditos"],
+    dataUnit: '$MXN',
+    legend: false,
+    datasets: [{
+      borderColor: "#fff",
+      background: ["#FD5D5D", "#55D8C1", "#FCF69C"],
+      data: [totalVentaMes, totalRentaMes, totalCreditoMes]
+    }]
+  };
+
+  function analyticsDoughnut(selector, set_data) {
+    var $selector = selector ? $(selector) : $('.analytics-doughnut');
+    $selector.each(function () {
+      var $self = $(this),
+          _self_id = $self.attr('id'),
+          _get_data = typeof set_data === 'undefined' ? eval(_self_id) : set_data;
+
+      var selectCanvas = document.getElementById(_self_id).getContext("2d");
+      var chart_data = [];
+
+      for (var i = 0; i < _get_data.datasets.length; i++) {
+        chart_data.push({
+          backgroundColor: _get_data.datasets[i].background,
+          borderWidth: 2,
+          borderColor: _get_data.datasets[i].borderColor,
+          hoverBorderColor: _get_data.datasets[i].borderColor,
+          data: _get_data.datasets[i].data
+        });
+      }
+
+      var chart = new Chart(selectCanvas, {
+        type: 'doughnut',
+        data: {
+          labels: _get_data.labels,
+          datasets: chart_data
+        },
+        options: {
+          legend: {
+            display: _get_data.legend ? _get_data.legend : false,
+            rtl: NioApp.State.isRTL,
+            labels: {
+              boxWidth: 12,
+              padding: 20,
+              fontColor: '#6783b8'
+            }
+          },
+          rotation: -1.5,
+          cutoutPercentage: 70,
+          maintainAspectRatio: false,
+          tooltips: {
+            enabled: true,
+            rtl: NioApp.State.isRTL,
+            callbacks: {
+              title: function title(tooltipItem, data) {
+                return data['labels'][tooltipItem[0]['index']];
+              },
+              label: function label(tooltipItem, data) {
+                return data.datasets[tooltipItem.datasetIndex]['data'][tooltipItem['index']] + ' ' + _get_data.dataUnit;
+              }
+            },
+            backgroundColor: '#1c2b46',
+            titleFontSize: 13,
+            titleFontColor: '#fff',
+            titleMarginBottom: 6,
+            bodyFontColor: '#fff',
+            bodyFontSize: 12,
+            bodySpacing: 4,
+            yPadding: 10,
+            xPadding: 10,
+            footerMarginTop: 0,
+            displayColors: false
+          }
+        }
+      });
+    });
+  } // init chart
+
+
+  NioApp.coms.docReady.push(function () {
+    analyticsDoughnut();
+  });
+}(NioApp, jQuery);
+</script>
+{% endblock %}

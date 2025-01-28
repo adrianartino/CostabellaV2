@@ -1,0 +1,229 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Editar Empleado | Costabella
+{% endblock %}
+
+{% block estilos %}
+
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block">
+            <div class="card">
+                <div class="card-aside-wrap">
+                    <div class="card-inner card-inner-lg">
+                        <div class="nk-block-head nk-block-head-lg">
+                            <div class="nk-block-between">
+                                <div class="nk-block-head-content">
+                                    <h4 class="nk-block-title">Configuración de acceso.</h4>
+                                    <div class="nk-block-des">
+                                        <p>Información de acceso y cambio de contraseña.</p>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div><!-- .nk-block-head -->
+                        <div class="animate__animated animate__fadeIn">
+                            <div class="card-inner">
+                                <div class="between-center flex-wrap g-3">
+                                    <div class="nk-block-text">
+                                        <h6>Cambiar nombre de usuario del empleado</h6>
+                                        <p>Se cambiará el nombre de usuario con el que el empleado accede al sistema</p>
+                                    </div>
+                                    <div class="nk-block-actions flex-shrink-sm-0">
+                                        <ul class="align-center flex-wrap flex-sm-nowrap gx-3 gy-2">
+                                            <li class="order-md-last">
+                                                <a href="#" data-toggle="modal" data-target="#cambiarNombreUsuario" class="btn btn-primary">Cambiar Nombre de usuario</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div><!-- .card-inner -->
+                            <div class="card-inner">
+                                <div class="between-center flex-wrap g-3">
+                                    <div class="nk-block-text">
+                                        <h6>Cambiar contraseña de acceso al sistema</h6>
+                                        <p>Se cambiará la contraseña con la que el usuario accede al sistema</p>
+                                    </div>
+                                    <div class="nk-block-actions flex-shrink-sm-0">
+                                        <ul class="align-center flex-wrap flex-sm-nowrap gx-3 gy-2">
+                                            <li class="order-md-last">
+                                                <a href="#" data-toggle="modal" data-target="#cambiarContraseña" class="btn btn-primary">Cambiar Contraseña</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div><!-- .card-inner -->
+                        </div>
+                        
+                    </div>
+                    <div class="card-aside card-aside-left user-aside toggle-slide toggle-slide-left toggle-break-lg" data-content="userAside" data-toggle-screen="lg" data-toggle-overlay="true">
+                        <div class="card-inner-group" data-simplebar>
+                            <div class="card-inner">
+                                <div class="user-card">
+                                    <div class="user-avatar bg-primary">
+                                        <span>{{letrasEmpleado}}</span>
+                                    </div>
+                                    <div class="user-info">
+                                        <span class="lead-text">{{nombres}} {{apellidoPaterno}} {{apellidoMaterno}}</span>
+                                        <span class="sub-text">Nombre usuario: {{nombreUsuario}}</span>
+                                    </div>
+                                    
+                                </div><!-- .user-card -->
+                            </div><!-- .card-inner -->
+                            <div class="card-inner">
+                                <div class="user-account-info py-0">
+                                    <h6 class="overline-title-alt">Balance de ventas</h6>
+                                    <div class="user-balance">$ {{totalVentas}} <small class="currency currency-btc">MXN</small></div>
+                                    <div class="user-balance-sub"><span>En {{contadorVentas}} ventas realizadas</span></div>
+                                </div>
+                            </div><!-- .card-inner -->
+                            <div class="card-inner p-0">
+                                <ul class="link-list-menu">
+                                    <form action="/editarEmpleado/" method="POST" id="formActualizar">{% csrf_token %}
+                                        <input type="hidden" value="{{idEmpleadoEditar3}}" name="idEmpleadoEditar">
+                                        <div class="data-head" style="background-color:#f56d91!important;">
+                                            <h6 class="overline-title"><button class="btn btn-md btn-primary"><em class="icon ni ni-user-fill-c"></em><span>Información Personal</span></button></h6>
+                                        </div>
+                                        
+                                    </form>
+                                    <br>
+                                    <form action="/editarConfiguracionEmpleado/" method="POST" id="formConfig">{% csrf_token %}
+                                        <input type="hidden" value="{{idEmpleadoEditar4}}" name="idEmpleadoConfigurar">
+                                        <div class="data-head" style="background-color:#95DAC1!important;" >
+                                            <h6 class="overline-title"><button class="btn btn-md btn-primary" style="background-color: #95DAC1!important; border: none !important;"><em class="icon ni ni-lock-alt-fill"></em><span>Configuración de acceso</span></button></h6>
+                                        </div>
+                                        
+                                    </form>
+                                    <br>
+                                    <form action="/informeEmpleado/" method="POST" id="formConfig">{% csrf_token %}
+                                            <input type="hidden" value="{{idEmpleadoEditar4}}" name="idEmpleadoInforme">
+                                            <div class="data-head" style="background-color:#f56d91!important;">
+                                                <h6 class="overline-title"><button class="btn btn-md btn-primary"><em class="icon ni ni-file"></em><span>Informe de empleado</span></button></h6>
+                                            </div>
+                                            
+                                    </form>
+                                    
+                                    
+                                </ul>
+                            </div><!-- .card-inner -->
+                        </div><!-- .card-inner-group -->
+                    </div><!-- card-aside -->
+                </div><!-- .card-aside-wrap -->
+            </div><!-- .card -->
+        </div><!-- .nk-block -->
+    </div>
+</div>
+
+<!-- Modal de información personal -->
+<div class="modal fade" tabindex="-1" role="dialog" id="cambiarNombreUsuario">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h5 class="title text-center ">CAMBIO NOMBRE DE USUARIO</h5>
+                <center>
+                    <img src="{% static 'images/accesos/nombreusuario.png' %} " alt="personal">
+                </center>
+                
+                <div class="tab-content">
+                    
+                    <form action="/actNombreUsuario/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <input type="hidden" value="{{idEmpleadoEditar2}}" name="idActualizado">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="form-label" for="full-name">Nombre de usuario</label>
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-left">
+                                                <em class="icon ni ni-user"></em>
+                                            </div>
+                                            <input type="text" class="form-control form-control-lg" id="full-name" value="{{nombreUsuario}}" maxlength="20" placeholder="Ingresar nombre de usuario" name="nombreUsuarioActualizado" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                        <li>
+                                            <button type="submit" class="btn btn-lg btn-primary">Actualizar nombre de usuario</button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            
+                        </div>
+                    </div><!-- .tab-pane -->
+                </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+
+
+<!-- Modal de información personal -->
+<div class="modal fade" tabindex="-1" role="dialog" id="cambiarContraseña">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h5 class="title text-center ">CAMBIO CONTRASEÑA DE USUARIO</h5>
+                <center>
+                    <img src="{% static 'images/accesos/cambiocontrasena.png' %} " alt="personal">
+                </center>
+                
+                <div class="tab-content">
+                    
+                    <form action="/actContrasena/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <input type="hidden" value="{{idEmpleadoEditar2}}" name="idActualizado">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="form-label" for="full-name">Nueva Contraseña</label>
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-left">
+                                                <em class="icon ni ni-eye"></em>
+                                            </div>
+                                            <input type="password" class="form-control form-control-lg" id="full-name" maxlength="20" placeholder="Ingresar nueva contraseña" name="contraActualizada" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                        <li>
+                                            <button type="submit" class="btn btn-lg btn-primary">Actualizar contraseña de usuario</button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            
+                        </div>
+                    </div><!-- .tab-pane -->
+                </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+
+
+{% endblock %}
+
+{% block relojJS %}
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+
+        window.onload= mueveReloj ();
+
+        
+    };
+</script>
+{% endblock %}

@@ -1,0 +1,1875 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Pagos Créditos | Costabella
+{% endblock %}
+
+{% block estilos %}
+<style>
+    @media screen and (max-width: 320px) {
+        table {
+          display: block!important;
+          overflow-x: auto!important;
+        }
+   }
+</style>
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    <h3 class="nk-block-title page-title color-texto-seleccion">LISTADO DE PAGOS DE CREDITOS</h3>
+                    <div class="nk-block-des text-soft">
+                        <p><span class="fw-bold text-dark">Total de créditos:</span> {{contadorCreditosPendientes}} Pendientes por pagar. 
+                    </div>
+                   
+                </div><!-- .nk-block-head-content -->
+           
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        
+        <!-- Div empleados todos -->
+        <div  id="divCreditosPago1">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Crédito por pagar</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de créditos con <span class="fw-bold text-danger">pagos pendientes por saldar </span>en el sistema.</p>
+                    </div>
+                
+                </div>
+               
+                
+            </div>
+        
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #900C3F !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Credito</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Cliente</span></th>
+                                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Pago 1</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Pago 2</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Pago 3</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Pago 4</span></th>
+                             
+                      
+                             
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Pago quincenal:</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto pagado:</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto restante:</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto total:</span></th>
+                              
+                             
+                             
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pago,cliente,pago_quincenal,restante,monto_total,sumasPagados,totalYaPagado,totalTotal in listaCreditosPago1 %}
+                            
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge-pill badge-info">{{pago.0}}</span>
+                                </td>
+
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-dark">Crédito #{{pago.1}} </span>
+                                </td>
+
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{cliente}}</span>
+                                </td>
+                                    <!--PAGO 1-->
+                                
+                                    {% for permiso in consultaPermisos %}
+                                    {% if permiso.tabla_modulo == "Pagos creditos" %}
+                                    {% if permiso.recibir_pagos == "Si" %}
+    
+                                    
+                                   
+    
+    
+                                   
+
+
+                                <td class="nk-tb-col">
+                                    {% if pago.2 %}
+                                    <div>
+                                        <p class="fw-bold text-dark">Fecha pago: <span class="text-dark fw-bold" style="color: rgb(32, 126, 54) !important;;">{{pago.2}}</span> </p>
+                                    </div>
+                                    <div>
+                                        <p class="fw-bold text-dark">Tipo pago: <span class="badge  badge-primary">{{pago.3}}</span></p>
+                                    </div>
+                                    {% if pago.3 == "Efectivo" %}
+                                    <div style="display: none !important;">
+                                       
+                                        <span class="badge  badge-primary">{{pago.4}}</span>
+                                    </div>
+                                    <div style="display: none !important;">
+                                        <span class="badge  badge-primary">{{pago.5}}</span>
+                                    </div>
+                                    <div style="display: none !important;">
+                                        <span class="badge  badge-primary">{{pago.6}}</span>
+                                    </div>
+                                    {% elif pago.3 == "Tarjeta" %}
+                                    <div style="display: block !important;">
+                                       
+                                        <span class="badge  badge-primary">{{pago.4}}</span>
+                                    </div>
+                                    <div style="display: block !important;">
+                                        <span class="badge  badge-primary">{{pago.5}}</span>
+                                    </div>
+                                    <div style="display: none !important;">
+                                        <span class="badge  badge-primary">{{pago.6}}</span>
+                                    </div>
+
+
+                                    {% elif pago.3 == "Transferencia" %}
+                                    <div style="display: none !important;">
+                                       
+                                        <span class="badge  badge-primary">{{pago.4}}</span>
+                                    </div>
+                                    <div style="display: none !important;">
+                                        <span class="badge  badge-primary">{{pago.5}}</span>
+                                    </div>
+                                    <div style="display: block !important;">
+                                        <span class="badge  badge-primary">{{pago.6}}</span>
+                                    </div>
+
+                                    {% endif %}
+
+
+
+
+                                    <div>
+                                        <p class="fw-bold text-dark">Monto pagado: <span   class="text-danger fw-bold" style="color: rgb(183, 11, 11) !important;;">$ {{pago.7}} MXN</span></p>
+                                    </div>
+                                    {% else %}
+                                    <input type="hidden" name="idPago1Credito" value="{{pago.0}}">
+                                    <center>
+                                        <button type="button" data-toggle="modal" data-target="#pago1Credito{{pago.0}}" class="btn btn-icon btn-sm btn-warning"><em class="icon ni ni-sign-usdc" data-toggle="tooltip" data-placement="bottom" title="Clic para recibir pago 1 de cliente"></em></button>
+                                    </center>
+                                    {% endif %}
+                                   
+                                </td>
+                                    {% else %}
+                                    <td class="nk-tb-col">
+                                        <span class="tb-amount">No tiene permisos para recibir pagos.</span>
+                                    </td>
+                                    {% endif %}
+                                    {% endif %}
+                                    {% endfor %}
+
+
+
+
+
+
+
+
+
+
+                                <!--FINAL PAGO 1-->
+
+                                <!--PAGO 2-->
+                                <td class="nk-tb-col">
+
+                                    {% if pago.7 == monto_total %}
+                                    <h5> <span   class="text-info fw-bold" style="color: rgb(198, 156, 18) !important;;">PAGO COMPLETO EN PAGO 1</span></h5>
+
+                                    {% else %}
+                                        {% if pago.8 %}
+                                            <div>
+                                                <p class="fw-bold text-dark">Fecha pago: <span class="text-dark fw-bold" style="color: rgb(32, 126, 54) !important;;">{{pago.8}}</span> </p>
+                                            </div>
+                                            <div>
+                                                <p class="fw-bold text-dark">Tipo pago: <span class="badge  badge-primary">{{pago.9}}</span></p>
+                                            </div>
+                                            {% if pago.9 == "Efectivo" %}
+                                                <div style="display: none !important;">
+                                                
+                                                    <span class="badge  badge-primary">{{pago.10}}</span>
+                                                </div>
+                                                <div style="display: none !important;">
+                                                    <span class="badge  badge-primary">{{pago.11}}</span>
+                                                </div>
+                                                <div style="display: none !important;">
+                                                    <span class="badge  badge-primary">{{pago.12}}</span>
+                                                </div>
+                                                {% elif pago.9 == "Tarjeta" %}
+                                                <div style="display: block !important;">
+                                                
+                                                    <span class="badge  badge-primary">{{pago.10}}</span>
+                                                </div>
+                                                <div style="display: block !important;">
+                                                    <span class="badge  badge-primary">{{pago.11}}</span>
+                                                </div>
+                                                <div style="display: none !important;">
+                                                    <span class="badge  badge-primary">{{pago.12}}</span>
+                                                </div>
+
+
+                                                {% elif pago.9 == "Transferencia" %}
+                                                <div style="display: none !important;">
+                                                
+                                                    <span class="badge  badge-primary">{{pago.10}}</span>
+                                                </div>
+                                                <div style="display: none !important;">
+                                                    <span class="badge  badge-primary">{{pago.11}}</span>
+                                                </div>
+                                                <div style="display: block !important;">
+                                                    <span class="badge  badge-primary">{{pago.12}}</span>
+                                                </div>
+
+                                            {% endif %}
+
+
+
+
+                                            <div>
+                                                <p class="fw-bold text-dark">Monto pagado: <span   class="text-danger fw-bold" style="color: rgb(183, 11, 11) !important;;">$ {{pago.13}} MXN</span></p>
+                                            </div>
+                                        {% else %}
+                                            <input type="hidden" name="idPago2Credito" value="{{pago.0}}">
+                                            <center>
+                                                <button type="button" data-toggle="modal" data-target="#pago2Credito{{pago.0}}" class="btn btn-icon btn-sm btn-warning"><em class="icon ni ni-sign-usdc" data-toggle="tooltip" data-placement="bottom" title="Clic para recibir pago 2 de cliente"></em></button>
+                                            </center>   
+                                        {% endif %}
+                                    {% endif %}
+                                   
+                                </td>
+
+                                 <!--FINAL PAGO 2-->
+                               
+                                    <!--PAGO 3-->
+                                <td class="nk-tb-col">
+
+                                    {% if pago.7 == monto_total %}
+                                        <h5> <span   class="text-info fw-bold" style="color: rgb(198, 156, 18) !important;;">PAGO COMPLETO EN PAGO 1</span></h5>
+
+                                    {% elif pago.7 and pago.13 == monto_total %}
+                                       
+                                            <h5> <span   class="text-info fw-bold" style="color: rgb(198, 156, 18) !important;;">PAGO COMPLETO EN PAGO 2</span></h5>
+                                    
+
+                                    {% elif pago.14  %}
+
+                                  
+                                            <div>
+                                                <p class="fw-bold text-dark">Fecha pago: <span class="text-dark fw-bold" style="color: rgb(32, 126, 54) !important;;">{{pago.14}}</span> </p>
+                                            </div>
+                                            <div>
+                                                <p class="fw-bold text-dark">Tipo pago: <span class="badge  badge-primary">{{pago.15}}</span></p>
+                                            </div>
+                                            
+                                            {% if pago.15 == "Efectivo" %}
+                                            <div style="display: none !important;">
+                                            
+                                                <span class="badge  badge-primary">{{pago.16}}</span>
+                                            </div>
+                                            <div style="display: none !important;">
+                                                <span class="badge  badge-primary">{{pago.17}}</span>
+                                            </div>
+                                            <div style="display: none !important;">
+                                                <span class="badge  badge-primary">{{pago.18}}</span>
+                                            </div>
+                                            {% elif pago.15 == "Tarjeta" %}
+                                            <div style="display: block !important;">
+                                            
+                                                <span class="badge  badge-primary">{{pago.16}}</span>
+                                            </div>
+                                            <div style="display: block !important;">
+                                                <span class="badge  badge-primary">{{pago.17}}</span>
+                                            </div>
+                                            <div style="display: none !important;">
+                                                <span class="badge  badge-primary">{{pago.18}}</span>
+                                            </div>
+
+
+                                            {% elif pago.15 == "Transferencia" %}
+                                            <div style="display: none !important;">
+                                            
+                                                <span class="badge  badge-primary">{{pago.16}}</span>
+                                            </div>
+                                            <div style="display: none !important;">
+                                                <span class="badge  badge-primary">{{pago.17}}</span>
+                                            </div>
+                                            <div style="display: block !important;">
+                                                <span class="badge  badge-primary">{{pago.18}}</span>
+                                            </div>
+
+                                            {% endif %}
+
+
+
+
+                                            <div>
+                                                <p class="fw-bold text-dark">Monto pagado: <span   class="text-danger fw-bold" style="color: rgb(183, 11, 11) !important;;">$ {{pago.19}} MXN</span></p>
+                                            </div>
+                                    {% else %}
+                                            <input type="hidden" name="idPago3Credito" value="{{pago.0}}">
+                                            <center>
+                                                <button type="button" data-toggle="modal" data-target="#pago3Credito{{pago.0}}" class="btn btn-icon btn-sm btn-warning"><em class="icon ni ni-sign-usdc" data-toggle="tooltip" data-placement="bottom" title="Clic para recibir pago 3 de cliente"></em></button>
+                                            </center>
+                                    {% endif %}
+                                       
+                                 
+                                   
+                                </td>
+                                 <!--FINAL PAGO 3-->
+
+                                    <!--PAGO 4-->
+                                <td class="nk-tb-col">
+
+                                    {% if pago.7 == monto_total %}
+                                        <h5> <span   class="text-info fw-bold" style="color: rgb(198, 156, 18) !important;;">PAGO COMPLETO EN PAGO 1</span></h5>
+
+                                    {% elif pago.7 and pago.13 == monto_total %}
+                                       
+                                            <h5> <span   class="text-info fw-bold" style="color: rgb(198, 156, 18) !important;;">PAGO COMPLETO EN PAGO 2</span></h5>
+                                       
+
+                                    {% elif pago.7 and pago.13 and pago.19 == monto_total %}
+                                    
+                                        <h5> <span   class="text-info fw-bold" style="color: rgb(198, 156, 18) !important;;">PAGO COMPLETO EN PAGO 3</span></h5>
+                                   
+
+                                    {% elif pago.20  %}
+
+
+                                         
+                                                <div>
+                                                    <p class="fw-bold text-dark">Fecha pago: <span class="text-dark fw-bold" style="color: rgb(32, 126, 54) !important;;">{{pago.20}}</span> </p>
+                                                </div>
+                                                <div>
+                                                    <p class="fw-bold text-dark">Tipo pago: <span class="badge  badge-primary">{{pago.21}}</span></p>
+                                                </div>
+                                                    {% if pago.21 == "Efectivo" %}
+                                                        <div style="display: none !important;">
+                                                        
+                                                            <span class="badge  badge-primary">{{pago.22}}</span>
+                                                        </div>
+                                                        <div style="display: none !important;">
+                                                            <span class="badge  badge-primary">{{pago.23}}</span>
+                                                        </div>
+                                                        <div style="display: none !important;">
+                                                            <span class="badge  badge-primary">{{pago.24}}</span>
+                                                        </div>
+                                                        {% elif pago.21 == "Tarjeta" %}
+                                                        <div style="display: block !important;">
+                                                        
+                                                            <span class="badge  badge-primary">{{pago.22}}</span>
+                                                        </div>
+                                                        <div style="display: block !important;">
+                                                            <span class="badge  badge-primary">{{pago.23}}</span>
+                                                        </div>
+                                                        <div style="display: none !important;">
+                                                            <span class="badge  badge-primary">{{pago.25}}</span>
+                                                        </div>
+
+
+                                                        {% elif pago.21 == "Transferencia" %}
+                                                        <div style="display: none !important;">
+                                                        
+                                                            <span class="badge  badge-primary">{{pago.22}}</span>
+                                                        </div>
+                                                        <div style="display: none !important;">
+                                                            <span class="badge  badge-primary">{{pago.23}}</span>
+                                                        </div>
+                                                        <div style="display: block !important;">
+                                                            <span class="badge  badge-primary">{{pago.24}}</span>
+                                                        </div>
+
+                                                    {% endif %}
+
+
+
+
+                                                <div>
+                                                    <p class="fw-bold text-dark">Monto pagado: <span   class="text-danger fw-bold" style="color: rgb(183, 11, 11) !important;;">$ {{pago.25}} MXN</span></p>
+                                                </div>
+
+                                    {% else %}
+                                    
+                                        <input type="hidden" name="idPago4Credito" value="{{pago.0}}">
+                                        <center>
+                                        <button type="button" data-toggle="modal" data-target="#pago4Credito{{pago.0}}" class="btn btn-icon btn-sm btn-warning"><em class="icon ni ni-sign-usdc" data-toggle="tooltip" data-placement="bottom" title="Clic para recibir pago 4 de cliente"></em></button>
+                                        </center>
+                                        
+                                       
+                                    {% endif %}
+                                    
+                                    
+                                  
+                                </td>
+                                  <!--FINAL PAGO 4-->
+
+                            
+                                  <td class="nk-tb-col">
+                                    <center>
+                                        <h5> <span   class="text-info fw-bold" >$ {{pago_quincenal}} MXN</span></h5>
+                                    </center>
+                                   
+                                </td>
+                                
+                                <td class="nk-tb-col">
+                                  
+                                    <center>
+                                        <h5> <span   class="text-azure fw-bold" >+ $ {{totalYaPagado}} MXN</span></h5>
+                                    </center>
+                                 
+                                   
+                                </td>
+                                <td class="nk-tb-col">
+                                  
+                                    <center>
+                                        <h5> <span   class="text-danger fw-bold" >$ {{restante}} MXN</span></h5>
+                                    </center>
+                                 
+                                   
+                                </td>
+                                <td class="nk-tb-col">
+                                  
+                                    <center>
+                                        <h5> <span   class="text-teal fw-bold">$ {{totalTotal}} MXN</span></h5>
+                                    </center>
+                                 
+                                   
+                                </td>
+                     
+
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                  
+                
+                </div>
+                
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+
+        <!-- MODAl pago 1  -->
+
+        {% for credito,cliente,pago_quincenal,restante,totales,sumas,totalYaPagado,totalTotal in listaCreditosPago1Modal %}
+        <!-- Modal de editar producto -->
+        <div class="modal fade" tabindex="-1" role="dialog" id="pago1Credito{{credito.0}}">
+            <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+                <div class="modal-content">
+                    <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+                    <div class="modal-body modal-body-lg">
+                        <h3 class="title text-center ">RECIBIR PRIMER PAGO DE CRÉDITO #{{credito.0}}</h3>
+                        <center>
+                           
+                            <img src="{% static 'images/iconosMenu/creditoPago.png' %} " alt="personal">
+                           
+                        </center>
+                        
+                        
+                        <div class="tab-content">
+                            
+                            <form action="/guardarPago1/" method="POST">{% csrf_token %}
+                                <input type="hidden" name="idCredito" value="{{credito.1}}" readonly>
+                                <input type="hidden" name="idPagoCredito" value="{{credito.0}}" readonly>
+                            <div class="tab-pane active" id="personal">
+                                <div class="row gy-4">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <h4 class="title text-center ">Recibido del cliente: <p class="fw-bold text-secondary">{{cliente}}</p> </h4>
+                                            </div>
+                                        </div>
+                                </div>
+                                <div class="row gy-4">
+                                    <div class="col-md-3">
+                                        <div class="form-group text-center">
+                                            <p class="fw-bold text-dark">PAGO MÍNIMO QUINCENAL</p>
+                                            <div>
+                                                <h5> <span   class="text-info fw-bold" >$ {{pago_quincenal}} MXN</span></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group text-center">
+                                            <p  class="fw-bold text-dark">MONTO YA PAGADO</p>
+                                            <div>
+                                                <h5> <span   class="text-azure fw-bold" >+ $ {{totalYaPagado}} MXN</span></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group text-center">
+                                            <p  class="fw-bold text-dark">MONTO RESTANTE</p>
+                                            <div>
+                                                <h5> <span   class="text-danger fw-bold" >$ {{restante}} MXN</span></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group text-center">
+                                            <p  class="fw-bold text-dark">MONTO TOTAL</p>
+                                            <div>
+                                                <h5> <span   class="text-teal fw-bold">$ {{totalTotal}} MXN</span></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                            </div>
+                             
+                                
+                                <hr class="preview-hr" style="border-color:  #14A990    !important; ">
+                            <div class="card h-100" id="div3">
+                                <div class="card-inner">
+                               
+                               
+                                 
+                                    <div class="row gy-4">
+        
+                                 
+        
+                                        <div class="col-sm-3"   >
+                                            <div class="form-group">
+                                                <div class="form-control-wrap ">
+                                               
+                                                    <span class="preview-title-lg overline-title text-pink" style="color: #14A990   !important;">Forma de pago:</span>
+                                                    <div class="form-control-select">
+                                                        <select class="form-control" id="selectTipoPagoPago1{{credito.0}}" name="tipoPago" onchange="cambioTipoPagoPago1{{credito.0}}()">
+                                                            <option value="Efectivo">Efectivo</option>
+                                                            <option value="Tarjeta">Tarjeta</option>
+                                                            <option value="Transferencia">Transferencia</option>
+                                                        </select>
+                                                    </div>
+                                           
+                                                </div>
+                                                <br>
+                                                <div class="form-control-wrap" id="cantidadPagarPago1{{credito.0}}">
+                                                    <span class="preview-title-lg overline-title text-pink" style="color: #14A990     !important;">CANTIDAD PAGO 1:</span>
+                                                    <input type="number"class="form-control"  name="cantidadPago1"  placeholder="Ingresar cantidad" maxlength="4" max="{{restante}}" min="5" value="{{rentaT.monto_cuota}}" step=".5" id="cantidadPago1{{credito.0}}" onchange="calcularTotalPago1{{credito.0}}()" required> 
+                                                </div>
+                                                <br>
+                                               
+                                         
+                                            
+                                                
+                                                
+                                            </div>
+                                            
+                                        </div>
+                                        <div class="col-sm-5" >
+                                            <div class="form-group">
+                                               
+                                                
+                                                <div class="form-control-wrap" id="cantidadEfectivoPago1{{credito.0}}">
+                                                    <span class="preview-title-lg overline-title text-pink" style="color: #14A990    !important;">Cantidad efectivo cliente:</span>
+                                                    <input type="number"class="form-control"   placeholder="Ingresar efectivo" maxlength="4" max="10000" min="5" value="" step="1" id="efectivoPagoClientePago1{{credito.0}}" onchange="calcularFeriaPago1{{credito.0}}()"> 
+                                                </div>
+                                              
+                                                <div class="form-control-wrap " id="divClaveRastreoTransferenciaPago1{{credito.0}}">
+                                               
+                                                    <div class="form-group">
+                                                        <span class="preview-title-lg overline-title text-pink" style="color: #14A990   !important;">Clave de rastreo:</span>
+                                                        <div class="form-control-wrap">
+                                                            
+                                                            <input type="text"class="form-control" placeholder="Ingresar Clave" maxlength="50" name="claveRastreoTransferencia"> 
+                                                        </div>
+                                                    </div>
+                                           
+                                                </div>
+                                                <div class="form-control-wrap " id="divSelectTipoTarjetaPago1{{credito.0}}">
+                                               
+                                                    <span class="preview-title-lg overline-title text-pink" style="color: #14A990    !important;">Tipo tarjeta:</span>
+                                                    <div class="form-control-select">
+                                                        <select class="form-control" id="default-06" name="tipoTarjeta">
+                                                            <option value="Credito">Crédito</option>
+                                                            <option value="Debito">Débito</option>
+                                                        </select>
+                                                    </div>
+                                           
+                                                </div>
+                                                <br>
+                                             
+                                                
+                                                <div class="form-control-wrap " id="divReferenciaBancariaPago1{{credito.0}}">
+                                               
+                                                    <div class="form-group">
+                                                        <span class="preview-title-lg overline-title text-pink" style="color: #14A990   !important;">Referencia de pago:</span>
+                                                        <div class="form-control-wrap">
+                                                            
+                                                            <input type="text"class="form-control" placeholder="Ingresar referencia Vouncher" maxlength="50" name="referenciaTarjeta"> 
+                                                        </div>
+                                                    </div>
+                                           
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3" >
+                                           
+                                            <div class="form-group">
+                                                <div class="form-control-wrap ">
+                                                    <span class="preview-title-lg overline-title text-pink" style="color: #14A990   !important;">Total pago 1:</span>
+                                                    <h6>$<input id="costoTotalPago1{{credito.0}}" type="text" value="{{rentaT.monto_restante}}" size="10" readonly style="border: none;" name="costoRestanteApagarPago2"></input> MXN.</h6>
+                                                </div> 
+                                             
+                                                <div class="form-control-wrap" id="spanCambioPago1{{credito.0}}">
+                                                    
+                                                    <h6>Cambio: $<span id="spanCambioChicoPago1{{credito.0}}">0</span> MXN.</h6>
+                                                </div>  
+                                                <br>
+                                               
+                                                
+                                            </div>
+                                       
+                                        </div>
+        
+                                       
+                                    </div>
+                                    
+                                    
+                                   
+                                
+                                
+                                    
+                                </div>
+                                
+                            
+                            </div><!-- .card -->
+                                <div class="row gy-4">
+                                    <div class="col-12">
+                                        <center>
+                                            <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                                <li>
+                                                    <button type="submit" class="btn btn-sm btn-warning" style="background-color:#14A990;">Recibir pago 1 de credito </button>
+                                                </li>
+                                            </ul>
+                                        </center>
+                                     
+                                    </div>
+                                </div>
+                                
+        
+                            </div><!-- .tab-pane -->
+                            </form>
+                        </div><!-- .tab-content -->
+                    </div><!-- .modal-body -->
+                </div><!-- .modal-content -->
+            </div><!-- .modal-dialog -->
+        </div><!-- .modal -->
+        
+        {% endfor %}
+        
+
+
+
+
+        <!-- MODAl pago 2  -->
+
+{% for credito,cliente,pago_quincenal,restante,totales,sumas,totalYaPagado,totalTotal in listaCreditosPago2Modal %}
+<!-- Modal de editar producto -->
+<div class="modal fade" tabindex="-1" role="dialog" id="pago2Credito{{credito.0}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center ">RECIBIR SEGUNDO PAGO DE CRÉDITO {{credito.0}}</h3>
+                <center>
+                   
+                    <img src="{% static 'images/iconosMenu/creditoPago.png' %} " alt="personal">
+                   
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/guardarPago2/" method="POST">{% csrf_token %}
+                        <input type="hidden" name="idCredito" value="{{credito.1}}" readonly>
+                        <input type="hidden" name="idPagoCredito" value="{{credito.0}}" readonly>
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <h4 class="title text-center ">Recibido del cliente: <p class="fw-bold text-secondary">{{cliente}}</p> </h4>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            <div class="col-md-3">
+                                <div class="form-group text-center">
+                                    <p class="fw-bold text-dark">PAGO MÍNIMO QUINCENAL</p>
+                                    <div>
+                                        <h5> <span   class="text-info fw-bold" >$ {{pago_quincenal}} MXN</span></h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group text-center">
+                                    <p  class="fw-bold text-dark">MONTO YA PAGADO</p>
+                                    <div>
+                                        <h5> <span   class="text-azure fw-bold" >+ $ {{totalYaPagado}} MXN</span></h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group text-center">
+                                    <p  class="fw-bold text-dark">MONTO RESTANTE</p>
+                                    <div>
+                                        <h5> <span   class="text-danger fw-bold" >$ {{restante}} MXN</span></h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group text-center">
+                                    <p  class="fw-bold text-dark">MONTO TOTAL</p>
+                                    <div>
+                                        <h5> <span   class="text-teal fw-bold">$ {{totalTotal}} MXN</span></h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr class="preview-hr" style="border-color:  #14A990    !important; ">
+                    <div class="card h-100" id="div3">
+                        <div class="card-inner">
+                       
+                       
+                         
+                            <div class="row gy-4">
+
+                         
+
+                                <div class="col-sm-3"   >
+                                    <div class="form-group">
+                                        <div class="form-control-wrap ">
+                                       
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #14A990   !important;">Forma de pago:</span>
+                                            <div class="form-control-select">
+                                                <select class="form-control" id="selectTipoPagoPago2{{credito.0}}" name="tipoPago" onchange="cambioTipoPagoPago2{{credito.0}}()">
+                                                    <option value="Efectivo">Efectivo</option>
+                                                    <option value="Tarjeta">Tarjeta</option>
+                                                    <option value="Transferencia">Transferencia</option>
+                                                </select>
+                                            </div>
+                                   
+                                        </div>
+                                        <br>
+                                        <div class="form-control-wrap" id="cantidadPagarPago2{{credito.0}}">
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #14A990     !important;">CANTIDAD PAGO 2:</span>
+                                            <input type="number"class="form-control"  name="cantidadPago2"  placeholder="Ingresar cantidad" maxlength="4" max="{{restante}}" min="5" value="{{rentaT.monto_cuota}}" step=".5" id="cantidadPago2{{credito.0}}" onchange="calcularTotalPago2{{credito.0}}()" > 
+                                        </div>
+                                        <br>
+                                       
+                                 
+                                    
+                                        
+                                        
+                                    </div>
+                                    
+                                </div>
+                                <div class="col-sm-5" >
+                                    <div class="form-group">
+                                       
+                                        
+                                        <div class="form-control-wrap" id="cantidadEfectivoPago2{{credito.0}}">
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #14A990    !important;">Cantidad efectivo cliente:</span>
+                                            <input type="number"class="form-control"   placeholder="Ingresar efectivo" maxlength="4" max="10000" min="5" value="" step="1" id="efectivoPagoClientePago2{{credito.0}}" onchange="calcularFeriaPago2{{credito.0}}()"> 
+                                        </div>
+                                      
+                                        <div class="form-control-wrap " id="divClaveRastreoTransferenciaPago2{{credito.0}}">
+                                       
+                                            <div class="form-group">
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #14A990   !important;">Clave de rastreo:</span>
+                                                <div class="form-control-wrap">
+                                                    
+                                                    <input type="text"class="form-control" placeholder="Ingresar Clave" maxlength="50" name="claveRastreoTransferencia"> 
+                                                </div>
+                                            </div>
+                                   
+                                        </div>
+                                        <div class="form-control-wrap " id="divSelectTipoTarjetaPago2{{credito.0}}">
+                                       
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #14A990    !important;">Tipo tarjeta:</span>
+                                            <div class="form-control-select">
+                                                <select class="form-control" id="default-06" name="tipoTarjeta">
+                                                    <option value="Credito">Crédito</option>
+                                                    <option value="Debito">Débito</option>
+                                                </select>
+                                            </div>
+                                   
+                                        </div>
+                                        <br>
+                                     
+                                        
+                                        <div class="form-control-wrap " id="divReferenciaBancariaPago2{{credito.0}}">
+                                       
+                                            <div class="form-group">
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #14A990   !important;">Referencia de pago:</span>
+                                                <div class="form-control-wrap">
+                                                    
+                                                    <input type="text"class="form-control" placeholder="Ingresar referencia Vouncher" maxlength="50" name="referenciaTarjeta"> 
+                                                </div>
+                                            </div>
+                                   
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3" >
+                                   
+                                    <div class="form-group">
+                                        <div class="form-control-wrap ">
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #14A990   !important;">Total pago 2:</span>
+                                            <h6>$<input id="costoTotalPago2{{credito.0}}" type="text" value="{{rentaT.monto_restante}}" size="10" readonly style="border: none;" name="costoRestanteApagarPago2"></input> MXN.</h6>
+                                        </div> 
+                                     
+                                        <div class="form-control-wrap" id="spanCambioPago2{{credito.0}}">
+                                            
+                                            <h6>Cambio: $<span id="spanCambioChicoPago2{{credito.0}}">0</span> MXN.</h6>
+                                        </div>  
+                                        <br>
+                                       
+                                        
+                                    </div>
+                               
+                                </div>
+
+                               
+                            </div>
+                            
+                            
+                           
+                        
+                        
+                            
+                        </div>
+                        
+                    
+                    </div><!-- .card -->
+                        <div class="row gy-4">
+                            <div class="col-12">
+                                <center>
+                                    <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                        <li>
+                                            <button type="submit" class="btn btn-sm btn-warning" style="background-color:#14A990;">Recibir pago 2 de credito </button>
+                                        </li>
+                                    </ul>
+                                </center>
+                             
+                            </div>
+                        </div>
+                        
+
+                    </div><!-- .tab-pane -->
+                    </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+
+
+
+        <!-- MODAl pago 3  -->
+
+        {% for credito,cliente,pago_quincenal,restante,totales,sumas,totalYaPagado,totalTotal in listaCreditosPago3Modal %}
+        <!-- Modal de editar producto -->
+        <div class="modal fade" tabindex="-1" role="dialog" id="pago3Credito{{credito.0}}">
+            <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+                <div class="modal-content">
+                    <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+                    <div class="modal-body modal-body-lg">
+                        <h3 class="title text-center ">RECIBIR TERCER PAGO DE CRÉDITO {{credito.0}}</h3>
+                        <center>
+                           
+                            <img src="{% static 'images/iconosMenu/creditoPago.png' %} " alt="personal">
+                           
+                        </center>
+                        
+                        
+                        <div class="tab-content">
+                            
+                            <form action="/guardarPago3/" method="POST">{% csrf_token %}
+                                <input type="hidden" name="idCredito" value="{{credito.1}}" readonly>
+                                <input type="hidden" name="idPagoCredito" value="{{credito.0}}" readonly>
+                            <div class="tab-pane active" id="personal">
+                                <div class="row gy-4">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <h4 class="title text-center ">Recibido del cliente: <p class="fw-bold text-secondary">{{cliente}}</p> </h4>
+                                            </div>
+                                        </div>
+                                </div>
+                                <div class="row gy-4">
+                                    <div class="col-md-3">
+                                        <div class="form-group text-center">
+                                            <p class="fw-bold text-dark">PAGO MÍNIMO QUINCENAL</p>
+                                            <div>
+                                                <h5> <span   class="text-info fw-bold" >$ {{pago_quincenal}} MXN</span></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group text-center">
+                                            <p  class="fw-bold text-dark">MONTO YA PAGADO</p>
+                                            <div>
+                                                <h5> <span   class="text-azure fw-bold" >+ $ {{totalYaPagado}} MXN</span></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group text-center">
+                                            <p  class="fw-bold text-dark">MONTO RESTANTE</p>
+                                            <div>
+                                                <h5> <span   class="text-danger fw-bold" >$ {{restante}} MXN</span></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group text-center">
+                                            <p  class="fw-bold text-dark">MONTO TOTAL</p>
+                                            <div>
+                                                <h5> <span   class="text-teal fw-bold">$ {{totalTotal}} MXN</span></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <hr class="preview-hr" style="border-color:  #14A990    !important; ">
+                            <div class="card h-100" id="div3">
+                                <div class="card-inner">
+                               
+                               
+                                 
+                                    <div class="row gy-4">
+        
+                                 
+        
+                                        <div class="col-sm-3"   >
+                                            <div class="form-group">
+                                                <div class="form-control-wrap ">
+                                               
+                                                    <span class="preview-title-lg overline-title text-pink" style="color: #14A990   !important;">Forma de pago:</span>
+                                                    <div class="form-control-select">
+                                                        <select class="form-control" id="selectTipoPagoPago3{{credito.0}}" name="tipoPago" onchange="cambioTipoPagoPago3{{credito.0}}()">
+                                                            <option value="Efectivo">Efectivo</option>
+                                                            <option value="Tarjeta">Tarjeta</option>
+                                                            <option value="Transferencia">Transferencia</option>
+                                                        </select>
+                                                    </div>
+                                           
+                                                </div>
+                                                <br>
+                                                <div class="form-control-wrap" id="cantidadPagarPago3{{credito.0}}">
+                                                    <span class="preview-title-lg overline-title text-pink" style="color: #14A990     !important;">CANTIDAD PAGO 3:</span>
+                                                    <input type="number"class="form-control"  name="cantidadPago3"  placeholder="Ingresar cantidad" maxlength="4" max="{{restante}}" min="5" value="{{rentaT.monto_cuota}}" step=".5" id="cantidadPago3{{credito.0}}" onchange="calcularTotalPago3{{credito.0}}()" > 
+                                                </div>
+                                                <br>
+                                               
+                                         
+                                            
+                                                
+                                                
+                                            </div>
+                                            
+                                        </div>
+                                        <div class="col-sm-5" >
+                                            <div class="form-group">
+                                               
+                                                
+                                                <div class="form-control-wrap" id="cantidadEfectivoPago3{{credito.0}}">
+                                                    <span class="preview-title-lg overline-title text-pink" style="color: #14A990    !important;">Cantidad efectivo cliente:</span>
+                                                    <input type="number"class="form-control"   placeholder="Ingresar efectivo" maxlength="4" max="10000" min="5" value="" step="1" id="efectivoPagoClientePago3{{credito.0}}" onchange="calcularFeriaPago3{{credito.0}}()"> 
+                                                </div>
+                                              
+                                                <div class="form-control-wrap " id="divClaveRastreoTransferenciaPago3{{credito.0}}">
+                                               
+                                                    <div class="form-group">
+                                                        <span class="preview-title-lg overline-title text-pink" style="color: #14A990   !important;">Clave de rastreo:</span>
+                                                        <div class="form-control-wrap">
+                                                            
+                                                            <input type="text"class="form-control" placeholder="Ingresar Clave" maxlength="50" name="claveRastreoTransferencia"> 
+                                                        </div>
+                                                    </div>
+                                           
+                                                </div>
+                                                <div class="form-control-wrap " id="divSelectTipoTarjetaPago3{{credito.0}}">
+                                               
+                                                    <span class="preview-title-lg overline-title text-pink" style="color: #14A990    !important;">Tipo tarjeta:</span>
+                                                    <div class="form-control-select">
+                                                        <select class="form-control" id="default-06" name="tipoTarjeta">
+                                                            <option value="Credito">Crédito</option>
+                                                            <option value="Debito">Débito</option>
+                                                        </select>
+                                                    </div>
+                                           
+                                                </div>
+                                                <br>
+                                             
+                                                
+                                                <div class="form-control-wrap " id="divReferenciaBancariaPago3{{credito.0}}">
+                                               
+                                                    <div class="form-group">
+                                                        <span class="preview-title-lg overline-title text-pink" style="color: #14A990   !important;">Referencia de pago:</span>
+                                                        <div class="form-control-wrap">
+                                                            
+                                                            <input type="text"class="form-control" placeholder="Ingresar referencia Vouncher" maxlength="50" name="referenciaTarjeta"> 
+                                                        </div>
+                                                    </div>
+                                           
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3" >
+                                           
+                                            <div class="form-group">
+                                                <div class="form-control-wrap ">
+                                                    <span class="preview-title-lg overline-title text-pink" style="color: #14A990   !important;">Total pago 3:</span>
+                                                    <h6>$<input id="costoTotalPago3{{credito.0}}" type="text" value="{{rentaT.monto_restante}}" size="10" readonly style="border: none;" name="costoRestanteApagarPago3"></input> MXN.</h6>
+                                                </div> 
+                                             
+                                                <div class="form-control-wrap" id="spanCambioPago3{{credito.0}}">
+                                                    
+                                                    <h6>Cambio: $<span id="spanCambioChicoPago3{{credito.0}}">0</span> MXN.</h6>
+                                                </div>  
+                                                <br>
+                                               
+                                                
+                                            </div>
+                                       
+                                        </div>
+        
+                                       
+                                    </div>
+                                    
+                                    
+                                   
+                                
+                                
+                                    
+                                </div>
+                                
+                            
+                            </div><!-- .card -->
+                                <div class="row gy-4">
+                                    <div class="col-12">
+                                        <center>
+                                            <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                                <li>
+                                                    <button type="submit" class="btn btn-sm btn-warning" style="background-color:#14A990;">Recibir pago 3 de credito </button>
+                                                </li>
+                                            </ul>
+                                        </center>
+                                     
+                                    </div>
+                                </div>
+                                
+        
+                            </div><!-- .tab-pane -->
+                            </form>
+                        </div><!-- .tab-content -->
+                    </div><!-- .modal-body -->
+                </div><!-- .modal-content -->
+            </div><!-- .modal-dialog -->
+        </div><!-- .modal -->
+        
+        {% endfor %}
+        
+
+
+        <!-- MODAl pago 4  -->
+
+        {% for credito,cliente,pago_quincenal,restante,totales,sumas,totalYaPagado,totalTotal in listaCreditosPago4Modal %}
+        <!-- Modal de editar producto -->
+        <div class="modal fade" tabindex="-1" role="dialog" id="pago4Credito{{credito.0}}">
+            <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+                <div class="modal-content">
+                    <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+                    <div class="modal-body modal-body-lg">
+                        <h3 class="title text-center ">RECIBIR CUARTO PAGO DE CRÉDITO {{credito.0}}</h3>
+                        <center>
+                           
+                            <img src="{% static 'images/iconosMenu/creditoPago.png' %} " alt="personal">
+                           
+                        </center>
+                        
+                        
+                        <div class="tab-content">
+                            
+                            <form action="/guardarPago4/" method="POST">{% csrf_token %}
+                                <input type="hidden" name="idCredito" value="{{credito.1}}" readonly>
+                                <input type="hidden" name="idPagoCredito" value="{{credito.0}}" readonly>
+                            <div class="tab-pane active" id="personal">
+                                <div class="row gy-4">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <h4 class="title text-center ">Recibido del cliente: <p class="fw-bold text-secondary">{{cliente}}</p> </h4>
+                                            </div>
+                                        </div>
+                                </div>
+                             
+                                <div class="row gy-4">
+                                    <div class="col-md-3">
+                                        <div class="form-group text-center">
+                                            <p class="fw-bold text-dark">PAGO MÍNIMO QUINCENAL</p>
+                                            <div>
+                                                <h5> <span   class="text-info fw-bold" >$ {{pago_quincenal}} MXN</span></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group text-center">
+                                            <p  class="fw-bold text-dark">MONTO YA PAGADO</p>
+                                            <div>
+                                                <h5> <span   class="text-azure fw-bold" >+ $ {{totalYaPagado}} MXN</span></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group text-center">
+                                            <p  class="fw-bold text-dark">MONTO RESTANTE</p>
+                                            <div>
+                                                <h5> <span   class="text-danger fw-bold" >$ {{restante}} MXN</span></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group text-center">
+                                            <p  class="fw-bold text-dark">MONTO TOTAL</p>
+                                            <div>
+                                                <h5> <span   class="text-teal fw-bold">$ {{totalTotal}} MXN</span></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="preview-hr" style="border-color:  #14A990    !important; ">
+                            <div class="card h-100" id="div3">
+                                <div class="card-inner">
+                               
+                               
+                                 
+                                    <div class="row gy-4">
+        
+                                 
+        
+                                        <div class="col-sm-3"   >
+                                            <div class="form-group">
+                                                <div class="form-control-wrap ">
+                                               
+                                                    <span class="preview-title-lg overline-title text-pink" style="color: #14A990   !important;">Forma de pago:</span>
+                                                    <div class="form-control-select">
+                                                        <select class="form-control" id="selectTipoPagoPago4{{credito.0}}" name="tipoPago" onchange="cambioTipoPagoPago4{{credito.0}}()">
+                                                            <option value="Efectivo">Efectivo</option>
+                                                            <option value="Tarjeta">Tarjeta</option>
+                                                            <option value="Transferencia">Transferencia</option>
+                                                        </select>
+                                                    </div>
+                                           
+                                                </div>
+                                                <br>
+                                                <div class="form-control-wrap" id="cantidadPagarPago4{{credito.0}}">
+                                                    <span class="preview-title-lg overline-title text-pink" style="color: #14A990     !important;">CANTIDAD PAGO 4:</span>
+                                                    <input type="number"class="form-control"  name="cantidadPago4"  placeholder="Ingresar cantidad" maxlength="4" max="{{restante}}" min="5" value="{{rentaT.monto_cuota}}" step=".5" id="cantidadPago4{{credito.0}}" onchange="calcularTotalPago4{{credito.0}}()" > 
+                                                </div>
+                                                <br>
+                                               
+                                         
+                                            
+                                                
+                                                
+                                            </div>
+                                            
+                                        </div>
+                                        <div class="col-sm-5" >
+                                            <div class="form-group">
+                                               
+                                                
+                                                <div class="form-control-wrap" id="cantidadEfectivoPago4{{credito.0}}">
+                                                    <span class="preview-title-lg overline-title text-pink" style="color: #14A990    !important;">Cantidad efectivo cliente:</span>
+                                                    <input type="number"class="form-control"   placeholder="Ingresar efectivo" maxlength="4" max="10000" min="5" value="" step="1" id="efectivoPagoClientePago4{{credito.0}}" onchange="calcularFeriaPago4{{credito.0}}()"> 
+                                                </div>
+                                              
+                                                <div class="form-control-wrap " id="divClaveRastreoTransferenciaPago4{{credito.0}}">
+                                               
+                                                    <div class="form-group">
+                                                        <span class="preview-title-lg overline-title text-pink" style="color: #14A990   !important;">Clave de rastreo:</span>
+                                                        <div class="form-control-wrap">
+                                                            
+                                                            <input type="text"class="form-control" placeholder="Ingresar Clave" maxlength="50" name="claveRastreoTransferencia"> 
+                                                        </div>
+                                                    </div>
+                                           
+                                                </div>
+                                                <div class="form-control-wrap " id="divSelectTipoTarjetaPago4{{credito.0}}">
+                                               
+                                                    <span class="preview-title-lg overline-title text-pink" style="color: #14A990    !important;">Tipo tarjeta:</span>
+                                                    <div class="form-control-select">
+                                                        <select class="form-control" id="default-06" name="tipoTarjeta">
+                                                            <option value="Credito">Crédito</option>
+                                                            <option value="Debito">Débito</option>
+                                                        </select>
+                                                    </div>
+                                           
+                                                </div>
+                                                <br>
+                                             
+                                                
+                                                <div class="form-control-wrap " id="divReferenciaBancariaPago4{{credito.0}}">
+                                               
+                                                    <div class="form-group">
+                                                        <span class="preview-title-lg overline-title text-pink" style="color: #14A990   !important;">Referencia de pago:</span>
+                                                        <div class="form-control-wrap">
+                                                            
+                                                            <input type="text"class="form-control" placeholder="Ingresar referencia Vouncher" maxlength="50" name="referenciaTarjeta"> 
+                                                        </div>
+                                                    </div>
+                                           
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3" >
+                                           
+                                            <div class="form-group">
+                                                <div class="form-control-wrap ">
+                                                    <span class="preview-title-lg overline-title text-pink" style="color: #14A990   !important;">Total pago 4:</span>
+                                                    <h6>$<input id="costoTotalPago4{{credito.0}}" type="text" value="{{rentaT.monto_restante}}" size="10" readonly style="border: none;" name="costoRestanteApagarPago2"></input> MXN.</h6>
+                                                </div> 
+                                             
+                                                <div class="form-control-wrap" id="spanCambioPago4{{credito.0}}">
+                                                    
+                                                    <h6>Cambio: $<span id="spanCambioChicoPago4{{credito.0}}">0</span> MXN.</h6>
+                                                </div>  
+                                                <br>
+                                               
+                                                
+                                            </div>
+                                       
+                                        </div>
+        
+                                       
+                                    </div>
+                                    
+                                    
+                                   
+                                
+                                
+                                    
+                                </div>
+                                
+                            
+                            </div><!-- .card -->
+                                <div class="row gy-4">
+                                    <div class="col-12">
+                                        <center>
+                                            <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                                <li>
+                                                    <button type="submit" class="btn btn-sm btn-warning" style="background-color:#14A990;">Recibir pago 4 de credito </button>
+                                                </li>
+                                            </ul>
+                                        </center>
+                                     
+                                    </div>
+                                </div>
+                                
+        
+                            </div><!-- .tab-pane -->
+                            </form>
+                        </div><!-- .tab-content -->
+                    </div><!-- .modal-body -->
+                </div><!-- .modal-content -->
+            </div><!-- .modal-dialog -->
+        </div><!-- .modal -->
+        
+        {% endfor %}
+        
+
+
+
+
+<script>
+    {% for rentaJS, clienteJS, productoJS,encargadoJS,sucursal in listaPendientesDevolucionPorClienteJS %}
+    function calcularCuotaRetraso{{rentaJS.id_renta}}() {
+
+        var fechaDev = document.getElementById('fechaDevolucion');
+        var fecha = fechaDev.value;
+        var fechDevolucion = new Date(fecha);
+        
+        var spanRetraso = document.getElementById("retraso");
+
+        
+      
+
+        var fechaFinalRentaLimiteCuota = '{{rentaJS.fecha_limite_devolucion_cuota}}';
+
+       var fechaLimite = new Date(fechaLimite);
+
+        
+        if (fechDevolucion < fechaLimite){
+            spanRetraso.innerHTML = "No";
+
+        }
+        else{
+            
+                spanRetraso.innerHTML = "Si";
+     
+    
+           
+
+        }
+     
+     
+
+    }
+    {% endfor %}
+
+   
+</script>
+
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<script>
+
+    {% if rentaAgregada %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{rentaAgregada}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    {% if rentaNoAgregada %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'error',
+            title: 'Ups..!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{rentaNoAgregada}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    {% if rentaEntregada %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{rentaEntregada}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    {% if recibirRentaPendiente %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{recibirRentaPendiente}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    {% if rentaCuotaPagada %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{rentaCuotaPagada}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+</script>
+
+
+{% for credito,cliente,pago_quincenal,restante,totales,sumas in listaCreditosPago1JS %}
+<script>
+    window.clearTimeout();
+ 
+
+
+      
+        var divSelectTipoTarjetaPago1{{credito.0}} = document.getElementById('divSelectTipoTarjetaPago1{{credito.0}}');
+        var divReferenciaBancariaPago1{{credito.0}} = document.getElementById('divReferenciaBancariaPago1{{credito.0}}');
+        var divClaveRastreoTransferenciaPago1{{credito.0}} = document.getElementById('divClaveRastreoTransferenciaPago1{{credito.0}}');
+       
+        var divCantidadEfectivoPago1{{credito.0}} = document.getElementById('cantidadEfectivoPago1{{credito.0}}');
+        var spanCambioPago1{{credito.0}} = document.getElementById('spanCambioPago1{{credito.0}}');
+        var cantidadAbonoPago1{{credito.0}} = document.getElementById('cantidadAbonoPago1{{credito.0}}');
+
+        
+        
+        
+        divSelectTipoTarjetaPago1{{credito.0}}.style.display = "none";
+        divReferenciaBancariaPago1{{credito.0}}.style.display = "none";
+        divClaveRastreoTransferenciaPago1{{credito.0}}.style.display = "none";
+    
+        divCantidadEfectivoPago1{{credito.0}}.style.display = "block";
+
+        cantidadAbonoPago1{{credito.0}}.style.display = "none";
+        
+        var montoTotalPagarRestantePago1{{credito.0}} = document.getElementById("costoTotalPago1{{credito.0}}");
+        
+        
+       
+
+        
+
+
+    function cambioTipoPagoPago1{{credito.0}}(){
+        var tipoPagoSeleccionadoPago1{{credito.0}} = document.getElementById('selectTipoPagoPago1{{credito.0}}').value;
+        var divCantidadEfectivoPago1{{credito.0}} = document.getElementById('cantidadEfectivoPago1{{credito.0}}');
+        var spanCambioPago1{{credito.0}} = document.getElementById('spanCambioPago1{{credito.0}}');
+        if (tipoPagoSeleccionadoPago1{{credito.0}} == 'Efectivo'){
+            divCantidadEfectivoPago1{{credito.0}}.style.display = "block";
+            divSelectTipoTarjetaPago1{{credito.0}}.style.display = "none";
+            divReferenciaBancariaPago1{{credito.0}}.style.display = "none";
+            divClaveRastreoTransferenciaPago1{{credito.0}}.style.display = "none";
+            spanCambioPago1{{credito.0}}.style.display = "block";
+          
+            
+        }
+        else if(tipoPagoSeleccionadoPago1{{credito.0}} == 'Tarjeta'){
+            divCantidadEfectivoPago1{{credito.0}}.style.display = "none";
+            divSelectTipoTarjetaPago1{{credito.0}}.style.display = "block";
+            divReferenciaBancariaPago1{{credito.0}}.style.display = "block";
+            divClaveRastreoTransferenciaPago1{{credito.0}}.style.display = "none";
+            spanCambioPago1{{credito.0}}.style.display = "none";
+        }
+        else if(tipoPagoSeleccionadoPago1{{credito.0}} == 'Transferencia'){
+            divCantidadEfectivoPago1{{credito.0}}.style.display = "none";
+            divSelectTipoTarjetaPago1{{credito.0}}.style.display = "none";
+            divReferenciaBancariaPago1{{credito.0}}.style.display = "none";
+            
+            divClaveRastreoTransferenciaPago1{{credito.0}}.style.display = "block";
+            spanCambioPago1{{credito.0}}.style.display = "none";
+        
+        }
+   
+    }
+
+    
+    function calcularFeriaPago1{{credito.0}}(){
+        var efectivoPagoClientePago1{{credito.0}} = document.getElementById("efectivoPagoClientePago1{{credito.0}}");
+        var spanCambioChicoPago1{{credito.0}} = document.getElementById("spanCambioChicoPago1{{credito.0}}");
+        var cantidadPago1{{credito.0}} = document.getElementById("cantidadPago1{{credito.0}}").value;
+        var valorInputPago1{{credito.0}} = efectivoPagoClientePago1{{credito.0}}.value;
+
+        if (valorInputPago1{{credito.0}} == ""){
+            spanCambioChicoPago1{{credito.0}}.innerHTML = "0";
+        }
+        else{
+            var cambioPago1{{credito.0}} = parseFloat(valorInputPago1{{credito.0}}) - cantidadPago1{{credito.0}};
+
+            
+
+            spanCambioChicoPago1{{credito.0}}.innerHTML = cambioPago1{{credito.0}}.toString();
+        }
+        
+
+
+    }
+
+    function calcularTotalPago1{{credito.0}}(){
+        var cantidadPago1{{credito.0}} = document.getElementById("cantidadPago1{{credito.0}}");
+        var totalPago1{{credito.0}} = document.getElementById("costoTotalPago1{{credito.0}}");
+        var valorCantidadPago1{{credito.0}} = cantidadPago1{{credito.0}}.value;
+    
+        var pago1{{credito.0}} = valorCantidadPago1{{credito.0}};
+
+   
+        totalPago1{{credito.0}}.value = pago1{{credito.0}}.toString();
+        
+        
+    
+    
+    };
+
+
+
+
+   
+</script>
+
+{% endfor %}
+
+
+
+
+{% for credito,cliente,pago_quincenal,restante,totales,sumas in listaCreditosPago2JS %}
+<script>
+    window.clearTimeout();
+ 
+
+
+      
+        var divSelectTipoTarjetaPago2{{credito.0}} = document.getElementById('divSelectTipoTarjetaPago2{{credito.0}}');
+        var divReferenciaBancariaPago2{{credito.0}} = document.getElementById('divReferenciaBancariaPago2{{credito.0}}');
+        var divClaveRastreoTransferenciaPago2{{credito.0}} = document.getElementById('divClaveRastreoTransferenciaPago2{{credito.0}}');
+       
+        var divCantidadEfectivoPago2{{credito.0}} = document.getElementById('cantidadEfectivoPago2{{credito.0}}');
+        var spanCambioPago2{{credito.0}} = document.getElementById('spanCambioPago2{{credito.0}}');
+        var cantidadAbonoPago2{{credito.0}} = document.getElementById('cantidadAbonoPago2{{credito.0}}');
+
+        
+        
+        
+        divSelectTipoTarjetaPago2{{credito.0}}.style.display = "none";
+        divReferenciaBancariaPago2{{credito.0}}.style.display = "none";
+        divClaveRastreoTransferenciaPago2{{credito.0}}.style.display = "none";
+    
+        divCantidadEfectivoPago2{{credito.0}}.style.display = "block";
+
+        cantidadAbonoPago2{{credito.0}}.style.display = "none";
+        
+        var montoTotalPagarRestantePago2{{credito.0}} = document.getElementById("costoTotalPago2{{credito.0}}");
+        
+        
+       
+
+        
+
+
+    function cambioTipoPagoPago2{{credito.0}}(){
+        var tipoPagoSeleccionadoPago2{{credito.0}} = document.getElementById('selectTipoPagoPago2{{credito.0}}').value;
+        var divCantidadEfectivoPago2{{credito.0}} = document.getElementById('cantidadEfectivoPago2{{credito.0}}');
+        var spanCambioPago2{{credito.0}} = document.getElementById('spanCambioPago2{{credito.0}}');
+        if (tipoPagoSeleccionadoPago2{{credito.0}} == 'Efectivo'){
+            divCantidadEfectivoPago2{{credito.0}}.style.display = "block";
+            divSelectTipoTarjetaPago2{{credito.0}}.style.display = "none";
+            divReferenciaBancariaPago2{{credito.0}}.style.display = "none";
+            divClaveRastreoTransferenciaPago2{{credito.0}}.style.display = "none";
+            spanCambioPago2{{credito.0}}.style.display = "block";
+          
+            
+        }
+        else if(tipoPagoSeleccionadoPago2{{credito.0}} == 'Tarjeta'){
+            divCantidadEfectivoPago2{{credito.0}}.style.display = "none";
+            divSelectTipoTarjetaPago2{{credito.0}}.style.display = "block";
+            divReferenciaBancariaPago2{{credito.0}}.style.display = "block";
+            divClaveRastreoTransferenciaPago2{{credito.0}}.style.display = "none";
+            spanCambioPago2{{credito.0}}.style.display = "none";
+        }
+        else if(tipoPagoSeleccionadoPago2{{credito.0}} == 'Transferencia'){
+            divCantidadEfectivoPago2{{credito.0}}.style.display = "none";
+            divSelectTipoTarjetaPago2{{credito.0}}.style.display = "none";
+            divReferenciaBancariaPago2{{credito.0}}.style.display = "none";
+            
+            divClaveRastreoTransferenciaPago2{{credito.0}}.style.display = "block";
+            spanCambioPago2{{credito.0}}.style.display = "none";
+        
+        }
+   
+    }
+
+    
+    function calcularFeriaPago2{{credito.0}}(){
+        var efectivoPagoClientePago2{{credito.0}} = document.getElementById("efectivoPagoClientePago2{{credito.0}}");
+        var spanCambioChicoPago2{{credito.0}} = document.getElementById("spanCambioChicoPago2{{credito.0}}");
+        var cantidadPago2{{credito.0}} = document.getElementById("cantidadPago2{{credito.0}}").value;
+        var valorInputPago2{{credito.0}} = efectivoPagoClientePago2{{credito.0}}.value;
+
+        if (valorInputPago2{{credito.0}} == ""){
+            spanCambioChicoPago2{{credito.0}}.innerHTML = "0";
+        }
+        else{
+            var cambioPago2{{credito.0}} = parseFloat(valorInputPago2{{credito.0}}) - cantidadPago2{{credito.0}};
+
+            
+
+            spanCambioChicoPago2{{credito.0}}.innerHTML = cambioPago2.toString();
+        }
+        
+
+
+    }
+
+    function calcularTotalPago2{{credito.0}}(){
+        var cantidadPago2{{credito.0}} = document.getElementById("cantidadPago2{{credito.0}}");
+        var totalPago2{{credito.0}} = document.getElementById("costoTotalPago2{{credito.0}}");
+        var valorCantidadPago2{{credito.0}} = cantidadPago2{{credito.0}}.value;
+    
+        var pago2{{credito.0}} = valorCantidadPago2{{credito.0}};
+
+   
+        totalPago2{{credito.0}}.value = pago2{{credito.0}}.toString();
+        
+        
+    
+    
+    };
+
+
+
+
+   
+</script>
+
+{% endfor %}
+
+
+
+{% for credito,cliente,pago_quincenal,restante,totales,sumas in listaCreditosPago3JS %}
+<script>
+    window.clearTimeout();
+ 
+
+
+      
+        var divSelectTipoTarjetaPago3{{credito.0}} = document.getElementById('divSelectTipoTarjetaPago3{{credito.0}}');
+        var divReferenciaBancariaPago3{{credito.0}} = document.getElementById('divReferenciaBancariaPago3{{credito.0}}');
+        var divClaveRastreoTransferenciaPago3{{credito.0}} = document.getElementById('divClaveRastreoTransferenciaPago3{{credito.0}}');
+       
+        var divCantidadEfectivoPago3{{credito.0}} = document.getElementById('cantidadEfectivoPago3{{credito.0}}');
+        var spanCambioPago3{{credito.0}} = document.getElementById('spanCambioPago3{{credito.0}}');
+        var cantidadAbonoPago3{{credito.0}} = document.getElementById('cantidadAbonoPago3{{credito.0}}');
+
+        
+        
+        
+        divSelectTipoTarjetaPago3{{credito.0}}.style.display = "none";
+        divReferenciaBancariaPago3{{credito.0}}.style.display = "none";
+        divClaveRastreoTransferenciaPago3{{credito.0}}.style.display = "none";
+    
+        divCantidadEfectivoPago3{{credito.0}}.style.display = "block";
+
+        cantidadAbonoPago3{{credito.0}}.style.display = "none";
+        
+        var montoTotalPagarRestantePago3{{credito.0}} = document.getElementById("costoTotalPago3{{credito.0}}");
+        
+        
+       
+
+        
+
+
+    function cambioTipoPagoPago3{{credito.0}}(){
+        var tipoPagoSeleccionadoPago3{{credito.0}} = document.getElementById('selectTipoPagoPago3{{credito.0}}').value;
+        var divCantidadEfectivoPago3{{credito.0}} = document.getElementById('cantidadEfectivoPago3{{credito.0}}');
+        var spanCambioPago3{{credito.0}} = document.getElementById('spanCambioPago3{{credito.0}}');
+        if (tipoPagoSeleccionadoPago3{{credito.0}} == 'Efectivo'){
+            divCantidadEfectivoPago3{{credito.0}}.style.display = "block";
+            divSelectTipoTarjetaPago3{{credito.0}}.style.display = "none";
+            divReferenciaBancariaPago3{{credito.0}}.style.display = "none";
+            divClaveRastreoTransferenciaPago3{{credito.0}}.style.display = "none";
+            spanCambioPago3{{credito.0}}.style.display = "block";
+          
+            
+        }
+        else if(tipoPagoSeleccionadoPago3{{credito.0}} == 'Tarjeta'){
+            divCantidadEfectivoPago3{{credito.0}}.style.display = "none";
+            divSelectTipoTarjetaPago3{{credito.0}}.style.display = "block";
+            divReferenciaBancariaPago3{{credito.0}}.style.display = "block";
+            divClaveRastreoTransferenciaPago3{{credito.0}}.style.display = "none";
+            spanCambioPago3{{credito.0}}.style.display = "none";
+        }
+        else if(tipoPagoSeleccionadoPago3{{credito.0}} == 'Transferencia'){
+            divCantidadEfectivoPago3{{credito.0}}.style.display = "none";
+            divSelectTipoTarjetaPago3{{credito.0}}.style.display = "none";
+            divReferenciaBancariaPago3{{credito.0}}.style.display = "none";
+            
+            divClaveRastreoTransferenciaPago3{{credito.0}}.style.display = "block";
+            spanCambioPago3{{credito.0}}.style.display = "none";
+        
+        }
+   
+    }
+
+    
+    function calcularFeriaPago3{{credito.0}}(){
+        var efectivoPagoClientePago3{{credito.0}} = document.getElementById("efectivoPagoClientePago3{{credito.0}}");
+        var spanCambioChicoPago3{{credito.0}} = document.getElementById("spanCambioChicoPago3{{credito.0}}");
+        var cantidadPago3{{credito.0}} = document.getElementById("cantidadPago3{{credito.0}}").value;
+        var valorInputPago3{{credito.0}} = efectivoPagoClientePago3{{credito.0}}.value;
+
+        if (valorInputPago3{{credito.0}} == ""){
+            spanCambioChicoPago3{{credito.0}}.innerHTML = "0";
+        }
+        else{
+            var cambioPago3{{credito.0}} = parseFloat(valorInputPago3{{credito.0}}) - cantidadPago3{{credito.0}};
+
+            
+
+            spanCambioChicoPago3{{credito.0}}.innerHTML = cambioPago3{{credito.0}}.toString();
+        }
+        
+
+
+    }
+
+    function calcularTotalPago3{{credito.0}}(){
+        var cantidadPago3{{credito.0}} = document.getElementById("cantidadPago3{{credito.0}}");
+        var totalPago3{{credito.0}} = document.getElementById("costoTotalPago3{{credito.0}}");
+        var valorCantidadPago3{{credito.0}} = cantidadPago3{{credito.0}}.value;
+    
+        var pago3{{credito.0}} = valorCantidadPago3{{credito.0}};
+
+   
+        totalPago3{{credito.0}}.value = pago3{{credito.0}}.toString();
+        
+        
+    
+    
+    };
+
+
+
+
+   
+</script>
+{% endfor %}
+
+
+
+{% for credito,cliente,pago_quincenal,restante,totales,sumas in listaCreditosPago4JS %}
+<script>
+    window.clearTimeout();
+ 
+
+
+      
+        var divSelectTipoTarjetaPago4{{credito.0}} = document.getElementById('divSelectTipoTarjetaPago4{{credito.0}}');
+        var divReferenciaBancariaPago4{{credito.0}} = document.getElementById('divReferenciaBancariaPago4{{credito.0}}');
+        var divClaveRastreoTransferenciaPago4{{credito.0}} = document.getElementById('divClaveRastreoTransferenciaPago4{{credito.0}}');
+       
+        var divCantidadEfectivoPago4{{credito.0}} = document.getElementById('cantidadEfectivoPago4{{credito.0}}');
+        var spanCambioPago4{{credito.0}} = document.getElementById('spanCambioPago4{{credito.0}}');
+        var cantidadAbonoPago4{{credito.0}} = document.getElementById('cantidadAbonoPago4{{credito.0}}');
+
+        
+        
+        
+        divSelectTipoTarjetaPago4{{credito.0}}.style.display = "none";
+        divReferenciaBancariaPago4{{credito.0}}.style.display = "none";
+        divClaveRastreoTransferenciaPago4{{credito.0}}.style.display = "none";
+    
+        divCantidadEfectivoPago4{{credito.0}}.style.display = "block";
+
+        cantidadAbonoPago4{{credito.0}}.style.display = "none";
+        
+        var montoTotalPagarRestantePago4{{credito.0}} = document.getElementById("costoTotalPago4{{credito.0}}");
+        
+        
+       
+
+        
+
+
+    function cambioTipoPagoPago4{{credito.0}}(){
+        var tipoPagoSeleccionadoPago4{{credito.0}} = document.getElementById('selectTipoPagoPago4{{credito.0}}').value;
+        var divCantidadEfectivoPago4{{credito.0}} = document.getElementById('cantidadEfectivoPago4{{credito.0}}');
+        var spanCambioPago4{{credito.0}} = document.getElementById('spanCambioPago4{{credito.0}}');
+        if (tipoPagoSeleccionadoPago4{{credito.0}} == 'Efectivo'){
+            divCantidadEfectivoPago4{{credito.0}}.style.display = "block";
+            divSelectTipoTarjetaPago4{{credito.0}}.style.display = "none";
+            divReferenciaBancariaPago4{{credito.0}}.style.display = "none";
+            divClaveRastreoTransferenciaPago4{{credito.0}}.style.display = "none";
+            spanCambioPago4{{credito.0}}.style.display = "block";
+          
+            
+        }
+        else if(tipoPagoSeleccionadoPago4{{credito.0}} == 'Tarjeta'){
+            divCantidadEfectivoPago4{{credito.0}}.style.display = "none";
+            divSelectTipoTarjetaPago4{{credito.0}}.style.display = "block";
+            divReferenciaBancariaPago4{{credito.0}}.style.display = "block";
+            divClaveRastreoTransferenciaPago4{{credito.0}}.style.display = "none";
+            spanCambioPago4{{credito.0}}.style.display = "none";
+        }
+        else if(tipoPagoSeleccionadoPago4{{credito.0}} == 'Transferencia'){
+            divCantidadEfectivoPago4{{credito.0}}.style.display = "none";
+            divSelectTipoTarjetaPago4{{credito.0}}.style.display = "none";
+            divReferenciaBancariaPago4{{credito.0}}.style.display = "none";
+            
+            divClaveRastreoTransferenciaPago4{{credito.0}}.style.display = "block";
+            spanCambioPago4{{credito.0}}.style.display = "none";
+        
+        }
+   
+    }
+
+    
+    function calcularFeriaPago4{{credito.0}}(){
+        var efectivoPagoClientePago4{{credito.0}}= document.getElementById("efectivoPagoClientePago4{{credito.0}}");
+        var spanCambioChicoPago4{{credito.0}} = document.getElementById("spanCambioChicoPago4{{credito.0}}");
+        var cantidadPago4{{credito.0}} = document.getElementById("cantidadPago4{{credito.0}}").value;
+        var valorInputPago4{{credito.0}} = efectivoPagoClientePago4{{credito.0}}.value;
+
+        if (valorInputPago4{{credito.0}} == ""){
+            spanCambioChicoPago4{{credito.0}}.innerHTML = "0";
+        }
+        else{
+            var cambioPago4{{credito.0}} = parseFloat(valorInputPago4{{credito.0}}) - cantidadPago4{{credito.0}};
+
+            
+
+            spanCambioChicoPago4{{credito.0}}.innerHTML = cambioPago4{{credito.0}}.toString();
+        }
+        
+
+
+    }
+
+    function calcularTotalPago4{{credito.0}}(){
+        var cantidadPago4{{credito.0}} = document.getElementById("cantidadPago4{{credito.0}}");
+        var totalPago4{{credito.0}} = document.getElementById("costoTotalPago4{{credito.0}}");
+        var valorCantidadPago4{{credito.0}} = cantidadPago4{{credito.0}}.value;
+    
+        var pago4{{credito.0}} = valorCantidadPago4{{credito.0}};
+
+   
+        totalPago4{{credito.0}}.value = pago4{{credito.0}}.toString();
+        
+        
+    
+    
+    };
+
+
+
+
+   
+</script>
+{% endfor %}
+
+
+
+
+
+{% endblock %}
+
+
+
+{% block relojJS %}
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+
+        window.onload= mueveReloj ();
+
+        
+    };
+</script>
+{% endblock %}

@@ -1,0 +1,400 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Cortes de Caja | Costabella
+{% endblock %}
+
+{% block estilos %}
+
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    <h3 class="nk-block-title page-title color-texto-seleccion">LISTA DE CORTES DE CAJA REALIZADOS EN: {{nombreSucursal}}</h3>
+                    <h3 class="nk-block-title page-title text-dark">Sucursal: {{nombreSucursal}}</h3>
+                    <div class="nk-block-des text-soft">
+                        <p>Tabla de cortes de caja realizados en la sucursal de:{{nombreSucursal}} realizados en la historia de CostaBella.</p>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+                <div class="nk-block-head-content">
+                    <div class="toggle-wrap nk-block-tools-toggle">
+                        <a href="#" class="btn btn-icon btn-trigger toggle-expand mr-n1" data-target="more-options"><em class="icon ni ni-more-v"></em></a>
+                        <div class="toggle-expand-content" data-content="more-options">
+                            <ul class="nk-block-tools g-3">
+                                <li>
+                                    <div class="drodown">
+                                        
+                                    </div>
+                                </li>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Empleados" %}
+                                {% if permiso.agregar == "Si"  %}
+                                <li class="nk-block-tools-opt">
+                                    <a href="#" class="btn btn-icon btn-primary d-md-none"><em class="icon ni ni-plus"></em></a>
+                                    <a href="/seleccionarSucursalMovimientosDia/" class="btn btn-primary d-none d-md-inline-flex"><em class="icon ni ni-plus"></em><span>Agregar Corte de Caja<span></a>
+                                </li>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                               
+
+                            </ul>
+                        </div>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        
+        <!-- Div empleados todos -->
+        <div class="nk-block nk-block-lg" id="divEmpleadosTotales">
+            <div class="nk-block-head">
+             
+            </div>
+        
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false" >
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #FFC600 !important; color:white !important">
+                                <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco" >Fecha Corte</span></th>
+                                <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Hora Corte</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco">Monto Ingresos Venta</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco">Monto Ingresos Manuales</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco">Monto Retiros Manuales</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco">Monto Total Corte</span></th>
+                                <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Empleado Corte</span></th>
+                                
+                               
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for corteCaja, empleado in listaZipeada %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col nk-tb-col-check">
+                                    <span class="badge badge-info">{{corteCaja.id_corte_caja}}</span>
+                                </td>
+                                <td class="nk-tb-col nk-tb-col-check">
+                                    <span class="fw-bold text-dark">{{corteCaja.fecha_corte}}</span>
+                                </td>
+                                <td class="nk-tb-col nk-tb-col-check">
+                                    <span class="text-dark">{{corteCaja.hora_corte}} hrs</span>
+                                </td>
+                                <td class="nk-tb-col nk-tb-col-check">
+                                    <span class="fw-bold text-dark">$<span class="text-teal">{{corteCaja.monto_ingresos_venta}}</span> MXN.</span>
+                                </td>
+                                <td class="nk-tb-col nk-tb-col-check">
+                                    <span class="fw-bold text-dark">$<span class="text-teal">{{corteCaja.monto_ingresos_manuales}}</span> MXN.</span>
+                                </td>
+                                <td class="nk-tb-col nk-tb-col-check">
+                                    <span class="fw-bold text-dark">$<span class="text-danger">{{corteCaja.monto_retiros_manuales}}</span> MXN.</span>
+                                </td>
+                                <td class="nk-tb-col nk-tb-col-check">
+                                    <span class="fw-bold text-dark">$<span class="text-azure">{{corteCaja.monto_total_corte}}</span> MXN.</span>
+                                </td>
+                                <td class="nk-tb-col nk-tb-col-check">
+                                    <span class="badge badge-primary">{{empleado}}</span>
+                                </td>
+                                
+                                
+                            </tr><!-- .nk-tb-item  -->
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+        <!-- DIV EMPLEADOS ACTIVOS -->
+        <div class="" id="divEmpleadosActivos">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Empleados Activos</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de empleados <span class="coloralta">activos</span> en el sistema.</p>
+                    </div>
+                </div>
+                <div>
+                    <form action="/xlEmpleados/" method="POST">{% csrf_token %}
+                        <input type="hidden" name="todos" value="todos">
+                        <button type="submit" class="btn btn-icon btn-sm btn-light" 
+                            data-toggle="tooltip" data-placement="right"
+                            title="Descargar reporte Empleados en Excel.">
+                            &nbsp;<img src="{% static 'images/iconosMenu/iconoExcel.png' %}" alt="iconoExcel" width="25"> &nbsp;Excel&nbsp;&nbsp;               
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #24A19C !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Usuario</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco" >Nombres</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Apellidos</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Teléfono</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Puesto</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Tipo</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha alta</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha baja</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Estado</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Editar</span></th>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for empleado, usuario, sucursal, tipo, color in listaActivos %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{empleado.id_empleado}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <div class="user-card">
+                                        <div class="user-avatar {{color}} d-none d-sm-flex">
+                                            <span>{{usuario.0}}{{usuario.1}}{{usuario.2}}</span>
+                                        </div>
+                                        <div class="user-info">
+                                            <span class="tb-lead">{{empleado.nombre_usuario}} <span class="dot dot-success d-md-none ml-1"></span></span>
+                                           
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{empleado.nombres}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{empleado.apellido_paterno}} {{empleado.apellido_materno}}</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount">{{empleado.telefono}}</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount">{{empleado.puesto}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    {% if  tipo == "Administrador" %}
+                                        <span class="badge badge-warning">Administrador</span>
+                                    {% elif tipo == "Empleado" %}
+                                        <span class="badge badge-info">Empleado</span>
+                                    {% endif %}
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{empleado.fecha_alta}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    {% if empleado.fecha_baja == None %}
+                                    <span class="tb-amount">Sin fecha de baja</span>
+                                    {% else %}
+                                    <span class="tb-amount">{{empleado.fecha_baja}}</span>
+                                    {% endif %}
+                           
+                                </td>
+                                <td class="nk-tb-col">
+                                    {% if empleado.estado_contratacion == "A" %}
+                                    <span class="badge badge-pill badge-success">Activo</span>
+                                    {% else %}
+                                    <span class="badge badge-pill badge-danger">De baja</span>
+                                    {% endif %}
+                           
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{sucursal}}</span>
+                           
+                                </td>
+                                <td class="nk-tb-col">
+                                    <form action="/editarEmpleado/" method="POST">{% csrf_token %}
+                                        <input type="hidden" name="idEmpleadoEditar" value="{{empleado.id_empleado}}">
+                                        <button type="submit" class="btn btn-icon btn-sm btn-primarypruple"><em class="icon ni ni-edit"></em></button>
+                                    </form>
+                                    
+                                </td>
+                            </tr><!-- .nk-tb-item  -->
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+        <!-- DIV EMPLEADOS INACTIVOS -->
+        <div class="" id="divEmpleadosInActivos">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Empleados Inactivos</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de empleados <span class="colorbaja">inactivos</span> en el sistema.</p>
+                    </div>
+                </div>
+                <div>
+                    <form action="/xlEmpleados/" method="POST">{% csrf_token %}
+                        <input type="hidden" name="todos" value="todos">
+                        <button type="submit" class="btn btn-icon btn-sm btn-light" 
+                            data-toggle="tooltip" data-placement="right"
+                            title="Descargar reporte Empleados en Excel.">
+                            &nbsp;<img src="{% static 'images/iconosMenu/iconoExcel.png' %}" alt="iconoExcel" width="25"> &nbsp;Excel&nbsp;&nbsp;               
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #6F69AC !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Usuario</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco" >Nombres</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Apellidos</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Teléfono</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Puesto</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Tipo</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha alta</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha baja</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Estado</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Editar</span></th>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for empleado, usuario, sucursal, tipo, color in listaInactivos %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{empleado.id_empleado}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <div class="user-card">
+                                        <div class="user-avatar {{color}} d-none d-sm-flex">
+                                            <span>{{usuario.0}}{{usuario.1}}{{usuario.2}}</span>
+                                        </div>
+                                        <div class="user-info">
+                                            <span class="tb-lead">{{empleado.nombre_usuario}} <span class="dot dot-success d-md-none ml-1"></span></span>
+                                           
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount">{{empleado.nombres}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{empleado.apellido_paterno}} {{empleado.apellido_materno}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{empleado.telefono}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{empleado.puesto}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    {% if  tipo == "Administrador" %}
+                                        <span class="badge badge-warning">Administrador</span>
+                                    {% elif tipo == "Empleado" %}
+                                        <span class="badge badge-info">Empleado</span>
+                                    {% endif %}
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{empleado.fecha_alta}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    {% if empleado.fecha_baja == None %}
+                                    <span class="tb-amount">Sin fecha de baja</span>
+                                    {% else %}
+                                    <span class="tb-amount">{{empleado.fecha_baja}}</span>
+                                    {% endif %}
+                           
+                                </td>
+                                <td class="nk-tb-col">
+                                    {% if empleado.estado_contratacion == "A" %}
+                                    <span class="badge badge-pill badge-success">Activo</span>
+                                    {% else %}
+                                    <span class="badge badge-pill badge-danger">De baja</span>
+                                    {% endif %}
+                           
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{sucursal}}</span>
+                           
+                                </td>
+                                <td class="nk-tb-col">
+                                    <form action="/editarEmpleado/" method="POST">{% csrf_token %}
+                                        <input type="hidden" name="idEmpleadoEditar" value="{{empleado.id_empleado}}">
+                                        <button type="submit" class="btn btn-icon btn-sm btn-primarypruple"><em class="icon ni ni-edit"></em></button>
+                                    </form>
+                                    
+                                </td>
+                            </tr><!-- .nk-tb-item  -->
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<script>
+
+    {% if mensaje %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{mensaje}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+</script>
+
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+        var divEmpleadosTotales = document.getElementById("divEmpleadosTotales");
+        var divEmpleadosActivos = document.getElementById("divEmpleadosActivos");
+        var divEmpleadosInActivos = document.getElementById("divEmpleadosInActivos");
+        divEmpleadosActivos.style.display = "none";
+        divEmpleadosInActivos.style.display = "none";
+        divEmpleadosTotales.style.display = "block";
+
+        window.onload= mueveReloj ();
+        
+    };
+
+    function mostrarTodos(){
+        divEmpleadosTotales.style.display = "block";
+        divEmpleadosActivos.style.display = "none";
+        divEmpleadosInActivos.style.display = "none";
+        console.log("Todos los divs");
+    };
+
+    function mostrarActivos(){
+        divEmpleadosTotales.style.display = "none";
+        divEmpleadosActivos.style.display = "block";
+        divEmpleadosInActivos.style.display = "none";
+        console.log("activos");
+    };
+
+    function mostrarInactivos(){
+        divEmpleadosTotales.style.display = "none";
+        divEmpleadosActivos.style.display = "none";
+        divEmpleadosInActivos.style.display = "block";
+        console.log("inactivos");
+    };
+</script>
+{% endblock %}

@@ -1,0 +1,443 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Alta Certificado | Costabella
+{% endblock %}
+
+{% block estilos %}
+
+{% endblock %}
+
+{% block contenido %}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    
+                        <h2 class="overline-title text-purple fs-20px ">CANJEAR SERVICIOS DEL CERTIFICADO DE REGALO.</h2>
+                        <div class="nk-block-des">
+                            <p class="fs-15px">En este módulo se podrán canjear los servicios del certificado de regalo por el cliente.</p>
+                        </div>
+                </div><!-- .nk-block-head-content -->
+             
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        {% for datoCertificado in consultaCertificado %}
+        <div class="nk-block nk-block-lg">
+            <div class="card card-preview">
+                <div class="card-inner">
+                    <div class="preview-block">
+                        <form action="/canjearCertificado/" enctype="multipart/form-data" method="POST">{% csrf_token %}
+
+                            {% if vieneDeCita %}
+                            <input type="hidden" value="{{idDeCita}}" name="vieneDeCita">
+                            {% endif %}
+
+                            <span class="preview-title-lg overline-title text-pink">Información del certificado.</span>
+                            <div class="row gy-4">
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span> Folio de certificado:</label>
+                                        <div class="form-control-wrap">
+                                            <input type="text" class="form-control" value="{{datoCertificado.codigo_certificado}}" readonly> 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span> Beneficiaria:</label>
+                                        <div class="form-control-wrap">
+                                            <h4 class="fw-bold text-dark">{{datoCertificado.nombre_beneficiaria}}</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-03">Cliente:</label>
+                                        <div class="form-control-wrap">
+                                            <h4 class="fw-bold text-dark">{{nombreCompletoCliente}}</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span> Estatus certificado:</label>
+                                        <div class="form-control-wrap">
+                                            {% if datoCertificado.estatus_certificado == "P" %}
+                                            <h1 class="badge badge-danger fs-13px">Certificado Pendiente de canjear al 100%</h1>
+                                            {% else %}
+                                            <h1 class="badge badge-success fs-13px">Certificado canjeado al 100%</h1>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <hr class="preview-hr">
+                            <div class="row gy-4">
+                                <div class="col-sm-2">
+                                    
+                                </div>
+                                <div class="col-sm-4">
+                                    <center>
+                                        <h4>Fecha de compra:</h4>
+                                        <p class="fw-bold text-azure fs-17px">{{datoCertificado.fecha_alta}}</p>
+                                    </center>
+                                </div>
+                                <div class="col-sm-4">
+                                    <center>
+                                        <h4>Fecha de vigencia:</h4>
+                                        <p class="fw-bold text-azure fs-17px">{{datoCertificado.vigencia}}</p>
+                                    </center>
+                                </div>
+                                <div class="col-sm-2">
+                                    
+                                </div>
+                                
+                            </div>
+                            <hr class="preview-hr">
+                            <span class="preview-title-lg overline-title text-pink">Selección de los servicios a canjear</span>
+                            <div class="row gy-4">
+                                <div class="col-sm-6">
+                                    <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                                        <thead>
+                                            <tr class="nk-tb-item nk-tb-head">
+                                                <th class="nk-tb-col nk-tb-col-check">
+                                                    
+                                                </th>
+                                                <th class="nk-tb-col"><span class="sub-text">Código</span></th>
+                                                <th class="nk-tb-col tb-col-mb"><span class="sub-text">Nombre</span></th>
+                                                <th class="nk-tb-col tb-col-md"><span class="sub-text">Precio</span></th>
+                                                <th class="nk-tb-col tb-col-lg"><span class="sub-text">Descripción</span></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% if vieneDeCita %}
+                                            {% for servicio, estatus, disponibleCita in listaZipeadaServicios %}
+                                            <tr class="nk-tb-item">
+                                                <td class="nk-tb-col nk-tb-col-check">
+                                                    <div class="custom-control custom-control-sm custom-checkbox notext">
+                                                        {% if disponibleCita == "si" %}
+                                                            <input type="checkbox" class="custom-control-input" id="checkboxServicio{{servicio.0}}" name="checkboxServicio{{servicio.0}}"  onclick="agregarServicio{{servicio.0}}('{{servicio.0}}')">
+                                                            <label class="custom-control-label" for="checkboxServicio{{servicio.0}}"></label>
+                                                        {% else %}
+                                                        <input type="checkbox" class="custom-control-input" id="checkboxServicio{{servicio.0}}" name="checkboxServicio{{servicio.0}}"  onclick="agregarServicio{{servicio.0}}('{{servicio.0}}')" disabled>
+                                                        <label class="custom-control-label" for="checkboxServicio{{servicio.0}}"></label>
+                                                        {% endif %}
+                                                        
+                                                    </div>
+                                                </td>
+                                                <td class="nk-tb-col">
+                                                    <div class="user-card">
+                                                        <div class="user-info">
+                                                            <span class="badge badge-dark">{{servicio.1}}</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="nk-tb-col">
+                                                    <div class="user-card">
+                                                        <div class="user-info">
+                                                            <span class="fw-bold text-dark">{{servicio.2}}</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="nk-tb-col">
+                                                    <div class="user-card">
+                                                        <div class="user-info">
+                                                            <span class="fw-bold text-dark">$<span class="text-teal">{{servicio.3}}</span> MXN</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="nk-tb-col">
+                                                    <div class="user-card">
+                                                        <div class="user-info">
+                                                            <span class="tb-lead"> 
+                                                                <button type="button" class="btn btn-sm btn-danger" data-toggle="popover" 
+                                                                title="Descripción" 
+                                                                data-content="{{servicio.4}}">
+                                                                <span><em class="icon ni ni-eye"></em></span>
+                                                                </button>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                
+                                            </tr><!-- .nk-tb-item  -->
+                                            {% endfor %}
+                                            {% else %}
+                                            {% for servicio, estatus in listaZipeadaServicios %}
+                                            <tr class="nk-tb-item">
+                                                <td class="nk-tb-col nk-tb-col-check">
+                                                    <div class="custom-control custom-control-sm custom-checkbox notext">
+                                                        <input type="checkbox" class="custom-control-input" id="checkboxServicio{{servicio.0}}" name="checkboxServicio{{servicio.0}}"  onclick="agregarServicio{{servicio.0}}('{{servicio.0}}')">
+                                                        <label class="custom-control-label" for="checkboxServicio{{servicio.0}}"></label>
+                                                    </div>
+                                                </td>
+                                                <td class="nk-tb-col">
+                                                    <div class="user-card">
+                                                        <div class="user-info">
+                                                            <span class="badge badge-dark">{{servicio.1}}</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="nk-tb-col">
+                                                    <div class="user-card">
+                                                        <div class="user-info">
+                                                            <span class="fw-bold text-dark">{{servicio.2}}</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="nk-tb-col">
+                                                    <div class="user-card">
+                                                        <div class="user-info">
+                                                            <span class="fw-bold text-dark">$<span class="text-teal">{{servicio.3}}</span> MXN</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="nk-tb-col">
+                                                    <div class="user-card">
+                                                        <div class="user-info">
+                                                            <span class="tb-lead"> 
+                                                                <button type="button" class="btn btn-sm btn-danger" data-toggle="popover" 
+                                                                title="Descripción" 
+                                                                data-content="{{servicio.4}}">
+                                                                <span><em class="icon ni ni-eye"></em></span>
+                                                                </button>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                
+                                            </tr><!-- .nk-tb-item  -->
+                                            {% endfor %}
+                                            {% endif %}
+                                            
+                                            
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-sm-6">
+                                    <center>
+                                        
+                                        <h3>Precio de certificado</h3>
+                                        <p class="fw-bold text-dark fs-22px">Total</p>
+                                        <p class="fw-bold text-dark fs-22px"><span><input type="text" value="${{datoCertificado.monto_total_pagar}} MXN" readonly style="text-align: center !important; border:none !important;"></span></p>
+                                        <hr class="preview-hr">    
+                                        <h3 class="text-pink">Servicios canjeados previamente</h3>
+                                        <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                                            <thead>
+                                                <tr class="nk-tb-item nk-tb-head">
+                                                    <th class="nk-tb-col"><span class="sub-text">Código</span></th>
+                                                    <th class="nk-tb-col tb-col-mb"><span class="sub-text">Nombre</span></th>
+                                                    <th class="nk-tb-col tb-col-md"><span class="sub-text">Precio</span></th>
+                                                    <th class="nk-tb-col tb-col-lg"><span class="sub-text">Descripción</span></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for servicio, estatus in listaZipeadaServiciosCanjeados %}
+                                                <tr class="nk-tb-item">
+                                                    <td class="nk-tb-col">
+                                                        <div class="user-card">
+                                                            <div class="user-info">
+                                                                <span class="badge badge-dark">{{servicio.1}}</span>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="nk-tb-col">
+                                                        <div class="user-card">
+                                                            <div class="user-info">
+                                                                <span class="fw-bold text-dark">{{servicio.2}}</span>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="nk-tb-col">
+                                                        <div class="user-card">
+                                                            <div class="user-info">
+                                                                <span class="fw-bold text-dark">$<span class="text-teal">{{servicio.3}}</span> MXN</span>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="nk-tb-col">
+                                                        <div class="user-card">
+                                                            <div class="user-info">
+                                                                <span class="tb-lead"> 
+                                                                    <button type="button" class="btn btn-sm btn-danger" data-toggle="popover" 
+                                                                    title="Descripción" 
+                                                                    data-content="{{servicio.4}}">
+                                                                    <span><em class="icon ni ni-eye"></em></span>
+                                                                    </button>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    
+                                                </tr><!-- .nk-tb-item  -->
+                                                {% endfor %}
+                                                
+                                                
+                                            </tbody>
+                                        </table>
+                                        
+                                        
+                                    </center>
+                                </div>
+                                
+                                
+                            </div>
+                            <br>
+                            <input type="hidden" name="idCertificadoACanjear" value="{{datoCertificado.id_certificado}}">
+                            <button type="submit" class="btn btn-dim btn-primary" id="botonCanjearCertificado">Canjear Certificado</button>
+                        </form>
+                    </div>
+                </div>
+            </div><!-- .card-preview -->
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    var contadorCkeckbox = 0; //Contador
+
+    var botonVenderCertificado = document.getElementById("botonCanjearCertificado");
+    botonVenderCertificado.disabled = true;
+
+    {% for servicio in arregloServiciosTabla %}
+    function agregarServicio{{servicio.0}}(idServicio){
+        var id_servicio = idServicio;
+        
+        
+        
+        var nameCheckbox = "checkboxServicio"+id_servicio.toString()
+        var checkbox = document.getElementById(nameCheckbox);
+
+      
+        //Si chequea el chekbox
+        if (checkbox.checked==true){
+            contadorCkeckbox = contadorCkeckbox + 1;
+            botonVenderCertificado.disabled = false;
+        }
+        else{
+            contadorCkeckbox = contadorCkeckbox - 1;
+            if(contadorCkeckbox == 0){
+                botonVenderCertificado.disabled = true;
+            }
+        }
+
+    }
+    {% endfor %}
+
+</script>
+    
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<script>
+
+    {% if servicioAgregado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{servicioAgregado}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    {% if servicioNoAgregado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'error',
+            title: 'Ups..!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{servicioNoAgregado}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    window.onload = function(){
+      
+        var divProveedor = document.getElementById('divProveedor');
+        var divProveedor1 = document.getElementById('divProveedor1');
+
+        //Divs para mostrar dependiendo del select
+        var divVenta = document.getElementById('divVenta');
+        var divRenta = document.getElementById('divRenta');
+        var divGasto = document.getElementById('divGasto');
+        var divInventario = document.getElementById('divInventario');
+        var productoGasto = document.getElementById('productoGasto');
+        divVenta.style.display = "block";
+        divRenta.style.display = "none";
+        divGasto.style.display = "none";
+        divInventario.style.display = "block";
+        productoGasto.style.display = "none";
+
+        
+        
+        
+      
+
+     
+        divProveedor.style.display = "none";
+        divProveedor1.style.display = "block";
+
+        var checkbox = document.getElementById('checkbox');
+        checkbox.addEventListener("change", validarCheckBox, false);
+
+        function validarCheckBox(){
+           
+            if(checkbox.checked){
+             
+                divProveedor.style.display = "block";
+                
+                divProveedor1.style.display = "none";
+               
+            }else{
+              
+                divProveedor.style.display = "none";
+            
+                divProveedor1.style.display = "block";
+                
+            }
+        }
+
+        window.onload= mueveReloj ();
+
+
+    }
+
+    function cambiarTipo(){
+        var cod = document.getElementById("selectTipoProducto").value;
+        
+        if(cod == "venta"){
+            divVenta.style.display = "block";
+            divRenta.style.display = "none";
+            divGasto.style.display = "none";
+            divInventario.style.display = "block";
+            productoGasto.style.display = "none";
+        }else if(cod == "renta"){
+            divVenta.style.display = "none";
+            divRenta.style.display = "block";
+            divGasto.style.display = "none";
+            divInventario.style.display = "none";
+            productoGasto.style.display = "none";
+        }else if(cod == "gasto"){
+            divVenta.style.display = "none";
+            divRenta.style.display = "none";
+            divGasto.style.display = "block";
+            divInventario.style.display = "block";
+            productoGasto.style.display = "block";
+        }
+    }
+</script>
+{% endblock %}

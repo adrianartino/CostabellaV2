@@ -1,0 +1,479 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Editar Empleado | Costabella
+{% endblock %}
+
+{% block estilos %}
+
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block">
+            <div class="card">
+                <div class="card-aside-wrap">
+                    <div class="card-inner card-inner-lg">
+                        <div class="nk-block-head nk-block-head-lg">
+                            <div class="nk-block-between">
+                                <div class="nk-block-head-content">
+                                    <h4 class="nk-block-title">Información Personal y Laboral.</h4>
+                                    <div class="nk-block-des">
+                                        <p>Información personal y laboral del empleado.</p>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div><!-- .nk-block-head -->
+                        <div class="nk-block animate__animated animate__fadeIn">
+                            <div class="nk-data data-list">
+                                <div class="data-head">
+                                    <h6 class="overline-title">Información Personal</h6>
+                                </div>
+                                <div class="data-item" data-toggle="modal" data-target="#profile-edit">
+                                    <div class="data-col">
+                                        <span class="data-label">Editar información personal</span>
+                                        <span class="data-value">Nombre actual: {{nombres}}</span>
+                                    </div>
+                                    <div class="data-col data-col-end"><span class="data-more"><em class="icon ni ni-forward-ios"></em></span></div>
+                                </div><!-- data-item -->
+                                
+                            </div><!-- data-list -->
+                            
+                            <div class="nk-data data-list" data-toggle="modal" data-target="#infoLaboral">
+                                <div class="data-head">
+                                    <h6 class="overline-title">Información laboral</h6>
+                                </div>
+                                <div class="data-item">
+                                    <div class="data-col">
+                                        <span class="data-label">Editar información laboral</span>
+                                        <span class="data-value">Puesto actual: {{puesto}}</span>
+                                    </div>
+                                    <div class="data-col data-col-end"><span class="data-more"><em class="icon ni ni-forward-ios"></em></span></div>
+                                </div><!-- data-item -->
+                                
+                            </div><!-- data-list -->
+
+                            <div class="nk-data data-list">
+                                <div class="data-head">
+                                    <h6 class="overline-title">Estado de contratación</h6>
+                                </div>
+                                <div class="data-item">
+                                    <div class="data-col"> 
+                                        <span class="data-label">Fecha Alta en el sistema: <span class="badge badge-success" >{{fecha_alta}}</span></span>
+                                        {% if fecha_baja == None %}
+                                        
+                                        {% else %}
+                                        <span class="data-label">Fecha Baja en el sistema: <span class="badge badge-danger" >{{fecha_baja}}</span> </span>
+                                        {% endif %}
+                                        
+                                    </div>
+                                                                      
+                                </div><!-- data-item -->
+                                <div class="data-item">
+                                    <div class="data-col"> 
+                                        {% if activo2 %}
+                                        <span class="data-label">
+                                            Estado de contratación: <span class="badge badge-success" >Activo</span>
+                                        </span>
+                                        {% else %}
+                                        <span class="data-label">
+                                            Estado de contratación: <span class="badge badge-danger" >Inactivo</span>
+                                        </span>
+                                        {% endif %}
+                                     
+                                        
+                                    </div>
+                                                                      
+                                </div><!-- data-item -->
+                                <div class="data-item">
+
+                                    <div class="data-col"> 
+                                        
+                                        <span class="data-label">
+                                            {% if activo %}
+                                            <a href="#" data-toggle="modal" data-target="#darDeBaja" class="btn btn-danger">Dar de baja del sistema</a>
+                                            {% else %}
+                                            <a href="#" data-toggle="modal" data-target="#darDeAlta" class="btn btn-success">Dar de alta al sistema</a>
+                                            {% endif %}
+                                        </span>
+                                        
+                                    </div>
+                                                                      
+                                </div><!-- data-item -->
+                                
+                                
+                            </div><!-- data-list -->
+                        </div><!-- .nk-block -->
+                    </div>
+                    <div class="card-aside card-aside-left user-aside toggle-slide toggle-slide-left toggle-break-lg" data-content="userAside" data-toggle-screen="lg" data-toggle-overlay="true">
+                        <div class="card-inner-group" data-simplebar>
+                            <div class="card-inner">
+                                <div class="user-card">
+                                    <div class="user-avatar bg-primary">
+                                        <span>{{letrasEmpleado}}</span>
+                                    </div>
+                                    <div class="user-info">
+                                        <span class="lead-text">{{nombres}} {{apellidoPaterno}} {{apellidoMaterno}}</span>
+                                        <span class="sub-text">Nombre usuario: {{nombreUsuario}}</span>
+                                    </div>
+                                    
+                                </div><!-- .user-card -->
+                            </div><!-- .card-inner -->
+                            <div class="card-inner">
+                                <div class="user-account-info py-0">
+                                    <h6 class="overline-title-alt">Balance de ventas</h6>
+                                    <div class="user-balance">$ {{totalVentas}} <small class="currency currency-btc">MXN</small></div>
+                                    <div class="user-balance-sub"><span>En {{contadorVentas}} ventas realizadas</span></div>
+                                </div>
+                            </div><!-- .card-inner -->
+                            <div class="card-inner p-0">
+                                <ul class="link-list-menu ">
+                                        <form action="/editarEmpleado/" method="POST" id="formActualizar">{% csrf_token %}
+                                            <input type="hidden" value="{{idEmpleadoEditar3}}" name="idEmpleadoEditar">
+                                            <div class="data-head" style="background-color:#95DAC1!important;">
+                                                <h6 class="overline-title"><button class="btn btn-md btn-primary" style="background-color: #95DAC1!important; border: none !important;"><em class="icon ni ni-user-fill-c"></em><span>Información Personal</span></button></h6>
+                                            </div>
+                                            
+                                        </form>
+                                        <br>
+                                        <form action="/editarConfiguracionEmpleado/" method="POST" id="formConfig">{% csrf_token %}
+                                            <input type="hidden" value="{{idEmpleadoEditar4}}" name="idEmpleadoConfigurar">
+                                            <div class="data-head" style="background-color:#f56d91!important;">
+                                                <h6 class="overline-title"><button class="btn btn-md btn-primary"><em class="icon ni ni-lock-alt-fill"></em><span>Configuración de acceso</span></button></h6>
+                                            </div>
+                                            
+                                        </form>
+                                        <br>
+                                        <form action="/informeEmpleado/" method="POST" id="formConfig">{% csrf_token %}
+                                                <input type="hidden" value="{{idEmpleadoEditar4}}" name="idEmpleadoInforme">
+                                                <div class="data-head" style="background-color:#f56d91!important;">
+                                                    <h6 class="overline-title"><button class="btn btn-md btn-primary"><em class="icon ni ni-file"></em><span>Informe de empleado</span></button></h6>
+                                                </div>
+                                                
+                                        </form>
+                                    
+                                    
+                                </ul>
+                            </div><!-- .card-inner -->
+                        </div><!-- .card-inner-group -->
+                    </div><!-- card-aside -->
+                </div><!-- .card-aside-wrap -->
+            </div><!-- .card -->
+        </div><!-- .nk-block -->
+    </div>
+</div>
+
+<!-- Modal de información personal -->
+<div class="modal fade" tabindex="-1" role="dialog" id="profile-edit">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center fuenteTitulo">EDITAR INFORMACIÓN PERSONAL</h3>
+                <center>
+                    <img src="{% static 'images/accesos/personal.png' %} " alt="personal">
+                </center>
+                
+                <ul class="nk-nav nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#personal">Personal</a>
+                    </li>
+                   
+                </ul><!-- .nav-tabs -->
+                <div class="tab-content">
+                    
+                    <form action="/actInfoPersonal/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <input type="hidden" value="{{idEmpleadoEditar2}}" name="idActualizado">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="form-label" for="full-name">Nombres</label>
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-left">
+                                                <em class="icon ni ni-user"></em>
+                                            </div>
+                                            <input type="text" class="form-control form-control-lg" id="full-name" value="{{nombres}}" maxlength="39" placeholder="Ingresar Nombres" name="nombreActualizado" required>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="form-label" for="display-name">Apellido Paterno</label>
+                                        <input type="text" class="form-control form-control-lg" id="display-name" value="{{apellidoPaterno}}" maxlength="20" placeholder="Ingresar apellido Paterno" name="apellidoPatActualizado" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="form-label" for="phone-no">Apellido Materno</label>
+                                        <input type="text" class="form-control form-control-lg" id="display-name" value="{{apellidoMaterno}}" maxlength="20" placeholder="Ingresar apellido Materno" name="apellidoMatActualizado" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label" for="phone-no">Teléfono</label>
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-left">
+                                                <em class="icon ni ni-call"></em>
+                                            </div>
+                                            <input type="text" class="form-control form-control-lg" id="phone-no" value="{{telefono}}" maxlength="10" placeholder="Ingesar teléfono" name="telefonoActualizado" required>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12">
+                                    <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                        <li>
+                                            <button type="submit" class="btn btn-lg btn-primary">Actualizar información</button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            
+                        </div>
+                    </div><!-- .tab-pane -->
+                </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+
+
+<!-- Modal de informacion laboral -->
+<div class="modal fade" tabindex="-1" role="dialog" id="infoLaboral">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center fuenteTitulo">EDITAR INFORMACIÓN LABORAL</h3>
+                <center>
+                    <img src="{% static 'images/accesos/laboral.png' %} " alt="laboral">
+                </center>
+                <ul class="nk-nav nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#personal">Laboral</a>
+                    </li>
+                   
+                </ul><!-- .nav-tabs -->
+                <div class="tab-content">
+                    <form action="/actInfoLaboral/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                            <input type="hidden" value="{{idEmpleadoEditar2}}" name="idActualizado">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label" for="full-name">Tipo</label>
+                                    <div class="form-control-wrap">
+                                        <div class="form-control-select">
+                                            <select class="form-control" id="default-06" name="tipoUsuario">
+                                                {% if tipo ==  "Administrador" %}
+                                                <option value="Administrador" selected>Administrador</option>
+                                                <option value="Empleado">Empleado</option>
+                                                {% elif tipo ==  "Empleado" %}
+                                                <option value="Empleado" selected>Empleado</option>
+                                                <option value="Administrador">Administrador</option>
+                                                {% endif %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label" for="display-name">Puesto</label>
+                                    <div class="form-control-wrap">
+                                        <div class="form-control-select">
+                                            <select class="form-control" id="default-06" name="puestoUsuario">
+                                                {% if puesto ==  "Cajera" %}
+                                                <option value="Cajera" selected>Cajera</option>
+                                                <option value="Encargada">Encargada</option>
+                                                <option value="Subdirectora">Subdirectora</option>
+                                                <option value="Directora">Directora</option>
+
+                                                {% elif puesto ==  "Encargada" %}
+                                                <option value="Cajera">Cajera</option>
+                                                <option value="Encargada" selected>Encargada</option>
+                                                <option value="Subdirectora">Subdirectora</option>
+                                                <option value="Directora">Directora</option>
+
+                                                {% elif puesto ==  "Subdirectora" %}
+                                                <option value="Cajera">Cajera</option>
+                                                <option value="Encargada">Encargada</option>
+                                                <option value="Subdirectora"selected>Subdirectora</option>
+                                                <option value="Directora" >Directora</option>
+
+                                                {% elif puesto ==  "Directora" %}
+                                                <option value="Cajera">Cajera</option>
+                                                <option value="Encargada">Encargada</option>
+                                                <option value="Subdirectora">Subdirectora</option>
+                                                <option value="Directora" selected>Directora</option>
+                                                {% endif %}
+                                                
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label" for="phone-no">Sucursal</label>
+                                    <div class="form-control-wrap">
+                                        <div class="form-control-select">
+                                            <select class="form-control" id="default-06" name="idSucursal">
+                                                {% if sucursal ==  "Todas" %}
+                                                <option value="{{sucursal}}">Todas las sucursales</option>
+                                                {% for sucTotal in listaSucursales %}
+                                                <option value="{{sucTotal.0}}">{{sucTotal.1}}</option>
+                                                {% endfor %}
+                                                {% else %}
+                                                <option value="Todas">Todas las sucursales</option>
+                                                <option value="{{idsucursal}}" selected>{{sucursal}}</option>
+                                                {% for sucFalt in listaSucursalesFaltantes %}
+                                                <option value="{{sucFalt.0}}">{{sucFalt.1}}</option>
+                                                {% endfor %}
+
+                                                {% endif %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            
+                            <div class="col-12">
+                                <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                    <li>
+                                        <button type="submit" class="btn btn-lg btn-primary">Actualizar información</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div><!-- .tab-pane -->
+                    </form>
+                    
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+
+<!-- Modal de dar de baja empleado -->
+<div class="modal fade" tabindex="-1" role="dialog" id="darDeBaja">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center fuenteTitulo">BAJA EMPLEADO</h3>
+                <center>
+                    <img src="{% static 'images/accesos/bajaempleado.png' %} " alt="personal">
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/darBajaEmpleado/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <input type="hidden" value="{{idEmpleadoEditar2}}" name="idEmpleadoBaja">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <h3 class="title text-center ">Fecha de alta en el sistema</h3>
+                                        <h4 class="text-center">{{fecha_alta}}</h4>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <h3 class="title text-center ">¿Segura que desea dar de baja al empleado del sistema?</h3>
+                                    </div>
+                                </div>
+                                
+                                
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <center>
+                                            <button type="submit"class="btn btn-danger text-center">Dar de baja del sistema</button>
+                                        </center>
+                                    </div>
+                                </div>
+                            
+                        </div>
+                    </div><!-- .tab-pane -->
+                </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+
+<!-- Modal de dar de alta empleado -->
+<div class="modal fade" tabindex="-1" role="dialog" id="darDeAlta">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h5 class="title text-center ">ALTA DE EMPLEADO</h5>
+                <center>
+                    <img src="{% static 'images/accesos/altaEmpleado.png' %} " alt="personal">
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/darAltaEmpleado/" method="POST">{% csrf_token %}
+                        <div class="tab-pane active" id="personal">
+                            <div class="row gy-4">
+                                    <input type="hidden" value="{{idEmpleadoEditar2}}" name="idEmpleadoAlta">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <h3 class="title text-center ">Fecha de baja en el sistema</h3>
+                                            <h4 class="text-center">{{fecha_baja}}</h4>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <h3 class="title text-center ">¿Segura que desea dar de alta al empleado del sistema?</h3>
+                                        </div>
+                                    </div>
+                                    
+                                    
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <center>
+                                                <button type="submit"class="btn btn-success text-center">Dar de alta al sistema</button>
+                                            </center>
+                                        </div>
+                                    </div>
+                                
+                            </div>
+                        </div><!-- .tab-pane -->
+                    </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+
+{% endblock %}
+
+{% block relojJS %}
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+
+        window.onload= mueveReloj ();
+
+        
+    };
+</script>
+{% endblock %}

@@ -1,0 +1,859 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Ver citas | Costabella
+{% endblock %}
+
+{% block estilos %}
+<style>
+    @media screen and (max-width: 320px) {
+        table {
+          display: block!important;
+          overflow-x: auto!important;
+        }
+   }
+</style>
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    <h3 class="nk-block-title page-title color-texto-seleccion">LISTADO DE CITAS <span class="text-dark">en </span>{{nombreSucursalView}}</h3>
+                    <div class="nk-block-des text-soft">
+                        <p>Total de citas por edtado: Citas pendientes - Citas efectuadas y vendidas.</p>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+                <div class="nk-block-head-content">
+                    <div class="toggle-wrap nk-block-tools-toggle">
+                        <a href="#" class="btn btn-icon btn-trigger toggle-expand mr-n1" data-target="more-options"><em class="icon ni ni-more-v"></em></a>
+                        <div class="toggle-expand-content" data-content="more-options">
+                            <ul class="nk-block-tools g-3">
+                                <li>
+                                    <div class="drodown">
+                                        <a href="#" class="dropdown-toggle dropdown-indicator btn btn-outline-light btn-white" data-toggle="dropdown">Filtro tipo de citas</a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <ul class="link-list-opt no-bdr">
+                                                <li style="cursor: pointer!important;"><a onclick="mostrarCorporales()"><span>Pendientes</span></a></li>
+                                                <li style="cursor: pointer!important;"> <a onclick="mostrarFaciales()"><span>Efectuadas y vendidas</span></a></li>
+                                                
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Citas" %}
+                                {% if permiso.agregar == "Si" %}
+                
+                                <li class="nk-block-tools-opt">
+                                    <a href="#" class="btn btn-icon btn-primary d-md-none"><em class="icon ni ni-plus"></em></a>
+                                    <a href="/agendarCita/" class="btn btn-primary d-none d-md-inline-flex"><em class="icon ni ni-plus"></em><span>Agendar Cita</span></a>
+                                </li>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                               
+                               
+
+                            </ul>
+                        </div>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        
+        <!-- Div empleados todos -->
+        <div  id="divServiciosCorporales">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Citas pendientes</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de citas pendientes por brindar a los clientes en el sistema.</p>
+                    </div>
+                
+                </div>
+                
+                
+            </div>
+        
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #277BC0 !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco">Cliente</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Empleado realizó</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Tipo de cita</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Datos Servicio/Tratamiento</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Tiempo máximo de duración</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha pactada</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Hora pactada</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Comentarios</span></th>
+                                
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Citas" %}
+                                {% if permiso.editar == "Si" %}
+                
+                                <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Re agendar </span></th>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Vender</span></th>
+
+                                
+                             
+                                
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for citaPendiente, idCertificado in cistasPendientesZipeada %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{citaPendiente.0}}</span>
+                                </td>
+                               
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-dark">{{citaPendiente.1}}</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="fw-bold text-dark">{{citaPendiente.2}}</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    {% if citaPendiente.3 == "Servicio" %}
+                                    <span class="badge badge-danger">{{citaPendiente.3}}</span>
+                                    {% elif citaPendiente.3 == "SesionTratamiento" %}
+                                    <span class="badge badge-warning">{{citaPendiente.3}}</span>
+                                    {% elif citaPendiente.3 == "PaqueteTratamiento" %}
+                                    <span class="badge badge-primary">{{citaPendiente.3}}</span>
+                                    {% elif citaPendiente.3 == "ServicioCertificado" %}
+                                    <span class="badge badge-primary">Certificado de regalo</span>
+                                    {% endif %}
+                                </td>
+                                <td class="nk-tb-col">
+                                    
+                                    <center>
+                                        <span>
+                                            <span class="fw-bold text-dark">{{citaPendiente.4}}</span>
+                                            <br> <span class="fw-bold text-dark">$ <span class="fw-bold text-teal">{{citaPendiente.5}}</span> MXN.</span>
+                                        </span>
+                                    </center>
+                                    
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <center>
+                                        <span class="fw-bold text-dark"><em class="icon ni ni-clock"></em> {{citaPendiente.8}} Minutos</span>
+                                    </center>
+                                    
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="fw-bold text-pink">{{citaPendiente.6}}</span>
+                                   
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="fw-bold text-azure">{{citaPendiente.7}}</span>
+                                    
+                                </td>
+                                <td class="nk-tb-col">
+                                    <center>
+                                        
+                                    <span><button type="button" class="btn btn-sm btn-gray" data-toggle="popover" data-placement="right" title="Comentarios"
+                                        data-content="{{citaPendiente.9}}"><em class="icon ni ni-notice"></em></button></span>
+                                    </center>
+
+                                </td>
+                                
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Citas" %}
+                                {% if permiso.editar == "Si" %}
+                
+                                <td class="nk-tb-col">
+                                    
+                                    {% if citaPendiente.10 == "sePuedeCambiar" %}
+                                        <center>
+                                            <button type="button" data-toggle="modal" data-target="#editarCita{{citaPendiente.0}}" class="btn btn-icon btn-sm btn-primarypruple"><em class="icon ni ni-calendar-check" ></em></button>
+                                        </center>
+                                    {% else %}
+                                        <span class="fw-bold text-danger" data-toggle="tooltip" data-placement="top" title="La cita solo se puede reagendar 24 horas antes de la misma.">La cita ya no puede cambiarse!  
+                                            <br>
+                                            <button type="button" data-toggle="modal" data-target="#cancelarCita{{citaPendiente.0}}" class="btn btn-icon btn-xs btn-primarypruple">Cancelar / reagendar</button>
+                                        </span>
+                                    {% endif %}
+                                    
+                                    
+                                    
+                                </td>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+
+                                {% if citaPendiente.3 == "ServicioCertificado" %}
+                                    
+                                <td class="nk-tb-col">
+                                    <form action="/verServiciosParaCanjear/" method="POST">{% csrf_token %}
+                                        <input type="hidden" value="{{idCertificado}}" name="idCertificado">
+                                        <input type="hidden" value="{{citaPendiente.0}}" name="viendeDeCita">
+                                        <button type="submit" class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="right" title="Canjear servicios"><em class="icon ni ni-ticket"></em></button>
+                                    </form>
+                                    
+                                </td>
+                                {% else %}
+                                <td class="nk-tb-col">
+                                    <form action="/vistaVenderCita/" method="POST">{% csrf_token %}
+                                        <input type="hidden" name="idCita" value="{{citaPendiente.0}}">
+                                        <center>
+                                            <button type="submit" class="btn btn-icon btn-sm btn-success"><em class="icon ni ni-cart" ></em></button>
+                                        </center>
+                                    </form>
+                                    
+                                </td>
+                                {% endif %}
+
+                                
+                            
+                             
+
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+        <!-- DIV EMPLEADOS ACTIVOS -->
+        <div  id="divServiciosFaciales">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Citas efectuadas y vendidas.</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de citas efectuadas y vendidas en el sistema.</p>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #EF9F9F !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco">Cliente</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Empleado realizó</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Tipo de cita</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Datos Servicio/Tratamiento</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Tiempo máximo de duración</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha pactada</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Hora pactada</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Comentarios</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Venta</span></th>
+                                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Ver detalles</span></th>
+                           
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for citaEfectuada in citasEfectuadas %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{citaEfectuada.0}}</span>
+                                </td>
+                               
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-dark">{{citaEfectuada.1}}</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="fw-bold text-dark">{{citaEfectuada.2}}</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    {% if citaEfectuada.3 == "Servicio" %}
+                                    <span class="badge badge-danger">{{citaEfectuada.3}}</span>
+                                    {% elif citaEfectuada.3 == "SesionTratamiento" %}
+                                    <span class="badge badge-warning">{{citaEfectuada.3}}</span>
+                                    {% elif citaEfectuada.3 == "PaqueteTratamiento" %}
+                                    <span class="badge badge-primary">{{citaEfectuada.3}}</span>
+                                    {% elif citaEfectuada.3 == "ServicioCertificado" %}
+                                    <span class="badge badge-primary">Certificado de regalo</span>
+                                    {% endif %}
+                                </td>
+                                <td class="nk-tb-col">
+                                    <center>
+                                        <span>
+                                            <span class="fw-bold text-dark">{{citaEfectuada.4}}</span>
+                                            <br> <span class="fw-bold text-dark">$ <span class="fw-bold text-teal">{{citaEfectuada.5}}</span> MXN.</span>
+                                        </span>
+                                    </center>
+                                    
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <center>
+                                        <span class="fw-bold text-dark"><em class="icon ni ni-clock"></em> {{citaEfectuada.8}} Minutos</span>
+                                    </center>
+                                    
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="fw-bold text-pink">{{citaEfectuada.6}}</span>
+                                   
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="fw-bold text-azure">{{citaEfectuada.7}}</span>
+                                    
+                                </td>
+                                <td class="nk-tb-col">
+                                    <center>
+                                        
+                                    <span><button type="button" class="btn btn-sm btn-gray" data-toggle="popover" data-placement="right" title="Comentarios"
+                                        data-content="{{citaEfectuada.9}}"><em class="icon ni ni-notice"></em></button></span>
+                                    </center>
+
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+
+                                    {% if citaEfectuada.3 == "ServicioCertificado" %}
+                                    <span class="badge badge-danger">Sin venta</span>
+                                    {% else %}
+                                    <span class="fw-bold text-purple">Venta #{{citaEfectuada.10}}</span>
+                                    <form action="/infoVenta/" method="POST">{% csrf_token %}
+                                        <input type="hidden" name="idVenta" value="{{citaEfectuada.10}}">
+                                        <center>
+                                            <button type="submit" class="btn btn-icon btn-xs btn-success"><em class="icon ni ni-eye" ></em></button>
+                                        </center>
+                                    </form>
+                                    {% endif %}
+                                    
+                                </td>
+                                
+                                <td class="nk-tb-col">
+                                    {% if citaEfectuada.3 == "ServicioCertificado" %}
+                                    <span class="badge badge-danger">Sin info que mostrar</span>
+                                    {% else %}
+                                    <form action="/vistaVenderCita/" method="POST">{% csrf_token %}
+                                        <input type="hidden" name="idCita" value="{{citaEfectuada.0}}">
+                                        <center>
+                                            <button type="submit" class="btn btn-icon btn-sm btn-info"><em class="icon ni ni-eye" ></em></button>
+                                        </center>
+                                    </form>
+                                    {% endif %}
+                                    
+                                </td>
+                            
+                             
+
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+    </div>
+</div>
+
+
+
+
+<!-- Modal para reagendar cita -->
+
+{% for cita in citasPendientesReagendar %}
+<!-- Modal de editar producto -->
+<div class="modal fade" tabindex="-1" role="dialog" id="editarCita{{cita.0}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center ">REAGENDAR CITA</h3>
+                <center>
+                  
+                    <img src="{% static 'images/iconosMenu/citasCalen.png' %} " alt="personal" width="70">
+               
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/reAgendarCita/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <h3 class="title text-center ">Fechas disponibles</h3>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            <input type="hidden" value="{{corporal.id_servicio}}" name="idServicioCorporalEditar">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #24A19C !important; color:white !important">
+                                                <th scope="col">Fecha</th>
+                                                <th scope="col">Hora</th>
+                                                
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row" > 
+                                                    <div class="form-control-wrap">
+                                                        <input type="date" class="form-control" data-date-format="yyyy-mm-dd" placeholder="Elegir fecha a agendar" id="date_picker{{cita.0}}" name="fechaReagendar{{cita.0}}" onchange="cambioFecha{{cita.0}}(this);" required>
+                                                    </div>
+                                                </th>
+                                                <th>
+                                                    <div id="opcionesSelect">
+                                                        <div class="form-control-wrap">
+                                                            <div class="form-control-select">
+                                                                <select class="form-control"  name="horarioCitaReagendada{{cita.0}}">
+                                                                        {% if sinCitasPendientes %}
+                                                                        <option value="09:00 AM">09:00 AM</option>
+                                                                        <option value="10:00 AM">10:00 AM</option>
+                                                                        <option value="11:00 AM">11:00 AM</option>
+                                                                        <option value="12:00 PM">12:00 PM</option>
+                                                                        <option value="13:00 PM">13:00 PM</option>
+                                                                        <option value="14:00 PM">14:00 PM</option>
+                                                                        <option value="15:00 PM">15:00 PM</option>
+                                                                        <option value="16:00 PM">16:00 PM</option>
+                                                                        <option value="17:00 PM">17:00 PM</option>
+                                                                        <option value="18:00 PM">18:00 PM</option>
+                                                                        {% else %}
+                                                                            {% for hora in arregloHoras2 %}
+                                                                            <option value="{{hora}}">{{hora}}</option>
+                                                                            {% endfor %}
+                                                                        {% endif %}
+                                                                    
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </th>
+                                                
+                                        
+                                              
+                                             
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" value="{{cita.0}}" name="idCitaReagendar">
+                        <div class="row gy-4">
+                            <div class="col-12">
+                                <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                    <li>
+                                        <button type="submit" class="btn btn-lg btn-primary">Re Agendar Cita</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+
+                    </div><!-- .tab-pane -->
+                    </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+<!-- Modal para reagendar cita -->
+
+{% for cita in citasPendientesReagendar3 %}
+<!-- Modal de editar producto -->
+<div class="modal fade" tabindex="-1" role="dialog" id="cancelarCita{{cita.0}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center ">CANCELAR O REAGENDAR CITA</h3>
+                <center>
+                  
+                    <img src="{% static 'images/iconosMenu/cancel.png' %} " alt="personal" width="70">
+               
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/reAgendarCancelarCita/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                            <div class="col-md-12">
+                                <div class="custom-switch ">
+                                    <center>
+                                        <input type="checkbox" class="custom-control-input" id="customSwitch{{cita.0}}" checked onclick="checarCheckbox{{cita.0}}()" name="checkBoxCancelacion{{cita.0}}">
+                                        <label class="custom-control-label fs-20px fw-bold" for="customSwitch{{cita.0}}">Cancelar cita?</label>
+                                        <br>
+                                        <br>
+
+                                        <p class="fw-bold text-dark"><span id="spanCosto{{cita.0}}">Costo de cancelación</span>: $ <span class="fw-bold text-danger">200.00</span><small>Mxn.</small></p>
+
+                                    </center>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row gy-4" id="agendarDeNuevo{{cita.0}}">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <h3 class="title text-center ">Fechas disponibles</h3>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #24A19C !important; color:white !important">
+                                                <th scope="col">Fecha</th>
+                                                <th scope="col">Hora</th>
+                                                
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row" > 
+                                                    <div class="form-control-wrap">
+                                                        <input type="date" class="form-control" data-date-format="yyyy-mm-dd" placeholder="Elegir fecha a agendar" id="date_pickerCancel{{cita.0}}" name="fechaReagendar{{cita.0}}" onchange="cambioFechaCancelar{{cita.0}}(this);">
+                                                    </div>
+                                                </th>
+                                                <th>
+                                                    <div id="opcionesSelect2">
+                                                        <div class="form-control-wrap">
+                                                            <div class="form-control-select">
+                                                                <select class="form-control"  name="horarioCitaCancelada">
+                                                                    {% for hora in arregloHoras2 %}
+                                                                    <option value="{{hora}}">{{hora}}</option>
+                                                                    {% endfor %}
+                                                                    
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </th>
+                                                
+                                        
+                                              
+                                             
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row gy-4" >
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <div class="form-control-wrap " id="formaPago">
+                                       
+                                        <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Forma de pago:</span>
+                                        <div class="form-control-select">
+                                            <select class="form-control" id="selectTipoPago{{cita.0}}" name="tipoPago" onchange="cambioTipoPago{{cita.0}}()">
+                                                <option value="Efectivo">Efectivo</option>
+                                                <option value="Tarjeta">Tarjeta</option>
+                                                <option value="Transferencia">Transferencia</option>
+                                            </select>
+                                        </div>
+                                        <br>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <div class="form-control-wrap" id="cantidadEfectivo{{cita.0}}">
+                                        <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Cantidad:</span>
+                                        <input type="number"class="form-control"   placeholder="Ingresar efectivo" maxlength="4" max="10000" min="0" value="0" step="1" id="efectivoPagoCliente{{cita.0}}" onkeyup="calcularFeria{{cita.0}}()"> 
+                                    </div>
+                                    <div class="form-control-wrap " id="divSelectTipoTarjeta{{cita.0}}">
+                                   
+                                        <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Tipo tarjeta:</span>
+                                        <div class="form-control-select">
+                                            <select class="form-control" id="default-06" name="tipoTarjeta">
+                                                <option value="Credito">Crédito</option>
+                                                <option value="Debito">Débito</option>
+                                            </select>
+                                        </div>
+                               
+                                    </div>
+                                    <div class="form-control-wrap " id="divReferenciaBancaria{{cita.0}}">
+                                   
+                                        <div class="form-group">
+                                            <label class="form-label" for="default-01">Referencia bancaria:</label>
+                                            <div class="form-control-wrap">
+                                                
+                                                <input type="text"class="form-control" placeholder="Ingresar Clave" maxlength="50" name="referenciaBancaria"> 
+                                            </div>
+                                        </div>
+                               
+                                    </div>
+                                    <div class="form-control-wrap " id="divClaveRastreoTransferencia{{cita.0}}">
+                                   
+                                        <div class="form-group">
+                                            <label class="form-label" for="default-01">Clave de rastreo Transferencia:</label>
+                                            <div class="form-control-wrap">
+                                                
+                                                <input type="text"class="form-control" placeholder="Ingresar Clave" maxlength="50" name="claveRastreoTransferencia"> 
+                                            </div>
+                                        </div>
+                               
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <div class="form-control-wrap " >
+                                   
+                                        <div class="form-group">
+                                            <label class="fw-24px fw-bold text-pink">TOTAL A PAGAR:</label>
+                                            <h3 class="fw-bold text-dark">$ <span class="text-teal">200</span> <small>Mxn.</small></h3>
+
+                                            <h4 id="cambio{{cita.0}}">Cambio: $<span id="spanCambioChico{{cita.0}}">0</span><small>Mxn.</small></h4>
+                                        </div>
+                               
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <input type="hidden" value="{{cita.0}}" name="idCitaReagendarCancelar">
+                        <div class="row gy-4">
+                            <div class="col-12">
+                                <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                    <li>
+                                        <button type="submit" class="btn btn-lg btn-primary">Re Agendar / Cancelar Cita</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+
+                    </div><!-- .tab-pane -->
+                    </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+
+<script>
+
+    
+    {% for citaReagendar in citasPendientesReagendar2 %}
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0');
+        var yyyy = today.getFullYear();
+
+        today = yyyy + '-' + mm + '-' + dd;
+        $('#date_picker{{citaReagendar.0}}').attr('value',today);
+        $('#date_picker{{citaReagendar.0}}').attr('min',today);
+        $('#date_picker{{citaReagendar.0}}').attr('max',"{{fechaLimite}}");
+
+
+        function cambioFecha{{citaReagendar.0}}(valorInput) {
+            var value = valorInput.value;  
+            {% for fecha, listaHoras in listaZipFechaHora %}
+                var fecha = "{{fecha}}";
+                var horasCompletas = "";
+
+                if (value == fecha){
+                    {% for lista in listaHoras %}
+                    var horita = "{{lista}}";
+                    horasCompletas = horasCompletas + "<option value='"+horita.toString()+"'>"+horita.toString()+"</option>"
+                    
+                    {% endfor %}
+                    console.log(horasCompletas);
+                    var codigoHtmlAgregar = "<div class='form-control-wrap'><div class='form-control-select'><select class='form-control'  name='horarioCitaReagendada'>"+horasCompletas.toString()+"</select></div></div>"
+
+                    document.getElementById("opcionesSelect").innerHTML = "";
+                    document.getElementById("opcionesSelect").innerHTML = codigoHtmlAgregar.toString();
+                }
+                
+            {% endfor %}
+        }
+    {% endfor %}
+</script>
+
+<script>
+
+    {% for citaReagendar in citasPendientesReagendar4 %}
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0');
+        var yyyy = today.getFullYear();
+
+        today = yyyy + '-' + mm + '-' + dd;
+        $('#date_pickerCancel{{citaReagendar.0}}').attr('value',today);
+        $('#date_pickerCancel{{citaReagendar.0}}').attr('min',today);
+        $('#date_pickerCancel{{citaReagendar.0}}').attr('max',"{{fechaLimite}}");
+
+
+        function cambioFechaCancelar{{citaReagendar.0}}(valorInput) {
+            var value = valorInput.value; 
+             
+            {% for fecha, listaHoras in listaZipFechaHora2 %}
+                var fecha = "{{fecha}}";
+                
+                var horasCompletas = "";
+
+                if (value == fecha){
+                    {% for lista in listaHoras %}
+                    var horita = "{{lista}}";
+                    horasCompletas = horasCompletas + "<option value='"+horita.toString()+"'>"+horita.toString()+"</option>"
+                    
+                    {% endfor %}
+                    console.log(horasCompletas);
+                    var codigoHtmlAgregar = "<div class='form-control-wrap'><div class='form-control-select'><select class='form-control'  name='horarioCitaCancelada'>"+horasCompletas.toString()+"</select></div></div>"
+
+                    document.getElementById("opcionesSelect2").innerHTML = "";
+                    document.getElementById("opcionesSelect2").innerHTML = codigoHtmlAgregar.toString();
+                }
+                
+            {% endfor %}
+        }
+    {% endfor %}
+</script>
+
+
+
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+        var divServiciosCorporales = document.getElementById("divServiciosCorporales");
+        var divServiciosFaciales = document.getElementById("divServiciosFaciales");
+     
+        divServiciosCorporales.style.display = "block";
+        divServiciosFaciales.style.display = "none";
+        window.onload= mueveReloj ();
+     
+      
+
+        
+    };
+
+    
+
+    function mostrarCorporales(){
+        divServiciosCorporales.style.display = "block";
+        divServiciosFaciales.style.display = "none";
+       
+        console.log("Todos los divs");
+    };
+
+    function mostrarFaciales(){
+        divServiciosCorporales.style.display = "none";
+        divServiciosFaciales.style.display = "block";
+        
+        console.log("activos");
+    };
+
+
+
+
+    {% for cita in citasPendientesReagendar5 %}
+        var divCantidadEfectivo{{cita.0}} = document.getElementById('cantidadEfectivo{{cita.0}}');
+        var divSelectTipoTarjeta{{cita.0}} = document.getElementById('divSelectTipoTarjeta{{cita.0}}');
+        var divReferenciaBancaria{{cita.0}} = document.getElementById('divReferenciaBancaria{{cita.0}}');
+        var divClaveRastreoTransferenci{{cita.0}} = document.getElementById('divClaveRastreoTransferencia{{cita.0}}');
+        var spanCosto{{cita.0}} = document.getElementById('spanCosto{{cita.0}}');
+
+        divSelectTipoTarjeta{{cita.0}}.style.display = "none";
+        divReferenciaBancaria{{cita.0}}.style.display = "none";
+        divClaveRastreoTransferencia{{cita.0}}.style.display = "none";
+
+
+
+        function cambioTipoPago{{cita.0}}(){
+            var tipoPagoSeleccionado{{cita.0}} = document.getElementById('selectTipoPago{{cita.0}}').value;
+            var spanCambio{{cita.0}} = document.getElementById('spanCambio{{cita.0}}');
+            if (tipoPagoSeleccionado{{cita.0}} == 'Efectivo'){
+                divCantidadEfectivo{{cita.0}}.style.display = "block";
+                divSelectTipoTarjeta{{cita.0}}.style.display = "none";
+                divReferenciaBancaria{{cita.0}}.style.display = "none";
+                divClaveRastreoTransferencia{{cita.0}}.style.display = "none";
+                spanCambio{{cita.0}}.style.display = "block";
+                
+            }
+            else if(tipoPagoSeleccionado{{cita.0}} == 'Tarjeta'){
+                divCantidadEfectivo{{cita.0}}.style.display = "none";
+                divSelectTipoTarjeta{{cita.0}}.style.display = "block";
+                divReferenciaBancaria{{cita.0}}.style.display = "block";
+                divClaveRastreoTransferencia{{cita.0}}.style.display = "none";
+                spanCambio{{cita.0}}.style.display = "none";
+            }
+            else if(tipoPagoSeleccionado{{cita.0}} == 'Transferencia'){
+                divCantidadEfectivo{{cita.0}}.style.display = "none";
+                divSelectTipoTarjeta{{cita.0}}.style.display = "none";
+                divReferenciaBancaria{{cita.0}}.style.display = "none";
+                
+                divClaveRastreoTransferencia{{cita.0}}.style.display = "block";
+                spanCambio{{cita.0}}.style.display = "none";
+            
+            }
+    
+        }
+
+        var agendarDeNuevo{{cita.0}} = document.getElementById("agendarDeNuevo{{cita.0}}");
+        agendarDeNuevo{{cita.0}}.style.display = "none";
+
+        function checarCheckbox{{cita.0}}(){
+            var checkboxCancelar{{cita.0}} = document.getElementById("customSwitch{{cita.0}}");
+
+            if(checkboxCancelar{{cita.0}}.checked){
+                agendarDeNuevo{{cita.0}}.style.display = "none";
+                spanCosto{{cita.0}}.innerHTML = "Costo de cancelación"
+            }else{
+                agendarDeNuevo{{cita.0}}.style.display = "block";
+                spanCosto{{cita.0}}.innerHTML = "Costo por reagendar"
+            }
+        }
+
+        function calcularFeria{{cita.0}}(){
+            var efectivoPagoCliente{{cita.0}} = document.getElementById("efectivoPagoCliente{{cita.0}}");
+            var spanCambioChico{{cita.0}} = document.getElementById("spanCambioChico{{cita.0}}");
+            var valorInput{{cita.0}} = efectivoPagoCliente{{cita.0}}.value;
+    
+            if (valorInput{{cita.0}} == ""){
+                spanCambioChico{{cita.0}}.innerHTML = "0";
+            }
+            else{
+                var cambio{{cita.0}} = parseFloat(valorInput{{cita.0}}) - 200;
+                spanCambioChico{{cita.0}}.innerHTML = cambio{{cita.0}}.toString();
+            }
+            
+    
+    
+        }
+
+        
+    {% endfor %}
+
+
+    
+
+</script>
+{% endblock %}

@@ -1,0 +1,1813 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Productos | Costabella
+{% endblock %}
+
+{% block estilos %}
+<style>
+    @media screen and (max-width: 320px) {
+        table {
+          display: block!important;
+          overflow-x: auto!important;
+        }
+   }
+</style>
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    <h3 class="nk-block-title page-title color-texto-seleccion">LISTADO DE PRODUCTOS</h3>
+                    <div class="nk-block-des text-soft">
+                        <p>Total de productos: {{contadorProductosVentas}} Productos para venta - {{contadorProductosRentas}} productos para renta - {{contadorProductosGastos}} productos Gasto.</p>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+                <div class="nk-block-head-content">
+                    <div class="toggle-wrap nk-block-tools-toggle">
+                        <a href="#" class="btn btn-icon btn-trigger toggle-expand mr-n1" data-target="more-options"><em class="icon ni ni-more-v"></em></a>
+                        <div class="toggle-expand-content" data-content="more-options">
+                            <ul class="nk-block-tools g-3">
+                                <li>
+                                    <div class="drodown">
+                                        <a href="#" class="dropdown-toggle dropdown-indicator btn btn-outline-light btn-white" data-toggle="dropdown">Filtro tipo de producto</a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <ul class="link-list-opt no-bdr">
+                                                <li style="cursor: pointer!important;"><a onclick="mostrarVenta()"><span>Productos para venta</span></a></li>
+                                                <li style="cursor: pointer!important;"> <a onclick="mostrarRenta()"><span>Productos para renta</span></a></li>
+                                                <li style="cursor: pointer!important;"> <a onclick="mostrarGasto()"><span>Productos gasto</span></a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Productos" %}
+                                {% if permiso.agregar == "Si" %}
+                
+                                <li class="nk-block-tools-opt">
+                                    <a href="#" class="btn btn-icon btn-primary d-md-none"><em class="icon ni ni-plus"></em></a>
+                                    <a href="/altaProductos/" class="btn btn-primary d-none d-md-inline-flex"><em class="icon ni ni-plus"></em><span>Agregar Producto</span></a>
+                                </li>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                              
+                               
+
+                            </ul>
+                        </div>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        
+        <!-- Div empleados todos -->
+        <div class="nk-block nk-block-lg" id="divProductosVentas">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Productos para venta</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de <span class="coloralta">productos para venta</span> en el sistema.</p>
+                    </div>
+                
+                </div>
+                <div>
+                    <button type="button" class="btn btn-icon btn-sm btn-light" 
+                        data-toggle="modal" data-target="#modalExcelInventarioProductosVenta" >
+                        &nbsp;<em class="icon ni ni-view-list-wd text-danger"></em> &nbsp;Inventario costos&nbsp;&nbsp;               
+                    </button>
+                    <button type="button" class="btn btn-icon btn-sm btn-light" 
+                    data-toggle="modal" data-target="#modalExcelInventarioProductosVentaCiclico" >
+                    &nbsp;<em class="icon ni ni-reload text-info"></em> &nbsp;Inventario cíclico&nbsp;&nbsp;               
+                    </button>
+                    <button type="button" class="btn btn-icon btn-sm btn-light" 
+                    data-toggle="modal" data-target="#modalExcelStockBajoProductosVenta" >
+                    &nbsp;<em class="icon ni ni-caret-down-fill text-teal"></em> &nbsp;Reporte Stock Bajo&nbsp;&nbsp;               
+                    </button>
+                    <button type="button" class="btn btn-icon btn-sm btn-light" 
+                    data-toggle="modal" data-target="#modalCostosProductosVenta" >
+                    &nbsp;<em class="icon ni ni-home text-pink"></em> &nbsp;Costos por sucursal&nbsp;&nbsp;               
+                    </button>
+
+                    
+                </div>
+
+                
+            </div>
+        
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #313552 !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Código Producto</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco" >Nombre</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Costo compra</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Margen ganancia</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Costo venta</span></th>
+                                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Existencias</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Stock necesario</span></th>
+                            
+                            
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Descripción</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Imagen</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha Agregado</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Agregado por</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Productos" %}
+                                {% if permiso.editar == "Si" %}
+                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Editar</span></th>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                               
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Productos" %}
+                                {% if permiso.comprar == "Si" %}
+                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Comprar</span></th>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Etiqueta</span></th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for productoVenta, usuario, sucursal, stock in listaProductosVenta %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{productoVenta.id_producto}}</span>
+                                </td>
+                               
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-outline-secondary">{{productoVenta.codigo_producto}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{productoVenta.nombre_producto}}</span>
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <p class="tb-amount text-teal fw-bold">${{productoVenta.costo_compra}} MXN</p>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount"> <span class="badge badge-success text-dark fw-bold">+ {{productoVenta.margen_ganancia_producto}} %</span></span>
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <p class="tb-amount text-orange fw-bold">${{productoVenta.costo_venta}} MXN</p>
+                                </td>
+                          
+                         
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount ">{{productoVenta.cantidad}} unidades</span>
+                                </td>
+                    
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{productoVenta.stock}} unidades</span>
+                                    <div>
+                                        {% if stock == "No se necesitan artículos" %}
+                                        <span class="badge badge-pill badge-info">{{stock}}</span>
+                                        {% elif stock == "Se necesita restock" %}
+                                        <span class="badge badge-pill badge-danger">{{stock}}</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                             
+                                
+                                <td class="nk-tb-col text-center">
+                                    <button type="button" class="btn btn-secondary btn-xs" data-toggle="tooltip" data-placement="right" title="{{productoVenta.descripcion}}">
+                                        <em class="icon ni ni-notice"></em>
+                                      </button>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <center>
+                                        {% if productoVenta.imagen_producto %}
+                                        <img src="{{productoVenta.imagen_producto.url}}" width="40%" alt="lap">
+                                        {% else %}
+                                        <span class="tb-amount">Sin imagen</span>
+                                        {% endif %}
+                                    </center>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{productoVenta.fecha_alta}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-pill badge-outline-primary">{{usuario}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-pill badge-outline-dark">{{sucursal}}</span>
+                                </td>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Productos" %}
+                                {% if permiso.editar == "Si" %}
+                
+                                <td class="nk-tb-col">
+                                    
+                                    <input type="hidden" name="idProductoEditar" value="{{productoVenta.id_producto}}">
+                                    <center>
+                                        <button type="button" data-toggle="modal" data-target="#editarProductoVenta{{productoVenta.id_producto}}" class="btn btn-icon btn-sm btn-primarypruple"><em class="icon ni ni-edit" ></em></button>
+                                    </center>
+                                    
+                                </td>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                                
+
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Productos" %}
+                                {% if permiso.comprar == "Si" %}
+                
+                                <td class="nk-tb-col">
+                                    <input type="hidden" name="idProductoComprar" value="{{productoVenta.id_producto}}">
+                                    <center>
+                                        <button type="button" data-toggle="modal" data-target="#comprarProductoVenta{{productoVenta.id_producto}}" class="btn btn-icon btn-sm btn-success"><em class="icon ni ni-cart" data-toggle="tooltip" data-placement="bottom" title="Clic para comprar y agregar cantidades de este producto."></em></button>
+                                    </center>
+                                
+                                </td>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <form action="/imprimirCodigoBarras/" enctype="multipart/form-data" method="POST">{% csrf_token %}
+                                        <center>
+                                            <input type="hidden" name="codigoProducto" value="{{productoVenta.codigo_producto}}">
+                                            <span>
+                                                <input type="number" max="20" min="1" value="1" name="cantidadEtiquetas">
+                                                <br><br>
+                                                <center>
+                                                    <button type="submit" class="btn btn-icon btn-sm btn-warning"><em class="icon ni ni-printer" data-toggle="tooltip" data-placement="bottom" title="Clic para imprimir codigo de barras de producto."></em></button>
+                                                </center>
+                                            </span>
+                                        </center>
+                                        
+                                        
+                                       
+                                    </form>
+                                
+                                </td>
+                               
+
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+        <!-- DIV EMPLEADOS ACTIVOS -->
+        <div  id="divProductosRentas">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Productos para renta</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de productos <span class="coloralta">para renta</span> en el sistema.</p>
+                    </div>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-icon btn-sm btn-light" 
+                        data-toggle="modal" data-target="#modalExcelInventarioProductosRenta" >
+                        &nbsp;<em class="icon ni ni-view-list-wd text-danger"></em> &nbsp;Inventario costos/rentas&nbsp;&nbsp;               
+                    </button>
+                    <button type="button" class="btn btn-icon btn-sm btn-light" 
+                    data-toggle="modal" data-target="#modalCostosProductosRenta" >
+                    &nbsp;<em class="icon ni ni-home text-pink"></em> &nbsp;Costos por sucursal&nbsp;&nbsp;               
+                    </button>
+                </div>
+            </div>
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #24A19C !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Código Producto</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco" >Nombre</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Costo compra</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Costo de renta</span></th>
+                                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Existencias</span></th>
+                             
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Estado de renta</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Descripción</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Imagen</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha Agregado</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Agregado por</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Productos" %}
+                                {% if permiso.editar == "Si" %}
+                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Editar</span></th>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Etiqueta</span></th>
+                               
+                                
+                               
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for productoRenta, usuario, sucursal,cliente in listaProductosRenta %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge-pill badge-info">{{productoRenta.id_producto}}</span>
+                                </td>
+                               
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-outline-secondary">{{productoRenta.codigo_producto}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{productoRenta.nombre_producto}}</span>
+                                </td>
+                        
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span class="tb-amount">${{productoRenta.costo_de_compra}} MXN</span>
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span class="badge badge-pill badge-info">${{productoRenta.costo_renta}} MXN</span>
+                                </td>
+                          
+                         
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">1 unidad</span>
+                                </td>
+                             
+                                <td class="nk-tb-col">
+                                    {% if productoRenta.estado_renta == "Sin rentar" %}
+                                    <span class="badge badge-pill badge-success">No está en renta</span>
+                                    <div>
+                                        <span class="badge badge-pill badge-success">Por: Sin cliente</span>
+                                    </div>
+                                   
+                                    {% elif productoRenta.estado_renta == "En renta" %}
+                                    <span class="badge badge-pill badge-danger">Rentado</span>
+                                    <div>
+                                        <span class="badge badge-pill badge-danger">Por: {{cliente}}</span>
+                                    </div>
+                                    {% elif productoRenta.estado_renta == "Vendido" %}
+                                    <span class="badge badge-pill badge-danger">Vendido</span>
+
+                                    {% endif %}
+                                </td>
+                                <td class="nk-tb-col text-center">
+                                    <button type="button" class="btn btn-secondary btn-xs" data-toggle="tooltip" data-placement="right" title="{{productoRenta.descripcion}}">
+                                        <em class="icon ni ni-notice"></em>
+                                      </button>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <center>
+                                        {% if productoRenta.imagen_producto %}
+                                        <img src="{{productoRenta.imagen_producto.url}}" width="40%" alt="lap">
+                                        {% else %}
+                                        <span class="tb-amount">Sin imagen</span>
+                                        {% endif %}
+                                    </center>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{productoRenta.fecha_alta}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-pill badge-outline-primary">{{usuario}}</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-pill badge-outline-dark">{{sucursal}}</span>
+                                </td>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Productos" %}
+                                {% if permiso.editar == "Si" %}
+                
+                                <td class="nk-tb-col">
+                                    
+                                    <input type="hidden" name="idProductoEditar" value="{{productoRenta.id_producto}}">
+                                    <center>
+                                        <button type="button" data-toggle="modal" data-target="#editarProductoRenta{{productoRenta.id_producto}}" class="btn btn-icon btn-sm btn-primarypruple"><em class="icon ni ni-edit" ></em></button>
+                                    </center>
+                                    
+                                </td>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <form action="/imprimirCodigoBarras/" enctype="multipart/form-data" method="POST">{% csrf_token %}
+                                        <center>
+                                            <input type="hidden" name="codigoProducto" value="{{productoRenta.codigo_producto}}">
+                                            <span>
+                                                <input type="number" max="20" min="1" value="1" name="cantidadEtiquetas">
+                                                <br><br>
+                                                <center>
+                                                    <button type="submit" class="btn btn-icon btn-sm btn-warning"><em class="icon ni ni-printer" data-toggle="tooltip" data-placement="bottom" title="Clic para imprimir codigo de barras de producto."></em></button>
+                                                </center>
+                                            </span>
+                                        </center>
+                                        
+                                        
+                                       
+                                    </form>
+                                
+                                </td>
+                         
+                                
+                            </tr><!-- .nk-tb-item  -->
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+        <!-- DIV EMPLEADOS INACTIVOS -->
+        <div  id="divProductosGastos">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Productos de gastos</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de productos <span class="colorbaja">de gastos</span> en el sistema.</p>
+                    </div>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-icon btn-sm btn-light" 
+                        data-toggle="modal" data-target="#modalExcelInventarioProductosGasto" >
+                        &nbsp;<em class="icon ni ni-view-list-wd text-danger"></em> &nbsp;Inventario costos&nbsp;&nbsp;               
+                    </button>
+                    <button type="button" class="btn btn-icon btn-sm btn-light" 
+                    data-toggle="modal" data-target="#modalExcelInventarioProductosGastoCiclico" >
+                    &nbsp;<em class="icon ni ni-reload text-info"></em> &nbsp;Inventario cíclico&nbsp;&nbsp;               
+                    </button>
+                    <button type="button" class="btn btn-icon btn-sm btn-light" 
+                    data-toggle="modal" data-target="#modalExcelStockBajoProductosGasto" >
+                    &nbsp;<em class="icon ni ni-caret-down-fill text-teal"></em> &nbsp;Reporte Stock Bajo&nbsp;&nbsp;               
+                    </button>
+                    <button type="button" class="btn btn-icon btn-sm btn-light" 
+                    data-toggle="modal" data-target="#modalCostosProductosGasto" >
+                    &nbsp;<em class="icon ni ni-home text-pink"></em> &nbsp;Costos por sucursal&nbsp;&nbsp;               
+                    </button>
+                </div>
+            </div>
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #6F69AC !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Código Producto</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco" >Nombre</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Costo compra</span></th>
+                                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Existencias</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Stock necesario</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Estado Stock</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Cuantificable</span></th>
+                             
+                               
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Descripción</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Imagen</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha Agregado</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Agregado por</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Productos" %}
+                                {% if permiso.editar == "Si" %}
+                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Editar</span></th>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                               
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Productos" %}
+                                {% if permiso.comprar == "Si" %}
+                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Comprar</span></th>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Etiqueta</span></th>
+                               
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for productoGasto, usuario, sucursal in listaProductosGasto2 %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge-pill badge-info">{{productoGasto.id_producto}}</span>
+                                </td>
+                               
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-outline-secondary">{{productoGasto.codigo_producto}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{productoGasto.nombre_producto}}</span>
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span class="tb-amount">${{productoGasto.costo_compra}} MXN</span>
+                                </td>
+                          
+                         
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{productoGasto.cantidad}} unidades</span>
+                                </td>
+
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{productoGasto.stock}} unidades</span>
+                                </td>
+                             
+                                <td class="nk-tb-col">
+                                    {% if productoGasto.cantidad >  productoGasto.stock %}
+                                    <span class="badge badge-pill badge-success">No se necesitan artículos</span>
+                                    {% elif productoGasto.cantidad <=  productoGasto.stock %}
+                                    <span class="badge badge-pill badge-danger">Se necesitan artículos</span>
+                                    {% endif %}
+                                </td>
+                                <td class="nk-tb-col">
+                                    {% if productoGasto.contenido_cuantificable == "N" %}
+                                    <span class="badge badge-pill badge-warning">No cuantificable</span>
+                                    {% elif productoGasto.contenido_cuantificable == "S" %}
+                                    <span class="badge badge-pill badge-info">Cuantificable</span>
+                                    {% endif %}
+                                </td>
+                                <td class="nk-tb-col text-center">
+                                    <button type="button" class="btn btn-secondary btn-xs" data-toggle="tooltip" data-placement="right" title="{{productoGasto.descripcion}}">
+                                        <em class="icon ni ni-notice"></em>
+                                      </button>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <center>
+                                        {% if productoGasto.imagen_producto %}
+                                        <img src="{{productoGasto.imagen_producto.url}}" width="40%" alt="lap">
+                                        {% else %}
+                                        <span class="tb-amount">Sin imagen</span>
+                                        {% endif %}
+                                    </center>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{productoGasto.fecha_alta}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-pill badge-outline-primary">{{usuario}}</span>
+                                </td>
+                                <td class="nk-tb-col tb-col-lg">
+                                    <span class="badge badge-pill badge-outline-dark">{{sucursal}}</span>
+                                </td>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Productos" %}
+                                {% if permiso.editar == "Si" %}
+                
+                                <td class="nk-tb-col">
+                                    
+                                    <input type="hidden" name="idProductoEditar" value="{{productoGasto.id_producto}}">
+                                    <center>
+                                        <button type="button" data-toggle="modal" data-target="#editarProductoGasto{{productoGasto.id_producto}}"class="btn btn-icon btn-sm btn-primarypruple"><em class="icon ni ni-edit" ></em></button>
+                                    </center>
+                                    
+                                </td>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                               
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Productos" %}
+                                {% if permiso.comprar == "Si" %}
+                
+                                <td class="nk-tb-col">
+                                   
+                                    <input type="hidden" name="idProductoEditar" value="{{productoGasto.id_producto}}">
+                                    <center>
+                                        <button type="button" data-toggle="modal" data-target="#comprarProductoGasto{{productoGasto.id_producto}}" class="btn btn-icon btn-sm btn-success"><em class="icon ni ni-cart" data-toggle="tooltip" data-placement="bottom" title="Clic para comprar y actualizar cantidades de este producto."></em></button>
+                                    </center>
+                              
+                                
+                                </td>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <form action="/imprimirCodigoBarras/" enctype="multipart/form-data" method="POST">{% csrf_token %}
+                                        <center>
+                                            <input type="hidden" name="codigoProducto" value="{{productoGasto.codigo_producto}}">
+                                            <span>
+                                                <input type="number" max="20" min="1" value="1" name="cantidadEtiquetas">
+                                                <br><br>
+                                                <center>
+                                                    <button type="submit" class="btn btn-icon btn-sm btn-warning"><em class="icon ni ni-printer" data-toggle="tooltip" data-placement="bottom" title="Clic para imprimir codigo de barras de producto."></em></button>
+                                                </center>
+                                            </span>
+                                        </center>
+                                        
+                                        
+                                       
+                                    </form>
+                                
+                                </td>
+                               
+                             
+                                
+                            </tr><!-- .nk-tb-item  -->
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+                
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+    </div>
+</div>
+
+
+
+
+<!-- MODAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALSSSS VENTAAASSSSSSSSSS   -->
+
+{% for productoVentaEditar, usuario, sucursal in listaProductosVentaEditar %}
+<!-- Modal de editar producto -->
+<div class="modal fade" tabindex="-1" role="dialog" id="editarProductoVenta{{productoVentaEditar.id_producto}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center ">EDITAR PRODUCTO</h3>
+                <center>
+                    {% if productoVentaEditar.imagen_producto %}
+                    <img src="{{productoVentaEditar.imagen_producto.url}}" width="20%" alt="lap">
+                    {% else %}
+                    <img src="{% static 'images/accesos/editarProducto.png' %} " alt="personal">
+                    {% endif %}
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/actualizarProductoV/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <h3 class="title text-center ">Información del producto</h3>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            <input type="hidden" value="{{productoVentaEditar.id_producto}}" name="idProductoVentaEditar">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #24A19C !important; color:white !important">
+                                                <th scope="col">Id</th>
+                                                <th scope="col">Código</th>
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Cantidad en existencia</th>
+                                                <th scope="col">Costo de compra</th>
+                                                <th scope="col">Margen de ganancia</th>
+                                                <th scope="col">Costo de venta actualizado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row" > <span  class="badge-pill badge-info">{{productoVentaEditar.id_producto}}</span> </th>
+                                                <td><span  class="badge-pill badge-warning">{{productoVentaEditar.codigo_producto}}</span></td>
+                                                <td>{{productoVentaEditar.nombre_producto}}</td>
+                                                <td>{{productoVentaEditar.cantidad}}</td>
+                                                <td> <input  type="number" class="form-control" min="0.00" max="10000.00" step="0.01" placeholder="Ingresar precio de compra"  name="costoGastoActualizado" value="{{productoVentaEditar.costo_compra}}" onkeyup="calcularPrecioVenta{{productoVentaEditar.id_producto}}()" id="costoCompra{{productoVentaEditar.id_producto}}"></td>
+                                                <td><input id="margenCompra{{productoVentaEditar.id_producto}}" type="number" min="0" max="100" step="1" class="form-control" id="default-01" placeholder="Ingresar margen de ganancia" maxlength="3"  name="margenActualizado" value="{{productoVentaEditar.margen_ganancia_producto}}" onkeyup="calcularPrecioVenta{{productoVentaEditar.id_producto}}()"></td>
+                                                <td><input id="inputCostoVenta{{productoVentaEditar.id_producto}}" type="text readonly" value="{{productoVentaEditar.costo_venta}}" style="border: none!important;" name="costoVentaActualizado"></td>
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row gy-4">
+                            <div class="col-12">
+                                <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                    <li>
+                                        <button type="submit" class="btn btn-lg btn-primary">Actualizar producto</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+
+                    </div><!-- .tab-pane -->
+                    </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+{% for productoVentaComprar, usuario, sucursal in listaProductosVentaComprar %}
+<!-- Modal de editar producto -->
+<div class="modal fade" tabindex="-1" role="dialog" id="comprarProductoVenta{{productoVentaComprar.id_producto}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center ">COMPRAR PRODUCTO</h3>
+                <center>
+                    {% if productoVentaComprar.imagen_producto %}
+                    <img src="{{productoVentaComprar.imagen_producto.url}}" width="20%" alt="lap">
+                    {% else %}
+                    <img src="{% static 'images/accesos/editarProducto.png' %} " alt="personal">
+                    {% endif %}
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/actualizarProductoVentaCompra/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <h3 class="title text-center ">Información del producto</h3>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            <input type="hidden" value="{{productoVentaComprar.id_producto}}" name="idProductoVentaComprar">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #24A19C !important; color:white !important">
+                                                <th scope="col">Id</th>
+                                                <th scope="col">Código</th>
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Cantidad actual en existencia</th>
+                                                <th scope="col">Cantidad a comprar</th>
+                                                <th scope="col">Costo de compra guardado <em class="icon ni ni-question" data-toggle="tooltip" data-placement="right" title="Se puede editar el costo de compra, al guardar, se actualizará este dato."></em></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row" > <span  class="badge-pill badge-info">{{productoVentaComprar.id_producto}}</span> </th>
+                                                <td><span  class="badge-pill badge-warning">{{productoVentaComprar.codigo_producto}}</span></td>
+                                                <td>{{productoVentaComprar.nombre_producto}}</td>
+                                                <td>{{productoVentaComprar.cantidad}}</td>
+                                                <td> <input type="number" value="1" class="form-control" min="1" max="100" step="1" name="cantidadComprarProducto"></td>
+                                                <td><input  type="number" class="form-control" min="0.00" max="10000.00" step="0.01" placeholder="Ingresar precio de compra"  name="costoGastoActualizado" value="{{productoVentaComprar.costo_compra}}" ></td>
+                                                
+
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row gy-4">
+                            <div class="col-12">
+                                <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                    <li>
+                                        <button type="submit" class="btn btn-lg btn-primary">Comprar producto</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+
+                    </div><!-- .tab-pane -->
+                    </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+<!-- Modal de editar producto Gasto -->
+
+{% for productoGastoEditar, usuario, sucursal in listaProductosGastoEditar %}
+<!-- Modal de editar producto -->
+<div class="modal fade" tabindex="-1" role="dialog" id="editarProductoGasto{{productoGastoEditar.id_producto}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center ">EDITAR PRODUCTO</h3>
+                <center>
+                    {% if productoGastoEditar.imagen_producto %}
+                    <img src="{{productoGastoEditar.imagen_producto.url}}" width="20%" alt="lap">
+                    {% else %}
+                    <img src="{% static 'images/accesos/editarProducto.png' %} " alt="personal">
+                    {% endif %}
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/actualizarProductoGasto/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <h3 class="title text-center ">Información del producto</h3>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            <input type="hidden" value="{{productoGastoEditar.id_producto}}" name="idProductoGastoEditar">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #24A19C !important; color:white !important">
+                                                <th scope="col">Id</th>
+                                                <th scope="col">Código</th>
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Cantidad en existencia</th>
+                                                <th scope="col">Costo de compra</th>
+                                              
+                                                <th scope="col">Sucursal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row" > <span  class="badge-pill badge-info">{{productoGastoEditar.id_producto}}</span> </th>
+                                                <td><span  class="badge-pill badge-warning">{{productoGastoEditar.codigo_producto}}</span></td>
+                                                <td>{{productoGastoEditar.nombre_producto}}</td>
+                                                <td><input  type="number" class="form-control" min="0" max="{{productoGastoEditar.cantidad}}" step="1"   name="cantidadActualizado" value="{{productoGastoEditar.cantidad}}"  ></td>
+                                                <td> <input  type="number" class="form-control" min="0.00" max="10000.00" step="0.01" placeholder="Ingresar precio de compra"  name="costoGastoActualizado" value="{{productoGastoEditar.costo_compra}}"  id="costoCompra{{productoGastoEditar.id_producto}}"></td>
+                                                <td>{{sucursal}}</td>
+                                        
+                                              
+                                             
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row gy-4">
+                            <div class="col-12">
+                                <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                    <li>
+                                        <button type="submit" class="btn btn-lg btn-primary">Actualizar producto</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+
+                    </div><!-- .tab-pane -->
+                    </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+
+
+{% for productoGastoComprar, usuario, sucursal in listaProductosGastoComprar %}
+<!-- Modal de editar producto -->
+<div class="modal fade" tabindex="-1" role="dialog" id="comprarProductoGasto{{productoGastoComprar.id_producto}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center ">COMPRAR PRODUCTO</h3>
+                <center>
+                    {% if productoVentaComprar.imagen_producto %}
+                    <img src="{{productoGastoComprar.imagen_producto.url}}" width="20%" alt="lap">
+                    {% else %}
+                    <img src="{% static 'images/accesos/editarProducto.png' %} " alt="personal">
+                    {% endif %}
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/actualizarProductoGastoCompra/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <h3 class="title text-center ">Información del producto</h3>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            <input type="hidden" value="{{productoGastoComprar.id_producto}}" name="idProductoGastoComprar">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #24A19C !important; color:white !important">
+                                                <th scope="col">Id</th>
+                                                <th scope="col">Código</th>
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Cantidad actual en existencia</th>
+                                                <th scope="col">Cantidad a comprar</th>
+                                                <th scope="col">Costo de compra guardado <em class="icon ni ni-question" data-toggle="tooltip" data-placement="right" title="Se puede editar el costo de compra, al guardar, se actualizará este dato."></em></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row" > <span  class="badge-pill badge-info">{{productoGastoComprar.id_producto}}</span> </th>
+                                                <td><span  class="badge-pill badge-warning">{{productoGastoComprar.codigo_producto}}</span></td>
+                                                <td>{{productoGastoComprar.nombre_producto}}</td>
+                                                <td>{{productoGastoComprar.cantidad}}</td>
+                                                <td> <input type="number" value="1" class="form-control" min="1" max="100" step="1" name="cantidadComprarProducto"></td>
+                                                <td><input  type="number" class="form-control" min="0.00" max="10000.00" step="0.01" placeholder="Ingresar precio de compra"  name="costoGastoActualizado" value="{{productoGastoComprar.costo_compra}}" ></td>
+                                                
+
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row gy-4">
+                            <div class="col-12">
+                                <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                    <li>
+                                        <button type="submit" class="btn btn-lg btn-primary">Comprar producto</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+
+                    </div><!-- .tab-pane -->
+                    </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+
+<!-- Fin  Modal de editar producto Gasto-->
+
+<!-- Modal de editar producto renta -->
+
+{% for productoRentaEditar, usuario, sucursal in listaProductosRentaEditar %}
+<!-- Modal de editar producto -->
+<div class="modal fade" tabindex="-1" role="dialog" id="editarProductoRenta{{productoRentaEditar.id_producto}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center ">EDITAR PRODUCTO</h3>
+                <center>
+                    {% if productoRentaEditar.imagen_producto %}
+                    <img src="{{productoGastoEditar.imagen_producto.url}}" width="20%" alt="lap">
+                    {% else %}
+                    <img src="{% static 'images/accesos/editarProducto.png' %} " alt="personal">
+                    {% endif %}
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/actualizarProductoRenta/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <h3 class="title text-center ">Información del producto</h3>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            <input type="hidden" value="{{productoRentaEditar.id_producto}}" name="idProductoRentaEditar">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #24A19C !important; color:white !important">
+                                                <th scope="col">Id</th>
+                                                <th scope="col">Código</th>
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Cantidad en existencia</th>
+                                                <th scope="col">Costo de compra</th>
+                                                <th scope="col">Costo de renta</th>
+                                              
+                                                <th scope="col">Sucursal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row" > <span  class="badge-pill badge-info">{{productoRentaEditar.id_producto}}</span> </th>
+                                                <td><span  class="badge-pill badge-warning">{{productoRentaEditar.codigo_producto}}</span></td>
+                                                <td>{{productoRentaEditar.nombre_producto}}</td>
+                                                <td>{{productoRentaEditar.cantidad}}</td>
+                                                <td> <input  type="number" class="form-control" min="0.00" max="10000.00" step="0.01" placeholder="Ingresar precio de compra"  name="costoPrecioCompraActualizado" value="{{productoRentaEditar.costo_de_compra}}"  id="costoCompra{{productoRentaEditar.id_producto}}"></td>
+                                                <td> <input  type="number" class="form-control" min="0.00" max="10000.00" step="0.01" placeholder="Ingresar precio de renta"  name="costoRentaActualizado" value="{{productoRentaEditar.costo_renta}}"  id="costoRenta{{productoRentaEditar.id_producto}}"></td>
+                                                <td>{{sucursal}}</td>
+                                        
+                                              
+                                             
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row gy-4">
+                            <div class="col-12">
+                                <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                    <li>
+                                        <button type="submit" class="btn btn-lg btn-primary">Actualizar producto</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+
+                    </div><!-- .tab-pane -->
+                    </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+<!-- Fin  Modal de editar producto Gasto-->
+
+
+
+<!-- Modal para excel de inventario -->
+
+<!-- Modal Content Code -->
+<div class="modal fade" tabindex="-1" id="modalExcelInventarioProductosVenta">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                <em class="icon ni ni-cross"></em>
+            </a>
+            <div class="modal-header">
+                <h5 class="modal-title">Filtro de sucursal</h5>
+            </div>
+            <div class="modal-body">
+                <p>Elegir una sucursal para descargar el inventario de productos para venta.</p>
+                <div class="form-control-wrap">
+                    <select class="form-select form-control form-control-lg" id="selectSucursalInventarioProductosVenta" onchange="mandarSelectSucursalInventarioProductosVenta();">
+                        <option value="todas">Todas las sucursales</option>
+                        {% for sucursal in listaSucursales %}
+                        <option value="{{sucursal.id_sucursal}}">{{sucursal.nombre}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <br>
+                <center>
+                    <form action="/xlInventarioProductosVenta/" method="POST">{% csrf_token %}
+                        <input type="hidden" name="tipoProductos" value="productosVenta">
+                        <input type="hidden" name="sucursalInventarioProductosVenta" id="sucursalInventarioProductosVentaExcel" value="todas">
+                        <button type="submit" class="btn btn-icon btn-sm btn-light" 
+                            data-toggle="tooltip" data-placement="right"
+                            title="Descargar inventario Productos para venta en Excel.">
+                            &nbsp;<img src="{% static 'images/iconosMenu/iconoExcel.png' %}" alt="iconoExcel" width="25"> &nbsp;Excel&nbsp;&nbsp;               
+                        </button>
+                    </form>
+
+                    
+
+                    
+                </center>
+                
+            </div>
+            <div class="modal-footer bg-light">
+                <span class="sub-text text-pink">Costabella</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="modalExcelInventarioProductosVentaCiclico">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                <em class="icon ni ni-cross"></em>
+            </a>
+            <div class="modal-header">
+                <h5 class="modal-title">Filtro de sucursal</h5>
+            </div>
+            <div class="modal-body">
+                <p>Elegir una sucursal para descargar el inventario cíclico de productos para venta.</p>
+                <div class="form-control-wrap">
+                    <select class="form-select form-control form-control-lg" id="selectSucursalInventarioProductosVentaCiclico" onchange="mandarSelectSucursalInventarioProductosVentaCiclico();">
+                        <option value="todas">Todas las sucursales</option>
+                        {% for sucursal in listaSucursales %}
+                        <option value="{{sucursal.id_sucursal}}">{{sucursal.nombre}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <br>
+                <center>
+                    <form action="/xlInventarioCiclicoProductosVenta/" method="POST">{% csrf_token %}
+                        <input type="hidden" name="tipoProductos" value="productosVenta">
+                        <input type="hidden" name="sucursalInventarioProductosVenta" id="sucursalInventarioProductosVentaExcelCiclico" value="todas">
+                        <button type="submit" class="btn btn-icon btn-sm btn-light" 
+                            data-toggle="tooltip" data-placement="right"
+                            title="Descargar inventario Productos para venta en Excel.">
+                            &nbsp;<img src="{% static 'images/iconosMenu/iconoExcel.png' %}" alt="iconoExcel" width="25"> &nbsp;Excel&nbsp;&nbsp;               
+                        </button>
+                    </form>
+                   
+                    
+
+                    
+                </center>
+                <br>
+                <p>Subir archivo para ajuste de cantidades de inventario por sucursal.</p>
+                <form action="/ajusteProductosVenta/" method="POST" enctype="multipart/form-data">{% csrf_token %}
+                    <input type="hidden" name="sucursal" id="sucursalInventarioProductosVentaExcelCiclico2" value="todas">
+                    <div class="form-control-wrap">
+                        <div class="custom-file">
+                            <input type="file" name="archivoExcelAjusteProductosVenta" class="custom-file-input"  >
+                            <label class="custom-file-label" for="customFile">Escoger Archivo</label>
+                        </div>
+                    </div>
+                    <br>
+                    <center>
+                        <button type="submit" class="btn btn-sm btn-outline-primary">Subir archivo</button>
+                    </center>
+                </form>
+                
+            </div>
+            <div class="modal-footer bg-light">
+                <span class="sub-text text-pink">Costabella</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="modalExcelStockBajoProductosVenta">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                <em class="icon ni ni-cross"></em>
+            </a>
+            <div class="modal-header">
+                <h5 class="modal-title">Filtro de sucursal</h5>
+            </div>
+            <div class="modal-body">
+                <p>Elegir una sucursal para mandar un reporte de stock bajo de productos para venta.</p>
+                <div class="form-control-wrap">
+                    <select class="form-select form-control form-control-lg" id="selectSucursalInventarioProductosVentaStockBajo" onchange="mandarSelectSucursalInventarioProductosVentaStockBajo();">
+                        <option value="todas">Todas las sucursales</option>
+                        {% for sucursal in listaSucursales %}
+                        <option value="{{sucursal.id_sucursal}}">{{sucursal.nombre}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <br>
+                <center>
+                    <form action="/informeStockBajoProductosVenta/" method="POST">{% csrf_token %}
+                        <input type="hidden" name="tipoProductos" value="productosVenta">
+                        <input type="hidden" name="sucursalInventarioProductosVenta" id="sucursalInventarioProductosVentaExcelStockBajo" value="todas">
+                        <button type="submit" class="btn btn-icon btn-sm btn-light" 
+                            data-toggle="tooltip" data-placement="right"
+                            title="Se mandará un reporte a tu correo electrónico.">
+                            &nbsp;<em class="icon ni ni-emails text-pink"></em> &nbsp;Solicitar informe por correo.&nbsp;&nbsp;               
+                        </button>
+                    </form>
+                   
+                    
+
+                    
+                </center>
+                
+                
+            </div>
+            <div class="modal-footer bg-light">
+                <span class="sub-text text-pink">Costabella</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modals productos Gasto-->
+<div class="modal fade" tabindex="-1" id="modalExcelInventarioProductosGasto">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                <em class="icon ni ni-cross"></em>
+            </a>
+            <div class="modal-header">
+                <h5 class="modal-title">Filtro de sucursal</h5>
+            </div>
+            <div class="modal-body">
+                <p>Elegir una sucursal para descargar el inventario de productos gasto.</p>
+                <div class="form-control-wrap">
+                    <select class="form-select form-control form-control-lg" id="selectSucursalInventarioProductosGasto" onchange="mandarSelectSucursalInventarioProductosGasto();">
+                        <option value="todas">Todas las sucursales</option>
+                        {% for sucursal in listaSucursales %}
+                        <option value="{{sucursal.id_sucursal}}">{{sucursal.nombre}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <br>
+                <center>
+                    <form action="/xlInventarioProductosVenta/" method="POST">{% csrf_token %}
+                        <input type="hidden" name="tipoProductos" value="productosGasto">
+                        <input type="hidden" name="sucursalInventarioProductosVenta" id="sucursalInventarioProductosGastoExcel" value="todas">
+                        <button type="submit" class="btn btn-icon btn-sm btn-light" 
+                            data-toggle="tooltip" data-placement="right"
+                            title="Descargar inventario Productos gasto en Excel.">
+                            &nbsp;<img src="{% static 'images/iconosMenu/iconoExcel.png' %}" alt="iconoExcel" width="25"> &nbsp;Excel&nbsp;&nbsp;               
+                        </button>
+                    </form>
+
+                    
+
+                    
+                </center>
+                
+            </div>
+            <div class="modal-footer bg-light">
+                <span class="sub-text text-pink">Costabella</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="modalExcelInventarioProductosGastoCiclico">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                <em class="icon ni ni-cross"></em>
+            </a>
+            <div class="modal-header">
+                <h5 class="modal-title">Filtro de sucursal</h5>
+            </div>
+            <div class="modal-body">
+                <p>Elegir una sucursal para descargar el inventario cíclico de productos gasto.</p>
+                <div class="form-control-wrap">
+                    <select class="form-select form-control form-control-lg" id="selectSucursalInventarioProductosGastoCiclico" onchange="mandarSelectSucursalInventarioProductosGastoCiclico();">
+                        <option value="todas">Todas las sucursales</option>
+                        {% for sucursal in listaSucursales %}
+                        <option value="{{sucursal.id_sucursal}}">{{sucursal.nombre}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <br>
+                <center>
+                    <form action="/xlInventarioCiclicoProductosVenta/" method="POST">{% csrf_token %}
+                        <input type="hidden" name="tipoProductos" value="productosGasto">
+                        <input type="hidden" name="sucursalInventarioProductosVenta" id="sucursalInventarioProductosGastoExcelCiclico" value="todas">
+                        <button type="submit" class="btn btn-icon btn-sm btn-light" 
+                            data-toggle="tooltip" data-placement="right"
+                            title="Descargar inventario cíclico Productos gasto en Excel.">
+                            &nbsp;<img src="{% static 'images/iconosMenu/iconoExcel.png' %}" alt="iconoExcel" width="25"> &nbsp;Excel&nbsp;&nbsp;               
+                        </button>
+                    </form>
+                   
+                    
+
+                    
+                </center>
+                <br>
+                <p>Subir archivo para ajuste de cantidades de inventario por sucursal.</p>
+                <form action="/ajusteProductosGasto/" method="POST" enctype="multipart/form-data">{% csrf_token %}
+                    <input type="hidden" name="sucursal" id="sucursalInventarioProductosGastoExcelCiclico2" value="todas">
+                    <div class="form-control-wrap">
+                        <div class="custom-file">
+                            <input type="file" name="archivoExcelAjusteProductosGasto" class="custom-file-input"  >
+                            <label class="custom-file-label" for="customFile">Escoger Archivo</label>
+                        </div>
+                    </div>
+                    <br>
+                    <center>
+                        <button type="submit" class="btn btn-sm btn-outline-primary">Subir archivo</button>
+                    </center>
+                </form>
+                
+            </div>
+            <div class="modal-footer bg-light">
+                <span class="sub-text text-pink">Costabella</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="modalExcelStockBajoProductosGasto">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                <em class="icon ni ni-cross"></em>
+            </a>
+            <div class="modal-header">
+                <h5 class="modal-title">Filtro de sucursal</h5>
+            </div>
+            <div class="modal-body">
+                <p>Elegir una sucursal para mandar un reporte de stock bajo de productos gasto.</p>
+                <div class="form-control-wrap">
+                    <select class="form-select form-control form-control-lg" id="selectSucursalInventarioProductosGastoStockBajo" onchange="mandarSelectSucursalInventarioProductosGastoStockBajo();">
+                        <option value="todas">Todas las sucursales</option>
+                        {% for sucursal in listaSucursales %}
+                        <option value="{{sucursal.id_sucursal}}">{{sucursal.nombre}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <br>
+                <center>
+                    <form action="/informeStockBajoProductosVenta/" method="POST">{% csrf_token %}
+                        <input type="hidden" name="tipoProductos" value="productosGasto">
+                        <input type="hidden" name="sucursalInventarioProductosVenta" id="sucursalInventarioProductosGastoExcelStockBajo" value="todas">
+                        <button type="submit" class="btn btn-icon btn-sm btn-light" 
+                            data-toggle="tooltip" data-placement="right"
+                            title="Se mandará un reporte a tu correo electrónico.">
+                            &nbsp;<em class="icon ni ni-emails text-pink"></em> &nbsp;Solicitar informe por correo.&nbsp;&nbsp;               
+                        </button>
+                    </form>
+                   
+                    
+
+                    
+                </center>
+                
+                
+            </div>
+            <div class="modal-footer bg-light">
+                <span class="sub-text text-pink">Costabella</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals productos Renta-->
+<div class="modal fade" tabindex="-1" id="modalExcelInventarioProductosRenta">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                <em class="icon ni ni-cross"></em>
+            </a>
+            <div class="modal-header">
+                <h5 class="modal-title">Filtro de sucursal</h5>
+            </div>
+            <div class="modal-body">
+                <p>Elegir una sucursal para descargar el inventario de productos renta.</p>
+                <div class="form-control-wrap">
+                    <select class="form-select form-control form-control-lg" id="selectSucursalInventarioProductosRenta" onchange="mandarSelectSucursalInventarioProductosRenta();">
+                        <option value="todas">Todas las sucursales</option>
+                        {% for sucursal in listaSucursales %}
+                        <option value="{{sucursal.id_sucursal}}">{{sucursal.nombre}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <br>
+                <center>
+                    <form action="/xlInventarioProductosVenta/" method="POST">{% csrf_token %}
+                        <input type="hidden" name="tipoProductos" value="productosRenta">
+                        <input type="hidden" name="sucursalInventarioProductosVenta" id="sucursalInventarioProductosRentaExcel" value="todas">
+                        <button type="submit" class="btn btn-icon btn-sm btn-light" 
+                            data-toggle="tooltip" data-placement="right"
+                            title="Descargar inventario Productos renta en Excel.">
+                            &nbsp;<img src="{% static 'images/iconosMenu/iconoExcel.png' %}" alt="iconoExcel" width="25"> &nbsp;Excel&nbsp;&nbsp;               
+                        </button>
+                    </form>
+
+                    
+
+                    
+                </center>
+                
+            </div>
+            <div class="modal-footer bg-light">
+                <span class="sub-text text-pink">Costabella</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals Costo Total Productos Venta-->
+<div class="modal fade" tabindex="-1" id="modalCostosProductosVenta">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                <em class="icon ni ni-cross"></em>
+            </a>
+            <div class="modal-header">
+                <h5 class="modal-title">Costos totales sucursales</h5>
+            </div>
+            <div class="modal-body">
+                <center>
+                    
+                    <h5 class="text-dark fw-bold">Costo total de inevntario <br> en todas las sucursales.</h5>
+                    <h4 class="text-dark fw-bold"><span class="text-teal">${{costoTotalProductosVenta}}</span> MXN</h4>
+                    <div class="card card-preview">
+                        <div class="card-inner table-responsive">
+                            <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                                <thead>
+                                    <tr class="nk-tb-item nk-tb-head" style="background-color: #187498 !important; color:white !important">
+                                        <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                        <th class="nk-tb-col" ><span class="sub-text textoBlanco">Nombre</span></th>
+                                        <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco"># Productos Venta</span></th>
+                                        <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Costo total</span></th>
+                                        <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Costo total venta</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for id, nombre, numProd, costo, ingreso in totalesSucursalesProductosVenta %}
+                                    <tr class="nk-tb-item">
+                                        <td class="nk-tb-col"style="white-space:nowrap!important;">
+                                            <span class="badge badge-info">{{id}}</span>
+                                        </td>
+                                        <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                            <span class="badge badge-dark">{{nombre}}</span>
+                                        </td>
+                                        <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                            <span class="text-dark fw-bold">{{numProd}} productos</span>
+                                        </td>
+                                        <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                            <span class="fw-bold text-dark"><span class="text-teal">${{costo}}</span> MXN.</span>
+                                        </td>
+                                        <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                            <span class="fw-bold text-dark"><span class="text-azure">${{ingreso}}</span> MXN.</span>
+                                        </td>
+                                       
+                                        
+                                       
+        
+                                    </tr>
+                                    {% endfor %}
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div><!-- .card-preview -->
+                </center>
+                
+            </div>
+            <div class="modal-footer bg-light">
+                <span class="sub-text text-pink">Costabella</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals Costo Total Productos Renta-->
+<div class="modal fade" tabindex="-1" id="modalCostosProductosRenta">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                <em class="icon ni ni-cross"></em>
+            </a>
+            <div class="modal-header">
+                <h5 class="modal-title">Costos totales sucursales</h5>
+            </div>
+            <div class="modal-body">
+                <center>
+                    
+                    <h5 class="text-dark fw-bold">Costo total de inevntario <br> en todas las sucursales.</h5>
+                    <h4 class="text-dark fw-bold"><span class="text-teal">${{costoTotalProductosRenta}}</span> MXN</h4>
+                    <div class="card card-preview">
+                        <div class="card-inner table-responsive">
+                            <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                                <thead>
+                                    <tr class="nk-tb-item nk-tb-head" style="background-color: #001E6C !important; color:white !important">
+                                        <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                        <th class="nk-tb-col" ><span class="sub-text textoBlanco">Nombre</span></th>
+                                        <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco"># Productos Venta</span></th>
+                                        <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Costo total</span></th>
+                                        <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Costo total renta</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for id, nombre, numProd, costo, renta in totalesSucursalesProductosRenta %}
+                                    <tr class="nk-tb-item">
+                                        <td class="nk-tb-col"style="white-space:nowrap!important;">
+                                            <span class="badge badge-info">{{id}}</span>
+                                        </td>
+                                        <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                            <span class="badge badge-dark">{{nombre}}</span>
+                                        </td>
+                                        <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                            <span class="text-dark fw-bold">{{numProd}} productos</span>
+                                        </td>
+                                        <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                            <span class="fw-bold text-dark"><span class="text-teal">${{costo}}</span> MXN.</span>
+                                        </td>
+                                        <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                            <span class="fw-bold text-dark"><span class="text-azure">${{renta}}</span> MXN.</span>
+                                        </td>
+                                       
+                                        
+                                       
+        
+                                    </tr>
+                                    {% endfor %}
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div><!-- .card-preview -->
+                </center>
+                
+            </div>
+            <div class="modal-footer bg-light">
+                <span class="sub-text text-pink">Costabella</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals Costo Total Productos Renta-->
+<div class="modal fade" tabindex="-1" id="modalCostosProductosGasto">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                <em class="icon ni ni-cross"></em>
+            </a>
+            <div class="modal-header">
+                <h5 class="modal-title">Costos totales sucursales</h5>
+            </div>
+            <div class="modal-body">
+                <center>
+                    
+                    <h5 class="text-dark fw-bold">Costo total de inevntario <br> en todas las sucursales.</h5>
+                    <h4 class="text-dark fw-bold"><span class="text-teal">${{costoTotalProductosGasto}}</span> MXN</h4>
+                    <div class="card card-preview">
+                        <div class="card-inner table-responsive">
+                            <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                                <thead>
+                                    <tr class="nk-tb-item nk-tb-head" style="background-color: #5463FF !important; color:white !important">
+                                        <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                        <th class="nk-tb-col" ><span class="sub-text textoBlanco">Nombre</span></th>
+                                        <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco"># Productos Venta</span></th>
+                                        <th class="nk-tb-col" style="white-space:nowrap!important;"><span class="sub-text textoBlanco">Costo total</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for id, nombre, numProd, costo in totalesSucursalesProductosGasto %}
+                                    <tr class="nk-tb-item">
+                                        <td class="nk-tb-col"style="white-space:nowrap!important;">
+                                            <span class="badge badge-info">{{id}}</span>
+                                        </td>
+                                        <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                            <span class="badge badge-dark">{{nombre}}</span>
+                                        </td>
+                                        <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                            <span class="text-dark fw-bold">{{numProd}} productos</span>
+                                        </td>
+                                        <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                            <span class="fw-bold text-dark"><span class="text-teal">${{costo}}</span> MXN.</span>
+                                        </td>
+                                       
+                                        
+                                       
+        
+                                    </tr>
+                                    {% endfor %}
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div><!-- .card-preview -->
+                </center>
+                
+            </div>
+            <div class="modal-footer bg-light">
+                <span class="sub-text text-pink">Costabella</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+    function mandarSelectSucursalInventarioProductosVenta()
+    {
+    /* Para obtener el valor */
+    var sucursal = document.getElementById("selectSucursalInventarioProductosVenta").value;
+
+    var sucursalInventarioProductosVentaExcel = document.getElementById("sucursalInventarioProductosVentaExcel");
+    sucursalInventarioProductosVentaExcel.value=sucursal;
+    }
+
+    function mandarSelectSucursalInventarioProductosVentaCiclico()
+    {
+    /* Para obtener el valor */
+    var sucursal = document.getElementById("selectSucursalInventarioProductosVentaCiclico").value;
+
+    var sucursalInventarioProductosVentaExcelCiclico = document.getElementById("sucursalInventarioProductosVentaExcelCiclico");
+    var sucursalInventarioProductosVentaExcelCiclico2 = document.getElementById("sucursalInventarioProductosVentaExcelCiclico2");
+
+
+    sucursalInventarioProductosVentaExcelCiclico.value=sucursal;
+    sucursalInventarioProductosVentaExcelCiclico2.value = sucursal;
+    }
+
+    function mandarSelectSucursalInventarioProductosVentaStockBajo()
+    {
+    /* Para obtener el valor */
+    var sucursal = document.getElementById("selectSucursalInventarioProductosVentaStockBajo").value;
+
+    var sucursalInventarioProductosVentaExcelStockBajo = document.getElementById("sucursalInventarioProductosVentaExcelStockBajo");
+
+
+    sucursalInventarioProductosVentaExcelStockBajo.value=sucursal;
+    }
+
+
+    function mandarSelectSucursalInventarioProductosGasto(){
+        /* Para obtener el valor */
+        var sucursal = document.getElementById("selectSucursalInventarioProductosGasto").value;
+
+        var sucursalInventarioProductosGastoExcel = document.getElementById("sucursalInventarioProductosGastoExcel");
+        sucursalInventarioProductosGastoExcel.value=sucursal;
+    }
+    
+    function mandarSelectSucursalInventarioProductosGastoCiclico(){
+        var sucursal = document.getElementById("selectSucursalInventarioProductosGastoCiclico").value;
+
+        var sucursalInventarioProductosGastoExcelCiclico = document.getElementById("sucursalInventarioProductosGastoExcelCiclico");
+        var sucursalInventarioProductosGastoExcelCiclico2 = document.getElementById("sucursalInventarioProductosGastoExcelCiclico2");
+
+
+        sucursalInventarioProductosGastoExcelCiclico.value=sucursal;
+        sucursalInventarioProductosGastoExcelCiclico2.value = sucursal;
+    }
+
+    function mandarSelectSucursalInventarioProductosGastoStockBajo(){
+        var sucursal = document.getElementById("selectSucursalInventarioProductosGastoStockBajo").value;
+
+        var sucursalInventarioProductosGastoExcelStockBajo = document.getElementById("sucursalInventarioProductosGastoExcelStockBajo");
+
+
+        sucursalInventarioProductosGastoExcelStockBajo.value=sucursal;
+    }
+
+
+    function mandarSelectSucursalInventarioProductosRenta(){
+        /* Para obtener el valor */
+        var sucursal = document.getElementById("selectSucursalInventarioProductosRenta").value;
+
+        var sucursalInventarioProductosRentaExcel = document.getElementById("sucursalInventarioProductosRentaExcel");
+        sucursalInventarioProductosRentaExcel.value=sucursal;
+    }
+
+</script>
+
+<script>
+    {% for productoVentaEditar, usuario, sucursal in listaProductosVentaEditar2 %}
+    function calcularPrecioVenta{{productoVentaEditar.id_producto}}() {
+        const valorCosto = document.getElementById("costoCompra{{productoVentaEditar.id_producto}}").value;
+        const valorMargen = document.getElementById("margenCompra{{productoVentaEditar.id_producto}}").value;
+        const inputCostoVenta = document.getElementById("inputCostoVenta{{productoVentaEditar.id_producto}}");
+
+        margenFloat = parseFloat(valorMargen);
+        margenEntero = margenFloat.toFixed();
+        if(margenEntero == 100){
+            margenString = "2.00"
+        }else{
+            
+            margenString = "1."+margenEntero.toString();
+        }
+        margenIntFinal = parseFloat(margenString);
+
+        const costoVentaNuevo = valorCosto * margenIntFinal;
+        costoVentaNuevoChido =costoVentaNuevo.toFixed(2);
+        inputCostoVenta.value = costoVentaNuevoChido;
+        console.log(costoVentaNuevoChido);
+
+    }
+    {% endfor %}
+
+   
+</script>
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<script>
+
+    {% if productoActualizado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{productoActualizado}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+
+    {% if productosActualizados %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{productosActualizados}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+
+    {% if errorProductosActualizados %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'error',
+            title: 'Ups!!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{errorProductosActualizados}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    {% if correoEnviado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{correoEnviado}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    {% if correoNoEnviado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'error',
+            title: 'Ups!!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{correoNoEnviado}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+</script>
+
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+        var divProductosVentas = document.getElementById("divProductosVentas");
+        var divProductosRentas = document.getElementById("divProductosRentas");
+        var divProductosGastos = document.getElementById("divProductosGastos");
+        divProductosVentas.style.display = "block";
+        divProductosRentas.style.display = "none";
+        divProductosGastos.style.display = "none";
+        
+        window.onload= mueveReloj ();
+        
+        
+    };
+
+    
+
+    function mostrarVenta(){
+        divProductosVentas.style.display = "block";
+        divProductosRentas.style.display = "none";
+        divProductosGastos.style.display = "none";
+        console.log("Todos los divs");
+    };
+
+    function mostrarRenta(){
+        divProductosVentas.style.display = "none";
+        divProductosRentas.style.display = "block";
+        divProductosGastos.style.display = "none";
+        console.log("activos");
+    };
+
+    function mostrarGasto(){
+        divProductosVentas.style.display = "none";
+        divProductosRentas.style.display = "none";
+        divProductosGastos.style.display = "block";
+        console.log("inactivos");
+    };
+</script>
+{% endblock %}

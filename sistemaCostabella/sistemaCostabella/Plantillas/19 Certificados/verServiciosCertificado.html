@@ -1,0 +1,363 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Servicios Certificados | Costabella
+{% endblock %}
+
+{% block estilos %}
+
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    <h3 class="nk-block-title page-title color-texto-seleccion">LISTA DE SERVICIOS PARA CERTIFICADOS DE REGALO</h3>
+                    <h4 class="nk-block-title fw-bold text-dark">Sucursal: {{nombreSucursal}}</h4>
+                </div><!-- .nk-block-head-content -->
+                <div class="nk-block-head-content">
+                    <div class="toggle-wrap nk-block-tools-toggle">
+                        <a href="#" class="btn btn-icon btn-trigger toggle-expand mr-n1" data-target="more-options"><em class="icon ni ni-more-v"></em></a>
+                        <div class="toggle-expand-content" data-content="more-options">
+                            <ul class="nk-block-tools g-3">
+                                
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Certificado" %}
+                                {% if permiso.agregar == "Si"  %}
+                                <li class="nk-block-tools-opt">
+                                    <a href="#" class="btn btn-icon btn-primary d-md-none"><em class="icon ni ni-plus"></em></a>
+                                    <a href="/agregarServicioCertificado/" class="btn btn-primary d-none d-md-inline-flex"><em class="icon ni ni-plus"></em><span>Agregar Servicio</span></a>
+                                </li>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                               
+
+                            </ul>
+                        </div>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        
+        <!-- Div empleados todos -->
+        <div class="nk-block nk-block-lg" id="divEmpleadosTotales">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Servicios para certificado de regalo</h4>
+                
+                </div>
+                
+                
+            </div>
+        
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false" >
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #B270A2 !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Código</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Nombre</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Descripción</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Precio</span></th>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Certificado" %}
+                                {% if permiso.agregar == "Si"  %}
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Editar</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Paquete de productos</span></th>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for servicio, yaTienePaquete in listaZipTabla %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{servicio.id_servicio_certificado}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-dark">{{servicio.codigo_servocio}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="fw-bold text-dark">{{servicio.nombre}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <center>
+                                        <button type="button" class="btn btn-xs btn-danger" data-toggle="popover" 
+                                        title="Descripción" 
+                                        data-content="{{servicio.descripcion}}">
+                                        <span><em class="icon ni ni-eye"></em></span>
+                                        </button>
+                                    </center>
+                                    
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="fw-bold text-dark">$<span class="text-teal">{{servicio.precio}}</span> MXN.</span>
+                                </td>
+                                
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Certificado" %}
+                                {% if permiso.agregar == "Si"  %}
+                                <td class="nk-tb-col">
+                                    <center>
+                                        <button type="button" data-toggle="modal" data-target="#editarServicio{{servicio.id_servicio_certificado}}" class="btn btn-icon btn-sm btn-primarypruple"><em class="icon ni ni-edit" ></em></button>
+                                    </center>
+                                    
+                                    
+                                </td>
+                                <td class="nk-tb-col">
+                                    {% if yaTienePaquete == "Con paquete" %}
+                                    <span class="fw-bold text-danger">Ya tiene un paquete asignado.</span>
+                                    <center>
+                                        <button type="button" id="verProductosServicio{{servicio.id_servicio_certificado}}" data-toggle="modal" data-target="#verProductos{{servicio.id_servicio_certificado}}" class="btn btn-icon btn-sm btn-success"><em class="icon ni ni-eye" ></em></button>
+                                    </center>
+                                    {% else %}
+                                    <form action="/crearPaqueteServicioCertificado/" method="POST">{% csrf_token %}
+                                        <input type="hidden" name="idServicioCertificado" value="{{servicio.id_servicio_certificado}}">
+                                        <center>
+                                        <button type="submit"   class="btn btn-icon btn-sm bg-indigo text-white"><em class="icon ni ni-package" ></em></button>
+                                        </center>
+
+                                    </form>
+                                    {% endif %}
+                                    
+                                    
+                                    
+                                </td>
+
+
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                                
+                            </tr><!-- .nk-tb-item  -->
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+       
+    </div>
+</div>
+
+<!-- Modal de editar servicios certificados -->
+
+{% for servicio in consultaServicios2 %}
+<!-- Modal de editar producto -->
+<div class="modal fade" tabindex="-1" role="dialog" id="editarServicio{{servicio.id_servicio_certificado}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center ">EDITAR SERVICIO CERTIFICADO</h3>
+                <center>
+                  
+                    <img src="{% static 'images/accesos/regalito.png' %} " alt="personal" width="70">
+               
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/actualizarServicioCertificado/" method="POST">{% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <h3 class="title text-center ">Información del servicio</h3>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            <input type="hidden" value="{{servicio.id_servicio_certificado}}" name="idServicioCertificadoEditar">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #24A19C !important; color:white !important">
+                                                <th scope="col">Id</th>
+                                                <th scope="col">Código</th>
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Precio</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <span class="badge badge-info">{{servicio.id_servicio_certificado}}</span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge badge-dark">{{servicio.codigo_servocio}}</span>
+                                                </td>
+                                                <td>
+                                                    <input  type="text" class="form-control"   name="nombreActualizado" value="{{servicio.nombre}}"  >
+                                                </td>
+                                                <td>
+                                                    <input  type="number" step=".5" min="1" max="10000" class="form-control"   name="precioActualizado" value="{{servicio.precio}}"  >
+                                                </td>
+                                                
+                                        
+                                              
+                                             
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <br>
+                            <center>
+                                <button type="submit" class="btn btn-lg btn-primary">Actualizar servicio</button>
+                            </center>
+                        </div>
+                        
+
+                    </div><!-- .tab-pane -->
+                    </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+<!-- Modal para ver los productos del paquete Corporal -->
+{% for servicio, yaTienePaquete, listaProductos in listaZipTabla2 %}
+<div class="modal fade" tabindex="-1" role="dialog" id="verProductos{{servicio.id_servicio_certificado}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center ">PAQUETE DE PRODUCTOS DE SERVICIO PARA CERTIFICADO</h3>
+                <center>
+                  
+                    <img src="{% static 'images/iconosMenu/paquetes.png' %} " alt="personal">
+               
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                   
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <center>
+                                        <div class="form-group">
+                                            <span class="badge badge-dim badge-danger"><h3  style="color: rgb(180, 10, 10) !important;">{{corporal.nombre_servicio}}</h3></span>
+                                        </div>
+                                    </center>
+                                    
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #24A19C !important; color:white !important">
+                                               
+                                             
+                                                <th scope="col">Id Producto</th>
+                                              
+                                                <th scope="col">Codigo</th>
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Cantidad utilizada por sesión</th>
+                                                
+                                               
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for p in listaProductos %}
+                                            <tr>
+                                                
+                                                <th scope="row" > <span  class="badge badge-dark">{{p.0}}</span> </th>
+                                                <th scope="row" > <span  class="badge badge-primary">{{p.1}}</span> </th>
+                                                <th scope="row" > <span  class="fw-bold text-dark">{{p.3}}</span> </th>
+                                                
+                                                <th scope="row" > 
+                                                    <center>
+                                                        
+                                                    <span  class="badge badge-outline-warning" style="color: black !important;">{{p.4}} unidades</span> 
+                                                    </center>
+                                                </th>
+                                                
+                                            </tr>
+                                            {% endfor %}
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <center>
+                                    {% for permiso in consultaPermisos %}
+                                    {% if permiso.tabla_modulo == "Paquetes" %}
+                                    {% if permiso.editar == "Si" %}
+                                    <form action="/verProductoDePaqueteServicioCertificadoEditar/" method="POST">{% csrf_token %}
+                                        <input type="hidden" value="{{servicio.id_servicio_certificado}}" name="idServicioCertificadoEditar">
+                                        <button type="submit" class="btn btn-dim btn-warning">Editar productos</button>
+                                    </form>
+                                    {% endif %}
+                                    {% endif %}
+                                    {% endfor %}
+                                </center>
+                               
+
+                            </div>
+                        </div>
+                
+                        
+
+                    </div><!-- .tab-pane -->
+               
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<script>
+
+    {% if mensaje %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{mensaje}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+</script>
+
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+        
+
+        window.onload= mueveReloj ();
+
+        
+    };
+
+    
+</script>
+{% endblock %}

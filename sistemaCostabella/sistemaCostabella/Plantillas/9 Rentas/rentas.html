@@ -1,0 +1,1718 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Rentas | Costabella
+{% endblock %}
+
+{% block estilos %}
+<style>
+    @media screen and (max-width: 320px) {
+        table {
+          display: block!important;
+          overflow-x: auto!important;
+        }
+   }
+</style>
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    <h3 class="nk-block-title page-title color-texto-seleccion">LISTADO DE RENTAS REALIZADAS</h3>
+                    <div class="nk-block-des text-soft">
+                        <p>Total de rentas: {{contadorApartadas}} Apartadas - {{contadorPendientes}} Pendientes - {{contadorFinalizadasSin}} Finalizadas sin cuota - {{contadorFinalizadasCon}} Finalizadas con cuota</p>
+                    </div>
+                   
+                </div><!-- .nk-block-head-content -->
+                <div class="nk-block-head-content">
+                    <div class="toggle-wrap nk-block-tools-toggle">
+                        <a href="#" class="btn btn-icon btn-trigger toggle-expand mr-n1" data-target="more-options"><em class="icon ni ni-more-v"></em></a>
+                        <div class="toggle-expand-content" data-content="more-options">
+                            <ul class="nk-block-tools g-3">
+                                <li>
+                                    <div class="drodown">
+                                        <a href="#" class="dropdown-toggle dropdown-indicator btn btn-outline-light btn-white" data-toggle="dropdown">Estado de renta</a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <ul class="link-list-opt no-bdr">
+                                                <li style="cursor: pointer!important;"><a onclick="mostrarApartadas()"><span>Rentas apartadas</span></a></li>
+                                                
+                                                <li style="cursor: pointer!important;"> <a onclick="mostrarPendientes()"><span>Rentas pendientes</span></a></li>
+                                                <li style="cursor: pointer!important;"><a onclick="mostrarFinalizadasSinCuota()"><span>Rentas finalizadas sin cuota</span></a></li>
+                                                <li style="cursor: pointer!important;"><a onclick="mostrarFinalizadasConCuota()"><span>Rentas finalizadas con cuota</span></a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                             
+                                <li class="nk-block-tools-opt">
+                                    <a href="#" class="btn btn-icon btn-primary d-md-none"><em class="icon ni ni-plus"></em></a>
+                                    <a href="/seleccionarSucursalRentas/" class="btn btn-primary d-none d-md-inline-flex"><em class="icon ni ni-plus"></em><span>Realizar renta</span></a>
+                                </li>
+                               
+
+                            </ul>
+                        </div>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        
+        <!-- Div empleados todos -->
+        <div  id="divRentasApartadas">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Rentas apartadas</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de <span class="coloralta">rentas apartadas</span> en el sistema.</p>
+                    </div>
+                
+                </div>
+                
+                
+            </div>
+        
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #7267CB !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Cliente</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Producto</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha de renta</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha de entrega</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha límite devolución</span></th>
+                             
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha límite devolución con cuota</span></th>
+                               
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto $ total de renta</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">$ mínimo apartado</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto $ abonado</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto $ restante</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Realizado por:</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal:</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Entregar:</span></th>
+                              
+                             
+                             
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for renta,cliente,producto,encargado,sucursal in listaApartados %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{renta.id_renta}}</span>
+                                </td>
+
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span class="badge badge-dark">{{cliente}}</span>
+                                </td>
+                               
+                                <td class="nk-tb-col">
+                                    <center>
+                                        <button type="button" class="btn btn-dim btn-primary btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                        {% for sf in producto %}
+                                        <div> 
+                                            <h6> <span class='text-primary fs-11px'> {{sf.0}} -</span> <span class='text-soft fs-11px'> {{sf.1}}  </span> <span class='text-info fs-11px'> </span>   </h6>
+                                        </div>
+                                        
+                                        {% endfor %}"><em class="icon ni ni-eye" ></em></button>
+                                    </center>
+                                  
+                                </td>
+
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <div>
+                                        <span class="tb-amount">{{renta.fecha_apartado}}</span>
+                                    </div>
+                                  
+                                    <div>
+                                        <p class="fs-12px fw-bold text-pink" style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="{{renta.comentarios_renta}}">Comentarios</p> 
+                                    </div>
+                                </td>
+                               
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span class="badge  badge-primary">{{renta.fecha_entrega_renta}}</span>
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span class="fw-bold text-danger">{{renta.fecha_limite_devolucion}}</span>
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span class="badge badge-danger text-white" >{{renta.fecha_limite_devolucion_cuota}}</span>
+                                </td>
+
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span   class="text-dark fw-bold">$ {{renta.monto_total_renta}} MXN</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-gray" >$ {{renta.monto_min_apartado}} MXN</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="badge  badge-success" >$ {{renta.monto_pago_apartado}} MXN</span>
+                                </td>
+
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info" >$ {{renta.monto_restante}} MXN</span>
+                                </td>
+
+                               
+                                <td class="nk-tb-col">
+                                    <center>
+                                        <button type="button" class="btn btn-dim btn-danger btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                                 
+                                        <div> 
+                                            <h6> <span class='text-primary fs-11px'> {{encargado}}    </h6>
+                                        </div>
+                                        
+                                      "><em class="icon ni ni-user-alt"></em></button>
+                                    </center>
+                                 
+                                </td>
+
+                                <td class="nk-tb-col">
+                                   
+                                    <span class="badge badge-pill badge-light fw-bold">{{sucursal}}</span>
+                               
+                                </td>
+                                <td class="nk-tb-col">
+                                <input type="hidden" name="idRentaApartadaEntregarAcliente" value="{{renta.id_renta}}">
+                                <center>
+                                    <button type="button" data-toggle="modal" data-target="#rentaApartadaEntregarACliente{{renta.id_renta}}" class="btn btn-icon btn-sm btn-success"><em class="icon ni ni-check-circle-fill" data-toggle="tooltip" data-placement="bottom" title="Clic para hacer entrega de vestido apartado a cliente."></em></button>
+                                </center>
+                                </td>
+                     
+
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+        <!-- DIV RENTAS PENDIENTES -->
+        <div class="nk-block nk-block-lg" id="divRentasPendientes">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Rentas pendientes</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de rentas <span class="coloralta">pendientes por devolver</span> en el sistema.</p>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #24A19C !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Cliente</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Producto</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha de renta</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha de entrega</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha límite devolución</span></th>
+                             
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha límite devolución con cuota</span></th>
+                               
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto $ total de renta</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">$ mínimo apartado</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto $ abono</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto $ restante</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Realizado por:</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal:</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Finalizar</span></th>
+                             
+                             
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for renta,cliente,producto,encargado,sucursal in listaPendientes %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-info">{{renta.id_renta}}</span>
+                                </td>
+
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span class="badge badge-dark">{{cliente}}</span>
+                                </td>
+                               
+                                <td class="nk-tb-col">
+                                   <button type="button" class="btn btn-dim btn-primary btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                                       {% for sf in producto %}
+                                                       <div> 
+                                                           <h6> <span class='text-primary fs-11px'> {{sf.0}} -</span> <span class='text-soft fs-11px'> {{sf.1}}  </span> <span class='text-info fs-11px'> </span>   </h6>
+                                                       </div>
+                                                       
+                                                       {% endfor %}"><em class="icon ni ni-eye"></em></button>
+                                </td>
+
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <div>
+                                        <span class="tb-amount">{{renta.fecha_apartado}}</span>
+                                    </div>
+                                  
+                                    <div>
+                                        <p class="fs-12px fw-bold text-pink" style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="{{renta.comentarios_renta}}">Comentarios</p> 
+                                    </div>
+                                </td>
+                               
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span class="badge  badge-primary">{{renta.fecha_entrega_renta}}</span>
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span class="fw-bold text-danger" >{{renta.fecha_limite_devolucion}}</span>
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span class="badge badge-danger text-white" style="color: black !important;;">{{renta.fecha_limite_devolucion_cuota}}</span>
+                                </td>
+
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span   class="text-dark fw-bold" style="color: black !important;;">$ {{renta.monto_total_renta}} MXN</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-gray" style="color: black !important;;">$ {{renta.monto_min_apartado}} MXN</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="badge  badge-success" style="color: black !important;;">$ {{renta.monto_pago_apartado}} MXN</span>
+                                </td>
+
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info" style="color: black !important;;">$ {{renta.monto_restante}} MXN</span>
+                                </td>
+
+                               
+                                <td class="nk-tb-col">
+                                    <button type="button" class="btn btn-dark btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                                 
+                                                       <div> 
+                                                           <h6> <span class='text-primary fs-11px'> {{encargado}}    </h6>
+                                                       </div>
+                                                       
+                                                     "><em class="icon ni ni-user-alt" ></em></button>
+                                </td>
+
+                                <td class="nk-tb-col">
+                                   
+                                    <span class="badge badge-pill badge-light fw-bold">{{sucursal}}</span>
+                               
+                                </td>
+
+                                <td class="nk-tb-col">
+                                <input type="hidden" name="idRentaPendienteDevolucionCliente" value="{{renta.id_renta}}">
+                                <center>
+                                    <button type="button" data-toggle="modal" data-target="#rentaPendienteDevolucionCliente{{renta.id_renta}}" class="btn btn-icon btn-sm btn-danger" ><em class="icon ni ni-calendar-check" data-toggle="tooltip" data-placement="bottom" title="Clic para finalizar renta."></em></button>
+                                </center>
+                         
+                                </td>
+
+                            </tr>
+                            {% endfor %}
+                            
+                            
+                        </tbody>
+                    </table>
+                 
+                </div>
+                {% if cuota  %}
+                <h1>{{retrasos}}</h1>
+                {% else %}
+                <h1>{{retrasos}}</h1>
+                {% endif %}
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+        <!-- DIV EMPLEADOS INACTIVOS -->
+        <div  id="divRentasFinalizadasSinCuota">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Rentas finalizadas sin cuota</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de rentas <span class="colorbaja">finalizadas</span> en el sistema.</p>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #66BFBF !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Cliente</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Producto</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Costo $ de renta</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto $ abono</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Monto $ abono final</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha de entrega</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha de limite de devolución</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha de devolución</span></th>
+                              
+                              
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Detalles</span></th>
+                               
+                                
+                                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Realizada por:</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                                
+                             
+                             
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for renta,cliente,producto,encargado, sucursal in listaFinalizadasSinCuota %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{renta.id_renta}}</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-dark">{{cliente}}</span>
+                                </td>
+                               
+                                <td class="nk-tb-col">
+                                    <div>
+                                        <center>
+                                            <button type="button" class="btn btn-dim btn-primary btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                            
+                                            {% for sf in producto %}
+                                            <div> 
+                                                <h6> <span class='text-primary fs-11px'> {{sf.0}} -</span> <span class='text-soft fs-11px'> {{sf.1}}  </span> <span class='text-info fs-11px'> </span>   </h6>
+                                            </div>
+                                            
+                                            {% endfor %}"><em class="icon ni ni-eye" ></em></button>
+                                        </center>
+                                    </div>
+                                   
+                                    
+                                    <div>
+                                        <p class="fs-12px fw-bold text-pink" data-toggle="tooltip" style="cursor: pointer;" data-placement="bottom" title="{{renta.comentarios_renta}}">Comentarios</p> 
+                                    </div>
+                                    
+                                 
+                                 </td>
+
+                               <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span   class="text-dark fw-bold" >$ {{renta.monto_total_renta}} MXN</span>
+                                </td>
+                               
+
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-success" >$ {{renta.monto_pago_apartado}} MXN</span>
+                                </td>
+
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-success" >$ {{renta.monto_pago_restante}} MXN</span>
+                                </td>
+                               
+                               
+                               
+                                <td class="nk-tb-col">
+                                    <span class="badge  badge-primary">{{renta.fecha_entrega_renta}}</span>
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span class="fw-bold text-dark" style="color: black !important;;">{{renta.fecha_limite_devolucion}}</span>
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span class="badge  badge-info">{{renta.fecha_devolucion}}</span>
+                                </td>
+                            
+
+                                <td class="nk-tb-col" >
+                                    {% if renta.descripcion_devolucion == "" %}
+                                    <center>
+                                        <button type="button" class="btn btn-dim btn-info btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                   
+                                        <h6> <span class='text-primary fs-11px'> Sin detalles</span>   </h6>
+                                    "><em class="icon ni ni-chat" ></em></button>
+                                    </center>
+                                    {% else %}
+                                    <center>
+                                        <button type="button" class="btn btn-dim btn-info btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                   
+                                        <h6> <span class='text-primary fs-11px'> {{renta.descripcion_devolucion}}</span>   </h6>
+                                    "><em class="icon ni ni-chat" ></em></button>
+                                    </center>
+                                    {% endif %}
+                                 
+                                </td>
+
+                               
+                               
+                                <td class="nk-tb-col" >
+                                    <center>
+                                        <button type="button" class="btn btn-dim btn-danger btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                   
+                                        <h6> <span class='text-primary fs-11px'> {{encargado}}</span>   </h6>
+                                    "><em class="icon ni ni-user-alt"></em></button>
+                                    </center>
+                               
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-pill badge-outline-dark">{{sucursal}}</span>
+                                </td>
+                           
+                     
+
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+    </div>
+</div>
+
+
+        <!-- DIV EMPLEADOS INACTIVOS -->
+        <div  id="divRentasFinalizadasConCuota">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Rentas finalizadas con cuota</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de rentas <span class="colorbaja">finalizadas</span> en el sistema.</p>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #E94560 !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Cliente</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Producto</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Costo $ de renta</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha de entrega</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha de limite de devolución</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha limite con cuota</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha de devolución</span></th>
+                                
+                              
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Detalles de devolución</span></th>
+                                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Costo $ de cuota</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Cuota saldada?</span></th>
+                               
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Renta realizada por:</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Recibir cuota:</span></th>
+                                
+                             
+                             
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for renta,cliente,producto,encargado,sucursal in listaFinalizadasCuota %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{renta.id_renta}}</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-dark">{{cliente}}</span>
+                                </td>
+                               
+                                <td class="nk-tb-col">
+                                    <div>
+                                        <center>
+                                            <button type="button" class="btn btn-dim btn-primary btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                            
+                                            {% for sf in producto %}
+                                            <div> 
+                                                <h6> <span class='text-primary fs-11px'> {{sf.0}} -</span> <span class='text-soft fs-11px'> {{sf.1}}  </span> <span class='text-info fs-11px'> </span>   </h6>
+                                            </div>
+                                            
+                                            {% endfor %}"><em class="icon ni ni-eye" ></em></button>
+                                        </center>
+                                    </div>
+                                 
+
+                                    <div>
+                                        <p class="fs-12px fw-bold text-pink" style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="{{renta.comentarios_renta}}">Comentarios</p> 
+                                    </div>
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span   class="text-dark fw-bold" >$ {{renta.monto_total_renta}} MXN</span>
+                                </td>
+                               
+                                <td class="nk-tb-col">
+                                    <span class="badge  badge-primary">{{renta.fecha_entrega_renta}}</span>
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span class="fw-bold text-dark" >{{renta.fecha_limite_devolucion}}</span>
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span class="badge  badge-warning">{{renta.fecha_limite_devolucion_cuota}}</span>
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span class="badge  badge-danger">{{renta.fecha_devolucion}}</span>
+                                </td>
+                               
+
+                                <td class="nk-tb-col">
+                                    {% if renta.descripcion_devolucion == "" %}
+                                    <center>
+                                        <button type="button" class="btn btn-dim btn-info btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                   
+                                        <h6> <span class='text-primary fs-11px'>Sin detalles</span>   </h6>
+                                    "><em class="icon ni ni-chat" ></em></button>
+                                    </center>
+                                    {% else %}
+                                    <center>
+                                        <button type="button" class="btn btn-dim btn-info btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                   
+                                        <h6> <span class='text-primary fs-11px'> {{renta.descripcion_devolucion}}</span>   </h6>
+                                    "><em class="icon ni ni-chat" ></em></button>
+                                    </center>
+                                    {% endif %}
+                                 
+
+                                </td>
+                               
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    <span   class="text-dark fw-bold" style="color: black !important;;">$ {{renta.monto_cuota}} MXN</span>
+                                </td>
+
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    {% if renta.cuota_saldada == "No" %}
+                                    <center>
+                                        <span   class="badge badge-danger">NO</span>
+
+                                    </center>
+                                    {% else %}
+                                    <center>
+                                        
+                                    <span   class="badge badge-info" >SI</span>
+                                    </center>
+                                    {% endif %}
+                                </td>
+                                
+                                <td class="nk-tb-col" >
+                                    <center>
+                                        <button type="button" class="btn btn-dim btn-danger btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                   
+                                        <h6> <span class='text-primary fs-11px'> {{encargado}}</span>   </h6>
+                                    "><em class="icon ni ni-user-alt" data-toggle="tooltip" data-placement="bottom" title="Clic para ver empleado"></em></button>
+                                    </center>
+                               
+                                </td>
+                            
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-pill badge-outline-dark">{{sucursal}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    {% if renta.cuota_saldada == "No" %}
+                                    <input type="hidden" name="idRentaCuota" value="{{renta.id_renta}}">
+                                    <center>
+                                        <button type="button" data-toggle="modal" data-target="#rentaCuota{{renta.id_renta}}" class="btn btn-icon btn-sm btn-danger" ><em class="icon ni ni-sign-usd-alt2" data-toggle="tooltip" data-placement="bottom" title="Clic para recibir pago de cuota."></em></button>
+                                    </center>
+                                    {% else %}
+                                    <span   class="badge badge-success" >Pagado</span>
+                                    {% endif %}
+                             
+                                </td>
+                             
+                           
+                     
+
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+    </div>
+</div>
+
+
+
+<!-- MODAl RENTAS APARTADAS   -->
+
+{% for rentaT, clienteT, productoT,vendedor,sucursal in listaApartadosEntregarAclienteModal %}
+<!-- Modal de editar producto -->
+<div class="modal fade" tabindex="-1" role="dialog" id="rentaApartadaEntregarACliente{{rentaT.id_renta}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h3 class="title text-center fuenteTitulo">ENTREGAR RENTA APARTADA A CLIENTE</h3>
+                <center>
+                    <img src="{% static 'images/iconosMenu/entregaRenta.png' %} " alt="personal">
+                </center>
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/entregarRentaApartada/" method="POST">{% csrf_token %}
+                        <input type="hidden" name="idSucursal" value="{{idSucursal}}" readonly>
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <h4 class="title text-center ">Renta apartada por cliente <span class="badge badge-dim badge-pill badge-outline-danger">{{clienteT}}</span> </h4>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="row gy-4">
+                            <input type="hidden" value="{{rentaT.id_renta}}" name="idRentaEntregaAcliente">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr style="background-color: #0b82e4 !important; color:white !important">
+                                           
+                                                <th scope="col-md-3">Producto</th>
+                                                <th scope="col-md-3">Imagen</th>
+                                                
+                                               
+                                               
+                                                
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                            {% for x in productoT %}
+                                            <tr>
+                                              
+                                           
+                                                <td>
+                                                   
+                                                  <span><span class="fw-bold text-azure">{{x.0}} </span>-<span class="fw-bold text-dark"> {{x.1}}</span>
+                                                        
+                                                 
+
+                                                   
+                                                </td>
+
+                                                <td>
+                                               
+                                                 
+                                                        <center>
+                                                            {% if x.2 %}
+                                                            <img src="{{x.2.url}}" width="15%" alt="lap">
+                                                            {% else %}
+                                                            <span>Sin imagen</span>
+                                                            {% endif %}
+                                                        </center>
+
+                                                </td>
+                                             
+
+                                               
+                                            </tr>
+                                            {% endfor %}
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr class="preview-hr" style="border-color:  #0b82e4    !important;">
+                    <div class="card h-100" id="div3">
+                        <div class="card-inner">
+                       
+                       
+                         
+                            <div class="row gy-4">
+
+                         
+
+                                <div class="col-sm-3"   >
+                                    <div class="form-group">
+                                        <div class="form-control-wrap ">
+                                       
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #086bbc   !important;">Forma de pago:</span>
+                                            <div class="form-control-select">
+                                                <select class="form-control" id="selectTipoPago{{rentaT.id_renta}}" name="tipoPago" onchange="cambioTipoPago{{rentaT.id_renta}}()">
+                                                    <option value="Efectivo">Efectivo</option>
+                                                    <option value="Tarjeta">Tarjeta</option>
+                                                    <option value="Transferencia">Transferencia</option>
+                                                </select>
+                                            </div>
+                                   
+                                        </div>
+                                        <br>
+                                       
+                                 
+                                    
+                                        
+                                        
+                                    </div>
+                                    
+                                </div>
+                                <div class="col-sm-5" >
+                                    <div class="form-group">
+                                       
+                                        
+                                        <div class="form-control-wrap" id="cantidadEfectivo{{rentaT.id_renta}}">
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #086bbc    !important;">Cantidad:</span>
+                                            <input type="number"class="form-control"   placeholder="Ingresar efectivo" maxlength="4" max="10000" min="5" value="5" step="1" id="efectivoPagoCliente{{rentaT.id_renta}}" onchange="calcularFeria{{rentaT.id_renta}}()"> 
+                                        </div>
+                                        <div class="form-control-wrap" id="cantidadAbono">
+                                            
+                                        </div>
+                                        <div class="form-control-wrap " id="divClaveRastreoTransferencia{{rentaT.id_renta}}">
+                                       
+                                            <div class="form-group">
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #086bbc   !important;">Clave de rastreo:</span>
+                                                <div class="form-control-wrap">
+                                                    
+                                                    <input type="text"class="form-control" placeholder="Ingresar Clave" maxlength="50" name="claveRastreoTransferencia"> 
+                                                </div>
+                                            </div>
+                                   
+                                        </div>
+                                        <div class="form-control-wrap " id="divSelectTipoTarjeta{{rentaT.id_renta}}">
+                                       
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #086bbc    !important;">Tipo tarjeta:</span>
+                                            <div class="form-control-select">
+                                                <select class="form-control" id="default-06" name="tipoTarjeta">
+                                                    <option value="Credito">Crédito</option>
+                                                    <option value="Debito">Débito</option>
+                                                </select>
+                                            </div>
+                                   
+                                        </div>
+                                        <br>
+                                        
+                                        <div class="form-control-wrap " id="divReferenciaBancaria{{rentaT.id_renta}}">
+                                       
+                                            <div class="form-group">
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #086bbc    !important;">Referencia de pago:</span>
+                                                <div class="form-control-wrap">
+                                                    
+                                                    <input type="text"class="form-control" placeholder="Ingresar referencia Vouncher" maxlength="50" name="referenciaTarjeta"> 
+                                                </div>
+                                            </div>
+                                   
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3" >
+                                   
+                                    <div class="form-group">
+                                        <div class="form-control-wrap ">
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #086bbc   !important;">Total restante a pagar:</span>
+                                            <h6>$<input id="costoTotal{{rentaT.id_renta}}" type="text" value="{{rentaT.monto_restante}}" size="10" readonly style="border: none;" name="costoRestanteApagar"></input> MXN.</h6>
+                                        </div> 
+                                     
+                                        <div class="form-control-wrap" id="spanCambio{{rentaT.id_renta}}">
+                                            
+                                            <h6>Cambio: $<span id="spanCambioChico{{rentaT.id_renta}}">0</span> MXN.</h6>
+                                        </div>  
+                                        <br>
+                                       
+                                        
+                                    </div>
+                               
+                                </div>
+
+                               
+                            </div>
+                            
+                            
+                           
+                        
+                        
+                            <hr class="preview-hr" style="border-color:  #0b82e4   !important;">
+                        </div>
+                        
+                        <center>
+                            <button type="submit" class="btn btn-sm btn-warning">Entregar renta apartada a cliente</button>
+                        </center>
+                    </div><!-- .card -->
+                        
+
+                    </div><!-- .tab-pane -->
+                    </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+
+
+<!-- MODAl RENTAS Pendientes   -->
+
+{% for rentaT, clienteT, productoT,vendedor,sucursal, idSucursal in listaPendientesDevolucionPorClienteModal %}
+<!-- Modal de editar producto -->
+<div class="modal fade" tabindex="-1" role="dialog" id="rentaPendienteDevolucionCliente{{rentaT.id_renta}}">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h2 class="title text-center fuenteTitulo">RECIBIR RENTA #{{rentaT.id_renta}} PENDIENTE POR CLIENTE</h2>
+                <h5 class="title text-center "><span class="badge badge-dim badge-pill badge-outline-danger">{{clienteT}}</span> </h5>
+                <center>
+                    {% if productoT.2 %}
+                    <img src="{{productoT.2.url}}" width="20%" alt="lap">
+                    {% else %}
+                    <img src="{% static 'images/iconosMenu/devolucion.png' %} " alt="personal">
+                    {% endif %}
+                </center>
+             
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/recibirRentaDevolucionCliente/" method="POST">{% csrf_token %}
+                    <input type="hidden" name="idSucursal" value="{{idSucursal}}" readonly>
+                    <div class="tab-pane active" id="personal">
+                      
+                       
+                        <hr class="preview-hr" style="border-color:  #b42a1b    !important;">
+
+                        <div class="row gy-2">
+                                    <input type="hidden" value="{{rentaT.id_renta}}" name="idRentaDevolucionPorcliente">
+    
+                             
+    
+                                    <div class="col-sm-6"   >
+                                        <div class="form-group">
+                                            <div class="form-control-wrap ">
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #b42a1b   !important;">Fecha devolución:</span>
+                                                <div class="form-group">
+                                                    <div class="form-icon form-icon-left">
+                                                        <em class="icon ni ni-calendar"></em>
+                                                    </div>
+                                                    <input type="text" class="form-control date-picker" data-date-format="yyyy-mm-dd"  required name="fechaDevolucionVestido" >
+                                                </div>
+                                            </div>
+                                            <br>
+                                          
+                                       
+                                         
+                                           
+                                     
+                                        
+                                            
+                                            
+                                        </div>
+                                        
+                                    </div>
+                               
+                                    <div class="col-sm-6" >
+                                        <div class="form-group">
+                                            <div class="form-control-wrap ">
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #b42a1b    !important;">Comentarios devolución:</span>
+                                                <textarea class=" estilotextarea"  placeholder="Ingresar comentarios de la devolución"  name="comentarios"></textarea>
+                                            </div> 
+                                           
+                                            <br>
+                                            
+                                           
+                                           
+                                            
+                                            
+                                             
+                                            
+                                       
+                                        </div>
+                                           
+                                            
+                                            
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <center>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="checkBoxDanio{{rentaT.id_renta}}" name="checkBoxDanio{{rentaT.id_renta}}"  onclick="mostrarPagoDanio{{rentaT.id_renta}}()">
+                                                <label class="custom-control-label" for="checkBoxDanio{{rentaT.id_renta}}">Vestido Dañado?</label>
+                                            </div>
+                                        </center>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <div id="divPagoDaño{{rentaT.id_renta}}">
+                                            <div class="row gy-4">
+                                                <div class="col-sm-12">
+                                                    <center>
+                                                        <h4 class="text-dark">Pago por daño</h4>
+                                                        
+                                                    </center>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Nivel de daño</label>
+                                                        <div class="form-control-wrap">
+                                                            <select class="form-select form-control form-control-lg" name="selectTipoDaño{{rentaT.id_renta}}" id="selectTipoDaño{{rentaT.id_renta}}" onchange="seleccionarTipoDeDaño{{rentaT.id_renta}}()">
+                                                                <option value="Leve">Leve</option>
+                                                                <option value="Grave">Grave</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Total a pagar</label>
+                                                        <h4 class="fw-bold fs-40">$ <input type="text" id="inputCantidadDaño{{rentaT.id_renta}}" style="border: none;" class="text-teal" value="500" size="4" readonly><small>Mxn.</small></h4>
+                                                        <h6 id="spanCambioDaño{{rentaT.id_renta}}">$ <span id="spanCambioChicoDaño{{rentaT.id_renta}}">0</span><small>Mxn.</small></h6>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
+
+
+
+
+                                            <div class="row gy-4">
+                                                <input type="hidden" value="{{rentaT.id_renta}}" name="idRentaPagoCuota">
+                
+                                         
+                
+                                                <div class="col-sm-6"   >
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap ">
+                                                       
+                                                            <span class="preview-title-lg overline-title text-pink" style="color: #b42a1b    !important;">Forma de pago:</span>
+                                                            <div class="form-control-select">
+                                                                <select class="form-control" id="selectTipoPagoDaño{{rentaT.id_renta}}" name="selectTipoPagoDaño{{rentaT.id_renta}}" onchange="cambioTipoPagoDaño{{rentaT.id_renta}}()">
+                                                                    <option value="Efectivo">Efectivo</option>
+                                                                    <option value="Tarjeta">Tarjeta</option>
+                                                                    <option value="Transferencia">Transferencia</option>
+                                                                </select>
+                                                            </div>
+                                                   
+                                                        </div>
+                                                    
+                                                        <div class="form-control-wrap " id="divSelectTipoTarjetaDaño{{rentaT.id_renta}}">
+                                                            <br>
+                                                            <span class="preview-title-lg overline-title text-pink" style="color: #b42a1b !important;">Tipo tarjeta:</span>
+                                                            <div class="form-control-select">
+                                                                <select class="form-control" id="default-06" name="tipoTarjetaDaño{{rentaT.id_renta}}">
+                                                                    <option value="Credito">Crédito</option>
+                                                                    <option value="Debito">Débito</option>
+                                                                </select>
+                                                            </div>
+                                                   
+                                                        </div>
+                                                        
+                                                       
+                                                 
+                                                    
+                                                        
+                                                        
+                                                    </div>
+                                                    
+                                                </div>
+                                                <div class="col-sm-6" >
+                                                    <div class="form-group">
+                                                       
+                                                        <div class="form-control-wrap " id="divReferenciaBancariaDaño{{rentaT.id_renta}}">
+                                                       
+                                                            <div class="form-group">
+                                                                <span class="preview-title-lg overline-title text-pink" style="color: #b42a1b    !important;">Referencia de pago:</span>
+                                                                <div class="form-control-wrap">
+                                                                    
+                                                                    <input type="text"class="form-control" placeholder="Ingresar referencia Vouncher" maxlength="50" name="referenciaTarjetaDaño{{rentaT.id_renta}}"> 
+                                                                </div>
+                                                            </div>
+                                                   
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-control-wrap " id="divClaveRastreoTransferenciaDaño{{rentaT.id_renta}}">
+                                                       
+                                                        <div class="form-group">
+                                                            <span class="preview-title-lg overline-title text-pink" style="color: #b42a1b    !important;">Clave de rastreo:</span>
+                                                            <div class="form-control-wrap">
+                                                                
+                                                                <input type="text"class="form-control" placeholder="Ingresar Clave" maxlength="50" name="claveRastreoTransferencia{{rentaT.id_renta}}"> 
+                                                            </div>
+                                                        </div>
+                                               
+                                                    </div>
+                                                 
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap" id="cantidadEfectivoDaño{{rentaT.id_renta}}">
+                                                            <span class="preview-title-lg overline-title text-pink" style="color: #b42a1b     !important;">Cantidad:</span>
+                                                            <input type="number"class="form-control"   placeholder="Ingresar efectivo" maxlength="4" max="10000" min="5" value="" step="1" id="efectivoPagoClienteDaño{{rentaT.id_renta}}" onkeyup="calcularFeriaDaño{{rentaT.id_renta}}()"> 
+                                                        </div>
+                                                       
+                                                        
+                                                    </div>
+                                                </div>
+                
+                                               
+                                            </div>
+
+
+
+
+
+
+
+                                            
+                                        </div>
+                                    </div>
+                                    
+                                    
+                                 
+                                  
+    
+                                   
+                                </div>
+                                <br>
+                        <center>
+                            <button type="submit" class="btn btn-sm btn-danger"  >Recibir renta pendiente </button>
+                        </center>
+                    
+                        
+                     
+                    </div><!-- .card -->
+
+                        
+                        
+
+                    </div><!-- .tab-pane -->
+                    </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+
+
+<!-- MODAl RENTAS FINALIZADAS   -->
+
+{% for rentaT, clienteT, productoT,vendedor,sucursal in listaFinalizadasCuotaModal %}
+<!-- Modal de editar producto -->
+<div class="modal fade" tabindex="-1" role="dialog" id="rentaCuota{{rentaT.id_renta}}">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h4 class="title text-center ">RECIBIR PAGO DE CUOTA DE RENTA</h4>
+              
+                <center>
+                    {% if productoT.imagen_producto %}
+                    <img src="{{productoT.2.url}}" width="20%" alt="lap">
+                    {% else %}
+                    <img src="{% static 'images/iconosMenu/cuota.png' %} " alt="personal">
+                    {% endif %}
+                </center>
+             
+                
+                
+                <div class="tab-content">
+                    
+                    <form action="/recibirPagoCuota/" method="POST">{% csrf_token %}
+                        <input type="hidden" name="idSucursal" value="{{idSucursal}}" readonly>
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <h4 class="title text-center ">Cuota de cliente: <span class="badge badge-dim badge-pill badge-outline-danger">{{clienteT}}</span> </h4>
+                                </div>
+                            </div>
+                    </div>
+                      
+                       
+                        <hr class="preview-hr" style="border-color:  #b42a1b    !important;">
+
+                    
+                        
+                      <br>
+                    
+                    <div class="card h-100" id="div3">
+                        <div class="card-inner">
+                       
+                       
+                         
+                            <div class="row gy-4">
+                                <input type="hidden" value="{{rentaT.id_renta}}" name="idRentaPagoCuota">
+
+                         
+
+                                <div class="col-sm-3"   >
+                                    <div class="form-group">
+                                        <div class="form-control-wrap ">
+                                       
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #b42a1b    !important;">Forma de pago:</span>
+                                            <div class="form-control-select">
+                                                <select class="form-control" id="selectTipoPagoCuota{{rentaT.id_renta}}" name="tipoPago" onchange="cambioTipoPagoCuota{{rentaT.id_renta}}()">
+                                                    <option value="Efectivo">Efectivo</option>
+                                                    <option value="Tarjeta">Tarjeta</option>
+                                                    <option value="Transferencia">Transferencia</option>
+                                                </select>
+                                            </div>
+                                   
+                                        </div>
+                                        <br>
+                                    
+                                        <div class="form-control-wrap " id="divSelectTipoTarjetaCuota{{rentaT.id_renta}}">
+                                       
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #b42a1b !important;">Tipo tarjeta:</span>
+                                            <div class="form-control-select">
+                                                <select class="form-control" id="default-06" name="tipoTarjetaCuota">
+                                                    <option value="Credito">Crédito</option>
+                                                    <option value="Debito">Débito</option>
+                                                </select>
+                                            </div>
+                                   
+                                        </div>
+                                        <br>
+                                        <div class="form-control-wrap " id="divClaveRastreoTransferenciaCuota{{rentaT.id_renta}}">
+                                       
+                                            <div class="form-group">
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #b42a1b    !important;">Clave de rastreo:</span>
+                                                <div class="form-control-wrap">
+                                                    
+                                                    <input type="text"class="form-control" placeholder="Ingresar Clave" maxlength="50" name="claveRastreoTransferencia"> 
+                                                </div>
+                                            </div>
+                                   
+                                        </div>
+                                     
+                                        <br>
+                                       
+                                 
+                                    
+                                        
+                                        
+                                    </div>
+                                    
+                                </div>
+                                <div class="col-sm-5" >
+                                    <div class="form-group">
+                                       
+                                        <div class="form-control-wrap" id="cantidadEfectivoCuota">
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #b42a1b     !important;">Monto de cuota:</span>
+                                            <input type="number"class="form-control"  name="montoCuota"  placeholder="Ingresar cantidad" maxlength="4" max="10000" min="5" value="{{rentaT.monto_cuota}}" step="1" id="montoCuota{{rentaT.id_renta}}" onchange="calcularTotalCuota{{rentaT.id_renta}}()" > 
+                                        </div>
+                                        <br>
+                                    
+                                  
+                                        
+                                        <div class="form-control-wrap " id="divReferenciaBancariaCuota{{rentaT.id_renta}}">
+                                       
+                                            <div class="form-group">
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #b42a1b    !important;">Referencia de pago:</span>
+                                                <div class="form-control-wrap">
+                                                    
+                                                    <input type="text"class="form-control" placeholder="Ingresar referencia Vouncher" maxlength="50" name="referenciaTarjeta"> 
+                                                </div>
+                                            </div>
+                                   
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3" >
+                                   
+                                    <div class="form-group">
+                                        <div class="form-control-wrap" id="cantidadEfectivoCuota{{rentaT.id_renta}}">
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #b42a1b     !important;">Cantidad:</span>
+                                            <input type="number"class="form-control"   placeholder="Ingresar efectivo" maxlength="4" max="10000" min="5" value="" step="1" id="efectivoPagoClienteCuota{{rentaT.id_renta}}" onchange="calcularFeriaCuota{{rentaT.id_renta}}()"> 
+                                        </div>
+                                        <br>
+                                        <div class="form-control-wrap ">
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #b42a1b    !important;">Total a pagar:</span>
+                                            <h6>$<input id="costoTotalCuota{{rentaT.id_renta}}" type="text" value="{{rentaT.monto_cuota}}" size="10" readonly style="border: none;" name="costoRestanteApagar"></input> MXN.</h6>
+                                        </div> 
+                                     
+                                        <div class="form-control-wrap" id="spanCambioCuota{{rentaT.id_renta}}">
+                                            
+                                            <h6>Cambio: $<span id="spanCambioChicoCuota{{rentaT.id_renta}}">0</span> MXN.</h6>
+                                        </div>  
+                                        <br>
+                                       
+                                        
+                                    </div>
+                               
+                                </div>
+
+                               
+                            </div>
+                            
+                            
+                           
+                        
+                        
+                       
+                        </div>
+                        
+                     
+                    </div><!-- .card -->
+
+                        <div class="row gy-4">
+                            <div class="col-12">
+                                <center>
+                                    <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                        <li>
+                                            <button type="submit" class="btn btn-sm btn-danger"  >Recibir pago de cuota </button>
+                                        </li>
+                                    </ul>
+                                </center>
+                             
+                            </div>
+                        </div>
+                        
+
+                    </div><!-- .tab-pane -->
+                    </form>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+
+{% endfor %}
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<script>
+    {% if rentasEnviadas %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{rentasEnviadas }}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+</script>
+
+
+
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+        var divRentasApartadas = document.getElementById("divRentasApartadas");
+        var divRentasPendientes = document.getElementById("divRentasPendientes");
+        var divRentasFinalizadasSinCuota = document.getElementById("divRentasFinalizadasSinCuota");
+        var divRentasFinalizadasConCuota = document.getElementById("divRentasFinalizadasConCuota");
+        divRentasApartadas.style.display = "block";
+        divRentasPendientes.style.display = "none";
+        divRentasFinalizadasSinCuota.style.display = "none";
+        divRentasFinalizadasConCuota.style.display = "none";
+
+        window.onload= mueveReloj ();
+        
+    };
+
+    
+
+    function mostrarApartadas(){
+        divRentasApartadas.style.display = "block";
+        divRentasPendientes.style.display = "none";
+        divRentasFinalizadasSinCuota.style.display = "none";
+        divRentasFinalizadasConCuota.style.display = "none";
+        console.log("Todos los divs");
+    };
+
+    function mostrarPendientes(){
+        divRentasApartadas.style.display = "none";
+        divRentasPendientes.style.display = "block";
+        divRentasFinalizadasSinCuota.style.display = "none";
+        divRentasFinalizadasConCuota.style.display = "none";
+        console.log("inactivos");
+    };
+
+    function mostrarFinalizadasSinCuota(){
+        divRentasApartadas.style.display = "none";
+        divRentasPendientes.style.display = "none";
+        divRentasFinalizadasSinCuota.style.display = "block";
+        divRentasFinalizadasConCuota.style.display = "none";
+        console.log("activos");
+    };
+
+    function mostrarFinalizadasConCuota(){
+        divRentasApartadas.style.display = "none";
+        divRentasPendientes.style.display = "none";
+        divRentasFinalizadasSinCuota.style.display = "none";
+        divRentasFinalizadasConCuota.style.display = "block";
+        console.log("activos");
+    };
+
+        
+    //Por cada una de las rentas
+    {% for rentaT, clienteT, productoT,vendedor,sucursal in listaApartadosEntregarAclienteModalJS %}
+        var divSelectTipoTarjeta{{rentaT.id_renta}} = document.getElementById('divSelectTipoTarjeta{{rentaT.id_renta}}');
+        var divReferenciaBancaria{{rentaT.id_renta}} = document.getElementById('divReferenciaBancaria{{rentaT.id_renta}}');
+        var divClaveRastreoTransferencia{{rentaT.id_renta}} = document.getElementById('divClaveRastreoTransferencia{{rentaT.id_renta}}');
+        var divCantidadEfectivo{{rentaT.id_renta}} = document.getElementById('cantidadEfectivo{{rentaT.id_renta}}');
+        var spanCambio{{rentaT.id_renta}} = document.getElementById('spanCambio{{rentaT.id_renta}}');
+        
+
+        
+        
+        divSelectTipoTarjeta{{rentaT.id_renta}}.style.display = "none";
+        divReferenciaBancaria{{rentaT.id_renta}}.style.display = "none";
+        divClaveRastreoTransferencia{{rentaT.id_renta}}.style.display = "none";
+        divCantidadEfectivo{{rentaT.id_renta}}.style.display = "block";
+
+        
+        var montoTotalPagarRestante{{rentaT.id_renta}} = document.getElementById("costoTotal{{rentaT.id_renta}}");
+
+
+        function cambioTipoPago{{rentaT.id_renta}}(){
+            var tipoPagoSeleccionado{{rentaT.id_renta}} = document.getElementById('selectTipoPago{{rentaT.id_renta}}').value;
+            var divCantidadEfectivo{{rentaT.id_renta}} = document.getElementById('cantidadEfectivo{{rentaT.id_renta}}');
+            var spanCambio{{rentaT.id_renta}} = document.getElementById('spanCambio{{rentaT.id_renta}}');
+            if (tipoPagoSeleccionado{{rentaT.id_renta}} == 'Efectivo'){
+                divCantidadEfectivo{{rentaT.id_renta}}.style.display = "block";
+                divSelectTipoTarjeta{{rentaT.id_renta}}.style.display = "none";
+                divReferenciaBancaria{{rentaT.id_renta}}.style.display = "none";
+                divClaveRastreoTransferencia{{rentaT.id_renta}}.style.display = "none";
+                spanCambio{{rentaT.id_renta}}.style.display = "block";
+                if(checkboxApartado{{rentaT.id_renta}}.checked){
+                    divCantidadEfectivo{{rentaT.id_renta}}.style.display = "none";
+                }
+                
+            }
+            else if(tipoPagoSeleccionado{{rentaT.id_renta}} == 'Tarjeta'){
+                divCantidadEfectivo{{rentaT.id_renta}}.style.display = "none";
+                divSelectTipoTarjeta{{rentaT.id_renta}}.style.display = "block";
+                divReferenciaBancaria{{rentaT.id_renta}}.style.display = "block";
+                divClaveRastreoTransferencia{{rentaT.id_renta}}.style.display = "none";
+                spanCambio{{rentaT.id_renta}}.style.display = "none";
+            }
+            else if(tipoPagoSeleccionado{{rentaT.id_renta}} == 'Transferencia'){
+                divCantidadEfectivo{{rentaT.id_renta}}.style.display = "none";
+                divSelectTipoTarjeta{{rentaT.id_renta}}.style.display = "none";
+                divReferenciaBancaria{{rentaT.id_renta}}.style.display = "none";
+                
+                divClaveRastreoTransferencia{{rentaT.id_renta}}.style.display = "block";
+                spanCambio{{rentaT.id_renta}}.style.display = "none";
+            
+            }
+       
+        }
+    
+        
+        function calcularFeria{{rentaT.id_renta}}(){
+            var efectivoPagoCliente{{rentaT.id_renta}} = document.getElementById("efectivoPagoCliente{{rentaT.id_renta}}");
+            var spanCambioChico{{rentaT.id_renta}} = document.getElementById("spanCambioChico{{rentaT.id_renta}}");
+            var montoTotalPagarRestante{{rentaT.id_renta}} = document.getElementById("costoTotal{{rentaT.id_renta}}").value;
+            var valorInpu{{rentaT.id_renta}}t = efectivoPagoCliente{{rentaT.id_renta}}.value;
+    
+            if (valorInput{{rentaT.id_renta}} == ""){
+                spanCambioChico{{rentaT.id_renta}}.innerHTML = "0";
+            }
+            else{
+                var cambio{{rentaT.id_renta}} = parseFloat(valorInput{{rentaT.id_renta}}) - montoTotalPagarRestante{{rentaT.id_renta}};
+    
+                
+    
+                spanCambioChico{{rentaT.id_renta}}.innerHTML = cambio.toString();
+            }
+            
+    
+    
+        }
+    {% endfor %}
+      
+   
+        
+        
+       
+
+        
+
+
+    
+
+
+
+
+   
+</script>
+
+<script>
+    
+    {% for rentaT, clienteT, productoT,vendedor,sucursal in listaFinalizadasCuotaModalJS %}
+    var divSelectTipoTarjetaCuota{{rentaT.id_renta}} = document.getElementById('divSelectTipoTarjetaCuota{{rentaT.id_renta}}');
+    var divReferenciaBancariaCuota{{rentaT.id_renta}} = document.getElementById('divReferenciaBancariaCuota{{rentaT.id_renta}}');
+    var divClaveRastreoTransferenciaCuota{{rentaT.id_renta}} = document.getElementById('divClaveRastreoTransferenciaCuota{{rentaT.id_renta}}');
+    var divCantidadEfectivoCuota{{rentaT.id_renta}} = document.getElementById('cantidadEfectivoCuota{{rentaT.id_renta}}');
+    var spanCambioCuota{{rentaT.id_renta}} = document.getElementById('spanCambioCuota{{rentaT.id_renta}}');
+
+        
+        
+        
+    divSelectTipoTarjetaCuota{{rentaT.id_renta}}.style.display = "none";
+    divReferenciaBancariaCuota{{rentaT.id_renta}}.style.display = "none";
+    divClaveRastreoTransferenciaCuota{{rentaT.id_renta}}.style.display = "none";
+    divCantidadEfectivoCuota{{rentaT.id_renta}}.style.display = "block";
+
+        
+    var montoTotalPagarRestanteCuota{{rentaT.id_renta}} = document.getElementById("costoTotalCuota{{rentaT.id_renta}}");
+
+    function cambioTipoPagoCuota{{rentaT.id_renta}}(){
+        var tipoPagoSeleccionadoCuota{{rentaT.id_renta}} = document.getElementById('selectTipoPagoCuota{{rentaT.id_renta}}').value;
+        var divCantidadEfectivoCuota{{rentaT.id_renta}} = document.getElementById('cantidadEfectivoCuota{{rentaT.id_renta}}');
+        var spanCambioCuota{{rentaT.id_renta}} = document.getElementById('spanCambioCuota{{rentaT.id_renta}}');
+        if (tipoPagoSeleccionadoCuota{{rentaT.id_renta}} == 'Efectivo'){
+            divCantidadEfectivoCuota{{rentaT.id_renta}}.style.display = "block";
+            divSelectTipoTarjetaCuota{{rentaT.id_renta}}.style.display = "none";
+            divReferenciaBancariaCuota{{rentaT.id_renta}}.style.display = "none";
+            divClaveRastreoTransferenciaCuota{{rentaT.id_renta}}.style.display = "none";
+            spanCambioCuota{{rentaT.id_renta}}.style.display = "block";
+            
+        }
+        else if(tipoPagoSeleccionadoCuota{{rentaT.id_renta}} == 'Tarjeta'){
+            divCantidadEfectivoCuota{{rentaT.id_renta}}.style.display = "none";
+            divSelectTipoTarjetaCuota{{rentaT.id_renta}}.style.display = "block";
+            divReferenciaBancariaCuota{{rentaT.id_renta}}.style.display = "block";
+            divClaveRastreoTransferenciaCuota{{rentaT.id_renta}}.style.display = "none";
+            spanCambioCuota{{rentaT.id_renta}}.style.display = "none";
+        }
+        else if(tipoPagoSeleccionadoCuota{{rentaT.id_renta}} == 'Transferencia'){
+            divCantidadEfectivoCuota{{rentaT.id_renta}}.style.display = "none";
+            divSelectTipoTarjetaCuota{{rentaT.id_renta}}.style.display = "none";
+            divReferenciaBancariaCuota{{rentaT.id_renta}}.style.display = "none";
+            
+            divClaveRastreoTransferenciaCuota{{rentaT.id_renta}}.style.display = "block";
+            spanCambioCuota{{rentaT.id_renta}}.style.display = "none";
+        
+        }
+
+    }
+
+    function calcularTotalCuota{{rentaT.id_renta}}(){
+        var montoCuota{{rentaT.id_renta}} = document.getElementById("montoCuota{{rentaT.id_renta}}");
+        var costoTotalCuota{{rentaT.id_renta}} = document.getElementById("costoTotalCuota{{rentaT.id_renta}}");
+        var valorMonto{{rentaT.id_renta}} = montoCuota{{rentaT.id_renta}}.value;
+
+        var montoPagarCuota{{rentaT.id_renta}} = valorMonto{{rentaT.id_renta}};
+        costoTotalCuota{{rentaT.id_renta}}.value = montoPagarCuota{{rentaT.id_renta}}.toString();
+        
+        
+
+
+    };
+
+    function calcularFeriaCuota{{rentaT.id_renta}}(){
+        var efectivoPagoClienteCuota{{rentaT.id_renta}} = document.getElementById("efectivoPagoClienteCuota{{rentaT.id_renta}}");
+        var spanCambioChicoCuota{{rentaT.id_renta}} = document.getElementById("spanCambioChicoCuota{{rentaT.id_renta}}");
+        var montoTotalCuota{{rentaT.id_renta}} = document.getElementById("costoTotalCuota{{rentaT.id_renta}}").value;
+        var valorEfectivo{{rentaT.id_renta}} = efectivoPagoClienteCuota{{rentaT.id_renta}}.value;
+
+        if (valorEfectivo{{rentaT.id_renta}} == ""){
+            spanCambioChicoCuota{{rentaT.id_renta}}.innerHTML = "0";
+        }
+        else{
+            var cambioCuota{{rentaT.id_renta}} = parseFloat(valorEfectivo{{rentaT.id_renta}}) - montoTotalCuota{{rentaT.id_renta}};
+
+            
+
+            spanCambioChicoCuota{{rentaT.id_renta}}.innerHTML = cambioCuota.toString();
+        }
+        
+
+
+    }
+    
+    {% endfor %}
+</script>
+    
+    <script>
+        {% for rentaJS, clienteJS, productoJS,encargadoJS,sucursal in listaPendientesDevolucionPorClienteJS %}
+        function calcularCuotaRetraso{{rentaJS.id_renta}}() {
+    
+            var fechaDev = document.getElementById('fechaDevolucion');
+            var fecha = fechaDev.value;
+            var fechDevolucion = new Date(fecha);
+            
+            var spanRetraso = document.getElementById("retraso");
+    
+            
+          
+    
+            var fechaFinalRentaLimiteCuota = '{{rentaJS.fecha_limite_devolucion_cuota}}';
+    
+           var fechaLimite = new Date(fechaLimite);
+    
+            
+            if (fechDevolucion < fechaLimite){
+                spanRetraso.innerHTML = "No";
+    
+            }
+            else{
+                
+                    spanRetraso.innerHTML = "Si";
+         
+        
+               
+    
+            }
+         
+         
+    
+        }
+        {% endfor %}
+    
+       
+    </script>
+
+
+
+    <script>
+        {% for rentaT, clienteT, productoT,vendedor,sucursal in listaPendientesDevolucionPorClienteModal2 %}
+        
+        var divPagoDaño{{rentaT.id_renta}} = document.getElementById("divPagoDaño{{rentaT.id_renta}}");
+        divPagoDaño{{rentaT.id_renta}}.style.display = "none";
+        function mostrarPagoDanio{{rentaT.id_renta}}(){
+            var checkBoxDanio{{rentaT.id_renta}} = document.getElementById("checkBoxDanio{{rentaT.id_renta}}");
+
+            if (checkBoxDanio{{rentaT.id_renta}}.checked){
+                divPagoDaño{{rentaT.id_renta}}.style.display = "block";
+            }else{
+                divPagoDaño{{rentaT.id_renta}}.style.display = "none";
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+        var divSelectTipoTarjetaDaño{{rentaT.id_renta}} = document.getElementById('divSelectTipoTarjetaDaño{{rentaT.id_renta}}');
+        var divReferenciaBancariaDaño{{rentaT.id_renta}} = document.getElementById('divReferenciaBancariaDaño{{rentaT.id_renta}}');
+        var divClaveRastreoTransferenciaDaño{{rentaT.id_renta}} = document.getElementById('divClaveRastreoTransferenciaDaño{{rentaT.id_renta}}');
+        var cantidadEfectivoDaño{{rentaT.id_renta}} = document.getElementById('cantidadEfectivoDaño{{rentaT.id_renta}}');
+        var spanCambioDaño{{rentaT.id_renta}} = document.getElementById('spanCambioDaño{{rentaT.id_renta}}');
+        
+
+        
+        
+        divSelectTipoTarjetaDaño{{rentaT.id_renta}}.style.display = "none";
+        divReferenciaBancariaDaño{{rentaT.id_renta}}.style.display = "none";
+        divClaveRastreoTransferenciaDaño{{rentaT.id_renta}}.style.display = "none";
+        cantidadEfectivoDaño{{rentaT.id_renta}}.style.display = "block";
+
+        
+
+
+        function cambioTipoPagoDaño{{rentaT.id_renta}}(){
+            var selectTipoPagoDaño{{rentaT.id_renta}} = document.getElementById('selectTipoPagoDaño{{rentaT.id_renta}}').value;
+            var cantidadEfectivoDaño{{rentaT.id_renta}} = document.getElementById('cantidadEfectivoDaño{{rentaT.id_renta}}');
+            var spanCambioDaño{{rentaT.id_renta}} = document.getElementById('spanCambioDaño{{rentaT.id_renta}}');
+            if (selectTipoPagoDaño{{rentaT.id_renta}} == 'Efectivo'){
+                cantidadEfectivoDaño{{rentaT.id_renta}}.style.display = "block";
+                divSelectTipoTarjetaDaño{{rentaT.id_renta}}.style.display = "none";
+                divReferenciaBancariaDaño{{rentaT.id_renta}}.style.display = "none";
+                divClaveRastreoTransferenciaDaño{{rentaT.id_renta}}.style.display = "none";
+                spanCambioDaño{{rentaT.id_renta}}.style.display = "block";
+                
+                
+            }
+            else if(selectTipoPagoDaño{{rentaT.id_renta}} == 'Tarjeta'){
+                cantidadEfectivoDaño{{rentaT.id_renta}}.style.display = "none";
+                divSelectTipoTarjetaDaño{{rentaT.id_renta}}.style.display = "block";
+                divReferenciaBancariaDaño{{rentaT.id_renta}}.style.display = "block";
+                divClaveRastreoTransferenciaDaño{{rentaT.id_renta}}.style.display = "none";
+                spanCambioDaño{{rentaT.id_renta}}.style.display = "none";
+            }
+            else if(selectTipoPagoDaño{{rentaT.id_renta}} == 'Transferencia'){
+                cantidadEfectivoDaño{{rentaT.id_renta}}.style.display = "none";
+                divSelectTipoTarjetaDaño{{rentaT.id_renta}}.style.display = "none";
+                divReferenciaBancariaDaño{{rentaT.id_renta}}.style.display = "none";
+                
+                divClaveRastreoTransferenciaDaño{{rentaT.id_renta}}.style.display = "block";
+                spanCambioDaño{{rentaT.id_renta}}.style.display = "none";
+            
+            }
+       
+        }
+    
+        
+        function calcularFeriaDaño{{rentaT.id_renta}}(){
+            var efectivoPagoClienteDaño{{rentaT.id_renta}} = document.getElementById("efectivoPagoClienteDaño{{rentaT.id_renta}}");
+            var spanCambioChicoDaño{{rentaT.id_renta}} = document.getElementById("spanCambioChicoDaño{{rentaT.id_renta}}");
+           
+            var valorInputPagoCliente{{rentaT.id_renta}} = efectivoPagoClienteDaño{{rentaT.id_renta}}.value;
+    
+            if (valorInputPagoCliente{{rentaT.id_renta}} == ""){
+                spanCambioChicoDaño{{rentaT.id_renta}}.innerHTML = "0";
+            }
+            else{
+                var inputCantidadDaño{{rentaT.id_renta}} = document.getElementById("inputCantidadDaño{{rentaT.id_renta}}").value;
+                var inputPagoDañoElegidoFloat{{rentaT.id_renta}} = parseFloat(inputCantidadDaño{{rentaT.id_renta}});
+                var cambioDaño{{rentaT.id_renta}} = parseFloat(valorInputPagoCliente{{rentaT.id_renta}}) - inputPagoDañoElegidoFloat{{rentaT.id_renta}};
+    
+                
+                spanCambioChicoDaño{{rentaT.id_renta}}.innerHTML = cambioDaño{{rentaT.id_renta}}.toString();
+            }
+            
+    
+    
+        }
+
+
+
+
+        function seleccionarTipoDeDaño{{rentaT.id_renta}}(){
+            var selectTipoDaño{{rentaT.id_renta}} = document.getElementById("selectTipoDaño{{rentaT.id_renta}}").value;
+
+            if (selectTipoDaño{{rentaT.id_renta}} === "Leve" ){
+                var inputCantidadDaño{{rentaT.id_renta}} = document.getElementById("inputCantidadDaño{{rentaT.id_renta}}");
+                inputCantidadDaño{{rentaT.id_renta}}.value = "500";
+            }else{
+                var inputCantidadDaño{{rentaT.id_renta}} = document.getElementById("inputCantidadDaño{{rentaT.id_renta}}");
+                inputCantidadDaño{{rentaT.id_renta}}.value = "1000";
+            }
+
+            var efectivoPagoClienteDaño{{rentaT.id_renta}} = document.getElementById("efectivoPagoClienteDaño{{rentaT.id_renta}}");
+            var spanCambioChicoDaño{{rentaT.id_renta}} = document.getElementById("spanCambioChicoDaño{{rentaT.id_renta}}");
+           
+            var valorInputPagoCliente{{rentaT.id_renta}} = efectivoPagoClienteDaño{{rentaT.id_renta}}.value;
+    
+            if (valorInputPagoCliente{{rentaT.id_renta}} == ""){
+                spanCambioChicoDaño{{rentaT.id_renta}}.innerHTML = "0";
+            }
+            else{
+                var inputCantidadDaño{{rentaT.id_renta}} = document.getElementById("inputCantidadDaño{{rentaT.id_renta}}").value;
+                var inputPagoDañoElegidoFloat{{rentaT.id_renta}} = parseFloat(inputCantidadDaño{{rentaT.id_renta}});
+                var cambioDaño{{rentaT.id_renta}} = parseFloat(valorInputPagoCliente{{rentaT.id_renta}}) - inputPagoDañoElegidoFloat{{rentaT.id_renta}};
+    
+                
+                spanCambioChicoDaño{{rentaT.id_renta}}.innerHTML = cambioDaño{{rentaT.id_renta}}.toString();
+            }
+
+        }
+        {% endfor %}
+    </script>
+
+{% endblock %}
+

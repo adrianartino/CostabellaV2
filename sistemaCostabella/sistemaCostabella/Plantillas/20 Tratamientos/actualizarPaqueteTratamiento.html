@@ -1,0 +1,470 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Editar paquete tratamiento| Costabella
+{% endblock %}
+
+{% block estilos %}
+
+{% endblock %}
+
+{% block contenido %}
+
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="content-page wide-xxl m-auto">
+         
+            <div class="nk-block">
+                <form action="/actualizarPaqueteTratamiento/" method="POST">{% csrf_token %}
+                <div class="card">
+                    <div class="card-inner card-inner-xl">
+                        {% for dato in consultaDatosTratamiento %}
+                        <input type="hidden" value="{{dato.id_tratamiento}}" name="idTratamientoEditar">
+                        <center>
+                            {% if dato.tipo_tratamiento == "Corporal" %}
+                            <h2 class="fuenteTitulo">EDITAR PAQUETE DE TRATAMIENTO CORPORAL</h2>
+                            {% elif dato.tipo_tratamiento == "Facial" %}
+                            <h2 class="fuenteTitulo">EDITAR PAQUETE DE TRATAMIENTO FACIAL</h2>
+                            {% endif %}
+                            <center>
+                                <img src="{% static 'images/accesos/servicios.png' %}" alt="iconoServicio" width="80">
+                            </center>
+                        </center>
+                        <dl class="row">
+                            <dt class="col-sm-4">
+                                <div>
+                                    <p>Nombre de servicio</p>
+                                    <h2 >{{dato.nombre_tratamiento}} <span class="text-pink"><small>{{dato.codigo_tratamiento}}</small></span> </h2>
+                                    <br>
+                                    <p>Duración de servicio</p>
+                                    <h4><em class="icon ni ni-clock text-pink"></em>&nbsp;De <span class="text-azure">{{dato.tiempo_minimo}}</span> a <span class="text-danger">{{dato.tiempo_maximo}}</span> minutos. </h4>
+                                    
+                                </div>
+ 
+                            </dt>
+                            <dt class="col-sm-4">
+                                <div >
+                                    <p>Descripción</p>
+                                    <h4>{{dato.descripcion_tratamiento}} </h4>
+                                    <br>
+                                    <p>Complementos</p>
+                                    {% if dato.complementos_tratamiento == None %}
+                                    <h4>Sin complementos</h4>
+                                    {% else %}
+                                    <h4>{{dato.complementos_tratamiento}}</h4>
+                                    {% endif %}
+                                    
+                                </div>
+ 
+                             </dt>
+                             <dt class="col-sm-4">
+                                <div >
+                                    <p>Precio de venta</p>
+                                    <h3><span class="text-dark"><span class="text-teal">$ {{dato.costo_venta_tratamiento}}</span> MXN </span></h3>
+                                    <br>
+                                    <p>Sucursal</p>
+                                    <h3><span class="text-blue">{{nombreSucursal}}</span> </h3>
+                                </div>
+                            </dt>
+                        </dl>
+                        <br>
+                        <br>
+                        <dl class="row">
+                            <dt class="col-sm-12 text-center">
+                                <div>
+                                    <p>Sesiones recomendadas</p>
+                                    {% if dato.sesiones_rec_tratamiento == 1 %}
+                                        {% if dato.periodo_rec_tratamiento == "Semanal" %}
+                                        <h2 class="fw-bold text-warning">1 sesión cada Semana</h2>
+                                        {% elif dato.periodo_rec_tratamiento == "Mes" %}
+                                        <h2 class="fw-bold text-warning">1 sesión cada mes</h2>
+                                        {% elif dato.periodo_rec_tratamiento == "Año" %}
+                                        <h2 class="fw-bold text-warning">1 sesión cada año</h2>
+                                        {% endif %}
+                                    {% else %}
+                                        {% if dato.periodo_rec_tratamiento == "Semanal" %}
+                                        <h2 class="fw-bold text-warning">{{dato.sesiones_rec_tratamiento}} sesiones por Semana</h2>
+                                        {% elif dato.periodo_rec_tratamiento == "Mes" %}
+                                        <h2 class="fw-bold text-warning">{{dato.sesiones_rec_tratamiento}} sesión por mes</h2>
+                                        {% elif dato.periodo_rec_tratamiento == "Año" %}
+                                        <h2 class="fw-bold text-warning">{{dato.sesiones_rec_tratamiento}} sesión por año</h2>
+                                        {% endif %}
+                                    
+                                    {% endif %}
+                                   
+                                </div>
+ 
+                            </dt>
+                        </dl>
+                        {% endfor %}
+                        <br>
+
+                        
+                        <h4 class="text-left"><em class="icon ni ni-property"></em> Productos que se utilizan:</h4> 
+                        <div class="card-inner table-responsive">
+                            <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                                <thead>
+                                    <tr class="nk-tb-item nk-tb-head" style="background-color: #0078AA !important; color:white !important">
+                                        <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                        <th class="nk-tb-col"><span class="sub-text textoBlanco">Código Producto</span></th>
+                                        <th class="nk-tb-col"><span class="sub-text textoBlanco">SKU</span></th>
+                                        <th class="nk-tb-col" ><span class="sub-text textoBlanco" >Nombre</span></th>
+                                        <th class="nk-tb-col"><span class="sub-text textoBlanco">Imagen</span></th>
+                                    
+                                        <th class="nk-tb-col"><span class="sub-text textoBlanco">Cantidad utilizada por sesion</span></th>
+                                        <th class="nk-tb-col"><span class="sub-text textoBlanco">Eliminar</span></th>
+                                    
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for dato in productosElegidos %}
+                                    <tr class="nk-tb-item">
+                                        <td class="nk-tb-col">
+                                            <span class="badge badge-info">{{dato.0}}</span>
+                                        </td>
+                                    
+                                        <td class="nk-tb-col">
+                                            <span class="badge badge-outline-secondary">{{dato.2}}</span>
+                                        </td>
+                                        <td class="nk-tb-col">
+                                            <span class="text-dark fw-bold">{{dato.5}}</span>
+                                        </td>
+                                        <td class="nk-tb-col">
+                                            <span class="tb-amount">{{dato.3}}</span>
+                                        </td>
+                                        
+                                        
+                                        <td class="nk-tb-col">
+                                            <center>
+                                                {% if dato.4 %}
+                                                <img src="{{dato.4.url}}" width="90" alt="lap">
+                                                {% else %}
+                                                <span class="tb-amount">Sin imagen</span>
+                                                {% endif %}
+                                            </center>
+                                        </td>
+                                        <td class="nk-tb-col">
+                                            <span class="tb-amount">
+                                                <input type="number" value="{{dato.1}}" max="100" min="1" name="cantidadProducto{{dato.0}}">
+                                                unidades</span>
+                                        </td>
+                                        <td class="nk-tb-col">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="check{{dato.0}}" name="eliminarProducto{{dato.0}}">
+                                                <label class="custom-control-label fw-bold text-danger" for="check{{dato.0}}">Eliminar del paquete</label>
+                                            </div>
+                                        </td>
+                                        
+                                
+        
+                                    </tr>
+                                    {% endfor %}
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Div para agregaar productos -->
+                        <div id="divAgregarMasProductos">
+                            <br>
+                        
+                            <h4 class="text-left"><em class="icon ni ni-search"></em> Agregar productos:</h4>
+                            <div class="card-inner table-responsive">
+                            <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                                <thead>
+                                    <tr class="nk-tb-item nk-tb-head" style="background-color: #D61C4E !important; color:white !important">
+                                        <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                        <th class="nk-tb-col"><span class="sub-text textoBlanco">Código Producto</span></th>
+                                        <th class="nk-tb-col"><span class="sub-text textoBlanco">SKU</span></th>
+                                        <th class="nk-tb-col" ><span class="sub-text textoBlanco" >Nombre</span></th>
+                                        <th class="nk-tb-col" ><span class="sub-text textoBlanco" >Existencias</span></th>
+                                        <th class="nk-tb-col" ><span class="sub-text textoBlanco" >Descripción</span></th>
+                                        <th class="nk-tb-col"><span class="sub-text textoBlanco">Imagen</span></th>
+                                        <th class="nk-tb-col" ><span class="sub-text textoBlanco" >Fecha agregado</span></th>
+                                        <th class="nk-tb-col"><span class="sub-text textoBlanco">Seleccionar</span></th>
+                                    
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for dato in arrayProductosGastoNoEnTratamiento %}
+                                    <tr class="nk-tb-item">
+                                        <td class="nk-tb-col">
+                                            <span class="badge badge-info">{{dato.0}}</span>
+                                        </td>
+                                    
+                                        <td class="nk-tb-col">
+                                            <span class="badge badge-outline-secondary">{{dato.1}}</span>
+                                        </td>
+                                        <td class="nk-tb-col">
+                                            <span class="text-dark fw-bold">{{dato.2}}</span>
+                                        </td>
+                                        <td class="nk-tb-col">
+                                            <span class="tb-amount">{{dato.3}}</span>
+                                        </td>
+                                        <td class="nk-tb-col">
+                                            <span class="tb-amount">{{dato.4}} unidades</span>
+                                        </td>
+                                        <td class="nk-tb-col">
+                                            <center>
+                                                <span><button type="button" class="btn btn-sm btn-gray" data-toggle="popover" data-placement="bottom" 
+                                                    data-content="{{dato.5}}"><em class="icon ni ni-notice"></em></button></span>
+                                            </center>
+                                        </td>
+                                        
+                                        
+                                        <td class="nk-tb-col">
+                                            <center>
+                                                {% if dato.6 %}
+                                                <img src="{{dato.6.url}}" width="90" alt="lap">
+                                                {% else %}
+                                                <span class="tb-amount">Sin imagen</span>
+                                                {% endif %}
+                                            </center>
+                                        </td>
+                                        <td class="nk-tb-col">
+                                            <span class="tb-amount">{{dato.7}}</span>
+                                        </td>
+                                        
+                                        <td class="nk-tb-col">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="checkbox{{dato.1}}" onclick="agregarProducto{{dato.0}}('{{dato.1}}')">
+                                                <label class="custom-control-label fw-bold text-teal" for="checkbox{{dato.1}}">Agregar</label>
+                                            </div>
+                                        </td>
+                                        
+                                
+        
+                                    </tr>
+                                    {% endfor %}
+                                    
+                                </tbody>
+                                </table>
+                            </div> 
+                            <br>
+                            <h4 class="text-left">Productos Agregados:</h4>
+                            <div class="card-inner table-responsive">
+                            <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                                <thead>
+                                    <tr class="nk-tb-item nk-tb-head" style="background-color: #A084CF !important; color:white !important">
+                                        <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                        <th class="nk-tb-col"><span class="sub-text textoBlanco">Código Producto</span></th>
+                                        <th class="nk-tb-col"><span class="sub-text textoBlanco">SKU</span></th>
+                                        <th class="nk-tb-col" ><span class="sub-text textoBlanco" >Nombre</span></th>
+                                        <th class="nk-tb-col" ><span class="sub-text textoBlanco" >Existencias</span></th>
+                                        <th class="nk-tb-col" ><span class="sub-text textoBlanco" >Descripción</span></th>
+                                        <th class="nk-tb-col"><span class="sub-text textoBlanco">Imagen</span></th>
+                                        <th class="nk-tb-col" ><span class="sub-text textoBlanco" >Fecha agregado</span></th>
+                                        <th class="nk-tb-col"><span class="sub-text textoBlanco">Cantidad a utilizar</span></th>
+                                    
+                                    </tr>
+                                </thead>
+                                <tbody id="productosAgregados">
+                                
+                        
+                                
+                                </tbody>
+                                </table>
+                            </div> 
+                            <div id="divCantidadProductos">
+
+                            </div>
+                        </div>
+
+                        <input type="hidden" value="noMasProductos" name="masProductos" id="inputMasProductos">
+                        <button type="submit" class="btn btn-dim btn-primary">Actualizar paquete</button>
+                        <button type="button" class="btn btn-dim btn-success" onclick="agregarMasProductos()">Agregar más productos</button>
+                    </div>
+                    </div>
+                </div>
+                
+            </form>
+            </div><!-- .nk-block -->
+        </div><!-- .content-page -->
+    </div>
+</div>
+{% block relojJS %}
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+
+        window.onload= mueveReloj ();
+
+        
+    };
+</script>
+{% endblock %}
+<script>
+    var divAgregarMasProductos = document.getElementById("divAgregarMasProductos");
+    divAgregarMasProductos.style.display = "none"
+
+
+
+    const datosJson = '{{productosVentaJson}}';
+    console.log(datosJson);
+    const datosJsonBonitos = JSON.parse(datosJson.replace(/&quot;/g,'"'));
+    console.log(datosJsonBonitos);
+
+    var contadorCheckbox = 0;
+    var idsProductosVentaSolicitar = [];
+    var valorProductosTotalesMandar = "";
+    {% for productoVenta in todosLosProductosGasto %}
+
+    function agregarProducto{{productoVenta.id_producto}}(codigoProducto){
+            var codigoProductoRecibido = codigoProducto;
+            let resultadoProductoCodigo = [];
+            resultadoProductoCodigo = datosJsonBonitos.filter(productoVenta => productoVenta['codigo_producto'].includes(codigoProductoRecibido));
+            console.log(resultadoProductoCodigo);  //El resultado de la busqueda de ese codigo de producto.
+
+            var idCheckbox = 'checkbox'+codigoProductoRecibido;
+            var checkbox = document.getElementById(idCheckbox);
+            var idTablaProductosAgregados = document.getElementById('productosAgregados');
+            var divCantidadProductos = document.getElementById('divCantidadProductos');
+
+
+            if (checkbox.checked == true){
+                contadorCheckbox = contadorCheckbox + 1;
+                resultadoProductoCodigo.map(productoVenta =>{
+                    var idProductoAgregar = productoVenta['id_producto'].toString();
+                    var codigoProductoAgregar = productoVenta['codigo_producto'].toString();
+                    var codigoBarrasProductoAgregar = productoVenta['codigo_barras'].toString();
+                    var tipoProductoAgregar = productoVenta['tipo_producto'].toString();
+                    var nombreProductoAgregar = productoVenta['nombre_producto'].toString();
+                    var costoProductoAgregar = productoVenta['costo_compra'].toString();
+                   
+                    var cantidadProductoAgregar = productoVenta['cantidad'].toString();
+                    var stockProductoAgregar = productoVenta['stock'].toString();
+                    var descripcionProductoAgregar = productoVenta['descripcion'].toString();
+                    var imagenProductoAgregar = productoVenta['imagen_producto'].toString();
+                    var altaProductoAgregar = productoVenta['fecha_alta'].toString();
+                    var skuProductoAgregar = productoVenta['sku_producto'].toString();
+                    let agregarId = idsProductosVentaSolicitar.push(idProductoAgregar);
+                    idTablaProductosAgregados.innerHTML+='<tr id="filaRegistroProductoVenta'+idProductoAgregar +'" class="nk-tb-item">\
+                        <td class="nk-tb-col">\
+                            <span class="badge badge-info"> '+idProductoAgregar +'</span> <input type="hidden" readonly value="'+idProductoAgregar+'" name="idProducto'+idProductoAgregar+'"></input>\
+                        </td>\
+                        <td class="nk-tb-col" data-order="35040.34">\
+                            <span class="badge badge-outline-secondary">'+codigoProductoAgregar +'</span>\
+                        </td>\
+                        <td class="nk-tb-col">\
+                            <span class="tb-amount">'+skuProductoAgregar +'</span>\
+                        </td>\
+                        <td class="nk-tb-col">\
+                            <span class="tb-amount">'+nombreProductoAgregar +'</span>\
+                        </td>\
+                        <td class="nk-tb-col" data-order="Email Verified - Kyc Unverified">\
+                            <span class="tb-amount">'+cantidadProductoAgregar +'  unidades</span>\
+                        </td>\
+                        <td class="nk-tb-col" data-order="Email Verified - Kyc Unverified">\
+                            <span class="tb-amount">'+descripcionProductoAgregar +' </span>\
+                        </td>\
+                        <td class="nk-tb-col" data-order="Email Verified - Kyc Unverified">\
+                            <center>\
+                                {% if productoVenta.imagen_producto %}\
+                                <img src="{{productoVenta.imagen_producto.url}}" width="40%" alt="lap">\
+                                {% else %}\
+                                <span class="tb-amount">Sin imagen</span>\
+                                {% endif %}\
+                            </center>\
+                        </td>\
+                        <td class="nk-tb-col" data-order="Email Verified - Kyc Unverified">\
+                            <span class="tb-amount">'+altaProductoAgregar +' </span>\
+                        </td>\
+                        <td>\
+                            <input type="number" value="1" max="'+cantidadProductoAgregar+'" min="1" name="cantidadUsar'+idProductoAgregar+'">\
+                        </td>\
+                    </tr>';
+                })
+            }
+            else{
+                contadorCheckbox = contadorCheckbox -1;
+                resultadoProductoCodigo.map(productoVenta =>{
+                    var idProductoAgregar = productoVenta['id_producto'].toString();
+                    var index = idsProductosVentaSolicitar.indexOf(idProductoAgregar);
+                    if(index !== -1){
+                        idsProductosVentaSolicitar.splice(index,1)
+                    }
+                    var idFila = "#filaRegistroProductoVenta"+idProductoAgregar;
+                    $(idFila).remove();
+                
+
+            })
+
+            }
+
+            if (idsProductosVentaSolicitar.length == 0){
+                valorProductosTotalesMandar = "No se mandara ningun producto";
+            }else{
+                idsProductosVentaSolicitar.forEach(function(valor,index){
+                    var posicion = index;
+                    var valor = valor;
+                    if(posicion==0){
+                        valorProductosTotalesMandar = valor.toString();
+                    }
+                    else{
+                        valorProductosTotalesMandar += "," + valor.toString();
+                    }
+
+                })
+            }
+
+            divCantidadProductos.innerHTML= '<input type="hidden" value="'+valorProductosTotalesMandar+'" readonly name="idsProductosGastoTratamiento"></input>';
+            console.log(contadorCheckbox);
+            console.log(idsProductosVentaSolicitar);
+            console.log("Esto se mandara a python" +valorProductosTotalesMandar);
+
+        }
+    {% endfor %}
+
+
+
+    function agregarMasProductos(){
+        var valorInputMasProductos = document.getElementById("inputMasProductos")
+        var divAgregarMasProductos = document.getElementById("divAgregarMasProductos")
+
+        var valorEscritoInputMasProductos = valorInputMasProductos.value
+        if (valorEscritoInputMasProductos == "noMasProductos"){
+            valorInputMasProductos.value = "masProductos"
+            divAgregarMasProductos.style.display = "block"
+            //Mostrar tabla para agregar productos gasto, exceptuando a los que ya están
+        }else{
+            valorInputMasProductos.value = "noMasProductos"
+            divAgregarMasProductos.style.display = "none"
+        }
+        
+    }
+
+</script>
+
+<script>
+    {% if paqueteAgregado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{paqueteAgregado}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    {% if paqueteNoAgregado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'error',
+            title: 'Ups..!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{paqueteNoAgregado}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+</script>
+
+
+{% endblock %}

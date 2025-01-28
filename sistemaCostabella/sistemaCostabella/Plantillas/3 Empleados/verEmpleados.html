@@ -1,0 +1,449 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Empleados | Costabella
+{% endblock %}
+
+{% block estilos %}
+
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    <h3 class="nk-block-title page-title color-texto-seleccion animate__animated animate__slideInLeft">LISTA DE EMPLEADOS</h3>
+                    <div class="nk-block-des text-soft animate__animated animate__fadeIn">
+                        <p>Total de empleados: {{contadorActivos}} Activos - {{contadorInactivos}} inactivos.</p>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+                <div class="nk-block-head-content">
+                    <div class="toggle-wrap nk-block-tools-toggle">
+                        <a href="#" class="btn btn-icon btn-trigger toggle-expand mr-n1" data-target="more-options"><em class="icon ni ni-more-v"></em></a>
+                        <div class="toggle-expand-content" data-content="more-options">
+                            <ul class="nk-block-tools g-3">
+                                <li>
+                                    <div class="drodown">
+                                        <a href="#" class="dropdown-toggle dropdown-indicator btn btn-outline-light btn-white" data-toggle="dropdown">Estado de empleado</a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <ul class="link-list-opt no-bdr">
+                                                <li style="cursor: pointer!important;"><a onclick="mostrarTodos()"><span>Todos los empleados</span></a></li>
+                                                <li style="cursor: pointer!important;"><a onclick="mostrarActivos()"><span>Activos</span></a></li>
+                                                <li style="cursor: pointer!important;"> <a onclick="mostrarInactivos()"><span>Bajas</span></a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Empleados" %}
+                                {% if permiso.agregar == "Si"  %}
+                                <li class="nk-block-tools-opt">
+                                    <a href="#" class="btn btn-icon btn-primary d-md-none"><em class="icon ni ni-plus"></em></a>
+                                    <a href="/altaEmpleado/" class="btn btn-primary d-none d-md-inline-flex"><em class="icon ni ni-plus"></em><span>Agregar Empleado</span></a>
+                                </li>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                               
+
+                            </ul>
+                        </div>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        
+        <!-- Div empleados todos -->
+        <div class="nk-block nk-block-lg" id="divEmpleadosTotales">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title animate__animated animate__slideInLeft">Empleados Totales</h4>
+                    <div class="nk-block-des animate__animated animate__fadeIn">
+                        <p>Lista de empleados <span class="coloralta">activos</span> y de <span class="colorbaja">baja</span> en el sistema.</p>
+                    </div>
+                
+                </div>
+                
+                
+            </div>
+        
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false" >
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #FFC600 !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Usuario</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco" >Nombres</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Apellidos</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Teléfono</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Puesto</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Tipo</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha alta</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha baja</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Estado</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Empleados" %}
+                                {% if permiso.editar == "Si"  %}
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Editar</span></th>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for empleado, usuario, sucursal, tipo, color in lista %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col nk-tb-col-check">
+                                    <span class="badge badge-info">{{empleado.id_empleado}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <div class="user-card">
+                                        <div class="user-avatar {{color}} d-none d-sm-flex">
+                                            <span>{{usuario.0}}{{usuario.1}}{{usuario.2}}</span>
+                                        </div>
+                                        <div class="user-info">
+                                            <span class="tb-lead">{{empleado.nombre_usuario}} <span class="dot dot-success d-md-none ml-1"></span></span>
+                                           
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount">{{empleado.nombres}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{empleado.apellido_paterno}} {{empleado.apellido_materno}}</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount">{{empleado.telefono}}</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount">{{empleado.puesto}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    {% if  tipo == "Administrador" %}
+                                        <span class="badge badge-warning">Administrador</span>
+                                    {% elif tipo == "Empleado" %}
+                                        <span class="badge badge-info">Empleado</span>
+                                    {% endif %}
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{empleado.fecha_alta}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    {% if empleado.fecha_baja == None %}
+                                    <span class="tb-amount">Sin fecha de baja</span>
+                                    {% else %}
+                                    <span class="tb-amount">{{empleado.fecha_baja}}</span>
+                                    {% endif %}
+                           
+                                </td>
+                                <td class="nk-tb-col">
+                                    {% if empleado.estado_contratacion == "A" %}
+                                    <span class="badge badge-pill badge-success">Activo</span>
+                                    {% else %}
+                                    <span class="badge badge-pill badge-danger">De baja</span>
+                                    {% endif %}
+                           
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{sucursal}}</span>
+                           
+                                </td>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Empleados" %}
+                                {% if permiso.editar == "Si"  %}
+                                <td class="nk-tb-col">
+                                    <form action="/editarEmpleado/" method="POST">{% csrf_token %}
+                                        <input type="hidden" name="idEmpleadoEditar" value="{{empleado.id_empleado}}">
+                                        <button type="submit" class="btn btn-icon btn-sm btn-primarypruple"><em class="icon ni ni-edit"></em></button>
+                                    </form>
+                                    
+                                </td>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                                
+                            </tr><!-- .nk-tb-item  -->
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+        <!-- DIV EMPLEADOS ACTIVOS -->
+        <div class="" id="divEmpleadosActivos">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Empleados Activos</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de empleados <span class="coloralta">activos</span> en el sistema.</p>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #14C38E !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Usuario</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco" >Nombres</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Apellidos</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Teléfono</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Puesto</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Tipo</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha alta</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha baja</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Estado</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Editar</span></th>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for empleado, usuario, sucursal, tipo, color in listaActivos %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{empleado.id_empleado}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <div class="user-card">
+                                        <div class="user-avatar {{color}} d-none d-sm-flex">
+                                            <span>{{usuario.0}}{{usuario.1}}{{usuario.2}}</span>
+                                        </div>
+                                        <div class="user-info">
+                                            <span class="tb-lead">{{empleado.nombre_usuario}} <span class="dot dot-success d-md-none ml-1"></span></span>
+                                           
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{empleado.nombres}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{empleado.apellido_paterno}} {{empleado.apellido_materno}}</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount">{{empleado.telefono}}</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount">{{empleado.puesto}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    {% if  tipo == "Administrador" %}
+                                        <span class="badge badge-warning">Administrador</span>
+                                    {% elif tipo == "Empleado" %}
+                                        <span class="badge badge-info">Empleado</span>
+                                    {% endif %}
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{empleado.fecha_alta}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    {% if empleado.fecha_baja == None %}
+                                    <span class="tb-amount">Sin fecha de baja</span>
+                                    {% else %}
+                                    <span class="tb-amount">{{empleado.fecha_baja}}</span>
+                                    {% endif %}
+                           
+                                </td>
+                                <td class="nk-tb-col">
+                                    {% if empleado.estado_contratacion == "A" %}
+                                    <span class="badge badge-pill badge-success">Activo</span>
+                                    {% else %}
+                                    <span class="badge badge-pill badge-danger">De baja</span>
+                                    {% endif %}
+                           
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{sucursal}}</span>
+                           
+                                </td>
+                                <td class="nk-tb-col">
+                                    <form action="/editarEmpleado/" method="POST">{% csrf_token %}
+                                        <input type="hidden" name="idEmpleadoEditar" value="{{empleado.id_empleado}}">
+                                        <button type="submit" class="btn btn-icon btn-sm btn-primarypruple"><em class="icon ni ni-edit"></em></button>
+                                    </form>
+                                    
+                                </td>
+                            </tr><!-- .nk-tb-item  -->
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+        <!-- DIV EMPLEADOS INACTIVOS -->
+        <div class="" id="divEmpleadosInActivos">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Empleados Inactivos</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de empleados <span class="colorbaja">inactivos</span> en el sistema.</p>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #E94560 !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Usuario</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco" >Nombres</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Apellidos</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Teléfono</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Puesto</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Tipo</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha alta</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha baja</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Estado</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Editar</span></th>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for empleado, usuario, sucursal, tipo, color in listaInactivos %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{empleado.id_empleado}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <div class="user-card">
+                                        <div class="user-avatar {{color}} d-none d-sm-flex">
+                                            <span>{{usuario.0}}{{usuario.1}}{{usuario.2}}</span>
+                                        </div>
+                                        <div class="user-info">
+                                            <span class="tb-lead">{{empleado.nombre_usuario}} <span class="dot dot-success d-md-none ml-1"></span></span>
+                                           
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount">{{empleado.nombres}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{empleado.apellido_paterno}} {{empleado.apellido_materno}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{empleado.telefono}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{empleado.puesto}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    {% if  tipo == "Administrador" %}
+                                        <span class="badge badge-warning">Administrador</span>
+                                    {% elif tipo == "Empleado" %}
+                                        <span class="badge badge-info">Empleado</span>
+                                    {% endif %}
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{empleado.fecha_alta}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    {% if empleado.fecha_baja == None %}
+                                    <span class="tb-amount">Sin fecha de baja</span>
+                                    {% else %}
+                                    <span class="tb-amount">{{empleado.fecha_baja}}</span>
+                                    {% endif %}
+                           
+                                </td>
+                                <td class="nk-tb-col">
+                                    {% if empleado.estado_contratacion == "A" %}
+                                    <span class="badge badge-pill badge-success">Activo</span>
+                                    {% else %}
+                                    <span class="badge badge-pill badge-danger">De baja</span>
+                                    {% endif %}
+                           
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{sucursal}}</span>
+                           
+                                </td>
+                                <td class="nk-tb-col">
+                                    <form action="/editarEmpleado/" method="POST">{% csrf_token %}
+                                        <input type="hidden" name="idEmpleadoEditar" value="{{empleado.id_empleado}}">
+                                        <button type="submit" class="btn btn-icon btn-sm btn-primarypruple"><em class="icon ni ni-edit"></em></button>
+                                    </form>
+                                    
+                                </td>
+                            </tr><!-- .nk-tb-item  -->
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<script>
+
+    {% if mensaje %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{mensaje}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+</script>
+
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+        var divEmpleadosTotales = document.getElementById("divEmpleadosTotales");
+        var divEmpleadosActivos = document.getElementById("divEmpleadosActivos");
+        var divEmpleadosInActivos = document.getElementById("divEmpleadosInActivos");
+        divEmpleadosActivos.style.display = "none";
+        divEmpleadosInActivos.style.display = "none";
+        divEmpleadosTotales.style.display = "block";
+
+        window.onload= mueveReloj ();
+
+        
+    };
+
+    function mostrarTodos(){
+        divEmpleadosTotales.style.display = "block";
+        divEmpleadosActivos.style.display = "none";
+        divEmpleadosInActivos.style.display = "none";
+        console.log("Todos los divs");
+    };
+
+    function mostrarActivos(){
+        divEmpleadosTotales.style.display = "none";
+        divEmpleadosActivos.style.display = "block";
+        divEmpleadosInActivos.style.display = "none";
+        console.log("activos");
+    };
+
+    function mostrarInactivos(){
+        divEmpleadosTotales.style.display = "none";
+        divEmpleadosActivos.style.display = "none";
+        divEmpleadosInActivos.style.display = "block";
+        console.log("inactivos");
+    };
+</script>
+{% endblock %}

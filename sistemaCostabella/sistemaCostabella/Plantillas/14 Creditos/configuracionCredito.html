@@ -1,0 +1,420 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Configuraciones de crédito | Costabella
+{% endblock %}
+
+{% block estilos %}
+<style>
+    @media screen and (max-width: 320px) {
+        table {
+          display: block!important;
+          overflow-x: auto!important;
+        }
+   }
+</style>
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    <h3 class="nk-block-title page-title color-texto-seleccion">LISTADO DE CONFIGURACIONES DE CRÉDITO</h3>
+                   
+                </div><!-- .nk-block-head-content -->
+                {% for permiso in consultaPermisos %}
+                {% if permiso.tabla_modulo == "Configuracion credito" %}
+                {% if permiso.agregar == "Si" %}
+
+                <div class="nk-block-head-content">
+                    <div class="toggle-wrap nk-block-tools-toggle">
+                        <a href="#" class="btn btn-icon btn-trigger toggle-expand mr-n1" data-target="more-options"><em class="icon ni ni-more-v"></em></a>
+                        <div class="toggle-expand-content" data-content="more-options">
+                            <ul class="nk-block-tools g-3">
+                             
+                                <li class="nk-block-tools-opt">
+                                    <a href="#" class="btn btn-icon btn-primary d-md-none"><em class="icon ni ni-plus"></em></a>
+                                    <a href="/agregarConfiguracionCredito/" class="btn btn-primary d-none d-md-inline-flex"><em class="icon ni ni-plus"></em><span>Agregar configuracion</span></a>
+                                </li>
+                               
+
+                            </ul>
+                        </div>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+              
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        
+        <!-- Div empleados todos -->
+        <div class="nk-block nk-block-lg" id="divProductosComprasVentas">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Configuraciones de crédito</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de <span class="coloralta">ajustes de crédito</span> en el sistema.</p>
+                    </div>
+                
+                </div>
+              
+                
+            </div>
+        
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #4649FF !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Límite de crédito</span></th>
+                               
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha de registro</span></th>
+
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Activar configuración</span></th>
+                                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                             
+                             
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for configuracion,sucursal in lista %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge-pill badge-info">{{configuracion.id_configuracion_credito}}</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-warning text-dark fw-bold">$ {{configuracion.limite_credito}} MXN</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{configuracion.fecha}}</span>
+                                </td>
+                                
+                                {% if configuracion.activo == "S" %}
+                                <td class="nk-tb-col">
+                                    <center>
+                                        <span class="tb-amount"> <span class="badge-pill badge-success text-white">Actualmente activo</span></span>
+                                    </center>
+                                </td>
+                                {% elif configuracion.activo == "N" %}
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Configuracion credito" %}
+                                {% if permiso.activar == "Si" %}
+
+                                
+                               
+
+
+                                <td class="nk-tb-col">
+                                    
+                                    <form action="/activarConfiguracionCredito/" method="POST">{% csrf_token %}
+                                        <input type="hidden" value="{{configuracion.id_configuracion_credito}}" name="idConfiguracionCredito">
+                                        <center>
+                                        <button type="submit"   class="btn btn-dim bg-dark  btn-sm text-white"><em class="icon ni ni-chevron-up-round" data-toggle="tooltip" data-placement="right" title="Clic para activar esta configuración en la sucursal {{sucursal}}."></em></button>
+                                        </center>
+                                    </form>
+                                    
+                                </td>
+                                {% else %}
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">No tiene permisos para activar la configuración.</span>
+                                </td>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+
+
+
+                                {% endif %}
+
+                               
+                               
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-primary">{{sucursal}}</span>
+                                </td>
+                     
+
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+        <!-- DIV EMPLEADOS ACTIVOS -->
+        <div class="nk-block nk-block-lg" id="divProductosComprasRentas">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Compras para renta</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de compras <span class="coloralta">de productos para renta</span> en el sistema.</p>
+                    </div>
+                </div>
+                <div>
+                    <form action="/xlEmpleados/" method="POST">{% csrf_token %}
+                        <input type="hidden" name="todos" value="A">
+                        <button type="submit" class="btn btn-icon btn-sm btn-success" 
+                            data-toggle="tooltip" data-placement="right"
+                            title="Descargar reporte Empleados en Excel.">
+                            <em class="icon ni ni-view-grid-sq"></em>
+                            Excel
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #ff7ba9 !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Producto</span></th>
+                               
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Costo compra</span></th>
+                             
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Cantidad </span></th>
+                                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Total de compra</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha de compra</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                             
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for compra, producto, sucursal in listaComprasProductosRenta %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge-pill badge-info">{{compra.id_compraRenta}}</span>
+                                </td>
+                               
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-outline-dark">{{producto}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">$ {{compra.costo_unitario}} MXN</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount">{{compra.cantidad_comprada}} unidades </span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount"> <span class="badge-pill badge-success">$ {{compra.total_costoCompra}} MXN</span></span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount">{{compra.fecha_compra}}</span>
+                                </td>
+                          
+                         
+                           
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-pill badge-outline-primary">{{sucursal}}</span>
+                                </td>
+                     
+
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+
+        <!-- DIV EMPLEADOS INACTIVOS -->
+        <div class="nk-block nk-block-lg" id="divProductosComprasGastos">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Compras para gastos</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de compras <span class="colorbaja">de productos para gasto</span> en el sistema.</p>
+                    </div>
+                </div>
+                <div>
+                    <form action="/xlEmpleados/" method="POST">{% csrf_token %}
+                        <input type="hidden" name="todos" value="I">
+                        <button type="submit" class="btn btn-icon btn-sm btn-success" 
+                            data-toggle="tooltip" data-placement="right"
+                            title="Descargar reporte Empleados en Excel.">
+                            <em class="icon ni ni-view-grid-sq"></em>
+                            Excel
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #ff7ba9 !important; color:white !important">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Producto</span></th>
+                               
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Costo compra</span></th>
+                             
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Cantidad </span></th>
+                                
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Total de compra</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Fecha de compra</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Sucursal</span></th>
+                             
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for compra, producto, sucursal in listaComprasProductosGasto %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge-pill badge-info">{{compra.id_compraGasto}}</span>
+                                </td>
+                               
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-outline-dark">{{producto}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">$ {{compra.costo_unitario}} MXN</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount">{{compra.cantidad_comprada}} unidades </span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount"> <span class="badge-pill badge-success">$ {{compra.total_costoCompra}} MXN</span></span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount">{{compra.fecha_compra}}</span>
+                                </td>
+                          
+                         
+                           
+                                <td class="nk-tb-col" >
+                                    <span class="badge badge-pill badge-outline-primary">{{sucursal}}</span>
+                                </td>
+                     
+
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+    </div>
+</div>
+
+
+
+
+
+
+<script>
+    {% for productoVentaEditar, usuario, sucursal in listaProductosVentaEditar2 %}
+    function calcularPrecioVenta{{productoVentaEditar.id_producto}}() {
+        const valorCosto = document.getElementById("costoCompra{{productoVentaEditar.id_producto}}").value;
+        const valorMargen = document.getElementById("margenCompra{{productoVentaEditar.id_producto}}").value;
+        const inputCostoVenta = document.getElementById("inputCostoVenta{{productoVentaEditar.id_producto}}");
+
+        margenFloat = parseFloat(valorMargen);
+        margenEntero = margenFloat.toFixed();
+        margenString = "1."+margenEntero.toString();
+        margenIntFinal = parseFloat(margenString);
+
+        const costoVentaNuevo = valorCosto * margenIntFinal;
+        costoVentaNuevoChido =costoVentaNuevo.toFixed(2);
+        inputCostoVenta.value = costoVentaNuevoChido;
+        console.log(costoVentaNuevoChido);
+
+    }
+    {% endfor %}
+
+   
+</script>
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<script>
+
+    {% if configuracionAgregada %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{configuracionAgregada}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    {% if configuracionActivada %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{configuracionActivada}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    {% if configuracionNoAgregado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'error',
+            title: 'Ups..!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{configuracionNoAgregado}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+</script>
+
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+        var divProductosComprasVentas = document.getElementById("divProductosComprasVentas");
+        var divProductosComprasRentas = document.getElementById("divProductosComprasRentas");
+        var divProductosComprasGastos = document.getElementById("divProductosComprasGastos");
+        divProductosComprasVentas.style.display = "block";
+        divProductosComprasRentas.style.display = "none";
+        divProductosComprasGastos.style.display = "none";
+
+        window.onload= mueveReloj ();
+        
+    };
+
+    
+
+    function mostrarCompraParaVenta(){
+        divProductosComprasVentas.style.display = "block";
+        divProductosComprasRentas.style.display = "none";
+        divProductosComprasGastos.style.display = "none";
+        console.log("Todos los divs");
+    };
+
+    function mostrarCompraParaRenta(){
+        divProductosComprasVentas.style.display = "none";
+        divProductosComprasRentas.style.display = "block";
+        divProductosComprasGastos.style.display = "none";
+        console.log("activos");
+    };
+
+    function mostrarCompraParaGasto(){
+        divProductosComprasVentas.style.display = "none";
+        divProductosComprasRentas.style.display = "none";
+        divProductosComprasGastos.style.display = "block";
+        console.log("inactivos");
+    };
+</script>
+{% endblock %}

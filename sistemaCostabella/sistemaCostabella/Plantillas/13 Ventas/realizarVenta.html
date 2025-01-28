@@ -1,0 +1,3482 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Realizar Venta | Costabella
+{% endblock %}
+
+{% block estilos %}
+
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        
+        <div class="nk-block" >
+            <form action="/guardarVenta/" method="POST">{% csrf_token %}
+            <div class="row g-gs" >
+      
+
+                <!--Encabezado Venta-->
+                <div class="col-xxl-12">
+                    
+                    <input type="hidden" name="idSucursal" value="{{sucursal}}" readonly>
+                    <div class="card h-150 animate__animated animate__slideInDown" id="div1">
+                        <div class="card-inner animate__animated animate__slideInDown">
+                            <center>
+                                <h2 class="fuenteTitulo">REALIZAR VENTA</h2>
+                                <img src="{% static 'images/iconosMenu/manoVentas.png' %}" width="50px" alt="spa"> 
+                            </center>
+                            <hr class="preview-hr" style="border-color:  #FA4EAB   !important;">
+                            <div class="row gy-4">
+
+                                <div class="col-sm-2" >
+                                   
+                                    <div class="form-group">
+                                        
+                                       
+                                            <div class="form-control-wrap ">
+                                           
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #FF7396   !important;">FECHA: <h6><script type="text/javascript"> var meses = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+                                                     var f=new Date(); document.write(f.getDate() + " " + meses[f.getMonth()] + " " + f.getFullYear()); </script></h6></span>
+                                                <span class="preview-title-lg overline-title text-pink" style="color:#FF7396   !important;" onload="time1()" >HORA: <h6 id="reloj"> </h6></span>
+                                       
+                                            </div>
+                                   
+                                        
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4">
+                                   
+                                    <div class="form-group">
+                                        <div class="form-control-wrap ">
+                                            {% for vendedor in datosVendedor %}
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #FF7396   !important;">Vendedor: <h6>{{vendedor.nombres}}</h6></span>
+                                                <span class="preview-title-lg overline-title text-pink" style="color:#FF7396   !important;" >Puesto: <h6>{{vendedor.puesto}} </h6></span>
+                                                
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-2">
+                                       
+                                    <div class="form-group">
+                                        <div class="form-control-wrap ">
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #FF7396   !important;">Sucursal: <h6>{{nombreSucursalSeleccionada}}</h6></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="form-label">Seleccionar cliente:</label>
+                                        <div class="form-control-wrap">
+                                            <select class="form-select form-control form-control-sm" data-search="on" id="selectCliente" onchange="cambioCliente()" name="clienteSeleccionado" >
+                                               
+                                                <option value="clienteMomentaneo">Ninguno</option>
+                                                {% for c, limite in listaLimites %} 
+                                                <option value="{{c.id_cliente}}-{{limite.0}}-{{limite.1}}">{{c.nombre_cliente}} {{c.apellidoPaterno_cliente}} {{c.apellidoMaterno_cliente}}</option>
+                                              
+                                                {% endfor %}
+                                            </select>
+                                       
+                                        </div>
+                                    </div>
+                                </div>
+                           
+                                </div>
+                        
+                   
+                        
+                        
+                            
+                            </div>
+                        </div><!-- .card -->
+                    </div>
+                </div><!-- .col -->
+            </div><!-- .row -->
+        
+            <div class="row g-gs" >
+      
+
+                <!--Productos-->
+                <div class="col-xxl-6" >
+
+                    <div class="card animate__animated animate__zoomInLeft" id="alturadiv1">
+                        <div class="card-inner animate__animated animate__zoomInLeft">
+                            <div class="card-title-group align-start mb-2 ">
+                                <div class="card-title animate__animated animate__zoomInLeft">
+                                    <center>
+                                       
+                                       
+                                        <h6 class="title">PRODUCTOS </h6>
+                                        
+                                        <img src="{% static 'images/iconosMenu/productosVenta.png' %}" alt="producto" width="40px">
+                                  
+                                    </center>
+                               
+                                   
+                                </div>
+                             
+                               
+                            </div>
+                            <hr style="border-color: #937DC2 !important;">
+                            <div class="nk-block nk-block-lg  ">
+                             
+                            
+                                     
+                                <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                                    <thead>
+                                        <tr class="nk-tb-item nk-tb-head" style="background-color: #937DC2 !important; color:white !important">
+                                     
+                                            <th class="nk-tb-col tb-col-sm" style="color: white !important;" ><span>Código</span></th>
+                                            <th class="nk-tb-col" style="color: white !important;" ><span>SKU</span></th>
+                                            <th class="nk-tb-col" style="color: white !important;" ><span>Nombre</span></th>
+                                            <th class="nk-tb-col" style="color: white !important;" ><span>Precio</span></th>
+                                            <th class="nk-tb-col" style="color: white !important;" ><span>Precio a crédito</span></th>
+                                            <th class="nk-tb-col tb-col-md" style="color: white !important;" ><span>Cantidad</span></th>
+                                         
+                                            <th class="nk-tb-col " style="color: white !important;" ><span>Vender</span></th>
+                                            
+                                          
+                                   
+                                        </tr><!-- .nk-tb-item -->
+                                    </thead>
+                                    <tbody>
+                                        {% for producto in productosVenta %}
+                                        <tr class="nk-tb-item">
+                                         
+                                            
+                                            <td class="nk-tb-col tb-col-sm">
+                                               
+                                                    <span class="badge badge-dark">{{producto.codigo_producto}}</span>
+                                             
+                                            </td>
+                                            <td class="nk-tb-col">
+                                                <span class="tb-lead">{{producto.sku_producto}}</span>
+                                            </td>
+                                            <td class="nk-tb-col">
+                                                <span class="tb-lead">{{producto.nombre_producto}}</span>
+                                            </td>
+                                            <td class="nk-tb-col"  style="white-space:nowrap!important;">
+                                                <span class="badge badge-success">$ {{producto.costo_venta}} MXN</span>
+                                            </td>
+                                            <td class="nk-tb-col"  style="white-space:nowrap!important;">
+                                                <span class="tb-lead">$ {{producto.costo_venta_a_credito}} MXN</span>
+                                            </td>
+                                            <td class="nk-tb-col tb-col-md">
+                                                <input  type="number" class="form-control" min="1" max="{{producto.cantidad}}" step="1"   name="minimoActualizado"  value="{{producto.cantidad}}" readonly>
+                                            </td>
+                                            
+                                            <td class="nk-tb-col tb-col-md">
+                                                <input type="hidden" name="idProductoVender" value="{{producto.id_producto}}">
+                                                <center>
+                                                    <div class="preview-block"  >
+                                                        
+                                                        <div class="custom-control custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input"  id="checkbox{{producto.codigo_producto}}" onclick="agregarProducto{{producto.codigo_producto}}('{{producto.codigo_producto}}')">
+                                                            <label class="custom-control-label tb-lead" for="checkbox{{producto.codigo_producto}}">Agregar</label>
+                                                        </div>
+                                                    </div>
+                                                </center>
+                                            </td>
+                                           
+                                            
+                                        </tr><!-- .nk-tb-item -->
+
+                                     
+                            
+                                        {% endfor %}
+                             
+                            
+                               
+                                    
+                                    </tbody>
+                                </table><!-- .nk-tb-list -->
+                            </div> <!-- nk-block -->
+                            <hr style="border-color: #937DC2 !important;">
+                        </div>
+                    </div>
+                    
+                </div><!-- .col -->
+                <div class="col-xxl-6" >
+
+                    <div class="card animate__animated animate__zoomInRight" id="alturadiv1">
+                        <div class="card-inner animate__animated animate__zoomInRight">
+                            <div class="card-title-group align-start mb-2">
+                                <div class="card-title">
+                                    <center>
+                                        <h6 class="title">SERVICIOS</h6>
+                                        <img src="{% static 'images/iconosMenu/facial.png' %}" alt="producto" width="40px">
+                                    </center>
+                                  
+                                  
+                                </div>
+                               
+                            </div>
+                            <hr style="border-color: #D96098 !important;">
+                            <div class="nk-block nk-block-lg">
+                            
+                                <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                                    <thead>
+                                        <tr class="nk-tb-item nk-tb-head" style="background-color: #D96098 !important; color:white !important">
+                                     
+                                            <th class="nk-tb-col tb-col-sm" style="color: white !important;"><span>Código</span></th>
+                                            <th class="nk-tb-col" style="color: white !important;"><span>Tipo</span></th>
+                                            <th class="nk-tb-col" style="color: white !important;"><span>Nombre</span></th>
+                                            <th class="nk-tb-col" style="color: white !important;"><span>Precio</span></th>
+                                            <th class="nk-tb-col tb-col-md" style="color: white !important;"><span>Productos</span></th>
+                                            <th class="nk-tb-col tb-col-md" style="color: white !important;"><span>Vender</span></th>
+                                           
+                                          
+                                   
+                                        </tr><!-- .nk-tb-item -->
+                                    </thead>
+                                    <tbody>
+                                        {% for servicio, producto in listaZipeada %}
+                                        <tr class="nk-tb-item">
+                                         
+                                            
+                                            <td class="nk-tb-col tb-col-sm">
+                                               
+                                                    <span class="tb-lead">{{servicio.0}}</span>
+                                             
+                                            </td>
+                                            <td class="nk-tb-col">
+                                                <span class="tb-lead">{{servicio.1}}</span>
+                                            </td>
+                                            <td class="nk-tb-col">
+                                                <span class="tb-lead">{{servicio.2}}</span>
+                                            </td>
+                                            <td class="nk-tb-col">
+                                                <span class="tb-lead">$ {{servicio.3}} MXN</span>
+                                            </td>
+                                            
+                                            <td class="nk-tb-col">
+                                               <button type="button" class="btn btn-primary" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                               {% for p in producto %}
+                                               <div> 
+                                                   <h6> <span class='text-primary '> {{p.0}}  </span> <span class='text-soft'> {{p.1}}  </span> <span class='text-info'>  {{p.2}} </span>   </h6>
+                                               </div>
+                                               
+                                               {% endfor %}"><span>Ver</span></button>
+                                         
+                                            </td>
+                                            
+                                            <td class="nk-tb-col tb-col-md">
+                                                <input type="hidden" name="idServicioVender" value="{{servicio.0}}">
+                                                <center>
+                                                    <div class="preview-block"  >
+                                                        
+                                                        <div class="custom-control custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input"  id="checkbox{{servicio.0}}" onclick="agregarServicio{{servicio.0}}('{{servicio.0}}')">
+                                                            <label class="custom-control-label tb-lead" for="checkbox{{servicio.0}}">Agregar</label>
+                                                        </div>
+                                                    </div>
+                                                </center>
+                                            </td>
+                                           
+                                            
+                                        </tr><!-- .nk-tb-item -->
+                                        {% endfor %}
+                             
+                            
+                               
+                                    
+                                    </tbody>
+                                </table><!-- .nk-tb-list -->
+                            </div> <!-- nk-block -->
+                            <hr style="border-color: #D96098 !important;">
+                                                     
+                        </div>
+                    </div>
+                    
+                </div><!-- .col -->
+            </div><!-- .row -->
+            <div class="row g-gs" >
+      
+
+
+                <div class="col-xxl-6" >
+
+                    
+                    <div class="card h-100" id="div2">
+                        <div class="card-inner animate__animated animate__zoomInLeft">
+                            <div class="card-title-group align-start mb-2">
+                                <div class="card-title">
+                                    <center>      
+                                        <h6 class="title">AGREGADOS AL CARRITO</h6>
+                                        <img src="{% static 'images/iconosMenu/shopping.png' %}" alt="producto" width="50px">
+                                       
+                                    </center>
+                                  
+                                  
+                                </div>
+                               
+                            </div>
+                            
+                          
+                            <hr style="border-color:  #A6CF98   !important;">
+
+                            <div class="nk-block nk-block-lg  ">
+                                     
+                                    
+                                             
+                                <table class=" nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                                    <thead>
+                                        <tr class="nk-tb-item nk-tb-head" style="background-color: #A6CF98 !important; color:white !important">
+                                     
+                                            <th class="nk-tb-col tb-col-sm" style="color: white !important;" ><span>Código</span></th>
+                                            <th class="nk-tb-col" style="color: white !important;" ><span>Concepto</span></th>
+                                            <th class="nk-tb-col" style="color: white !important;" ><span>Nombre</span></th>
+                                            <th class="nk-tb-col" style="color: white !important;" ><span>Precio</span></th>
+                                            <th class="nk-tb-col" style="color: white !important;" ><span>Precio A Crédito</span></th>
+                                            <th class="nk-tb-col tb-col-md" style="color: white !important;" ><span>Cantidad comprar</span></th>
+                                            <th class="nk-tb-col " style="color: white !important;" ><span>Total</span></th>
+                                        
+                                            
+                                          
+                                   
+                                        </tr><!-- .nk-tb-item -->
+                                    </thead>
+                                    <tbody id="tablaProductosAvender">
+                                        
+                                     
+                            
+                                  
+                             
+                            
+                               
+                                    
+                                    </tbody>
+                                </table><!-- .nk-tb-list -->
+                            </div> <!-- nk-block -->
+                            <div id="divCantidadProductos">
+                                <input type="hidden" id="codigosProductosVenta" name="codigosProductosVenta" value="" readonly>
+                                <input type="hidden" id="cantidadesProductosVenta" name="cantidadesProductosVenta" value="" readonly>
+
+                            </div>
+                            
+                            <hr class="preview-hr" style="border-color:  #A6CF98   !important;">
+                           
+                        
+                        
+                   
+                        </div>
+                    </div><!-- .card -->
+                </div><!-- .col -->
+                <div class="col-xxl-6" >
+
+                    <div class="card h-100 animate__animated animate__zoomInRight" id="div3">
+                        <div class="card-inner">
+                       
+                       
+                         
+                            <div class="row gy-4">
+
+                                <div class="col-sm-2" >
+                                    <div class="form-group">
+                                        
+                                       
+                                        <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Crédito?:</span>
+                                            <div class="preview-block"  >
+                                              
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input"  id="checkbox" name="checkboxCredito" >
+                                                    <label class="custom-control-label" for="checkbox">SI</label>
+                                                </div>
+                                            </div>
+                                   
+                                      
+                                    </div>
+                                        <div class="form-control-wrap " id="creditoAceptado" style="display: none;">
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important; font-size:10px!important;">Aceptado:</span>
+                                            <h6><span id="spanAceptado" >SI</span></h6>
+                                        </div>
+                                        <br>
+                                        <div class="form-control-wrap" id="conceptoCredito" style="display: none;">
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Pago:</span>
+                                            <p class="fs-12px"><span>4 quincenas</span></p>
+                                        </div>
+                                </div>
+
+                                <div class="col-sm-3"   >
+                                    <div class="form-group">
+                                        <div class="form-control-wrap " id="formaPago">
+                                       
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Forma de pago:</span>
+                                            <div class="form-control-select">
+                                                <select class="form-control" id="selectTipoPago" name="tipoPago" onchange="cambioTipoPago()">
+                                                    <option value="Efectivo">Efectivo</option>
+                                                    <option value="Tarjeta">Tarjeta</option>
+                                                    <option value="Transferencia">Transferencia</option>
+                                                </select>
+                                            </div>
+                                            <br>
+                                        </div>
+                                        <div class="form-control-wrap" id="cantidadEfectivo">
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Cantidad:</span>
+                                            <input type="number" class="form-control" placeholder="Ingresar efectivo" maxlength="4" max="10000" min="5" step="1" id="efectivoPagoCliente" onchange="calcularFeria()"> 
+                                        </div>
+                                        <div class="form-control-wrap " id="divSelectTipoTarjeta">
+                                       
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Tipo tarjeta:</span>
+                                            <div class="form-control-select">
+                                                <select class="form-control" id="default-06" name="tipoTarjeta">
+                                                    <option value="Credito">Crédito</option>
+                                                    <option value="Debito">Débito</option>
+                                                </select>
+                                            </div>
+                                   
+                                        </div>
+                                        <div class="form-control-wrap " id="divClaveRastreoTransferencia">
+                                       
+                                            <div class="form-group">
+                                                <label class="form-label" for="default-01">Clave de rastreo Transferencia:</label>
+                                                <div class="form-control-wrap">
+                                                    
+                                                    <input type="text"class="form-control" placeholder="Ingresar Clave" maxlength="50" name="claveRastreoTransferencia"> 
+                                                </div>
+                                            </div>
+                                   
+                                        </div>
+                                            <div class="form-control-wrap " id="fechaCreditoNuevo" style="display: none;">
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Fecha inicio:</span>
+                                                <h6><span id="spanFechaCreditoInicio">12-05-2022</span></h6>
+                                            </div>
+                                            <br>
+                                            <div class="form-control-wrap " id="fechaCreditoTermino" style="display: none;">
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Fecha final:</span>
+                                                <h6><span id="spanFechaCreditoFinal">07-08-2022</span></h6>
+                                                <br>
+                                            </div>
+                                            <div class="form-control-wrap " id="divCreditoLibre" style="display: none;">
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Crédito Libre:</span>
+                                                <h6><span>$ <span id="spanCreditoLibre" >0</span> MXN. </span></h6>
+                                            </div>
+                                        
+                                    </div>
+                                    
+                                    
+                                </div>
+                                <div class="col-sm-3" >
+                                    <div class="form-group">
+                                        <div class="form-control-wrap " style="padding-bottom: 10px!important;">
+                                       
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Descuento:</span>
+                                            <div class="form-control-select">
+                                                <select class="form-control" id="descuento" name="descuento" onchange="seleccionDescuento()">
+                                                    <option value="SinDescuento">No aplica</option>
+                                                    {% for descuento in descuentos %}
+                                                    <option value="{{descuento.porcentaje}}">{{descuento.nombre_descuento}} - {{descuento.porcentaje}}%</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                   
+                                        </div>
+
+                                        
+                                        <div class="form-control-wrap " id="divCreditoSucursal" style="display: none;">
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important; font-size:10px!important;">Límite Crédito:</span>
+                                            <h6><span>$ <span >{{montoLimiteStr}}</span> MXN. </span></h6>
+                                        </div>
+                                        <br>
+                                        <div class="form-control-wrap " id="divCreditoUsado" style="display: none;">
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Crédito usado:</span>
+                                            <h6><span>$ <span id="spanCreditoUsado" >0</span> MXN. </span></h6>
+                                        </div>
+
+                                        <div class="form-control-wrap " id="divReferenciaBancaria">
+                                       
+                                            <div class="form-group">
+                                                <label class="form-label" for="default-01">Referencia de pago:</label>
+                                                <div class="form-control-wrap">
+                                                    
+                                                    <input type="text"class="form-control" placeholder="Ingresar referencia Vouncher" maxlength="50" name="referenciaTarjeta"> 
+                                                </div>
+                                            </div>
+                                   
+                                        </div>
+                                       
+                                    </div>
+                                </div>
+                                <div class="col-sm-4" >
+                                   
+                                    <div class="form-group">
+                                        <div class="form-control-wrap ">
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Total a pagar:</span>
+                                            <h6>$<input id="costoTotal" type="text" value="0" size="10" readonly style="border: none;" name="costoTotalAPagar"></input> MXN.</h6>
+                                        </div> 
+                                        <div id="infoDescuento">
+                                            <div class="form-control-wrap ">
+                                                
+                                                <h6>-$<span id="spanResta">0</span> MXN Descuento</h6>
+                                            </div>
+                                            <br>
+                                            <div class="form-control-wrap ">
+                                                <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Total con descuento:</span>
+                                                <h6>$<span id="spanTotalConDescuento">0</span> MXN.</h6>
+                                            </div>
+                                        </div>
+                                        <div class="form-control-wrap" id="spanCambio">
+                                            
+                                            <h6>Cambio: $<span id="spanCambioChico">0</span> MXN.</h6>
+                                        </div>  
+                                        <br>
+                                        <div class="form-control-wrap" id="costoCredito" style="display: none;">
+                                            
+                                            <h6>Total a crédito: $<span id="spanCostoCredito">0</span> MXN.</h6>
+                                        </div> 
+                                        <div class="form-control-wrap" id="abono" style="display: none;">
+                                            
+                                            <h6>Abono: $<span id="spanAbono">0</span> MXN.</h6>
+                                        </div>  
+                                        <br>
+                                       
+                                        
+                                    </div>
+                                </div>
+
+                                
+                                
+                            </div>
+                            
+                            
+                            
+                           
+                        
+                        
+                   
+                        </div>
+                        
+                    </div>
+
+                    <div class="card h-100 animate__animated animate__zoomInRight" id="div3">
+                        <div class="card-inner animate__animated animate__zoomInRight">
+                       
+                            
+                         
+                            <div class="row gy-4">
+                                <div class="col-sm-8" >
+                                    <div class="form-group">
+                                        <div class="form-control-wrap ">
+                                            <span class="preview-title-lg overline-title text-pink" style="color: #D96098   !important;">Comentarios de venta:</span>
+                                            <textarea class="form-control form-control-sm" id="cf-default-textarea" placeholder="Ingresar comentarios de la venta" name="comentarios"></textarea>
+                                                
+                                        </div> 
+                                    </div>
+                                        
+                                </div>
+                                <div class="col-sm-4" >
+                                    <div class="form-group">
+                                        <center>
+                                            <br>
+                                            <br>
+                                            <br>
+                                            
+                                        <button type="submit" class="btn btn-dim btn-primary" id="botonGuardarVenta">Vender</button>
+                                        </center>
+                                    </div>
+                                        
+                                </div>
+                            </div>
+                                
+                        </div>
+                    </div>  
+
+                       
+                </div><!-- .card -->
+                    
+
+
+                    
+                </div><!-- .col -->
+            </div><!-- .row -->
+
+            
+
+
+            
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
+
+                
+
+            
+             
+           
+          
+        </form>        
+                
+           
+        </div><!-- .nk-block -->
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<script>
+    {% if bienvenida %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: '{{bienvenida}}',
+            footer: '<span style="color: #EB99E0!important"> Empieza a navegar por el sistema! </span>',
+            showConfirmButton: false,
+            timer: 2000
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+</script>
+
+<script>
+    function doSearch()
+
+    {
+
+        const tableReg = document.getElementById('datos');
+
+        const searchText = document.getElementById('searchTerm').value.toLowerCase();
+
+        let total = 0;
+
+
+
+        // Recorremos todas las filas con contenido de la tabla
+
+        for (let i = 1; i < tableReg.rows.length; i++) {
+
+            // Si el td tiene la clase "noSearch" no se busca en su cntenido
+
+            if (tableReg.rows[i].classList.contains("noSearch")) {
+
+                continue;
+
+            }
+
+
+
+            let found = false;
+
+            const cellsOfRow = tableReg.rows[i].getElementsByTagName('td');
+
+            // Recorremos todas las celdas
+
+            for (let j = 0; j < cellsOfRow.length && !found; j++) {
+
+                const compareWith = cellsOfRow[j].innerHTML.toLowerCase();
+
+                // Buscamos el texto en el contenido de la celda
+
+                if (searchText.length == 0 || compareWith.indexOf(searchText) > -1) {
+
+                    found = true;
+
+                    total++;
+
+                }
+
+            }
+
+            if (found) {
+
+                tableReg.rows[i].style.display = '';
+
+            } else {
+
+                // si no ha encontrado ninguna coincidencia, esconde la
+
+                // fila de la tabla
+
+                tableReg.rows[i].style.display = 'none';
+
+            }
+
+        }
+
+
+
+        // mostramos las coincidencias
+
+        const lastTR=tableReg.rows[tableReg.rows.length-1];
+
+        const td=lastTR.querySelector("td");
+
+        lastTR.classList.remove("hide", "red");
+
+        if (searchText == "") {
+
+            lastTR.classList.add("hide");
+
+        } else if (total) {
+
+            td.innerHTML="Se ha encontrado "+total+" coincidencia"+((total>1)?"s":"");
+
+        } else {
+
+            lastTR.classList.add("red");
+
+            td.innerHTML="No se han encontrado coincidencias";
+
+        }
+
+    }
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+        // Referencia al <select> de los productos
+        const productoDescuentoSelect = document.getElementById("productoDescuento");
+
+        // Referencia a la tabla "AGREGADOS AL CARRITO"
+        const tablaProductos = document.getElementById("tablaProductosAvender");
+
+        // Obtener las filas de la tabla
+        const filasTabla = tablaProductos.getElementsByTagName("tr");
+
+        // Recorrer las filas y agregar los códigos al <select>
+        for (let i = 0; i < filasTabla.length; i++) {
+            const celdas = filasTabla[i].getElementsByTagName("td"); // Obtener celdas de la fila
+            if (celdas.length > 0) {
+                const codigo = celdas[0].textContent.trim(); // Código está en la primera celda
+                const opcion = document.createElement("option");
+                opcion.value = codigo;
+                opcion.textContent = codigo;
+                productoDescuentoSelect.appendChild(opcion);
+            }
+        }
+    });
+
+</script>
+
+<script type="text/javascript">
+    showTime();
+    function showTime(){
+    myDate = new Date();
+    hours = myDate.getHours();
+    minutes = myDate.getMinutes();
+    seconds = myDate.getSeconds();
+    if (hours < 10) hours = 0 + hours;
+    
+    if (minutes < 10) minutes = "0" + minutes;
+    
+    if (seconds < 10) seconds = "0" + seconds;
+    
+    $("#reloj").text(hours+ ":" +minutes+ ":" +seconds);
+    setTimeout("showTime()", 1000);
+    } 
+    </script> 
+
+<script>
+    const data ='{{data}}';
+    console.log(data);
+    const dataAcomodada = JSON.parse(data.replace(/&quot;/g,'"'));
+    console.log(dataAcomodada);
+
+    const dataServicios = '{{dataServicios}}';
+    console.log(dataServicios);
+    const dataServiciosAcomodada = JSON.parse(dataServicios.replace(/&quot;/g,'"'));
+    console.log(dataServiciosAcomodada);
+
+    //PRODUUUCTOOOOOOOOOOOOOOOOOOOOOOOOOOOOOSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+    var contadorCkeckbox = 0;
+
+    var idsProductosAvender = []; //CODIGO PRODUCTO ID SERVICIO
+    var cantidadesMaximas = [];
+    var costosProductosAVender = [];  //Costo de producto y costo de servicio
+    var costosProductosAVenderACredito = [];
+    var nombresProductos =[]; //Nombre de producto y nombre de servicio
+    var cantidadProductos = [];  //Cantidades de producto y cantidades de Servicio
+    var cantidadAComprarProductos = [];
+    var idsProductosAvenderString ="";
+    var cantidadesAVenderString = "";
+
+
+    //SERVICIOOOOOSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+    var contadorCkeckboxServicios = 0;
+    var idsServiciosAvender = []; //este arreglo va a aguardar los ids de los productos que seleccione al marcar checkbox  para vender
+    var costosServiciosAVender = [];
+    var nombresServicios =[];
+
+    var cantidadAComprarServicios = [];
+    var idsServiciosAvenderString ="";
+    var cantidadesAVenderStringServicios = "";
+
+    var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+    botonGuardarVenta.disabled = true;
+   
+
+    
+    {% for productos in productosVentaJava %}
+    
+
+    function agregarProducto{{productos.codigo_producto}}(codigoProducto){
+        var codigo_producto = codigoProducto;
+        let resultadosBusqueda = []; //este arreglo vaa guardar el resultado de la busqueda de este producto en el arreglo de json
+        resultadosBusqueda = dataAcomodada.filter(productoVenta => productoVenta['codigo_producto'].includes(codigo_producto));
+        console.log(resultadosBusqueda);
+
+        var nameCheckbox = 'checkbox'+codigo_producto;
+        var checkbox = document.getElementById(nameCheckbox);
+        var tablaProductosVenta = document.getElementById('tablaProductosAvender');
+        var divCantidadProductos = document.getElementById('divCantidadProductos');
+        var spanCostoTotal = document.getElementById('costoTotal');
+
+        
+
+
+        //calcular el total a pagar por la cantidad de productos que se requieran 
+
+        
+        
+
+        if (checkbox.checked==true){
+            
+            //si se apreto el checkbox del producto
+            contadorCkeckbox = contadorCkeckbox +1;
+            if (contadorCkeckbox >= 1){
+                var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                botonGuardarVenta.disabled = false;
+            }
+
+
+            
+            
+            
+            resultadosBusqueda.map(productoVenta =>{
+                var arregloFilasHTML = [];
+                var idProducto = productoVenta['codigo_producto']
+                var costoProducto = productoVenta['costo_venta']
+                var costoProductoCredito = productoVenta['costo_venta_a_credito']
+                var nombreProducto =productoVenta['nombre_producto']
+                var cantidadProducto = productoVenta['cantidad']
+                var cantidadAComprar = 1
+
+
+
+                console.log(idProducto  + " " + costoProducto + " " + nombreProducto + " " + cantidadProducto)
+                
+
+                let agregarIdProducto = idsProductosAvender.push(idProducto);
+                let agregarCostoProducto = costosProductosAVender.push(costoProducto);
+                let agregarCostoProductoCredito = costosProductosAVenderACredito.push(costoProductoCredito);
+                let agregarNombreProducto = nombresProductos.push(nombreProducto)
+                let agregarCantidadProducto = cantidadProductos.push(cantidadProducto)
+                let agregarCantidadAComprarProducto = cantidadAComprarProductos.push(cantidadAComprar)
+                console.log(idsProductosAvender  + " " + costosProductosAVender + " " + nombresProductos + " " + cantidadProductos)
+
+                for (var i = 0; i < idsProductosAvender.length; i++) {
+                    var html = '<tr class="nk-tb-item" id="filaProducto'+idsProductosAvender[i]+'"><td class="nk-tb-col tb-col-sm"><span class="tb-lead">'+idsProductosAvender[i]+'</span></td><td class="nk-tb-col"><span class="tb-lead">Producto</span></td><td class="nk-tb-col"><span class="tb-lead">'+nombresProductos[i]+'</span></td><td class="nk-tb-col"><span class="tb-lead">$ '+costosProductosAVender[i]+' MXN</span></td><td class="nk-tb-col"><span class="tb-lead">$ '+costosProductosAVenderACredito[i]+' MXN</span></td><td class="nk-tb-col tb-col-md"><input  type="number" class="form-control" min="1" max='+cantidadProductos[i]+' step="1"   name="cantidadComprar'+idsProductosAvender[i]+'" value="'+cantidadAComprarProductos[i]+'" id="cantidadComprarInput'+idsProductosAvender[i]+'" onchange="cambiarCantidadAComprar'+idsProductosAvender[i]+'()" ></td><td class="nk-tb-col tb-col-md"><span class="tb-lead">$ <span id="subtotalProducto'+idsProductosAvender[i]+'">'+costosProductosAVender[i]+'</span> MXN</span></td><td class="nk-tb-col tb-col-md"></tr>';
+                    let agregarFila = arregloFilasHTML.push(html);
+                    
+                }
+                console.log(arregloFilasHTML);
+
+                var todasLasFilas = "";
+
+                arregloFilasHTML.forEach(function(valor,index){
+                    var posicion = index;
+                    var filahtml = valor;
+                    todasLasFilas = todasLasFilas + filahtml;
+    
+                }) 
+
+                tablaProductosVenta.innerHTML=todasLasFilas;
+
+                //Actualizar precio subtotal que estaba antes
+
+
+
+                //Suma de costo de productos
+                costoTotal = 0;
+                for(var i = 0; i < costosProductosAVender.length; i++){
+                    var codigoProducto = idsProductosAvender[i];
+                    var costoUnitario = costosProductosAVender[i];
+                    var cantidadActualAComprar = cantidadAComprarProductos[i];
+                    var codigoProducto = idsProductosAvender[i];
+
+                    var multiplicacion = costoUnitario * cantidadActualAComprar
+
+                    costoTotal = costoTotal + multiplicacion
+                    //FALTA QUE SE RESPETE EL SUBTOTAAAAAAAAAL
+                    var id = "subtotalProducto" + codigoProducto.toString();
+                    var subtotalProducto = document.getElementById(id); 
+
+                    var subtotal = costoUnitario * cantidadActualAComprar
+
+                    var subtotalString = subtotal.toString();
+                    console.log("COSTO UNITARIO EN TABLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"+subtotalString);
+                    subtotalProducto.innerHTML = subtotalString;
+
+                }
+
+                console.log("CostoTotal:"+costoTotal);
+
+                spanCostoTotal.value = costoTotal.toString();
+
+                var descuentoSeleccionado = document.getElementById('descuento').value;
+                var spanResta = document.getElementById('spanResta');
+                var spanTotalConDescuento = document.getElementById('spanTotalConDescuento');
+                if (descuentoSeleccionado == "SinDescuento"){
+                    infoDescuento.style.display = "none";
+                    //Obtener valor del select del cliente..
+                    var valorCliente = document.getElementById("selectCliente").value;
+                    if (valorCliente == "clienteMomentaneo"){
+                        console.log("Cliente momentaneo");
+                    }
+                    else{
+                        const arregloClienteLimite = valorCliente.split("-");
+                        var idCliente = arregloClienteLimite[0];
+                        var limiteCliente = arregloClienteLimite[1];
+                        var creditoUsado = arregloClienteLimite[2];
+
+                        var limiteClienteInt= parseInt(limiteCliente);
+                        var creditoUsadoInt = parseInt(creditoUsado);
+
+                        spanCreditoUsado.innerHTML = creditoUsado.toString();
+
+                        if (contadorCkeckbox >= 1){
+                            if (limiteClienteInt === 0 && creditoUsadoInt === 0 ){
+                                var spanAceptado = document.getElementById("spanAceptado");
+                                var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                spanAceptado.innerHTML = "No hay limite."
+                                spanAceptado.classList.add('text-danger');
+                               
+                                botonGuardarVenta.disabled = false;
+                            }
+                            else{
+                                if(costoTotal > limiteCliente){
+                                    //Aceptado = No.
+                                    var spanAceptado = document.getElementById("spanAceptado");
+                                    var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                    spanAceptado.innerHTML = "No."
+                                    spanAceptado.classList.add('text-danger');
+                                   
+                                    botonGuardarVenta.disabled = true;
+                                    
+            
+                                }else{
+                                    var spanAceptado = document.getElementById("spanAceptado");
+                                    var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                    spanAceptado.innerHTML = "Si."
+                                    spanAceptado.classList.remove('text-danger');
+                                    botonGuardarVenta.disabled = false;
+                                }
+                            }
+                            
+                        }
+
+                        spanCreditoLibre.innerHTML = limiteCliente.toString();
+
+                        var spanFechaCreditoInicio = document.getElementById("spanFechaCreditoInicio");
+                        var spanFechaCreditoFinal = document.getElementById("spanFechaCreditoFinal");
+
+                        function sumarDias(fecha, dias){
+                            fecha.setDate(fecha.getDate() + dias);
+                            return fecha;
+                        }
+
+                        var d = new Date();
+                        var fechaInicio = sumarDias(d, +15);
+                        var arregloMeses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sept", "Oct", "Nov", "Dic"]
+                        var mes = parseInt(fechaInicio.getMonth()+1)
+                        var mexTexto = ""
+                        vatContadorMes = 0
+                        for (var i = 0; i < arregloMeses.length; i++) {
+                            vatContadorMes += 1;
+                            if (vatContadorMes == mes){
+                                mexTexto = arregloMeses[vatContadorMes-1]
+                            }
+                        }
+                        spanFechaCreditoInicio.innerHTML = fechaInicio.getDate()+ "/"+mexTexto+ "/" + fechaInicio.getFullYear()
+                        var fechaFinal = sumarDias(fechaInicio, +45);
+                        var mesFinal = parseInt(fechaInicio.getMonth()+1)
+                        var mesFinalTexto = ""
+                        vatContadorMesFinal = 0
+                        for (var x = 0; x < arregloMeses.length; x++) {
+                            vatContadorMesFinal += 1;
+                            if (vatContadorMesFinal == mesFinal){
+                                mesFinalTexto = arregloMeses[vatContadorMesFinal-1]
+                            }
+                        }
+                        spanFechaCreditoFinal.innerHTML = fechaFinal.getDate()+ "/"+mesFinalTexto+ "/" + fechaFinal.getFullYear()
+
+                        var spanAbono = document.getElementById("spanAbono");
+                        var spanCostoCredito = document.getElementById("spanCostoCredito");
+                        var costoConElVeinte = parseFloat(costoTotal) * 1.20;
+                        var costoConElVeinteRedondeado = Math.round(costoConElVeinte);
+
+                        var abonito = costoConElVeinteRedondeado / 4;
+                        if (contadorCkeckbox >=1 ){
+                            spanCostoCredito.innerHTML = costoConElVeinteRedondeado.toString();
+                            spanAbono.innerHTML = abonito.toString();
+                        }else{
+                            spanCostoCredito.innerHTML = "0";
+                            spanAbono.innerHTML = "0";
+                        }
+                    }
+                    
+
+                   
+                }
+                else{
+                    infoDescuento.style.display = "block";
+                    //15
+                    var decimal = "."+descuentoSeleccionado.toString()
+                    var decimalFloat = parseFloat(decimal)  //.15
+                    var resta = costoTotal * decimalFloat
+                    var restaConDosDecimales = resta.toFixed(2); 
+                    var restaConDosDecimalesRedondeada = Math.round(restaConDosDecimales);
+
+                    var restaDescuento = costoTotal - restaConDosDecimales
+                    var restaDescuentoDosDecimales = restaDescuento.toFixed(2);
+                    var restaDescuentoDosDecimalesRedondeada = Math.round(restaDescuentoDosDecimales);
+
+                    spanResta.innerHTML = restaConDosDecimalesRedondeada.toString();
+                    spanTotalConDescuento.innerHTML = restaDescuentoDosDecimalesRedondeada.toString();
+                    //Tomar el valor del span del total a pagar.. 
+                    //Obtener valor del select del cliente..
+                    var valorCliente = document.getElementById("selectCliente").value;
+                    if (valorCliente == "clienteMomentaneo"){
+                        console.log("Cliente momentaneo");
+                    }
+                    else{
+                        const arregloClienteLimite = valorCliente.split("-");
+                        var idCliente = arregloClienteLimite[0];
+                        var limiteCliente = arregloClienteLimite[1];
+                        var creditoUsado = arregloClienteLimite[2];
+
+                        var limiteClienteInt= parseInt(limiteCliente);
+                        var creditoUsadoInt = parseInt(creditoUsado);
+
+
+                        spanCreditoUsado.innerHTML = creditoUsado.toString();
+
+                        if (contadorCkeckbox >= 1){
+                            if (limiteClienteInt === 0 && creditoUsadoInt === 0 ){
+                                var spanAceptado = document.getElementById("spanAceptado");
+                                var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                spanAceptado.innerHTML = "No hay limite."
+                                spanAceptado.classList.add('text-danger');
+                               
+                                botonGuardarVenta.disabled = false;
+                            }
+                            else{
+                                if(restaDescuentoDosDecimalesRedondeada > limiteCliente){
+                                    //Aceptado = No.
+                                    var spanAceptado = document.getElementById("spanAceptado");
+                                    var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                    spanAceptado.innerHTML = "No."
+                                    spanAceptado.classList.add('text-danger');
+                                    botonGuardarVenta.disabled = true;
+            
+                                }else{
+                                    var spanAceptado = document.getElementById("spanAceptado");
+                                    var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                    spanAceptado.innerHTML = "Si."
+                                    spanAceptado.classList.remove('text-danger');
+                                    botonGuardarVenta.disabled = false;
+                                }
+                            }
+                            
+                        }
+
+                        spanCreditoLibre.innerHTML = limiteCliente.toString();
+
+                        var spanFechaCreditoInicio = document.getElementById("spanFechaCreditoInicio");
+                        var spanFechaCreditoFinal = document.getElementById("spanFechaCreditoFinal");
+
+                        function sumarDias(fecha, dias){
+                            fecha.setDate(fecha.getDate() + dias);
+                            return fecha;
+                        }
+
+                        var d = new Date();
+                        var fechaInicio = sumarDias(d, +15);
+                        var arregloMeses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sept", "Oct", "Nov", "Dic"]
+                        var mes = parseInt(fechaInicio.getMonth()+1)
+                        var mexTexto = ""
+                        vatContadorMes = 0
+                        for (var i = 0; i < arregloMeses.length; i++) {
+                            vatContadorMes += 1;
+                            if (vatContadorMes == mes){
+                                mexTexto = arregloMeses[vatContadorMes-1]
+                            }
+                        }
+                        spanFechaCreditoInicio.innerHTML = fechaInicio.getDate()+ "/"+mexTexto+ "/" + fechaInicio.getFullYear()
+                        var fechaFinal = sumarDias(fechaInicio, +45);
+                        var mesFinal = parseInt(fechaInicio.getMonth()+1)
+                        var mesFinalTexto = ""
+                        vatContadorMesFinal = 0
+                        for (var x = 0; x < arregloMeses.length; x++) {
+                            vatContadorMesFinal += 1;
+                            if (vatContadorMesFinal == mesFinal){
+                                mesFinalTexto = arregloMeses[vatContadorMesFinal-1]
+                            }
+                        }
+                        spanFechaCreditoFinal.innerHTML = fechaFinal.getDate()+ "/"+mesFinalTexto+ "/" + fechaFinal.getFullYear()
+
+                        var spanAbono = document.getElementById("spanAbono");
+                        var spanCostoCredito = document.getElementById("spanCostoCredito");
+                        var costoConElVeinte = parseFloat(restaDescuentoDosDecimalesRedondeada) * 1.20;
+                        var costoConElVeinteRedondeado = Math.round(costoConElVeinte);
+
+                        var abonito = costoConElVeinteRedondeado / 4;
+                        if (contadorCkeckbox >=1 ){
+                            spanCostoCredito.innerHTML = costoConElVeinteRedondeado.toString();
+                            spanAbono.innerHTML = abonito.toString();
+                        }else{
+                            spanCostoCredito.innerHTML = "0";
+                            spanAbono.innerHTML = "0";
+                        }
+                    }
+                    
+                }
+                var efectivoPagoCliente = document.getElementById("efectivoPagoCliente");
+                var spanCambioChico = document.getElementById("spanCambioChico");
+                var valorInput = efectivoPagoCliente.value;
+
+                if (valorInput == ""){
+                    spanCambioChico.innerHTML = "0";
+                }
+                else{
+                    var valorDeSelectDeDescuento = document.getElementById("descuento").value;
+                    if (valorDeSelectDeDescuento == "SinDescuento"){
+                        var cambio = parseFloat(valorInput) - costoTotal;
+                    }else{
+                        var decimal = "."+valorDeSelectDeDescuento.toString()
+                        var decimalFloat = parseFloat(decimal)  //.15
+                        var resta = costoTotal * decimalFloat
+                        var restaConDosDecimales = resta.toFixed(2); 
+                        var restaConDosDecimalesRedondeada = Math.round(restaConDosDecimales);
+
+                        var restaDescuento = costoTotal - restaConDosDecimales
+                        var restaDescuentoDosDecimales = restaDescuento.toFixed(2);
+                        var restaDescuentoDosDecimalesRedondeada = Math.round(restaDescuentoDosDecimales);
+                        var cambio = parseFloat(valorInput) - restaDescuentoDosDecimalesRedondeada;
+                    }
+
+                    
+
+                    spanCambioChico.innerHTML = cambio.toString();
+                }
+
+
+                
+
+                
+            })
+        }
+        else{
+            contadorCkeckbox = contadorCkeckbox - 1
+            if(contadorCkeckbox == 0){
+                var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                botonGuardarVenta.disabled = true;
+            }
+            resultadosBusqueda.map(productoVenta=>{
+                var codigoProducto = productoVenta['codigo_producto'];
+                var posicion = idsProductosAvender.indexOf(codigoProducto);
+                if (posicion !== -1){
+                    idsProductosAvender.splice(posicion,1)
+                    costosProductosAVender.splice(posicion,1)
+                    costosProductosAVenderACredito.splice(posicion,1)
+                    nombresProductos.splice(posicion,1)
+                    cantidadProductos.splice(posicion,1)
+                    cantidadAComprarProductos.splice(posicion,1)
+                    
+                }
+                var idFila = "#filaProducto"+productoVenta['codigo_producto'];
+                $(idFila).remove();
+
+                costoTotal = 0;
+                for(var i = 0; i < costosProductosAVender.length; i++){
+                    var costoUnitario = costosProductosAVender[i];
+                    var codigoProducto = idsProductosAvender[i];
+
+                    var cantidadActualAComprar = cantidadAComprarProductos[i];
+
+                    var multiplicacion = costoUnitario * cantidadActualAComprar 
+                    costoTotal = costoTotal + multiplicacion
+
+                   
+                }
+
+                if (costoTotal == 0){
+                    var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                    bo
+                }
+
+                
+
+                console.log("CostoTotal:" + costoTotal);
+                spanCostoTotal.value = costoTotal.toString();
+
+                var descuentoSeleccionado = document.getElementById('descuento').value;
+                var spanResta = document.getElementById('spanResta');
+                var spanTotalConDescuento = document.getElementById('spanTotalConDescuento');
+                if (descuentoSeleccionado == "SinDescuento"){
+                    infoDescuento.style.display = "none";
+                    //Obtener valor del select del cliente..
+                    var valorCliente = document.getElementById("selectCliente").value;
+                    if (valorCliente == "clienteMomentaneo"){
+                        console.log("Cliente momentaneo");
+                    }
+                    else{
+                        const arregloClienteLimite = valorCliente.split("-");
+                        var idCliente = arregloClienteLimite[0];
+                        var limiteCliente = arregloClienteLimite[1];
+                        var creditoUsado = arregloClienteLimite[2];
+
+                        var limiteClienteInt= parseInt(limiteCliente);
+                        var creditoUsadoInt = parseInt(creditoUsado);   
+                        spanCreditoUsado.innerHTML = creditoUsado.toString();
+        
+                        if (contadorCkeckbox >= 1){
+                            if (limiteClienteInt === 0 && creditoUsadoInt === 0 ){
+                                var spanAceptado = document.getElementById("spanAceptado");
+                                var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                spanAceptado.innerHTML = "No hay limite."
+                                spanAceptado.classList.add('text-danger');
+                               
+                                botonGuardarVenta.disabled = false;
+                            }
+                            else{
+                                if(costoTotal > limiteCliente){
+                                    //Aceptado = No.
+                                    var spanAceptado = document.getElementById("spanAceptado");
+                                    var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                    spanAceptado.innerHTML = "No."
+                                    spanAceptado.classList.add('text-danger');
+                                    botonGuardarVenta.disabled = true;
+            
+                                }else{
+                                    var spanAceptado = document.getElementById("spanAceptado");
+                                    var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                    spanAceptado.innerHTML = "Si."
+                                    spanAceptado.classList.remove('text-danger');
+                                    botonGuardarVenta.disabled = false;
+                                }
+                            }
+
+                            
+                        }
+        
+                        spanCreditoLibre.innerHTML = limiteCliente.toString();
+
+                        var spanFechaCreditoInicio = document.getElementById("spanFechaCreditoInicio");
+                        var spanFechaCreditoFinal = document.getElementById("spanFechaCreditoFinal");
+
+                        function sumarDias(fecha, dias){
+                            fecha.setDate(fecha.getDate() + dias);
+                            return fecha;
+                        }
+
+                        var d = new Date();
+                        var fechaInicio = sumarDias(d, +15);
+                        var arregloMeses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sept", "Oct", "Nov", "Dic"]
+                        var mes = parseInt(fechaInicio.getMonth()+1)
+                        var mexTexto = ""
+                        vatContadorMes = 0
+                        for (var i = 0; i < arregloMeses.length; i++) {
+                            vatContadorMes += 1;
+                            if (vatContadorMes == mes){
+                                mexTexto = arregloMeses[vatContadorMes-1]
+                            }
+                        }
+                        spanFechaCreditoInicio.innerHTML = fechaInicio.getDate()+ "/"+mexTexto+ "/" + fechaInicio.getFullYear()
+                        var fechaFinal = sumarDias(fechaInicio, +45);
+                        var mesFinal = parseInt(fechaInicio.getMonth()+1)
+                        var mesFinalTexto = ""
+                        vatContadorMesFinal = 0
+                        for (var x = 0; x < arregloMeses.length; x++) {
+                            vatContadorMesFinal += 1;
+                            if (vatContadorMesFinal == mesFinal){
+                                mesFinalTexto = arregloMeses[vatContadorMesFinal-1]
+                            }
+                        }
+                        spanFechaCreditoFinal.innerHTML = fechaFinal.getDate()+ "/"+mesFinalTexto+ "/" + fechaFinal.getFullYear()
+                        var spanAbono = document.getElementById("spanAbono");
+                        var spanCostoCredito = document.getElementById("spanCostoCredito");
+                        var costoConElVeinte = parseFloat(costoTotal) * 1.20;
+                        var costoConElVeinteRedondeado = Math.round(costoConElVeinte);
+
+                        var abonito = costoConElVeinteRedondeado / 4;
+                        if (contadorCkeckbox >=1 ){
+                            spanCostoCredito.innerHTML = costoConElVeinteRedondeado.toString();
+                            spanAbono.innerHTML = abonito.toString();
+                        }else{
+                            spanCostoCredito.innerHTML = "0";
+                            spanAbono.innerHTML = "0";
+                        }
+                    }
+                    
+                }
+                else{
+                    infoDescuento.style.display = "block";
+                    //15
+                    var decimal = "."+descuentoSeleccionado.toString()
+                    var decimalFloat = parseFloat(decimal)  //.15
+                    var resta = costoTotal * decimalFloat
+                    var restaConDosDecimales = resta.toFixed(2); 
+                    var restaConDosDecimalesRedondeada = Math.round(restaConDosDecimales);
+
+                    var restaDescuento = costoTotal - restaConDosDecimales
+                    var restaDescuentoDosDecimales = restaDescuento.toFixed(2);
+                    var restaDescuentoDosDecimalesRedondeada = Math.round(restaDescuentoDosDecimales);
+
+                    spanResta.innerHTML = restaConDosDecimalesRedondeada.toString();
+                    spanTotalConDescuento.innerHTML = restaDescuentoDosDecimalesRedondeada.toString();
+                    //Tomar el valor del span del total a pagar.. 
+                    //Obtener valor del select del cliente..
+                    var valorCliente = document.getElementById("selectCliente").value;
+                    if (valorCliente == "clienteMomentaneo"){
+                        console.log("Cliente momentaneo");
+                    }
+                    else{
+                        const arregloClienteLimite = valorCliente.split("-");
+                        var idCliente = arregloClienteLimite[0];
+                        var limiteCliente = arregloClienteLimite[1];
+                        var creditoUsado = arregloClienteLimite[2];
+
+                        var limiteClienteInt= parseInt(limiteCliente);
+                        var creditoUsadoInt = parseInt(creditoUsado);
+
+                        spanCreditoUsado.innerHTML = creditoUsado.toString();
+    
+                        if (contadorCkeckbox >= 1){
+                            if (limiteClienteInt === 0 && creditoUsadoInt === 0 ){
+                                var spanAceptado = document.getElementById("spanAceptado");
+                                var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                spanAceptado.innerHTML = "No hay limite."
+                                spanAceptado.classList.add('text-danger');
+                               
+                                botonGuardarVenta.disabled = false;
+                            }
+                            else{
+                                if(restaDescuentoDosDecimalesRedondeada > limiteCliente){
+                                    //Aceptado = No.
+                                    var spanAceptado = document.getElementById("spanAceptado");
+                                    var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                    spanAceptado.innerHTML = "No."
+                                    spanAceptado.classList.add('text-danger');
+                                    botonGuardarVenta.disabled = true;
+            
+                                }else{
+                                    var spanAceptado = document.getElementById("spanAceptado");
+                                    var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                    spanAceptado.innerHTML = "Si."
+                                    spanAceptado.classList.remove('text-danger');
+                                    botonGuardarVenta.disabled = false;
+                                }
+                            }
+                            
+                            
+                        }
+        
+                        spanCreditoLibre.innerHTML = limiteCliente.toString();
+                        var spanFechaCreditoInicio = document.getElementById("spanFechaCreditoInicio");
+                        var spanFechaCreditoFinal = document.getElementById("spanFechaCreditoFinal");
+    
+                        function sumarDias(fecha, dias){
+                            fecha.setDate(fecha.getDate() + dias);
+                            return fecha;
+                        }
+    
+                        var d = new Date();
+                        var fechaInicio = sumarDias(d, +15);
+                        var arregloMeses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sept", "Oct", "Nov", "Dic"]
+                        var mes = parseInt(fechaInicio.getMonth()+1)
+                        var mexTexto = ""
+                        vatContadorMes = 0
+                        for (var i = 0; i < arregloMeses.length; i++) {
+                            vatContadorMes += 1;
+                            if (vatContadorMes == mes){
+                                mexTexto = arregloMeses[vatContadorMes-1]
+                            }
+                        }
+                        spanFechaCreditoInicio.innerHTML = fechaInicio.getDate()+ "/"+mexTexto+ "/" + fechaInicio.getFullYear()
+                        var fechaFinal = sumarDias(fechaInicio, +45);
+                        var mesFinal = parseInt(fechaInicio.getMonth()+1)
+                        var mesFinalTexto = ""
+                        vatContadorMesFinal = 0
+                        for (var x = 0; x < arregloMeses.length; x++) {
+                            vatContadorMesFinal += 1;
+                            if (vatContadorMesFinal == mesFinal){
+                                mesFinalTexto = arregloMeses[vatContadorMesFinal-1]
+                            }
+                        }
+                        spanFechaCreditoFinal.innerHTML = fechaFinal.getDate()+ "/"+mesFinalTexto+ "/" + fechaFinal.getFullYear()
+                        var spanAbono = document.getElementById("spanAbono");
+                        var spanCostoCredito = document.getElementById("spanCostoCredito");
+                        var costoConElVeinte = parseFloat(restaDescuentoDosDecimalesRedondeada) * 1.20;
+                        var costoConElVeinteRedondeado = Math.round(costoConElVeinte);
+
+                        var abonito = costoConElVeinteRedondeado / 4;
+                        if (contadorCkeckbox >=1 ){
+                            spanCostoCredito.innerHTML = costoConElVeinteRedondeado.toString();
+                            spanAbono.innerHTML = abonito.toString();
+                        }else{
+                            spanCostoCredito.innerHTML = "0";
+                            spanAbono.innerHTML = "0";
+                        }
+                    }
+                    
+                    
+                    
+                }
+                var efectivoPagoCliente = document.getElementById("efectivoPagoCliente");
+                var spanCambioChico = document.getElementById("spanCambioChico");
+                var valorInput = efectivoPagoCliente.value;
+
+                if (valorInput == ""){
+                    spanCambioChico.innerHTML = "0";
+                }
+                else{
+                    var valorDeSelectDeDescuento = document.getElementById("descuento").value;
+                    if (valorDeSelectDeDescuento == "SinDescuento"){
+                        var cambio = parseFloat(valorInput) - costoTotal;
+                    }else{
+                        var decimal = "."+valorDeSelectDeDescuento.toString()
+                        var decimalFloat = parseFloat(decimal)  //.15
+                        var resta = costoTotal * decimalFloat
+                        var restaConDosDecimales = resta.toFixed(2); 
+                        var restaConDosDecimalesRedondeada = Math.round(restaConDosDecimales);
+
+                        var restaDescuento = costoTotal - restaConDosDecimales
+                        var restaDescuentoDosDecimales = restaDescuento.toFixed(2);
+                        var restaDescuentoDosDecimalesRedondeada = Math.round(restaDescuentoDosDecimales);
+                        var cambio = parseFloat(valorInput) - restaDescuentoDosDecimalesRedondeada;
+                    }
+
+                    
+
+                    spanCambioChico.innerHTML = cambio.toString();
+                }
+
+                 
+
+                
+                
+
+            })
+        }
+
+        //CODIGO PARA AGREGAR TODOS LOS HTMLS DE LAS FILAS
+        if (idsProductosAvender.length == 0){
+            idsProductosAvenderString = "No se mandara ningun producto";
+        }else{
+            idsProductosAvender.forEach(function(valor,index){
+                var posicion = index;
+                var valor = valor;
+                if(posicion==0){
+                    idsProductosAvenderString = valor.toString();
+                }
+                else{
+                    idsProductosAvenderString += "," + valor.toString();
+                }
+
+            })
+            cantidadAComprarProductos.forEach(function(valor,index){
+                var posicion = index;
+                var valor = valor;
+                if(posicion==0){
+                    cantidadesAVenderString = valor.toString();
+                }
+                else{
+                    cantidadesAVenderString += "," + valor.toString();
+                }
+
+            })
+        }
+        var filaConValores = "#inputsValores"
+        $(filaConValores).remove();
+        var codigosProductosVenta = document.getElementById("codigosProductosVenta");
+        codigosProductosVenta.value = idsProductosAvenderString
+
+        var cantidadesProductosVenta = document.getElementById("cantidadesProductosVenta");
+        cantidadesProductosVenta.value = cantidadesAVenderString;
+        //divCantidadProductos.innerHTML= '<div id="inputsValores"><input type="hidden" value="'+idsProductosAvenderString+'" name="codigosProductosVenta" readonly></input><input type="hidden" value="'+cantidadesAVenderString+'" readonly name="cantidadesProductosVenta"></input></div>';
+        console.log(idsProductosAvender);
+        console.log("Esto se mandara a python" +idsProductosAvenderString);
+
+
+    }
+
+    function cambiarCantidadAComprar{{productos.codigo_producto}}(){
+        var codigo_producto = '{{productos.codigo_producto}}';
+        var costo_producto = '{{productos.costo_venta}}';
+        var spanCostoTotal = document.getElementById('costoTotal');
+        
+        var id = "subtotalProducto" + codigo_producto.toString();
+        var cantidad = "#cantidadComprarInput" + codigo_producto.toString();  
+        
+        var subtotalProducto = document.getElementById(id);
+        
+        
+        var cantidadActualizada = $(cantidad).val(); //Cantidad acualizada
+
+        var subtotal = costo_producto * cantidadActualizada;
+        var subtotalString = subtotal.toString();
+        subtotalProducto.innerHTML = subtotalString;
+
+        var posicion = idsProductosAvender.indexOf(codigo_producto);
+        cantidadAComprarProductos[posicion] = cantidadActualizada.toString();
+
+
+        //CODIGO PARA MANDAR VALORES A LOS INPUTS
+        if (idsProductosAvender.length == 0 &&  cantidadAComprarProductos.length == 0){
+            idsProductosAvenderString = "No se mandara ningun producto";
+            cantidadesAVenderString = "Ninguna cantidad mandada"
+        }else{
+            idsProductosAvender.forEach(function(valor,index){
+                var posicion = index;
+                var valor = valor;
+                if(posicion==0){
+                    idsProductosAvenderString = valor.toString();
+                }
+                else{
+                    idsProductosAvenderString += "," + valor.toString();
+                }
+
+            })
+            cantidadAComprarProductos.forEach(function(valor,index){
+                var posicion = index;
+                var valor = valor;
+                if(posicion==0){
+                    cantidadesAVenderString = valor.toString();
+                }
+                else{
+                    cantidadesAVenderString += "," + valor.toString();
+                }
+
+            })
+        }
+        var filaConValores = "#inputsValores"
+        $(filaConValores).remove();
+        var codigosProductosVenta = document.getElementById("codigosProductosVenta");
+        codigosProductosVenta.value = idsProductosAvenderString
+
+        var cantidadesProductosVenta = document.getElementById("cantidadesProductosVenta");
+        cantidadesProductosVenta.value = cantidadesAVenderString;
+
+        //divCantidadProductos.innerHTML= '<div id="inputsValores"><input type="hidden" value="'+idsProductosAvenderString+'"name="codigosProductosVenta" readonly></input><input type="hidden" value="'+cantidadesAVenderString+'" readonly name="cantidadesProductosVenta"></input></div>';
+        console.log(idsProductosAvender);
+        console.log("Esto se mandara a python" +idsProductosAvenderString);
+
+        costoTotal = 0;
+        for(var i = 0; i < costosProductosAVender.length; i++){
+            var costoUnitario = costosProductosAVender[i];
+            var cantidadActualAComprar = cantidadAComprarProductos[i];
+
+            var multiplicacion = costoUnitario * cantidadActualAComprar 
+            costoTotal = costoTotal + multiplicacion
+        }
+
+        console.log("CostoTotal:" + costoTotal);
+        spanCostoTotal.value = costoTotal.toString();
+
+        var descuentoSeleccionado = document.getElementById('descuento').value;
+        var spanResta = document.getElementById('spanResta');
+        var spanTotalConDescuento = document.getElementById('spanTotalConDescuento');
+        if (descuentoSeleccionado == "SinDescuento"){
+            infoDescuento.style.display = "none";
+            //Obtener valor del select del cliente..
+            var valorCliente = document.getElementById("selectCliente").value;
+            if (valorCliente == "clienteMomentaneo"){
+                console.log("Cliente momentaneo");
+            }
+            else{
+                const arregloClienteLimite = valorCliente.split("-");
+                var idCliente = arregloClienteLimite[0];
+                var limiteCliente = arregloClienteLimite[1];
+                var creditoUsado = arregloClienteLimite[2];
+
+                var limiteClienteInt= parseInt(limiteCliente);
+                var creditoUsadoInt = parseInt(creditoUsado);
+
+                spanCreditoUsado.innerHTML = creditoUsado.toString();
+    
+                if (contadorCkeckbox >= 1){
+                    if (limiteClienteInt === 0 && creditoUsadoInt === 0 ){
+                        var spanAceptado = document.getElementById("spanAceptado");
+                        var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                        spanAceptado.innerHTML = "No hay limite."
+                        spanAceptado.classList.add('text-danger');
+                       
+                        botonGuardarVenta.disabled = false;
+                    }
+                    else{
+                        if(costoTotal > limiteCliente){
+                            //Aceptado = No.
+                            var spanAceptado = document.getElementById("spanAceptado");
+                            var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                            spanAceptado.innerHTML = "No."
+                            spanAceptado.classList.add('text-danger');
+                            botonGuardarVenta.disabled = true;
+        
+                        }else{
+                            var spanAceptado = document.getElementById("spanAceptado");
+                            var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                            spanAceptado.innerHTML = "Si."
+                            spanAceptado.classList.remove('text-danger');
+                            botonGuardarVenta.disabled = false;
+                        }
+                    }
+
+                    
+                }
+    
+                spanCreditoLibre.innerHTML = limiteCliente.toString();
+                var spanFechaCreditoInicio = document.getElementById("spanFechaCreditoInicio");
+                var spanFechaCreditoFinal = document.getElementById("spanFechaCreditoFinal");
+    
+                function sumarDias(fecha, dias){
+                    fecha.setDate(fecha.getDate() + dias);
+                    return fecha;
+                }
+    
+                var d = new Date();
+                var fechaInicio = sumarDias(d, +15);
+                var arregloMeses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sept", "Oct", "Nov", "Dic"]
+                var mes = parseInt(fechaInicio.getMonth()+1)
+                var mexTexto = ""
+                vatContadorMes = 0
+                for (var i = 0; i < arregloMeses.length; i++) {
+                    vatContadorMes += 1;
+                    if (vatContadorMes == mes){
+                        mexTexto = arregloMeses[vatContadorMes-1]
+                    }
+                }
+                spanFechaCreditoInicio.innerHTML = fechaInicio.getDate()+ "/"+mexTexto+ "/" + fechaInicio.getFullYear()
+                var fechaFinal = sumarDias(fechaInicio, +45);
+                var mesFinal = parseInt(fechaInicio.getMonth()+1)
+                var mesFinalTexto = ""
+                vatContadorMesFinal = 0
+                for (var x = 0; x < arregloMeses.length; x++) {
+                    vatContadorMesFinal += 1;
+                    if (vatContadorMesFinal == mesFinal){
+                        mesFinalTexto = arregloMeses[vatContadorMesFinal-1]
+                    }
+                }
+                spanFechaCreditoFinal.innerHTML = fechaFinal.getDate()+ "/"+mesFinalTexto+ "/" + fechaFinal.getFullYear()
+                var spanAbono = document.getElementById("spanAbono");
+                var spanCostoCredito = document.getElementById("spanCostoCredito");
+                var costoConElVeinte = parseFloat(costoTotal) * 1.20;
+                var costoConElVeinteRedondeado = Math.round(costoConElVeinte);
+
+                var abonito = costoConElVeinteRedondeado / 4;
+                if (contadorCkeckbox >=1 ){
+                    spanCostoCredito.innerHTML = costoConElVeinteRedondeado.toString();
+                    spanAbono.innerHTML = abonito.toString();
+                }else{
+                    spanCostoCredito.innerHTML = "0";
+                    spanAbono.innerHTML = "0";
+                }
+            }
+            
+        }
+        else{
+            infoDescuento.style.display = "block";
+            //15
+            var decimal = "."+descuentoSeleccionado.toString()
+            var decimalFloat = parseFloat(decimal)  //.15
+            var resta = costoTotal * decimalFloat
+            var restaConDosDecimales = resta.toFixed(2); 
+            var restaConDosDecimalesRedondeada = Math.round(restaConDosDecimales);
+
+            var restaDescuento = costoTotal - restaConDosDecimales
+            var restaDescuentoDosDecimales = restaDescuento.toFixed(2);
+            var restaDescuentoDosDecimalesRedondeada = Math.round(restaDescuentoDosDecimales);
+
+            spanResta.innerHTML = restaConDosDecimalesRedondeada.toString();
+            spanTotalConDescuento.innerHTML = restaDescuentoDosDecimalesRedondeada.toString();
+            //Tomar el valor del span del total a pagar.. 
+            var efectivoPagoCliente = document.getElementById("efectivoPagoCliente");
+            var spanCambioChico = document.getElementById("spanCambioChico");
+            var valorInput = efectivoPagoCliente.value;
+
+            if (valorInput == ""){
+                spanCambioChico.innerHTML = "0";
+            }
+            else{
+                var cambio = parseFloat(valorInput) - restaDescuentoDosDecimalesRedondeada;
+    
+                spanCambioChico.innerHTML = cambio.toString();
+            }
+            //Obtener valor del select del cliente..
+            var valorCliente = document.getElementById("selectCliente").value;
+            if (valorCliente == "clienteMomentaneo"){
+                console.log("Cliente momentaneo");
+            }
+            else{
+                const arregloClienteLimite = valorCliente.split("-");
+                var idCliente = arregloClienteLimite[0];
+                var limiteCliente = arregloClienteLimite[1];
+                var creditoUsado = arregloClienteLimite[2];
+
+                var limiteClienteInt= parseInt(limiteCliente);
+                var creditoUsadoInt = parseInt(creditoUsado);
+
+                spanCreditoUsado.innerHTML = creditoUsado.toString();
+    
+                if (contadorCkeckbox >= 1){
+                    if (limiteClienteInt === 0 && creditoUsadoInt === 0 ){
+                        var spanAceptado = document.getElementById("spanAceptado");
+                        var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                        spanAceptado.innerHTML = "No hay limite."
+                        spanAceptado.classList.add('text-danger');
+                       
+                        botonGuardarVenta.disabled = false;
+                    }
+                    else{
+                        if(restaDescuentoDosDecimalesRedondeada > limiteCliente){
+                            //Aceptado = No.
+                            var spanAceptado = document.getElementById("spanAceptado");
+                            var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                            spanAceptado.innerHTML = "No."
+                            spanAceptado.classList.add('text-danger');
+                            botonGuardarVenta.disabled = true;
+        
+                        }else{
+                            var spanAceptado = document.getElementById("spanAceptado");
+                            var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                            spanAceptado.innerHTML = "Si."
+                            spanAceptado.classList.remove('text-danger');
+                            botonGuardarVenta.disabled = false;
+                        }
+                    }
+                    
+                }
+    
+                spanCreditoLibre.innerHTML = limiteCliente.toString();
+                var spanFechaCreditoInicio = document.getElementById("spanFechaCreditoInicio");
+                var spanFechaCreditoFinal = document.getElementById("spanFechaCreditoFinal");
+    
+                function sumarDias(fecha, dias){
+                    fecha.setDate(fecha.getDate() + dias);
+                    return fecha;
+                }
+    
+                var d = new Date();
+                var fechaInicio = sumarDias(d, +15);
+                var arregloMeses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sept", "Oct", "Nov", "Dic"]
+                var mes = parseInt(fechaInicio.getMonth()+1)
+                var mexTexto = ""
+                vatContadorMes = 0
+                for (var i = 0; i < arregloMeses.length; i++) {
+                    vatContadorMes += 1;
+                    if (vatContadorMes == mes){
+                        mexTexto = arregloMeses[vatContadorMes-1]
+                    }
+                }
+                spanFechaCreditoInicio.innerHTML = fechaInicio.getDate()+ "/"+mexTexto+ "/" + fechaInicio.getFullYear()
+                var fechaFinal = sumarDias(fechaInicio, +45);
+                var mesFinal = parseInt(fechaInicio.getMonth()+1)
+                var mesFinalTexto = ""
+                vatContadorMesFinal = 0
+                for (var x = 0; x < arregloMeses.length; x++) {
+                    vatContadorMesFinal += 1;
+                    if (vatContadorMesFinal == mesFinal){
+                        mesFinalTexto = arregloMeses[vatContadorMesFinal-1]
+                    }
+                }
+                spanFechaCreditoFinal.innerHTML = fechaFinal.getDate()+ "/"+mesFinalTexto+ "/" + fechaFinal.getFullYear()
+                var spanAbono = document.getElementById("spanAbono");
+                var spanCostoCredito = document.getElementById("spanCostoCredito");
+                var costoConElVeinte = parseFloat(restaDescuentoDosDecimalesRedondeada) * 1.20;
+                var costoConElVeinteRedondeado = Math.round(costoConElVeinte);
+
+                var abonito = costoConElVeinteRedondeado / 4;
+                if (contadorCkeckbox >=1 ){
+                    spanCostoCredito.innerHTML = costoConElVeinteRedondeado.toString();
+                    spanAbono.innerHTML = abonito.toString();
+                }else{
+                    spanCostoCredito.innerHTML = "0";
+                    spanAbono.innerHTML = "0";
+                }
+            }
+            
+            
+        }
+
+        
+    }
+
+
+    {% endfor %}
+
+
+    {% for servicios in datosServiciosQueSePuedenVenderJava %}
+    
+
+    function agregarServicio{{servicios.0}}(idServicio){
+        var id_servicio = idServicio;
+        var intIdServicio = parseInt(id_servicio)
+        let resultadosBusqueda = []; //este arreglo vaa guardar el resultado de la busqueda de este producto en el arreglo de json
+        resultadosBusqueda = dataServiciosAcomodada.filter(servicioVenta => servicioVenta['id_servicio'].includes(id_servicio));
+
+        var nameCheckbox = 'checkbox'+id_servicio;
+        var checkbox = document.getElementById(nameCheckbox);
+        var tablaProductosVenta = document.getElementById('tablaProductosAvender');
+        var divCantidadProductos = document.getElementById('divCantidadProductos');
+        var spanCostoTotal = document.getElementById('costoTotal');
+
+
+        //calcular el total a pagar por la cantidad de productos que se requieran 
+
+        
+        
+
+        if (checkbox.checked==true){
+            //si se apreto el checkbox del producto
+            contadorCkeckbox = contadorCkeckbox +1;
+
+            
+            
+            
+            resultadosBusqueda.map(servicioVenta =>{
+                var arregloFilasServiciosHTML = [];
+                var idServicio = servicioVenta['id_servicio']
+                var costoServicio = servicioVenta['precio_venta']
+                var nombreServicio =servicioVenta['nombre_servicio']
+             
+                var cantidadAComprarServicio = 1
+                var maximoServicio =servicioVenta['maximo_servicio']
+
+                console.log(idServicio  + " " + costoServicio + " " + nombreServicio)
+                
+
+                let agregarIdServicio = idsProductosAvender.push(idServicio);
+                let agregarCostoServicio = costosProductosAVender.push(costoServicio);
+                let agregarNombreServicio = nombresProductos.push(nombreServicio)
+                let agregarCantidadProducto = cantidadProductos.push(maximoServicio)
+                let agregarCantidadAComprarServicio = cantidadAComprarProductos.push(cantidadAComprarServicio)
+
+                console.log(idsProductosAvender  + " " + costosProductosAVender + " " + nombresProductos + " " + cantidadAComprarProductos)
+                var maximoServicios = 5
+                for (var i = 0; i < idsProductosAvender.length; i++) {
+                    var htmlServicios = '<tr class="nk-tb-item" id="filaProducto'+idsProductosAvender[i]+'"><td class="nk-tb-col tb-col-sm"><span class="tb-lead">'+idsProductosAvender[i]+'</span></td><td class="nk-tb-col"><span class="tb-lead">Servicio</span></td><td class="nk-tb-col"><span class="tb-lead">'+nombresProductos[i]+'</span></td><td class="nk-tb-col"><span class="tb-lead">$ '+costosProductosAVender[i]+' MXN</span></td><td class="nk-tb-col tb-col-md"><input  type="number" class="form-control" min="1" max='+cantidadProductos[i]+' step="1"   name="cantidadComprar'+idsProductosAvender[i]+'" value="'+cantidadAComprarProductos[i]+'" id="cantidadComprarInput'+idsProductosAvender[i]+'" onchange="cambiarCantidadAComprar'+idsProductosAvender[i]+'()" ></td><td class="nk-tb-col tb-col-md"><span class="tb-lead">$ <span id="subtotalProducto'+idsProductosAvender[i]+'">'+costosProductosAVender[i]+'</span> MXN</span></td><td class="nk-tb-col tb-col-md"></tr>';
+                    let agregarFilaServicios = arregloFilasServiciosHTML.push(htmlServicios);
+                    
+                }
+                console.log(arregloFilasServiciosHTML);
+
+                var todasLasFilasServicios = "";
+
+                arregloFilasServiciosHTML.forEach(function(valor,index){
+                    var posicionServicio = index;
+                    var filahtmlServicio = valor;
+                    todasLasFilasServicios = todasLasFilasServicios + filahtmlServicio;
+    
+                }) 
+
+                tablaProductosVenta.innerHTML=todasLasFilasServicios;
+
+                //Actualizar precio subtotal que estaba antes
+
+
+
+                //Suma de costo de productos
+                var costoTotal = 0;
+                for(var i = 0; i < costosProductosAVender.length; i++){
+                    var idServicio = idsProductosAvender[i];
+                    var costoUnitarioServicio = costosProductosAVender[i];
+                    var cantidadActualAComprarServicio = cantidadAComprarProductos[i];
+
+                    var multiplicacionServicio = costoUnitarioServicio * cantidadActualAComprarServicio
+
+                    costoTotal = costoTotal + multiplicacionServicio
+                    //FALTA QUE SE RESPETE EL SUBTOTAAAAAAAAAL
+                    var idSer = "subtotalProducto" + idServicio.toString();
+                    var subtotalProducto = document.getElementById(idSer); 
+
+                    var subtotal = costoUnitarioServicio * cantidadActualAComprarServicio
+
+                    var subtotalString = subtotal.toString();
+                    console.log("COSTO UNITARIO EN TABLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"+subtotalString);
+                    subtotalProducto.innerHTML = subtotalString;
+
+                }
+
+                console.log("CostoTotal:"+costoTotal);
+
+                spanCostoTotal.value = costoTotal.toString();
+
+                var descuentoSeleccionado = document.getElementById('descuento').value;
+                var spanResta = document.getElementById('spanResta');
+                var spanTotalConDescuento = document.getElementById('spanTotalConDescuento');
+                if (descuentoSeleccionado == "SinDescuento"){
+                    infoDescuento.style.display = "none";
+                    //Obtener valor del select del cliente..
+                    var valorCliente = document.getElementById("selectCliente").value;  //clienteMomentaneo
+
+                    if (valorCliente == "clienteMomentaneo"){
+                        console.log("Sin cliente");
+                    }
+                    else{
+                        const arregloClienteLimite = valorCliente.split("-");
+                        var idCliente = arregloClienteLimite[0];
+                        var limiteCliente = arregloClienteLimite[1];
+                        var creditoUsado = arregloClienteLimite[2];
+
+                        var limiteClienteInt= parseInt(limiteCliente);
+                        var creditoUsadoInt = parseInt(creditoUsado);
+
+                        spanCreditoUsado.innerHTML = creditoUsado.toString();
+
+                        if (contadorCkeckbox >= 1){
+                            if (limiteClienteInt === 0 && creditoUsadoInt === 0 ){
+                                var spanAceptado = document.getElementById("spanAceptado");
+                                var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                spanAceptado.innerHTML = "No hay limite."
+                                spanAceptado.classList.add('text-danger');
+                               
+                                botonGuardarVenta.disabled = false;
+                            }
+                            else{
+                                if(costoTotal > limiteCliente){
+                                    //Aceptado = No.
+                                    var spanAceptado = document.getElementById("spanAceptado");
+                                    var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                    spanAceptado.innerHTML = "No."
+                                    spanAceptado.classList.add('text-danger');
+                                    botonGuardarVenta.disabled = true;
+            
+                                }else{
+                                    var spanAceptado = document.getElementById("spanAceptado");
+                                    var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                    spanAceptado.innerHTML = "Si."
+                                    spanAceptado.classList.remove('text-danger');
+                                    botonGuardarVenta.disabled = false;
+                                }
+                            }
+                            
+                        
+
+                        }
+
+                        spanCreditoLibre.innerHTML = limiteCliente.toString();
+                        var spanFechaCreditoInicio = document.getElementById("spanFechaCreditoInicio");
+                        var spanFechaCreditoFinal = document.getElementById("spanFechaCreditoFinal");
+
+                        function sumarDias(fecha, dias){
+                            fecha.setDate(fecha.getDate() + dias);
+                            return fecha;
+                        }
+
+                        var d = new Date();
+                        var fechaInicio = sumarDias(d, +15);
+                        var arregloMeses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sept", "Oct", "Nov", "Dic"]
+                        var mes = parseInt(fechaInicio.getMonth()+1)
+                        var mexTexto = ""
+                        vatContadorMes = 0
+                        for (var i = 0; i < arregloMeses.length; i++) {
+                            vatContadorMes += 1;
+                            if (vatContadorMes == mes){
+                                mexTexto = arregloMeses[vatContadorMes-1]
+                            }
+                        }
+                        spanFechaCreditoInicio.innerHTML = fechaInicio.getDate()+ "/"+mexTexto+ "/" + fechaInicio.getFullYear()
+                        var fechaFinal = sumarDias(fechaInicio, +45);
+                        var mesFinal = parseInt(fechaInicio.getMonth()+1)
+                        var mesFinalTexto = ""
+                        vatContadorMesFinal = 0
+                        for (var x = 0; x < arregloMeses.length; x++) {
+                            vatContadorMesFinal += 1;
+                            if (vatContadorMesFinal == mesFinal){
+                                mesFinalTexto = arregloMeses[vatContadorMesFinal-1]
+                            }
+                        }
+                        spanFechaCreditoFinal.innerHTML = fechaFinal.getDate()+ "/"+mesFinalTexto+ "/" + fechaFinal.getFullYear()
+                        var spanAbono = document.getElementById("spanAbono");
+                        var spanCostoCredito = document.getElementById("spanCostoCredito");
+                        var costoConElVeinte = parseFloat(costoTotal) * 1.20;
+                        var costoConElVeinteRedondeado = Math.round(costoConElVeinte);
+
+                        var abonito = costoConElVeinteRedondeado / 4;
+                        if (contadorCkeckbox >=1 ){
+                            spanCostoCredito.innerHTML = costoConElVeinteRedondeado.toString();
+                            spanAbono.innerHTML = abonito.toString();
+                        }else{
+                            spanCostoCredito.innerHTML = "0";
+                            spanAbono.innerHTML = "0";
+                        }
+                    }
+                
+                    
+                }
+                else{
+                    infoDescuento.style.display = "block";
+                    //15
+                    var decimal = "."+descuentoSeleccionado.toString()
+                    var decimalFloat = parseFloat(decimal)  //.15
+                    var resta = costoTotal * decimalFloat
+                    var restaConDosDecimales = resta.toFixed(2); 
+                    var restaConDosDecimalesRedondeada = Math.round(restaConDosDecimales);
+
+                    var restaDescuento = costoTotal - restaConDosDecimales
+                    var restaDescuentoDosDecimales = restaDescuento.toFixed(2);
+                    var restaDescuentoDosDecimalesRedondeada = Math.round(restaDescuentoDosDecimales);
+
+                    spanResta.innerHTML = restaConDosDecimalesRedondeada.toString();
+                    spanTotalConDescuento.innerHTML = restaDescuentoDosDecimalesRedondeada.toString();
+                    //Tomar el valor del span del total a pagar.. 
+                    var valorCliente = document.getElementById("selectCliente").value;
+                    if (valorCliente == "clienteMomentaneo"){
+                        console.log("Cliente momentaneo");
+                    }
+                    else{
+                        const arregloClienteLimite = valorCliente.split("-");
+                        var idCliente = arregloClienteLimite[0];
+                        var limiteCliente = arregloClienteLimite[1];
+                        var creditoUsado = arregloClienteLimite[2];
+
+                        var limiteClienteInt= parseInt(limiteCliente);
+                        var creditoUsadoInt = parseInt(creditoUsado);
+
+                        spanCreditoUsado.innerHTML = creditoUsado.toString();
+    
+                        if (contadorCkeckbox >= 1){
+                            if (limiteClienteInt === 0 && creditoUsadoInt === 0 ){
+                                var spanAceptado = document.getElementById("spanAceptado");
+                                var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                spanAceptado.innerHTML = "No hay limite."
+                                spanAceptado.classList.add('text-danger');
+                               
+                                botonGuardarVenta.disabled = false;
+                            }
+                            else{
+                                if(restaDescuentoDosDecimalesRedondeada > limiteCliente){
+                                    //Aceptado = No.
+                                    var spanAceptado = document.getElementById("spanAceptado");
+                                    var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                    spanAceptado.innerHTML = "No."
+                                    spanAceptado.classList.add('text-danger');
+                                    botonGuardarVenta.disabled = true;
+            
+                                }else{
+                                    var spanAceptado = document.getElementById("spanAceptado");
+                                    var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                    spanAceptado.innerHTML = "Si."
+                                    spanAceptado.classList.remove('text-danger');
+                                    botonGuardarVenta.disabled = false;
+                                }
+                            }
+                            
+                        }
+    
+                        spanCreditoLibre.innerHTML = limiteCliente.toString();
+                        var spanFechaCreditoInicio = document.getElementById("spanFechaCreditoInicio");
+                        var spanFechaCreditoFinal = document.getElementById("spanFechaCreditoFinal");
+    
+                        function sumarDias(fecha, dias){
+                            fecha.setDate(fecha.getDate() + dias);
+                            return fecha;
+                        }
+    
+                        var d = new Date();
+                        var fechaInicio = sumarDias(d, +15);
+                        var arregloMeses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sept", "Oct", "Nov", "Dic"]
+                        var mes = parseInt(fechaInicio.getMonth()+1)
+                        var mexTexto = ""
+                        vatContadorMes = 0
+                        for (var i = 0; i < arregloMeses.length; i++) {
+                            vatContadorMes += 1;
+                            if (vatContadorMes == mes){
+                                mexTexto = arregloMeses[vatContadorMes-1]
+                            }
+                        }
+                        spanFechaCreditoInicio.innerHTML = fechaInicio.getDate()+ "/"+mexTexto+ "/" + fechaInicio.getFullYear()
+                        var fechaFinal = sumarDias(fechaInicio, +45);
+                        var mesFinal = parseInt(fechaInicio.getMonth()+1)
+                        var mesFinalTexto = ""
+                        vatContadorMesFinal = 0
+                        for (var x = 0; x < arregloMeses.length; x++) {
+                            vatContadorMesFinal += 1;
+                            if (vatContadorMesFinal == mesFinal){
+                                mesFinalTexto = arregloMeses[vatContadorMesFinal-1]
+                            }
+                        }
+                        spanFechaCreditoFinal.innerHTML = fechaFinal.getDate()+ "/"+mesFinalTexto+ "/" + fechaFinal.getFullYear()
+                        var spanAbono = document.getElementById("spanAbono");
+                        var spanCostoCredito = document.getElementById("spanCostoCredito");
+                        var costoConElVeinte = parseFloat(restaDescuentoDosDecimalesRedondeada) * 1.20;
+                        var costoConElVeinteRedondeado = Math.round(costoConElVeinte);
+
+                        var abonito = costoConElVeinteRedondeado / 4;
+                        if (contadorCkeckbox >=1 ){
+                            spanCostoCredito.innerHTML = costoConElVeinteRedondeado.toString();
+                            spanAbono.innerHTML = abonito.toString();
+                        }else{
+                            spanCostoCredito.innerHTML = "0";
+                            spanAbono.innerHTML = "0";
+                        }
+                    }  
+                }
+
+                var efectivoPagoCliente = document.getElementById("efectivoPagoCliente");
+                var spanCambioChico = document.getElementById("spanCambioChico");
+                var valorInput = efectivoPagoCliente.value;
+
+                if (valorInput == ""){
+                    spanCambioChico.innerHTML = "0";
+                }
+                else{
+                    var valorDeSelectDeDescuento = document.getElementById("descuento").value;
+                    if (valorDeSelectDeDescuento == "SinDescuento"){
+                        var cambio = parseFloat(valorInput) - costoTotal;
+                    }else{
+                        var decimal = "."+valorDeSelectDeDescuento.toString()
+                        var decimalFloat = parseFloat(decimal)  //.15
+                        var resta = costoTotal * decimalFloat
+                        var restaConDosDecimales = resta.toFixed(2); 
+                        var restaConDosDecimalesRedondeada = Math.round(restaConDosDecimales);
+
+                        var restaDescuento = costoTotal - restaConDosDecimales
+                        var restaDescuentoDosDecimales = restaDescuento.toFixed(2);
+                        var restaDescuentoDosDecimalesRedondeada = Math.round(restaDescuentoDosDecimales);
+                        var cambio = parseFloat(valorInput) - restaDescuentoDosDecimalesRedondeada;
+                    }
+
+                    
+
+                    spanCambioChico.innerHTML = cambio.toString();
+                }
+
+                
+                
+
+                
+            })
+        }
+        else{
+            resultadosBusqueda.map(servicioVenta=>{
+                var codigoServicio = servicioVenta['id_servicio'];
+                var posicion = idsProductosAvender.indexOf(codigoServicio);
+                if (posicion !== -1){
+                    
+                    idsProductosAvender.splice(posicion,1)
+                    costosProductosAVender.splice(posicion,1)
+                    nombresProductos.splice(posicion,1)
+                   
+                    cantidadAComprarProductos.splice(posicion,1)
+                    cantidadProductos.splice(posicion,1)
+                    
+                }
+                
+                var idFila = "#filaProducto"+servicioVenta['id_servicio'];
+                $(idFila).remove();
+
+                costoTotal = 0;
+                for(var i = 0; i < idsProductosAvender.length; i++){
+                    var costoUnitarioServicio = costosProductosAVender[i];
+                    var codigoServicio = idsProductosAvender[i];
+
+                    var cantidadActualAComprar = cantidadAComprarProductos[i];
+
+                    var multiplicacion = costoUnitarioServicio * cantidadActualAComprar 
+                    costoTotal = costoTotal + multiplicacion
+
+                   
+                }
+
+                console.log("CostoTotal:" + costoTotal);
+                spanCostoTotal.value = costoTotal.toString();
+
+                var descuentoSeleccionado = document.getElementById('descuento').value;
+                var spanResta = document.getElementById('spanResta');
+                var spanTotalConDescuento = document.getElementById('spanTotalConDescuento');
+                if (descuentoSeleccionado == "SinDescuento"){
+                    infoDescuento.style.display = "none";
+                    //Obtener valor del select del cliente..
+                    var valorCliente = document.getElementById("selectCliente").value;
+                    if (valorCliente == "clienteMomentaneo"){
+                        console.log("Cliente momentaneo");
+                    }
+                    else{
+                        const arregloClienteLimite = valorCliente.split("-");
+                        var idCliente = arregloClienteLimite[0];
+                        var limiteCliente = arregloClienteLimite[1];
+                        var creditoUsado = arregloClienteLimite[2];
+
+                        var limiteClienteInt= parseInt(limiteCliente);
+                        var creditoUsadoInt = parseInt(creditoUsado);
+
+                        spanCreditoUsado.innerHTML = creditoUsado.toString();
+    
+                        if (contadorCkeckbox >= 1){
+                            if (limiteClienteInt === 0 && creditoUsadoInt === 0 ){
+                                var spanAceptado = document.getElementById("spanAceptado");
+                                var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                spanAceptado.innerHTML = "No hay limite."
+                                spanAceptado.classList.add('text-danger');
+                               
+                                botonGuardarVenta.disabled = false;
+                            }
+                            else{
+                                if(costoTotal > limiteCliente){
+                                    //Aceptado = No.
+                                    var spanAceptado = document.getElementById("spanAceptado");
+                                    var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                    spanAceptado.innerHTML = "No."
+                                    spanAceptado.classList.add('text-danger');
+                                    botonGuardarVenta.disabled = true;
+            
+                                }else{
+                                    var spanAceptado = document.getElementById("spanAceptado");
+                                    var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                    spanAceptado.innerHTML = "Si."
+                                    spanAceptado.classList.remove('text-danger');
+                                    botonGuardarVenta.disabled = false;
+                                }
+                            }
+                            
+                        }
+    
+                        spanCreditoLibre.innerHTML = limiteCliente.toString();
+                        var spanFechaCreditoInicio = document.getElementById("spanFechaCreditoInicio");
+                        var spanFechaCreditoFinal = document.getElementById("spanFechaCreditoFinal");
+    
+                        function sumarDias(fecha, dias){
+                            fecha.setDate(fecha.getDate() + dias);
+                            return fecha;
+                        }
+    
+                        var d = new Date();
+                        var fechaInicio = sumarDias(d, +15);
+                        var arregloMeses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sept", "Oct", "Nov", "Dic"]
+                        var mes = parseInt(fechaInicio.getMonth()+1)
+                        var mexTexto = ""
+                        vatContadorMes = 0
+                        for (var i = 0; i < arregloMeses.length; i++) {
+                            vatContadorMes += 1;
+                            if (vatContadorMes == mes){
+                                mexTexto = arregloMeses[vatContadorMes-1]
+                            }
+                        }
+                        spanFechaCreditoInicio.innerHTML = fechaInicio.getDate()+ "/"+mexTexto+ "/" + fechaInicio.getFullYear()
+                        var fechaFinal = sumarDias(fechaInicio, +45);
+                        var mesFinal = parseInt(fechaInicio.getMonth()+1)
+                        var mesFinalTexto = ""
+                        vatContadorMesFinal = 0
+                        for (var x = 0; x < arregloMeses.length; x++) {
+                            vatContadorMesFinal += 1;
+                            if (vatContadorMesFinal == mesFinal){
+                                mesFinalTexto = arregloMeses[vatContadorMesFinal-1]
+                            }
+                        }
+                        spanFechaCreditoFinal.innerHTML = fechaFinal.getDate()+ "/"+mesFinalTexto+ "/" + fechaFinal.getFullYear()
+                        var spanAbono = document.getElementById("spanAbono");
+                        var spanCostoCredito = document.getElementById("spanCostoCredito");
+                        var costoConElVeinte = parseFloat(costoTotal) * 1.20;
+                        var costoConElVeinteRedondeado = Math.round(costoConElVeinte);
+
+                        var abonito = costoConElVeinteRedondeado / 4;
+                        if (contadorCkeckbox >=1 ){
+                            spanCostoCredito.innerHTML = costoConElVeinteRedondeado.toString();
+                            spanAbono.innerHTML = abonito.toString();
+                        }else{
+                            spanCostoCredito.innerHTML = "0";
+                            spanAbono.innerHTML = "0";
+                        }
+                    }
+                    
+                }
+                else{
+                    infoDescuento.style.display = "block";
+                    //15
+                    var decimal = "."+descuentoSeleccionado.toString()
+                    var decimalFloat = parseFloat(decimal)  //.15
+                    var resta = costoTotal * decimalFloat
+                    var restaConDosDecimales = resta.toFixed(2); 
+                    var restaConDosDecimalesRedondeada = Math.round(restaConDosDecimales);
+
+                    var restaDescuento = costoTotal - restaConDosDecimales
+                    var restaDescuentoDosDecimales = restaDescuento.toFixed(2);
+                    var restaDescuentoDosDecimalesRedondeada = Math.round(restaDescuentoDosDecimales);
+
+                    spanResta.innerHTML = restaConDosDecimalesRedondeada.toString();
+                    spanTotalConDescuento.innerHTML = restaDescuentoDosDecimalesRedondeada.toString();
+                    //Tomar el valor del span del total a pagar.. 
+                    var valorCliente = document.getElementById("selectCliente").value;
+                    if (valorCliente == "clienteMomentaneo"){
+                        console.log("Cliente momentaneo");
+                    }
+                    else{
+                        const arregloClienteLimite = valorCliente.split("-");
+                        var idCliente = arregloClienteLimite[0];
+                        var limiteCliente = arregloClienteLimite[1];
+                        var creditoUsado = arregloClienteLimite[2];
+
+                        var limiteClienteInt= parseInt(limiteCliente);
+                        var creditoUsadoInt = parseInt(creditoUsado);
+
+
+                        spanCreditoUsado.innerHTML = creditoUsado.toString();
+    
+                        if (contadorCkeckbox >= 1){
+                            
+                            if (limiteClienteInt === 0 && creditoUsadoInt === 0 ){
+                                var spanAceptado = document.getElementById("spanAceptado");
+                                var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                spanAceptado.innerHTML = "No hay limite."
+                                spanAceptado.classList.add('text-danger');
+                            
+                                botonGuardarVenta.disabled = false;
+                            }
+                            else{
+                                if(restaDescuentoDosDecimalesRedondeada > limiteCliente){
+                                    //Aceptado = No.
+                                    var spanAceptado = document.getElementById("spanAceptado");
+                                    var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                    spanAceptado.innerHTML = "No."
+                                    spanAceptado.classList.add('text-danger');
+                                    botonGuardarVenta.disabled = true;
+            
+                                }else{
+                                    var spanAceptado = document.getElementById("spanAceptado");
+                                    var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                    spanAceptado.innerHTML = "Si."
+                                    spanAceptado.classList.remove('text-danger');
+                                    botonGuardarVenta.disabled = false;
+                                }
+                            }
+                            
+                        }
+    
+                        spanCreditoLibre.innerHTML = limiteCliente.toString();
+                        var spanFechaCreditoInicio = document.getElementById("spanFechaCreditoInicio");
+                        var spanFechaCreditoFinal = document.getElementById("spanFechaCreditoFinal");
+    
+                        function sumarDias(fecha, dias){
+                            fecha.setDate(fecha.getDate() + dias);
+                            return fecha;
+                        }
+    
+                        var d = new Date();
+                        var fechaInicio = sumarDias(d, +15);
+                        var arregloMeses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sept", "Oct", "Nov", "Dic"]
+                        var mes = parseInt(fechaInicio.getMonth()+1)
+                        var mexTexto = ""
+                        vatContadorMes = 0
+                        for (var i = 0; i < arregloMeses.length; i++) {
+                            vatContadorMes += 1;
+                            if (vatContadorMes == mes){
+                                mexTexto = arregloMeses[vatContadorMes-1]
+                            }
+                        }
+                        spanFechaCreditoInicio.innerHTML = fechaInicio.getDate()+ "/"+mexTexto+ "/" + fechaInicio.getFullYear()
+                        var fechaFinal = sumarDias(fechaInicio, +45);
+                        var mesFinal = parseInt(fechaInicio.getMonth()+1)
+                        var mesFinalTexto = ""
+                        vatContadorMesFinal = 0
+                        for (var x = 0; x < arregloMeses.length; x++) {
+                            vatContadorMesFinal += 1;
+                            if (vatContadorMesFinal == mesFinal){
+                                mesFinalTexto = arregloMeses[vatContadorMesFinal-1]
+                            }
+                        }
+                        spanFechaCreditoFinal.innerHTML = fechaFinal.getDate()+ "/"+mesFinalTexto+ "/" + fechaFinal.getFullYear()
+                        var spanAbono = document.getElementById("spanAbono");
+                        var spanCostoCredito = document.getElementById("spanCostoCredito");
+                        var costoConElVeinte = parseFloat(restaDescuentoDosDecimalesRedondeada) * 1.20;
+                        var costoConElVeinteRedondeado = Math.round(costoConElVeinte);
+
+                        var abonito = costoConElVeinteRedondeado / 4;
+                        if (contadorCkeckbox >=1 ){
+                            spanCostoCredito.innerHTML = costoConElVeinteRedondeado.toString();
+                            spanAbono.innerHTML = abonito.toString();
+                        }else{
+                            spanCostoCredito.innerHTML = "0";
+                            spanAbono.innerHTML = "0";
+                        }
+                    }
+                    
+                    
+                    
+                }
+                var efectivoPagoCliente = document.getElementById("efectivoPagoCliente");
+                var spanCambioChico = document.getElementById("spanCambioChico");
+                var valorInput = efectivoPagoCliente.value;
+
+                if (valorInput == ""){
+                    spanCambioChico.innerHTML = "0";
+                    
+                }
+                else{
+                    var valorDeSelectDeDescuento = document.getElementById("descuento").value;
+                    if (valorDeSelectDeDescuento == "SinDescuento"){
+                        var cambio = parseFloat(valorInput) - costoTotal;
+                    }else{
+                        var decimal = "."+valorDeSelectDeDescuento.toString()
+                        var decimalFloat = parseFloat(decimal)  //.15
+                        var resta = costoTotal * decimalFloat
+                        var restaConDosDecimales = resta.toFixed(2); 
+                        var restaConDosDecimalesRedondeada = Math.round(restaConDosDecimales);
+
+                        var restaDescuento = costoTotal - restaConDosDecimales
+                        var restaDescuentoDosDecimales = restaDescuento.toFixed(2);
+                        var restaDescuentoDosDecimalesRedondeada = Math.round(restaDescuentoDosDecimales);
+                        var cambio = parseFloat(valorInput) - restaDescuentoDosDecimalesRedondeada;
+                    }
+
+                    
+
+                    spanCambioChico.innerHTML = cambio.toString();
+                }
+
+                
+        
+
+                
+                
+
+            })
+        }
+
+        //CODIGO PARA AGREGAR TODOS LOS HTMLS DE LAS FILAS
+        if (idsProductosAvender.length == 0){
+            idsServiciosAvenderString = "No se mandara ningun producto";
+            cantidadesAVenderStringServicios = "Ninguna cantidad mandada"
+        }else{
+            idsProductosAvender.forEach(function(valor,index){
+                var posicionServicio = index;
+                var valorServicio = valor;
+                if(posicionServicio==0){
+                    idsServiciosAvenderString = valorServicio.toString();
+                }
+                else{
+                    idsServiciosAvenderString += "," + valorServicio.toString();
+                }
+
+            })
+            cantidadAComprarProductos.forEach(function(valor,index){
+                var posicionServicio = index;
+                var valorServicio = valor;
+                if(posicionServicio==0){
+                    cantidadesAVenderStringServicios = valorServicio.toString();
+                }
+                else{
+                    cantidadesAVenderStringServicios += "," + valorServicio.toString();
+                }
+
+            })
+        }
+        console.log("kjasdfhkashdf");
+        var filaConValores = "#inputsValores"
+        $(filaConValores).remove();
+        var codigosProductosVenta = document.getElementById("codigosProductosVenta");
+        codigosProductosVenta.value = idsServiciosAvenderString
+
+        var cantidadesProductosVenta = document.getElementById("cantidadesProductosVenta");
+        cantidadesProductosVenta.value = cantidadesAVenderStringServicios;
+        //divCantidadProductos.innerHTML= '<div id="inputsValores"><input type="hidden" value="'+idsServiciosAvenderString+'"  name="codigosProductosVenta" readonly></input><input type="hidden" value="'+cantidadesAVenderStringServicios+'" readonly name="cantidadesProductosVenta"></input></div>';
+        console.log(idsProductosAvender);
+        console.log("Esto se mandara a python" +idsServiciosAvenderString);
+
+
+    }
+
+    function cambiarCantidadAComprar{{servicios.0}}(){
+        var id_servicio = '{{servicios.0}}';
+        var costo_servicio = '{{servicios.3}}';
+        var spanCostoTotal = document.getElementById('costoTotal');
+        
+        var idSer = "subtotalProducto" + id_servicio.toString();
+        var cantidad = "#cantidadComprarInput" + id_servicio.toString();  
+        
+        var subtotalServiciodiv = document.getElementById(idSer);
+        
+        
+        var cantidadActualizada = $(cantidad).val(); //Cantidad acualizada
+
+        var subtotalServicio = costo_servicio * cantidadActualizada;
+        var subtotalString = subtotalServicio.toString();
+        subtotalServiciodiv.innerHTML = subtotalString; //Aqui actualiza el subtotal del servicio
+
+        var posicion = idsProductosAvender.indexOf(id_servicio);
+        cantidadAComprarProductos[posicion] = cantidadActualizada.toString();
+
+
+        //CODIGO PARA MANDAR VALORES A LOS INPUTS
+        if (idsProductosAvender.length == 0 &&  cantidadAComprarProductos.length == 0){
+            idsServiciosAvenderString = "No se mandara ningun producto";
+            cantidadesAVenderStringServicios = "Ninguna cantidad mandada"
+        }else{
+            idsProductosAvender.forEach(function(valor,index){
+                var posicion = index;
+                var valor = valor;
+                if(posicion==0){
+                    idsServiciosAvenderString = valor.toString();
+                }
+                else{
+                    idsServiciosAvenderString += "," + valor.toString();
+                }
+
+            })
+            cantidadAComprarProductos.forEach(function(valor,index){
+                var posicion = index;
+                var valor = valor;
+                if(posicion==0){
+                    cantidadesAVenderStringServicios = valor.toString();
+                }
+                else{
+                    cantidadesAVenderStringServicios += "," + valor.toString();
+                }
+
+            })
+        }
+        var filaConValores = "#inputsValores"
+        $(filaConValores).remove();
+        var codigosProductosVenta = document.getElementById("codigosProductosVenta");
+        codigosProductosVenta.value = idsServiciosAvenderString
+
+        var cantidadesProductosVenta = document.getElementById("cantidadesProductosVenta");
+        cantidadesProductosVenta.value = cantidadesAVenderStringServicios;
+        //divCantidadProductos.innerHTML= '<div id=inputsValores"><input type="hidden" value="'+idsServiciosAvenderString+'"  name="codigosProductosVenta" readonly></input><input type="hidden" value="'+cantidadesAVenderStringServicios+'" readonly name="cantidadesProductosVenta"></input></div>';
+        console.log(idsProductosAvender);
+        console.log("Esto se mandara a python" +idsServiciosAvenderString);
+
+        costoTotal = 0;
+        for(var i = 0; i < costosProductosAVender.length; i++){
+            var costoUnitarioServicio = costosProductosAVender[i];
+            var cantidadActualAComprarServicio = cantidadAComprarProductos[i];
+
+            var multiplicacion = costoUnitarioServicio * cantidadActualAComprarServicio 
+            costoTotal = costoTotal + multiplicacion
+        }
+
+        console.log("CostoTotal:" + costoTotal);
+        spanCostoTotal.value = costoTotal.toString();
+
+        var descuentoSeleccionado = document.getElementById('descuento').value;
+        var spanResta = document.getElementById('spanResta');
+        var spanTotalConDescuento = document.getElementById('spanTotalConDescuento');
+        if (descuentoSeleccionado == "SinDescuento"){
+            infoDescuento.style.display = "none";
+
+            //Obtener valor del select del cliente..
+            var valorCliente = document.getElementById("selectCliente").value;
+            if (valorCliente == "clienteMomentaneo"){
+                console.log("Cliente momentaneo");
+            }
+            else{
+                const arregloClienteLimite = valorCliente.split("-");
+                var idCliente = arregloClienteLimite[0];
+                var limiteCliente = arregloClienteLimite[1];
+                var creditoUsado = arregloClienteLimite[2];
+
+                var limiteClienteInt= parseInt(limiteCliente);
+                var creditoUsadoInt = parseInt(creditoUsado);
+
+                spanCreditoUsado.innerHTML = creditoUsado.toString();
+    
+                if (contadorCkeckbox >= 1){
+                    if (limiteClienteInt === 0 && creditoUsadoInt === 0 ){
+                        var spanAceptado = document.getElementById("spanAceptado");
+                        var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                        spanAceptado.innerHTML = "No hay limite."
+                        spanAceptado.classList.add('text-danger');
+                       
+                        botonGuardarVenta.disabled = false;
+                    }
+                    else{
+                        if(costoTotal > limiteCliente){
+                            //Aceptado = No.
+                            var spanAceptado = document.getElementById("spanAceptado");
+                            var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                            spanAceptado.innerHTML = "No."
+                            spanAceptado.classList.add('text-danger');
+                            botonGuardarVenta.disabled = true;
+        
+                        }else{
+                            var spanAceptado = document.getElementById("spanAceptado");
+                            var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                            spanAceptado.innerHTML = "Si."
+                            spanAceptado.classList.remove('text-danger');
+                            botonGuardarVenta.disabled = false;
+                        }
+                    }
+                    
+                }
+    
+                spanCreditoLibre.innerHTML = limiteCliente.toString();
+                var spanFechaCreditoInicio = document.getElementById("spanFechaCreditoInicio");
+                var spanFechaCreditoFinal = document.getElementById("spanFechaCreditoFinal");
+    
+                function sumarDias(fecha, dias){
+                    fecha.setDate(fecha.getDate() + dias);
+                    return fecha;
+                }
+    
+                var d = new Date();
+                var fechaInicio = sumarDias(d, +15);
+                var arregloMeses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sept", "Oct", "Nov", "Dic"]
+                var mes = parseInt(fechaInicio.getMonth()+1)
+                var mexTexto = ""
+                vatContadorMes = 0
+                for (var i = 0; i < arregloMeses.length; i++) {
+                    vatContadorMes += 1;
+                    if (vatContadorMes == mes){
+                        mexTexto = arregloMeses[vatContadorMes-1]
+                    }
+                }
+                spanFechaCreditoInicio.innerHTML = fechaInicio.getDate()+ "/"+mexTexto+ "/" + fechaInicio.getFullYear()
+                var fechaFinal = sumarDias(fechaInicio, +45);
+                var mesFinal = parseInt(fechaInicio.getMonth()+1)
+                var mesFinalTexto = ""
+                vatContadorMesFinal = 0
+                for (var x = 0; x < arregloMeses.length; x++) {
+                    vatContadorMesFinal += 1;
+                    if (vatContadorMesFinal == mesFinal){
+                        mesFinalTexto = arregloMeses[vatContadorMesFinal-1]
+                    }
+                }
+                spanFechaCreditoFinal.innerHTML = fechaFinal.getDate()+ "/"+mesFinalTexto+ "/" + fechaFinal.getFullYear()
+    
+                var spanAbono = document.getElementById("spanAbono");
+                var spanCostoCredito = document.getElementById("spanCostoCredito");
+                var costoConElVeinte = parseFloat(costoTotal) * 1.20;
+                var costoConElVeinteRedondeado = Math.round(costoConElVeinte);
+
+                var abonito = costoConElVeinteRedondeado / 4;
+                if (contadorCkeckbox >=1 ){
+                    spanCostoCredito.innerHTML = costoConElVeinteRedondeado.toString();
+                    spanAbono.innerHTML = abonito.toString();
+                }else{
+                    spanCostoCredito.innerHTML = "0";
+                    spanAbono.innerHTML = "0";
+                }
+            }
+            
+        }
+        else{
+            infoDescuento.style.display = "block";
+            //15
+            var decimal = "."+descuentoSeleccionado.toString()
+            var decimalFloat = parseFloat(decimal)  //.15
+            var resta = costoTotal * decimalFloat
+            var restaConDosDecimales = resta.toFixed(2); 
+            var restaConDosDecimalesRedondeada = Math.round(restaConDosDecimales);
+
+            var restaDescuento = costoTotal - restaConDosDecimales
+            var restaDescuentoDosDecimales = restaDescuento.toFixed(2);
+            var restaDescuentoDosDecimalesRedondeada = Math.round(restaDescuentoDosDecimales);
+
+            spanResta.innerHTML = restaConDosDecimalesRedondeada.toString();
+            spanTotalConDescuento.innerHTML = restaDescuentoDosDecimalesRedondeada.toString();
+            //Tomar el valor del span del total a pagar.. 
+            var efectivoPagoCliente = document.getElementById("efectivoPagoCliente");
+            var spanCambioChico = document.getElementById("spanCambioChico");
+            var valorInput = efectivoPagoCliente.value;
+
+            if (valorInput == ""){
+                spanCambioChico.innerHTML = "0";
+            }
+            else{
+                var cambio = parseFloat(valorInput) - restaDescuentoDosDecimalesRedondeada;
+    
+                spanCambioChico.innerHTML = cambio.toString();
+            }
+
+            //Obtener valor del select del cliente..
+            var valorCliente = document.getElementById("selectCliente").value;
+            if (valorCliente == "clienteMomentaneo"){
+                console.log("Cliente momentaneo");
+            }
+            else{
+                const arregloClienteLimite = valorCliente.split("-");
+                var idCliente = arregloClienteLimite[0];
+                var limiteCliente = arregloClienteLimite[1];
+                var creditoUsado = arregloClienteLimite[2];
+
+                var limiteClienteInt= parseInt(limiteCliente);
+                var creditoUsadoInt = parseInt(creditoUsado);
+
+
+                spanCreditoUsado.innerHTML = creditoUsado.toString();
+    
+                if (contadorCkeckbox >= 1){
+                    if (limiteClienteInt === 0 && creditoUsadoInt === 0 ){
+                        var spanAceptado = document.getElementById("spanAceptado");
+                        var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                        spanAceptado.innerHTML = "No hay limite."
+                        spanAceptado.classList.add('text-danger');
+                       
+                        botonGuardarVenta.disabled = false;
+                    }
+                    else{
+                        if(restaDescuentoDosDecimalesRedondeada > limiteCliente){
+                            //Aceptado = No.
+                            var spanAceptado = document.getElementById("spanAceptado");
+                            var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                            spanAceptado.innerHTML = "No."
+                            spanAceptado.classList.add('text-danger');
+                            botonGuardarVenta.disabled = true;
+        
+                        }else{
+                            var spanAceptado = document.getElementById("spanAceptado");
+                            var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                            spanAceptado.innerHTML = "Si."
+                            spanAceptado.classList.remove('text-danger');
+                            botonGuardarVenta.disabled = false;
+                        }
+                    }
+
+                    
+                }
+    
+                spanCreditoLibre.innerHTML = limiteCliente.toString();
+                var spanFechaCreditoInicio = document.getElementById("spanFechaCreditoInicio");
+                var spanFechaCreditoFinal = document.getElementById("spanFechaCreditoFinal");
+    
+                function sumarDias(fecha, dias){
+                    fecha.setDate(fecha.getDate() + dias);
+                    return fecha;
+                }
+    
+                var d = new Date();
+                var fechaInicio = sumarDias(d, +15);
+                var arregloMeses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sept", "Oct", "Nov", "Dic"]
+                var mes = parseInt(fechaInicio.getMonth()+1)
+                var mexTexto = ""
+                vatContadorMes = 0
+                for (var i = 0; i < arregloMeses.length; i++) {
+                    vatContadorMes += 1;
+                    if (vatContadorMes == mes){
+                        mexTexto = arregloMeses[vatContadorMes-1]
+                    }
+                }
+                spanFechaCreditoInicio.innerHTML = fechaInicio.getDate()+ "/"+mexTexto+ "/" + fechaInicio.getFullYear()
+                var fechaFinal = sumarDias(fechaInicio, +45);
+                var mesFinal = parseInt(fechaInicio.getMonth()+1)
+                var mesFinalTexto = ""
+                vatContadorMesFinal = 0
+                for (var x = 0; x < arregloMeses.length; x++) {
+                    vatContadorMesFinal += 1;
+                    if (vatContadorMesFinal == mesFinal){
+                        mesFinalTexto = arregloMeses[vatContadorMesFinal-1]
+                    }
+                }
+                spanFechaCreditoFinal.innerHTML = fechaFinal.getDate()+ "/"+mesFinalTexto+ "/" + fechaFinal.getFullYear()
+    
+                var spanAbono = document.getElementById("spanAbono");
+                var spanCostoCredito = document.getElementById("spanCostoCredito");
+                var costoConElVeinte = parseFloat(restaDescuentoDosDecimalesRedondeada) * 1.20;
+                var costoConElVeinteRedondeado = Math.round(costoConElVeinte);
+
+                var abonito = costoConElVeinteRedondeado / 4;
+                if (contadorCkeckbox >=1 ){
+                    spanCostoCredito.innerHTML = costoConElVeinteRedondeado.toString();
+                    spanAbono.innerHTML = abonito.toString();
+                }else{
+                    spanCostoCredito.innerHTML = "0";
+                    spanAbono.innerHTML = "0";
+                }
+            }
+            
+            
+        }
+        
+    }
+
+
+    {% endfor %}
+
+
+</script>
+
+<script>
+    
+    window.onload = function(){
+      
+        var creditoAceptado = document.getElementById('creditoAceptado');
+        var conceptoCredito = document.getElementById('conceptoCredito');
+        var fechaCreditoNuevo = document.getElementById('fechaCreditoNuevo');
+        var fechaCreditoTermino = document.getElementById('fechaCreditoTermino');
+        var divCreditoLibre = document.getElementById('divCreditoLibre');
+        var spanCreditoLibre = document.getElementById('spanCreditoLibre');
+        var abono = document.getElementById('abono');
+        var costoCredito = document.getElementById('costoCredito');
+        var divCreditoSucursal = document.getElementById('divCreditoSucursal')
+        var divCreditoUsado = document.getElementById('divCreditoUsado');
+        var spanCreditoUsado = document.getElementById('spanCreditoUsado')
+
+
+        var divSelectTipoTarjeta = document.getElementById('divSelectTipoTarjeta');
+        var divReferenciaBancaria = document.getElementById('divReferenciaBancaria');
+        var divClaveRastreoTransferencia = document.getElementById('divClaveRastreoTransferencia');
+        var infoDescuento = document.getElementById('infoDescuento');
+        var divCantidadEfectivo = document.getElementById('cantidadEfectivo');
+        var spanCambio = document.getElementById('spanCambio');
+        var formaPago = document.getElementById('formaPago');
+        checkbox.disabled=true;
+
+        divSelectTipoTarjeta.style.display = "none";
+        divReferenciaBancaria.style.display = "none";
+        divClaveRastreoTransferencia.style.display = "none";
+    
+        infoDescuento.style.display = "none";
+        divCantidadEfectivo.style.display = "block";
+    
+
+        creditoAceptado.style.display = "none";
+        conceptoCredito.style.display = "none";
+        fechaCreditoNuevo.style.display = "none";
+        fechaCreditoTermino.style.display = "none";
+        abono.style.display = "none";
+        costoCredito.style.display = "none";
+        divCreditoLibre.style.display = "none";
+        divCreditoSucursal.style.display = "none";
+        divCreditoUsado.style.display = "none";
+      
+        checkbox.addEventListener("change", validarCheckBox, false);
+        
+        //Función de mostrar a credito o no.. 
+        function validarCheckBox(){
+           
+            if(checkbox.checked){
+                divSelectTipoTarjeta.style.display = "none";
+                divReferenciaBancaria.style.display = "none";
+                divClaveRastreoTransferencia.style.display = "none";
+                divCantidadEfectivo.style.display = "none";
+                spanCambio.style.display = "none";
+                formaPago.style.display = "none";
+
+             
+                creditoAceptado.style.display = "block";
+                conceptoCredito.style.display = "block";
+                fechaCreditoNuevo.style.display = "block";
+                fechaCreditoTermino.style.display = "block";
+                abono.style.display = "block";
+                costoCredito.style.display = "block";
+                divCreditoLibre.style.display = "block";
+                divCreditoSucursal.style.display = "block";
+                divCreditoUsado.style.display = "block";
+
+
+                //Obtener valor del select del cliente..
+
+                //Validar si hay o no un descuento 
+                var descuentoSeleccionado = document.getElementById('descuento').value;
+                var spanResta = document.getElementById('spanResta');
+                var spanTotalConDescuento = document.getElementById('spanTotalConDescuento');
+                if (descuentoSeleccionado == "SinDescuento"){
+                    infoDescuento.style.display = "none";
+                    var efectivoPagoCliente = document.getElementById("efectivoPagoCliente");
+                    var spanCambioChico = document.getElementById("spanCambioChico");
+                    var valorInput = efectivoPagoCliente.value;
+
+                    if (valorInput == ""){
+                        spanCambioChico.innerHTML = "0";
+                    }
+                    else{
+                        var cambio = parseFloat(valorInput) - costoTotal;
+            
+                        spanCambioChico.innerHTML = cambio.toString();
+                    }
+
+                    var valorCliente = document.getElementById("selectCliente").value;
+                    if (valorCliente == "clienteMomentaneo"){
+                        console.log("Cliente momentaneo");
+                    }
+                    else{
+                        console.log(valorCliente.toString());
+                        const arregloClienteLimite = valorCliente.split("-");//1-1250.0-750.0
+                    
+                        var idCliente = arregloClienteLimite[0];
+                        var limiteCliente = arregloClienteLimite[1];
+                        var creditoUsado = arregloClienteLimite[2];
+
+                        var limiteClienteInt= parseInt(limiteCliente);
+                        var creditoUsadoInt = parseInt(creditoUsado);
+
+                        
+                        if (contadorCkeckbox >= 1){
+                            if (limiteClienteInt === 0 && creditoUsadoInt === 0 ){
+                                var spanAceptado = document.getElementById("spanAceptado");
+                                var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                spanAceptado.innerHTML = "No hay limite."
+                                spanAceptado.classList.add('text-danger');
+                               
+                                botonGuardarVenta.disabled = false;
+                            }
+                            else{
+                                if (costoTotal > limiteCliente){
+                                    //Aceptado = No.
+                                    var spanAceptado = document.getElementById("spanAceptado");
+                                    var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                    spanAceptado.innerHTML = "No."
+                                    spanAceptado.classList.add('text-danger');
+                                    botonGuardarVenta.disabled = true;
+        
+                                }else{
+                                    var spanAceptado = document.getElementById("spanAceptado");
+                                    var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                    spanAceptado.innerHTML = "Si."
+                                    spanAceptado.classList.remove('text-danger');
+                                    botonGuardarVenta.disabled = false;
+                                }
+                            }
+
+
+    
+                            
+                        }
+                        spanCreditoLibre.innerHTML = limiteCliente.toString();
+                        spanCreditoUsado.innerHTML = creditoUsado.toString();
+    
+    
+                        var spanFechaCreditoInicio = document.getElementById("spanFechaCreditoInicio");
+                        var spanFechaCreditoFinal = document.getElementById("spanFechaCreditoFinal");
+    
+                        function sumarDias(fecha, dias){
+                            fecha.setDate(fecha.getDate() + dias);
+                            return fecha;
+                        }
+    
+                        var d = new Date();
+                        var fechaInicio = sumarDias(d, +15);
+                        var arregloMeses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sept", "Oct", "Nov", "Dic"]
+                        var mes = parseInt(fechaInicio.getMonth()+1)
+                        var mexTexto = ""
+                        vatContadorMes = 0
+                        for (var i = 0; i < arregloMeses.length; i++) {
+                            vatContadorMes += 1;
+                            if (vatContadorMes == mes){
+                                mexTexto = arregloMeses[vatContadorMes-1]
+                            }
+                        }
+                        spanFechaCreditoInicio.innerHTML = fechaInicio.getDate()+ "/"+mexTexto+ "/" + fechaInicio.getFullYear()
+                        var fechaFinal = sumarDias(fechaInicio, +45);
+                        var mesFinal = parseInt(fechaInicio.getMonth()+1)
+                        var mesFinalTexto = ""
+                        vatContadorMesFinal = 0
+                        for (var x = 0; x < arregloMeses.length; x++) {
+                            vatContadorMesFinal += 1;
+                            if (vatContadorMesFinal == mesFinal){
+                                mesFinalTexto = arregloMeses[vatContadorMesFinal-1]
+                            }
+                        }
+                        spanFechaCreditoFinal.innerHTML = fechaFinal.getDate()+ "/"+mesFinalTexto+ "/" + fechaFinal.getFullYear()
+    
+                        var spanAbono = document.getElementById("spanAbono");
+                        var spanCostoCredito = document.getElementById("spanCostoCredito");
+                        var costoConElVeinte = parseFloat(costoTotal) * 1.20;
+                        var costoConElVeinteRedondeado = Math.round(costoConElVeinte);
+
+                        var abonito = costoConElVeinteRedondeado / 4;
+                        if (contadorCkeckbox >=1 ){
+                            spanCostoCredito.innerHTML = costoConElVeinteRedondeado.toString();
+                            spanAbono.innerHTML = abonito.toString();
+                        }else{
+                            spanCostoCredito.innerHTML = "0";
+                            spanAbono.innerHTML = "0";
+                        }
+                    }
+                    
+                }else{
+                    infoDescuento.style.display = "block";
+                    //15
+                    var decimal = "."+descuentoSeleccionado.toString()
+                    var decimalFloat = parseFloat(decimal)  //.15
+                    var resta = costoTotal * decimalFloat
+        
+                    var restaConDosDecimales = resta.toFixed(2); 
+                    var restaConDosDecimalesRedondeada = Math.round(restaConDosDecimales);
+        
+                    var restaDescuento = costoTotal - restaConDosDecimales
+                    var restaDescuentoDosDecimales = restaDescuento.toFixed(2);
+                    var restaDescuentoDosDecimalesRedondeada = Math.round(restaDescuentoDosDecimales);
+        
+                    spanResta.innerHTML = restaConDosDecimalesRedondeada.toString();
+                    spanTotalConDescuento.innerHTML = restaDescuentoDosDecimalesRedondeada.toString();
+                    //Tomar el valor del span del total a pagar.. 
+                    var efectivoPagoCliente = document.getElementById("efectivoPagoCliente");
+                    var spanCambioChico = document.getElementById("spanCambioChico");
+                    var valorInput = efectivoPagoCliente.value;
+        
+                    if (valorInput == ""){
+                        spanCambioChico.innerHTML = "0";
+                    }
+                    else{
+                        var cambio = parseFloat(valorInput) - restaDescuentoDosDecimalesRedondeada;
+            
+                        spanCambioChico.innerHTML = cambio.toString();
+                    }
+                     //Obtener valor del select del cliente..
+                    var valorCliente = document.getElementById("selectCliente").value;
+                    if (valorCliente == "clienteMomentaneo"){
+                        console.log("Cliente momentaneo");
+                    }
+                    else{
+                        const arregloClienteLimite = valorCliente.split("-");
+                        var idCliente = arregloClienteLimite[0];
+                        var limiteCliente = arregloClienteLimite[1];
+                        var creditoUsado = arregloClienteLimite[2];
+
+                        var limiteClienteInt= parseInt(limiteCliente);
+                        var creditoUsadoInt = parseInt(creditoUsado);
+
+
+                        spanCreditoUsado.innerHTML = creditoUsado.toString();
+            
+                        if (contadorCkeckbox >= 1){
+                            if (limiteClienteInt === 0 && creditoUsadoInt === 0 ){
+                                var spanAceptado = document.getElementById("spanAceptado");
+                                var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                spanAceptado.innerHTML = "No hay limite."
+                                spanAceptado.classList.add('text-danger');
+                               
+                                botonGuardarVenta.disabled = false;
+                            }
+                            else{
+                                if(restaDescuentoDosDecimalesRedondeada > limiteCliente){
+                                    //Aceptado = No.
+                                    var spanAceptado = document.getElementById("spanAceptado");
+                                    var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                    spanAceptado.innerHTML = "No."
+                                    spanAceptado.classList.add('text-danger');
+                                    botonGuardarVenta.disabled = true;
+            
+                                }else{
+                                    var spanAceptado = document.getElementById("spanAceptado");
+                                    var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                                    spanAceptado.innerHTML = "Si."
+                                    spanAceptado.classList.remove('text-danger');
+                                    botonGuardarVenta.disabled = false;
+                                }
+                            }
+                            
+                        }
+            
+                        spanCreditoLibre.innerHTML = limiteCliente.toString();
+                        var spanFechaCreditoInicio = document.getElementById("spanFechaCreditoInicio");
+                        var spanFechaCreditoFinal = document.getElementById("spanFechaCreditoFinal");
+            
+                        function sumarDias(fecha, dias){
+                            fecha.setDate(fecha.getDate() + dias);
+                            return fecha;
+                        }
+            
+                        var d = new Date();
+                        var fechaInicio = sumarDias(d, +15);
+                        var arregloMeses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sept", "Oct", "Nov", "Dic"]
+                        var mes = parseInt(fechaInicio.getMonth()+1)
+                        var mexTexto = ""
+                        vatContadorMes = 0
+                        for (var i = 0; i < arregloMeses.length; i++) {
+                            vatContadorMes += 1;
+                            if (vatContadorMes == mes){
+                                mexTexto = arregloMeses[vatContadorMes-1]
+                            }
+                        }
+                        spanFechaCreditoInicio.innerHTML = fechaInicio.getDate()+ "/"+mexTexto+ "/" + fechaInicio.getFullYear()
+                        var fechaFinal = sumarDias(fechaInicio, +45);
+                        var mesFinal = parseInt(fechaInicio.getMonth()+1)
+                        var mesFinalTexto = ""
+                        vatContadorMesFinal = 0
+                        for (var x = 0; x < arregloMeses.length; x++) {
+                            vatContadorMesFinal += 1;
+                            if (vatContadorMesFinal == mesFinal){
+                                mesFinalTexto = arregloMeses[vatContadorMesFinal-1]
+                            }
+                        }
+                        spanFechaCreditoFinal.innerHTML = fechaFinal.getDate()+ "/"+mesFinalTexto+ "/" + fechaFinal.getFullYear()
+                        var spanAbono = document.getElementById("spanAbono");
+                        var spanCostoCredito = document.getElementById("spanCostoCredito");
+                        var costoConElVeinte = parseFloat(restaDescuentoDosDecimalesRedondeada) * 1.20;
+                        var costoConElVeinteRedondeado = Math.round(costoConElVeinte);
+
+                        var abonito = costoConElVeinteRedondeado / 4;
+                        if (contadorCkeckbox >=1 ){
+                            spanCostoCredito.innerHTML = costoConElVeinteRedondeado.toString();
+                            spanAbono.innerHTML = abonito.toString();
+                        }else{
+                            spanCostoCredito.innerHTML = "0";
+                            spanAbono.innerHTML = "0";
+                        }
+                    }  
+                    
+                }
+                
+
+                
+
+
+                
+                
+         
+               
+            }else{
+              
+                divSelectTipoTarjeta.style.display = "none";
+                divReferenciaBancaria.style.display = "none";
+                divClaveRastreoTransferencia.style.display = "none";
+                divCantidadEfectivo.style.display = "block";
+                spanCambio.style.display = "block";
+                formaPago.style.display = "block";
+
+             
+                creditoAceptado.style.display = "none";
+                conceptoCredito.style.display = "none";
+                fechaCreditoNuevo.style.display = "none";
+                fechaCreditoTermino.style.display = "none";
+                abono.style.display = "none";
+                divCreditoLibre.style.display = "none";
+                divCreditoSucursal.style.display = "none";
+                divCreditoUsado.style.display = "none";
+            
+               
+                
+            }
+        }
+    
+
+        window.onload= mueveReloj ();
+
+    }
+
+    
+    function cambioCliente(){
+        var clienteSeleccionado = document.getElementById('selectCliente').value;
+        if (clienteSeleccionado == 'clienteMomentaneo'){
+            checkbox.disabled=true;
+        }
+        else{
+            checkbox.disabled=false;
+        }
+   
+    }
+
+    //Nada que ver con el credito
+    function cambioTipoPago(){
+        var tipoPagoSeleccionado = document.getElementById('selectTipoPago').value;
+        var divCantidadEfectivo = document.getElementById('cantidadEfectivo');
+        var spanCambio = document.getElementById('spanCambio');
+        if (tipoPagoSeleccionado == 'Efectivo'){
+            divCantidadEfectivo.style.display = "block";
+            divSelectTipoTarjeta.style.display = "none";
+            divReferenciaBancaria.style.display = "none";
+            divClaveRastreoTransferencia.style.display = "none";
+            spanCambio.style.display = "block";
+            
+        }
+        else if(tipoPagoSeleccionado == 'Tarjeta'){
+            divCantidadEfectivo.style.display = "none";
+            divSelectTipoTarjeta.style.display = "block";
+            divReferenciaBancaria.style.display = "block";
+            divClaveRastreoTransferencia.style.display = "none";
+            spanCambio.style.display = "none";
+        }
+        else if(tipoPagoSeleccionado == 'Transferencia'){
+            divCantidadEfectivo.style.display = "none";
+            divSelectTipoTarjeta.style.display = "none";
+            divReferenciaBancaria.style.display = "none";
+            
+            divClaveRastreoTransferencia.style.display = "block";
+            spanCambio.style.display = "none";
+        
+        }
+   
+    }
+
+
+    //Ya hace lo del credito
+    function seleccionDescuento(){
+        var descuentoSeleccionado = document.getElementById('descuento').value;
+        var spanResta = document.getElementById('spanResta');
+        var spanTotalConDescuento = document.getElementById('spanTotalConDescuento');
+        if (descuentoSeleccionado == "SinDescuento"){
+            infoDescuento.style.display = "none";
+            var efectivoPagoCliente = document.getElementById("efectivoPagoCliente");
+            var spanCambioChico = document.getElementById("spanCambioChico");
+            var valorInput = efectivoPagoCliente.value;
+
+            if (valorInput == ""){
+                spanCambioChico.innerHTML = "0";
+            }
+            else{
+                var cambio = parseFloat(valorInput) - costoTotal;
+    
+                spanCambioChico.innerHTML = cambio.toString();
+            }
+            //Credito
+            var valorCliente = document.getElementById("selectCliente").value;
+            if (valorCliente == "clienteMomentaneo"){
+                console.log("Cliente momentaneo");
+            }
+            else{
+                const arregloClienteLimite = valorCliente.split("-");
+                var idCliente = arregloClienteLimite[0];
+                var limiteCliente = arregloClienteLimite[1];
+                var creditoUsado = arregloClienteLimite[2];
+                var limiteClienteInt= parseInt(limiteCliente);
+                var creditoUsadoInt = parseInt(creditoUsado);
+
+
+                spanCreditoUsado.innerHTML = creditoUsado.toString();
+    
+                if (contadorCkeckbox >= 1){
+                    if (limiteClienteInt === 0 && creditoUsadoInt === 0 ){
+                        var spanAceptado = document.getElementById("spanAceptado");
+                        var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                        spanAceptado.innerHTML = "No hay limite."
+                        spanAceptado.classList.add('text-danger');
+                       
+                        botonGuardarVenta.disabled = false;
+                    }
+                    else{
+                        if (costoTotal > limiteCliente){
+                            //Aceptado = No.
+                            var spanAceptado = document.getElementById("spanAceptado");
+                            var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                            spanAceptado.innerHTML = "No."
+                            spanAceptado.classList.add('text-danger');
+                            botonGuardarVenta.disabled = true;
+        
+                        }else{
+                            var spanAceptado = document.getElementById("spanAceptado");
+                            var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                            spanAceptado.innerHTML = "Si."
+                            spanAceptado.classList.remove('text-danger');
+                            botonGuardarVenta.disabled = false;
+                        }
+                    }
+    
+                    
+                }
+    
+                spanCreditoLibre.innerHTML = limiteCliente.toString();
+    
+                var spanFechaCreditoInicio = document.getElementById("spanFechaCreditoInicio");
+                var spanFechaCreditoFinal = document.getElementById("spanFechaCreditoFinal");
+    
+                function sumarDias(fecha, dias){
+                    fecha.setDate(fecha.getDate() + dias);
+                    return fecha;
+                }
+    
+                var d = new Date();
+                var fechaInicio = sumarDias(d, +15);
+                var arregloMeses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sept", "Oct", "Nov", "Dic"]
+                var mes = parseInt(fechaInicio.getMonth()+1)
+                var mexTexto = ""
+                vatContadorMes = 0
+                for (var i = 0; i < arregloMeses.length; i++) {
+                    vatContadorMes += 1;
+                    if (vatContadorMes == mes){
+                        mexTexto = arregloMeses[vatContadorMes-1]
+                    }
+                }
+                spanFechaCreditoInicio.innerHTML = fechaInicio.getDate()+ "/"+mexTexto+ "/" + fechaInicio.getFullYear()
+                var fechaFinal = sumarDias(fechaInicio, +45);
+                var mesFinal = parseInt(fechaInicio.getMonth()+1)
+                var mesFinalTexto = ""
+                vatContadorMesFinal = 0
+                for (var x = 0; x < arregloMeses.length; x++) {
+                    vatContadorMesFinal += 1;
+                    if (vatContadorMesFinal == mesFinal){
+                        mesFinalTexto = arregloMeses[vatContadorMesFinal-1]
+                    }
+                }
+                spanFechaCreditoFinal.innerHTML = fechaFinal.getDate()+ "/"+mesFinalTexto+ "/" + fechaFinal.getFullYear()
+                var spanAbono = document.getElementById("spanAbono");
+                var spanCostoCredito = document.getElementById("spanCostoCredito");
+                var costoConElVeinte = parseFloat(costoTotal) * 1.20;
+                var costoConElVeinteRedondeado = Math.round(costoConElVeinte);
+
+                var abonito = costoConElVeinteRedondeado / 4;
+                if (contadorCkeckbox >=1 ){
+                    spanCostoCredito.innerHTML = costoConElVeinteRedondeado.toString();
+                    spanAbono.innerHTML = abonito.toString();
+                }else{
+                    spanCostoCredito.innerHTML = "0";
+                    spanAbono.innerHTML = "0";
+                }
+            }
+            
+        }
+        else{
+            infoDescuento.style.display = "block";
+            //15
+            var decimal = "."+descuentoSeleccionado.toString()
+            var decimalFloat = parseFloat(decimal)  //.15
+            var resta = costoTotal * decimalFloat
+
+            var restaConDosDecimales = resta.toFixed(2); 
+            var restaConDosDecimalesRedondeada = Math.round(restaConDosDecimales);
+
+            var restaDescuento = costoTotal - restaConDosDecimales
+            var restaDescuentoDosDecimales = restaDescuento.toFixed(2);
+            var restaDescuentoDosDecimalesRedondeada = Math.round(restaDescuentoDosDecimales);
+
+            spanResta.innerHTML = restaConDosDecimalesRedondeada.toString();
+            spanTotalConDescuento.innerHTML = restaDescuentoDosDecimalesRedondeada.toString();
+            //Tomar el valor del span del total a pagar.. 
+            var efectivoPagoCliente = document.getElementById("efectivoPagoCliente");
+            var spanCambioChico = document.getElementById("spanCambioChico");
+            var valorInput = efectivoPagoCliente.value;
+
+            if (valorInput == ""){
+                spanCambioChico.innerHTML = "0";
+            }
+            else{
+                var cambio = parseFloat(valorInput) - restaDescuentoDosDecimalesRedondeada;
+    
+                spanCambioChico.innerHTML = cambio.toString();
+            }
+             //Obtener valor del select del cliente..
+            var valorCliente = document.getElementById("selectCliente").value;
+            if (valorCliente == "clienteMomentaneo"){
+                console.log("Cliente momentaneo");
+            }
+            else{
+                const arregloClienteLimite = valorCliente.split("-");
+                var idCliente = arregloClienteLimite[0];
+                var limiteCliente = arregloClienteLimite[1];
+                var creditoUsado = arregloClienteLimite[2];
+                var limiteClienteInt= parseInt(limiteCliente);
+                var creditoUsadoInt = parseInt(creditoUsado);
+
+                spanCreditoUsado.innerHTML = creditoUsado.toString();
+    
+                if (contadorCkeckbox >= 1){
+                    if (limiteClienteInt === 0 && creditoUsadoInt === 0 ){
+                        var spanAceptado = document.getElementById("spanAceptado");
+                        var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                        spanAceptado.innerHTML = "No hay limite."
+                        spanAceptado.classList.add('text-danger');
+                       
+                        botonGuardarVenta.disabled = false;
+                    }
+                    else{
+                        if(restaDescuentoDosDecimalesRedondeada > limiteCliente){
+                            //Aceptado = No.
+                            var spanAceptado = document.getElementById("spanAceptado");
+                            var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                            spanAceptado.innerHTML = "No."
+                            spanAceptado.classList.add('text-danger');
+                            botonGuardarVenta.disabled = true;
+    
+                        }else{
+                            var spanAceptado = document.getElementById("spanAceptado");
+                            var botonGuardarVenta = document.getElementById("botonGuardarVenta");
+                            spanAceptado.innerHTML = "Si."
+                            spanAceptado.classList.remove('text-danger');
+                            botonGuardarVenta.disabled = false;
+                        }
+                    }
+                    
+                }
+    
+                spanCreditoLibre.innerHTML = limiteCliente.toString();
+                var spanFechaCreditoInicio = document.getElementById("spanFechaCreditoInicio");
+                var spanFechaCreditoFinal = document.getElementById("spanFechaCreditoFinal");
+    
+                function sumarDias(fecha, dias){
+                    fecha.setDate(fecha.getDate() + dias);
+                    return fecha;
+                }
+    
+                var d = new Date();
+                var fechaInicio = sumarDias(d, +15);
+                var arregloMeses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sept", "Oct", "Nov", "Dic"]
+                var mes = parseInt(fechaInicio.getMonth()+1)
+                var mexTexto = ""
+                vatContadorMes = 0
+                for (var i = 0; i < arregloMeses.length; i++) {
+                    vatContadorMes += 1;
+                    if (vatContadorMes == mes){
+                        mexTexto = arregloMeses[vatContadorMes-1]
+                    }
+                }
+                spanFechaCreditoInicio.innerHTML = fechaInicio.getDate()+ "/"+mexTexto+ "/" + fechaInicio.getFullYear()
+                var fechaFinal = sumarDias(fechaInicio, +45);
+                var mesFinal = parseInt(fechaInicio.getMonth()+1)
+                var mesFinalTexto = ""
+                vatContadorMesFinal = 0
+                for (var x = 0; x < arregloMeses.length; x++) {
+                    vatContadorMesFinal += 1;
+                    if (vatContadorMesFinal == mesFinal){
+                        mesFinalTexto = arregloMeses[vatContadorMesFinal-1]
+                    }
+                }
+                spanFechaCreditoFinal.innerHTML = fechaFinal.getDate()+ "/"+mesFinalTexto+ "/" + fechaFinal.getFullYear()
+                var spanAbono = document.getElementById("spanAbono");
+                var spanCostoCredito = document.getElementById("spanCostoCredito");
+                var costoConElVeinte = parseFloat(restaDescuentoDosDecimalesRedondeada) * 1.20;
+                var costoConElVeinteRedondeado = Math.round(costoConElVeinte);
+
+                var abonito = costoConElVeinteRedondeado / 4;
+                if (contadorCkeckbox >=1 ){
+                    spanCostoCredito.innerHTML = costoConElVeinteRedondeado.toString();
+                    spanAbono.innerHTML = abonito.toString();
+                }else{
+                    spanCostoCredito.innerHTML = "0";
+                    spanAbono.innerHTML = "0";
+                }
+            }
+            
+        }
+       
+    }
+
+    //Nada que ver con el crédito
+    function calcularFeria(){
+        var efectivoPagoCliente = document.getElementById("efectivoPagoCliente");
+        var spanCambioChico = document.getElementById("spanCambioChico");
+        var valorInput = efectivoPagoCliente.value;
+
+        if (valorInput == ""){
+            spanCambioChico.innerHTML = "0";
+        }
+        else{
+            var valorDeSelectDeDescuento = document.getElementById("descuento").value;
+            if (valorDeSelectDeDescuento == "SinDescuento"){
+                var cambio = parseFloat(valorInput) - costoTotal;
+            }else{
+                var decimal = "."+valorDeSelectDeDescuento.toString()
+                var decimalFloat = parseFloat(decimal)  //.15
+                var resta = costoTotal * decimalFloat
+                var restaConDosDecimales = resta.toFixed(2); 
+                var restaConDosDecimalesRedondeada = Math.round(restaConDosDecimales);
+
+                var restaDescuento = costoTotal - restaConDosDecimales
+                var restaDescuentoDosDecimales = restaDescuento.toFixed(2);
+                var restaDescuentoDosDecimalesRedondeada = Math.round(restaDescuentoDosDecimales);
+                var cambio = parseFloat(valorInput) - restaDescuentoDosDecimalesRedondeada;
+            }
+
+            
+
+            spanCambioChico.innerHTML = cambio.toString();
+        }
+        
+
+
+    }
+
+    
+</script>
+
+{% endblock %}

@@ -1,0 +1,184 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Agregar Servicio Certificado | Costabella
+{% endblock %}
+
+{% block estilos %}
+
+{% endblock %}
+
+{% block contenido %}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    {% for permiso in consultaPermisos %}
+                    {% if permiso.tabla_modulo == "Certificado" %}
+                    {% if permiso.ver == "Si" %}
+    
+                    <div class="nk-block-head-sub"><a class="back-to" href="/verServiciosCertificado/"><em class="icon ni ni-arrow-left"></em><span>Ver servicios de certificados de regalo.</span></a></div>
+
+                    {% endif %}
+                    {% endif %}
+                    {% endfor %}
+                        <h2 class="overline-title text-purple fs-20px animate__animated animate__slideInLeft">NUEVO SERVICIO PARA CERTIFICADO DE REGALO.</h2>
+                        <div class="nk-block-des animate__animated animate__fadeIn">
+                            <p class="fs-15px">En este módulo se darán de alta un servicio que podrá ser incluido en una tarjeta de regalo. Es necesario contar con la información de los servicios y tratamientos necesaria.</p>
+                        </div>
+                </div><!-- .nk-block-head-content -->
+             
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        <div class="nk-block nk-block-lg">
+            <div class="card card-preview animate__animated animate__zoomIn">
+                <div class="card-inner animate__animated animate__zoomIn">
+                    <div class="preview-block">
+                        <form action="/agregarServicioCertificado/" enctype="multipart/form-data" method="POST">{% csrf_token %}
+                            <span class="preview-title-lg overline-title text-pink">Información del servicio.</span>
+                            <div class="row gy-4">
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span> Código de servicio:</label>
+                                        <div class="form-control-wrap">
+                                            <input type="text" class="form-control" id="default-01" placeholder="Ingresar código de servicio" value="{{ultimoCodigoCertificado}}" name="codigoServicioNuevo"  readonly> 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span> Nombre:</label>
+                                        <div class="form-control-wrap">
+                                            <input type="text"  onkeypress='return soloLetras(event)' class="form-control" id="default-01" placeholder="Ingresar nombre del servicio" maxlength="50" required name="nombreServicio"> 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span> Precio de venta:</label>
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-left">
+                                                <em class="icon ni ni-sign-usd-alt"></em>
+                                            </div>
+                                            <input type="number" class="form-control" value="1.00" min="0.00" max="10000.00" step="0.01"  maxlength="5" placeholder="Ingresar precio de venta" required name="costoServicio">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-03">Descripción</label>
+                                        <div class="form-control-wrap">
+                                            <textarea class="form-control form-control-simple no-resize" id="default-textarea" placeholder="Ingresar mensaje" maxlength="99" style="border-width: 1px!important; 
+                                            border-style: solid!important;
+                                            border-color: rgb(216, 216, 216)!important;" name="descripcion"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span> Tiempo mínimo:</label>
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-left">
+                                                <em class="icon ni ni-alarm-alt"></em>
+                                            </div>
+                                            <input type="number" class="form-control" value="1"  min="1" max="10000" step="1"  maxlength="5" placeholder="Ingresar el mínimo de minutos de duración" required name="tiempoMinimo"> 
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01"></label>
+                                        <div class="form-control-wrap">
+                                            <div>
+
+                                            </div>
+                                            <br>
+                                           <h6>Minutos</h6>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01"><span style="color: #dd2e2e;">* </span> Tiempo máximo:</label>
+                                        <div class="form-control-wrap">
+                                            <div class="form-icon form-icon-left">
+                                                <em class="icon ni ni-alarm-alt"></em>
+                                            </div>
+                                            <input type="number" class="form-control" value="1"  min="0.00" max="10000" step="1"  maxlength="5" placeholder="Ingresar el máximo de minutos de duración" required name="tiempoMaximo"> 
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-01"></label>
+                                        <div class="form-control-wrap">
+                                            <div>
+
+                                            </div>
+                                            <br>
+                                           <h6>Minutos</h6>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                
+                            </div>
+ 
+                            <hr class="preview-hr">
+                            <span class="preview-title-lg overline-title text-pink">Información Sucursal</span>
+                            <div class="row gy-4">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="form-label" for="default-06"><span style="color: #dd2e2e;">* </span> Sucursal <em class="icon ni ni-question" data-toggle="tooltip" data-placement="right" title="Seleccionar la sucursal donde se dará de alta el servicio."></em></label>
+                                        <div class="form-control-wrap ">
+                                            <div class="form-control-select">
+                                                <select class="form-select" multiple="multiple" id="default-06" name="sucursales" required>
+                                                    <option value="Todas">Todas las sucursales</option>
+                                                    {% for sucursal in sucursales %}
+                                                    <option value="{{sucursal.id_sucursal}}">{{sucursal.nombre}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                
+                            </div>
+                            <br>
+                            <button type="submit" class="btn btn-dim btn-primary">Dar de alta servicio</button>
+                        </form>
+                    </div>
+                </div>
+            </div><!-- .card-preview -->
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<script>
+
+    {% if ServicioCertificadoRegistrado %}
+    $(document).ready(function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Buen trabajo!',
+            showConfirmButton: true,
+            timer: 3300,
+            text: '{{ServicioCertificadoRegistrado}}'
+        });
+        e.preventDefault();
+    });
+    {% endif %}
+
+    
+</script>
+{% endblock %}

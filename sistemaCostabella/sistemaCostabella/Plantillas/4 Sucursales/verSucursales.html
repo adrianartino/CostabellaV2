@@ -1,0 +1,149 @@
+
+{% extends "menu.html" %}
+{% load static %}
+
+{% block titulo %}
+Alta Empleado | Costabella
+{% endblock %}
+
+{% block estilos %}
+
+{% endblock %}
+
+{% block contenido%}
+<div class="nk-content-inner">
+    <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    <h3 class="nk-block-title page-title color-texto-seleccion">LISTA DE SUCRUSALES</h3>
+                    <div class="nk-block-des text-soft">
+                        <p>Total de sucursales: {{cantidadSucursales}}.</p>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+                {% for permiso in consultaPermisos %}
+                {% if permiso.tabla_modulo == "Sucursales" %}
+                {% if permiso.agregar == "Si" %}
+                <div class="nk-block-head-content">
+                    <div class="toggle-wrap nk-block-tools-toggle">
+                        <a href="#" class="btn btn-icon btn-trigger toggle-expand mr-n1" data-target="more-options"><em class="icon ni ni-more-v"></em></a>
+                        <div class="toggle-expand-content" data-content="more-options">
+                            <ul class="nk-block-tools g-3">
+                                <li class="nk-block-tools-opt">
+                                    <a href="#" class="btn btn-icon btn-primary d-md-none"><em class="icon ni ni-plus"></em></a>
+                                    <a href="/altaSucursal/" class="btn btn-primary d-none d-md-inline-flex"><em class="icon ni ni-plus"></em><span>Agregar Sucursal</span></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div><!-- .nk-block-head-content -->
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+
+        
+        <div class="nk-block nk-block-lg">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Sucursales Totales</h4>
+                    <div class="nk-block-des">
+                        <p>Lista de sucursales <span class="colorCostabella">Costabella</span> <span class="colorbaja"></span> en el sistema.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card card-preview">
+                <div class="card-inner table-responsive">
+                    <table class="datatable-init nk-tb-list nk-tb-ulist animate__animated animate__zoomIn" data-auto-responsive="false">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head" style="background-color: #14C38E !important; color:white !important;">
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Id</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Nombre</span></th>
+                                <th class="nk-tb-col" ><span class="sub-text textoBlanco" >Dirección</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Teléfono</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Empleados en sucursal</span></th>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Sucursales" %}
+                                {% if permiso.ver_detalles == "Si" %}
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Ver información</span></th>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sucursal, empleadoSucursal in lista %}
+                            <tr class="nk-tb-item">
+                                <td class="nk-tb-col">
+                                    <span class="badge badge-info">{{sucursal.id_sucursal}}</span>
+                                </td>
+                                <td class="nk-tb-col">
+                                    <span  class="tb-amount">{{sucursal.nombre}}</span>
+                                </td>
+                                <td class="nk-tb-col" >
+                                    <span class="tb-amount">{{sucursal.direccion}}</span>
+                                </td>
+                            
+                                <td class="nk-tb-col">
+                                    <span class="tb-amount">{{sucursal.telefono}}</span>
+                                </td>
+                               
+                                <td class="nk-tb-col">
+                                    {% if empleadoSucursal ==  "Sin empleados" %}
+                                    <span class="badge badge-danger">Sin empleados</span>
+                                    {% else %}
+                                    <button type="button" class="btn btn-warning btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true" data-content="
+                                                       
+                                                       {% for sf in empleadoSucursal %}
+                                                       <div> 
+                                                           <h6> <span class='text-primary fs-11px'> {{sf.0}} -</span> <span class='text-soft fs-11px'> {{sf.1}} {{sf.2}} {{sf.3}}   </span>    </h6>
+                                                       </div>
+                                                       
+                                                       {% endfor %}"><span>Ver empleados</span></button>
+                                                       {% endif %}
+                                </td>
+                                {% for permiso in consultaPermisos %}
+                                {% if permiso.tabla_modulo == "Sucursales" %}
+                                {% if permiso.ver_detalles == "Si" %}
+                                <td class="nk-tb-col" >
+                                    <form action="/informeDeSucursal/" method="POST">{% csrf_token %}
+                                        <center>
+                                            <input type="hidden" value="{{sucursal.id_sucursal}}" name="idSucursalInforme">
+                                            <span class="tb-amount"><button type="submit" class="btn btn-info" data-toggle="tooltip" data-placement="right" title="Clic para ver el informe completo de la sucrusal."><em class="icon ni ni-eye"></em></button></span>
+                                        </center>
+                                    </form>
+                                    
+                                </td>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                                
+                              
+                        
+                        
+                             
+                            </tr><!-- .nk-tb-item  -->
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div> <!-- nk-block -->
+    </div>
+</div>
+{% endblock %}
+
+{% block relojJS %}
+<script>
+    window.clearTimeout();
+    window.onload = function() {
+
+        window.onload= mueveReloj ();
+
+        
+    };
+</script>
+{% endblock %}
