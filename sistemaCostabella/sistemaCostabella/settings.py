@@ -95,11 +95,17 @@ TEMPLATES = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'costabella',
-        'USER': 'root',
-        'PASSWORD': 'claveforaneaNull22$',
-        'HOST': 'localhost',
-        'PORT': '3306'
+        'NAME': 'customco_costabella',
+        'USER': 'customco_usradmincostabella',
+        'PASSWORD': 'MYj5}G5T7/@5',
+        'HOST': '65.99.252.126',
+        'PORT': '3306',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            'charset': 'utf8mb4',
+        },
+        'CONN_MAX_AGE': 600,
+        'OPTIONS': {'charset': 'utf8mb4'},
     }
 }
 
