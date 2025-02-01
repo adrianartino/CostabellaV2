@@ -73,6 +73,9 @@ from zebra import Zebra
 #Plugin impresora termica
 from appCostabella import Conector
 
+#Notificaciones
+from appCostabella.notificaciones.notificaciones import notificacionRentas, notificacionCitas
+
 def notificacionRentas(request):
      #Si ya existe una sesion al teclear login...
     if "idSesion" in request.session:
@@ -261,7 +264,7 @@ def notificacionCitas(request):
         
 
 
-
+# Lista
 def salir(request):
 
    # Cerrar variables de sesión
@@ -270,7 +273,7 @@ def salir(request):
    del request.session['tipoUsuario'] 
 
    return redirect('/login/')
-# Vista login
+# Lista
 def login(request):
 
     #Si ya existe una sesion al teclear login...
@@ -349,8 +352,7 @@ def login(request):
                 return render(request, "1 Login/login.html", {"error":error})
             
         return render(request, "1 Login/login.html")
-
-# Vista inicio
+# Lista
 def inicio(request):
 
     #Si ya existe una sesion al teclear login...
@@ -398,6 +400,9 @@ def inicio(request):
     else:
         return render(request, "1 Login/login.html")
 
+
+
+# Lista
 def altaEmpleado(request):
 
     if "idSesion" in request.session:
@@ -894,7 +899,7 @@ def altaEmpleado(request):
         return render(request, "3 Empleados/altaEmpleado.html", {"consultaPermisos":consultaPermisos,"idEmpleado":idEmpleado,"idPerfil":idPerfil, "idConfig":idConfig, "nombresEmpleado":nombresEmpleado,"tipoUsuario":tipoUsuario, "letra":letra, "puestoEmpleado":puestoEmpleado,"estaEnAltaEmpleado":estaEnAltaEmpleado, "sucursales":sucursales,"notificacionRenta":notificacionRenta,"notificacionCita":notificacionCita})
     else:
         return render(request,"1 Login/login.html")
-
+# Lista
 def verEmpleados(request):
 
     if "idSesion" in request.session:
@@ -1230,6 +1235,8 @@ def verSucursales(request):
     else:
         return render(request,"1 Login/login.html")
 
+
+# Lista
 def editarEmpleado(request):
 
     if "idSesion" in request.session:
@@ -1327,9 +1334,7 @@ def editarEmpleado(request):
         return redirect('/verEmpleados/')
     else:
         return render(request,"1 Login/login.html")
-
-        
-    
+# Lista 
 def actInfoPersonal(request):
 
     if "idSesion" in request.session:
@@ -1370,9 +1375,8 @@ def actInfoPersonal(request):
 
         return redirect('/verEmpleados/')
     else:
-        return render(request,"1 Login/login.html")
-    
-
+        return render(request,"1 Login/login.html")   
+# Lista
 def actInfoLaboral(request):
 
     if "idSesion" in request.session:
@@ -1419,8 +1423,7 @@ def actInfoLaboral(request):
         return redirect('/verEmpleados/')
     else:
         return render(request,"1 Login/login.html")  
-    
-
+# Lista
 def darAltaEmpleado(request):
 
     if "idSesion" in request.session:
@@ -1450,7 +1453,7 @@ def darAltaEmpleado(request):
         return redirect('/verEmpleados/')
     else:
         return render(request,"1 Login/login.html")  
-
+# Lista
 def darBajaEmpleado(request):
 
     if "idSesion" in request.session:
@@ -1480,7 +1483,7 @@ def darBajaEmpleado(request):
         return redirect('/verEmpleados/')
     else:
         return render(request,"1 Login/login.html")  
-        
+# Lista 
 def editarConfiguracionEmpleado(request):
 
     if "idSesion" in request.session:
