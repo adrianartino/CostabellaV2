@@ -8,11 +8,6 @@ from django.shortcuts import redirect, render
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-import json
-
-# Libreria Random
-import random
-
 # Librerías de fecha
 from datetime import date, datetime, time, timedelta
 from random import choice
@@ -37,11 +32,6 @@ from appCostabella.notificaciones.notificaciones import (
     notificacionRentas,
 )
 from dateutil.relativedelta import relativedelta
-
-# Libreria para manejar archivos en python
-from django.core.files.base import ContentFile
-from django.db.models import Q
-
 
 def altaEmpleado(request):
 
@@ -2407,6 +2397,68 @@ def informeEmpleado(request):
                     "notificacionCita": notificacionCita,
                 },
             )
+
+        return redirect("/verEmpleados/")
+    else:
+        return render(request, "1 Login/login.html")
+
+
+def actNombreUsuario(request):
+
+    if "idSesion" in request.session:
+
+        if request.method == "POST":
+            idActualizado = request.POST["idActualizado"]
+            nombreUsuarioActualizado = request.POST["nombreUsuarioActualizado"]
+
+            consulta = Empleados.objects.filter(id_empleado=idActualizado)
+
+            for dato in consulta:
+                nombreActualizado = dato.nombres
+
+            actualizarInfoPersonal = Empleados.objects.filter(
+                id_empleado=idActualizado
+            ).update(nombre_usuario=nombreUsuarioActualizado)
+
+            if actualizarInfoPersonal:
+                # falta notificacion
+                request.session["empleadoActualizado"] = (
+                    "Se ha actualizado el nombre de usuario de "
+                    + nombreActualizado
+                    + " correctamente!"
+                )
+                return redirect("/verEmpleados/")
+
+        return redirect("/verEmpleados/")
+    else:
+        return render(request, "1 Login/login.html")
+
+
+def actContrasena(request):
+
+    if "idSesion" in request.session:
+
+        if request.method == "POST":
+            idActualizado = request.POST["idActualizado"]
+            contraActualizada = request.POST["contraActualizada"]
+
+            consulta = Empleados.objects.filter(id_empleado=idActualizado)
+
+            for dato in consulta:
+                nombreActualizado = dato.nombres
+
+            actualizarInfoPersonal = Empleados.objects.filter(
+                id_empleado=idActualizado
+            ).update(contrasena=contraActualizada)
+
+            if actualizarInfoPersonal:
+                # falta notificacion
+                request.session["empleadoActualizado"] = (
+                    "Se ha actualizado la contraseña de "
+                    + nombreActualizado
+                    + " correctamente!"
+                )
+                return redirect("/verEmpleados/")
 
         return redirect("/verEmpleados/")
     else:

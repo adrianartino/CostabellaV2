@@ -1,80 +1,80 @@
 # Renderizado
+import os
+import string
 from csv import list_dialects
 from multiprocessing.sharedctypes import Value
 from operator import truediv
 from os import remove
-import string
-from tkinter import N
-from types import TracebackType
-from django.shortcuts import render
-from django.shortcuts import redirect
-from django.http.response import HttpResponse
-
 #Para ruta
 from pathlib import Path
-import os
+from tkinter import N
+from types import TracebackType
+
+from django.http.response import HttpResponse
+from django.shortcuts import redirect, render
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Importacion de modelos
-from appCostabella.models import Sucursales, Empleados, Clientes, ProductosVenta,ProductosRenta,ProductosGasto, ComprasVentas, ComprasGastos, ComprasRentas,MovimientosCaja,ConfiguracionCaja,Rentas,Servicios,ServiciosProductosGasto,Descuentos,Ventas, ConfiguracionCredito, Creditos, PagosCreditos,Permisos, Tratamientos, TratamientosProductosGasto, PaquetesPromocionTratamientos, Citas,TratamientosClientes, HistorialTratamientosClientes, citasTratamientos, pagosPaquetesTratamientos, CortesDeCaja, ServiciosCertificados, ProductosServiciosCertificados, CertificadosProgramados
-
-# Libreria para manejar archivos en python
-from django.core.files.base import ContentFile
-
-# Librerías de fecha
-from datetime import date, datetime, time,timedelta
-
-from calendar import c, calendar
-
-from dateutil.relativedelta import relativedelta
-
-# Archivo configuración de django
-from django.conf import settings
-
-#Librerias reportes pdf
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter
-from reportlab.lib.units import cm
-from reportlab.platypus import Image, Paragraph, Table, TableStyle
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib import colors
-from reportlab.lib.enums import TA_CENTER
-
-#Libreria excel.
-import xlwt
-from io import StringIO
-
+import json
 #Libreria Random
-import random 
+import random
+from calendar import c, calendar
+# Librerías de fecha
+from datetime import date, datetime, time, timedelta
+from io import StringIO
 from random import choice
 
-import json
-from django.db.models import Q
-
-#Para mandar telegram
-import telepot
-from appCostabella import keysBotCostabella
-
+import numpy as np
 #Para leer exceles.
 import pandas as pd
-import numpy as np
-
-#Correo electrónico
-from django.core.mail import send_mail
-from django.core.mail import EmailMessage
+#Para mandar telegram
+import telepot
+#Libreria excel.
+import xlwt
+#Plugin impresora termica
+from appCostabella import Conector, keysBotCostabella
+# Importacion de modelos
+from appCostabella.models import (CertificadosProgramados, Citas, Clientes,
+                                  ComprasGastos, ComprasRentas, ComprasVentas,
+                                  ConfiguracionCaja, ConfiguracionCredito,
+                                  CortesDeCaja, Creditos, Descuentos,
+                                  Empleados, HistorialTratamientosClientes,
+                                  MovimientosCaja, PagosCreditos,
+                                  PaquetesPromocionTratamientos, Permisos,
+                                  ProductosGasto, ProductosRenta,
+                                  ProductosServiciosCertificados,
+                                  ProductosVenta, Rentas, Servicios,
+                                  ServiciosCertificados,
+                                  ServiciosProductosGasto, Sucursales,
+                                  Tratamientos, TratamientosClientes,
+                                  TratamientosProductosGasto, Ventas,
+                                  citasTratamientos, pagosPaquetesTratamientos)
+#Notificaciones
+from appCostabella.notificaciones.notificaciones import (notificacionCitas,
+                                                         notificacionRentas)
+from dateutil.relativedelta import relativedelta
+# Archivo configuración de django
+from django.conf import settings
 from django.core import mail
+# Libreria para manejar archivos en python
+from django.core.files.base import ContentFile
+#Correo electrónico
+from django.core.mail import EmailMessage, send_mail
+from django.db.models import Q
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-
 #Impresora
 from escpos.printer import Usb
+from reportlab.lib import colors
+from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.units import cm
+#Librerias reportes pdf
+from reportlab.pdfgen import canvas
+from reportlab.platypus import Image, Paragraph, Table, TableStyle
 from zebra import Zebra
 
-#Plugin impresora termica
-from appCostabella import Conector
-
-#Notificaciones
-from appCostabella.notificaciones.notificaciones import notificacionRentas, notificacionCitas
 
 def notificacionRentas(request):
      #Si ya existe una sesion al teclear login...
@@ -156,7 +156,6 @@ def notificacionRentas(request):
     # Si no hay una sesion iniciada..
     else:
         return render(request, "1 Login/login.html")
-
 
 def notificacionCitas(request):
      #Si ya existe una sesion al teclear login...
@@ -258,12 +257,8 @@ def notificacionCitas(request):
     # Si no hay una sesion iniciada..
     else:
         return render(request, "1 Login/login.html")
-    
-    
-        
-        
 
-
+# INICIO ----------------------------------------------------------------------------------------------------------------------------
 # Lista
 def salir(request):
 
@@ -401,7 +396,7 @@ def inicio(request):
         return render(request, "1 Login/login.html")
 
 
-
+# EMPLEADOS -----------------------------------------------------------------------------------------------------------------------------
 # Lista
 def altaEmpleado(request):
 
@@ -1091,151 +1086,6 @@ def verEmpleados(request):
         "contadorActivos":contadorActivos, "contadorInactivos":contadorInactivos,"listaActivos":listaActivos,"listaInactivos":listaInactivos,"notificacionRenta":notificacionRenta,"notificacionCita":notificacionCita})
     else:
         return render(request,"1 Login/login.html")
-
-
-def altaSucursal(request):
-
-    if "idSesion" in request.session:
-
-        # Variables de sesión
-        idEmpleado = request.session['idSesion']
-        nombresEmpleado = request.session['nombresSesion']
-        idPerfil = idEmpleado
-        idConfig = idEmpleado
-    
-        tipoUsuario = request.session['tipoUsuario']
-        puestoEmpleado = request.session['puestoSesion']
-
-        # Variable para Menu
-        estaEnAltaSucursal = True
-
-        #INFORMACION de empleado para menusito
-        letra = nombresEmpleado[0]
-        
-           #notificacionRentas
-        notificacionRenta = notificacionRentas(request)
-
-        #notificacionCitas
-        notificacionCita = notificacionCitas(request)
-
-        consultaPermisos = Permisos.objects.filter(id_empleado_id__id_empleado = idEmpleado)
-
-
-        # retornar sucrusales
-        sucursales = Sucursales.objects.all()
-        if request.method == "POST":
-            nombreSucursal = request.POST['nombreSucursal']
-            telefono = request.POST['telefonoSucursal']
-            direccion = request.POST['direccionSucursal']
-            latitud = request.POST['latitud']
-            longitud = request.POST['longitud']
-       
-
-      
-
-            # Si usuario administrador..
-     
-            altaSucursal = Sucursales(nombre= nombreSucursal,
-                direccion=direccion,
-                telefono=telefono,
-                latitud = latitud,
-                longitud = longitud
-                ) #Sin sucursal porque Admin
-            altaSucursal.save()
-
-            if altaSucursal:
-                sucursalAgregado = "La sucursal "+nombreSucursal + " ha sido agregado satisfactoriamente!"
-                return render(request, "4 Sucursales/altaSucursal.html", {"consultaPermisos":consultaPermisos,"idEmpleado":idEmpleado,"idPerfil":idPerfil, "idConfig":idConfig, "nombresEmpleado":nombresEmpleado,"tipoUsuario":tipoUsuario, "letra":letra, "puestoEmpleado":puestoEmpleado,"estaEnAltaSucursal":estaEnAltaSucursal, "sucursales":sucursales, "sucursalAgregado":sucursalAgregado,"notificacionRenta":notificacionRenta, "notificacionCita":notificacionCita})
-            else:
-                sucursalNoAgregada = "Error en la base de datos, intentelo más tarde.."
-                return render(request, "4 Sucursales/altaSucursal.html", {"consultaPermisos":consultaPermisos,"idEmpleado":idEmpleado,"idPerfil":idPerfil, "idConfig":idConfig, "nombresEmpleado":nombresEmpleado,"tipoUsuario":tipoUsuario, "letra":letra, "puestoEmpleado":puestoEmpleado,"estaEnAltaSucursal":estaEnAltaSucursal, "sucursales":sucursales, "sucursalNoAgregada":sucursalNoAgregada,"notificacionRenta":notificacionRenta, "notificacionCita":notificacionCita})
-
-        return render(request, "4 Sucursales/altaSucursal.html", {"consultaPermisos":consultaPermisos,"idEmpleado":idEmpleado,"idPerfil":idPerfil, "idConfig":idConfig, "nombresEmpleado":nombresEmpleado,"tipoUsuario":tipoUsuario, "letra":letra, "puestoEmpleado":puestoEmpleado,"estaEnAltaSucursal":estaEnAltaSucursal, "sucursales":sucursales,"notificacionRenta":notificacionRenta, "notificacionCita":notificacionCita})
-    else:
-        return render(request,"1 Login/login.html")
-
-def verSucursales(request):
-
-    if "idSesion" in request.session:
-
-        # Variables de sesión
-        idEmpleado = request.session['idSesion']
-        nombresEmpleado = request.session['nombresSesion']
-        tipoUsuario = request.session['tipoUsuario']
-        puestoEmpleado = request.session['puestoSesion']
-        idPerfil = idEmpleado
-        idConfig = idEmpleado
-       
-
-        
-
-        #INFORMACION de empleado para menusito
-        letra = nombresEmpleado[0]
-        
-           #notificacionRentas
-        notificacionRenta = notificacionRentas(request)
-
-        #notificacionCitas
-        notificacionCita = notificacionCitas(request)
-
-        consultaPermisos = Permisos.objects.filter(id_empleado_id__id_empleado = idEmpleado)
-
-
-        empleadosPorSucursal = []
-        
-        empleadosTotalesPorSucursal =[]
-   
-        listaSucursales = Sucursales.objects.all()
-        cantidadSucursales = 0
-        
-       
-        
-        for sucursal in listaSucursales:
-            cantidadSucursales +=1
-            id_sucursal_una = sucursal.id_sucursal
-            sucursalInt = int(id_sucursal_una)
-            
-            empleadosEnSucursal = Empleados.objects.filter(id_sucursal_id__id_sucursal = sucursalInt)#filtro de los empleados que esten dentro de un area especifica
-            if empleadosEnSucursal:
-                empleadosDatos = []
-                for datosEmpleado in empleadosEnSucursal:
-                    idEmpleadoSucursal = datosEmpleado.id_empleado
-                    nombreEmpleadoSucursal = datosEmpleado.nombres
-                    apellidoPEmpleadoSucursal = datosEmpleado.apellido_paterno
-                    apellidoMEmpleadoSucursal = datosEmpleado.apellido_materno
-                    empleadosDatos.append([idEmpleadoSucursal,nombreEmpleadoSucursal,apellidoPEmpleadoSucursal,apellidoMEmpleadoSucursal])
-                empleadosTotalesPorSucursal.append(empleadosDatos)
-                
-                numero_empleados = 0
-                for empleado in empleadosEnSucursal:
-                    numero_empleados+=1
-                
-                empleadosPorSucursal.append(numero_empleados)
-            else:
-                empleadosTotalesPorSucursal.append("Sin empleados")
-                empleadosPorSucursal.append(0)
-
-                
-                    
-        
-            
-        lista = zip(listaSucursales,empleadosTotalesPorSucursal)
-                
-                
-       
-            
-            
-        
-        
-        
-        
-
-
-        return render(request, "4 Sucursales/verSucursales.html", {"consultaPermisos":consultaPermisos,"idEmpleado":idEmpleado,"idPerfil":idPerfil, "idConfig":idConfig, "nombresEmpleado":nombresEmpleado,"tipoUsuario":tipoUsuario, "letra":letra, "puestoEmpleado":puestoEmpleado, "lista":lista, "cantidadSucursales":cantidadSucursales,"notificacionRenta":notificacionRenta,"notificacionCita":notificacionCita})
-    else:
-        return render(request,"1 Login/login.html")
-
-
 # Lista
 def editarEmpleado(request):
 
@@ -1580,664 +1430,7 @@ def editarConfiguracionEmpleado(request):
         return redirect('/verEmpleados/')
     else:
         return render(request,"1 Login/login.html")
-
-
-
-
-def xlInventarioProductosVenta(request):
-    if request.method == "POST":
-        tipoProductos= request.POST['tipoProductos'] #A o I
-        sucursalInventarioProductosVenta = request.POST['sucursalInventarioProductosVenta']
-            
-    response = HttpResponse(content_type='application/ms-excel')
-    if tipoProductos == "productosVenta":
-    
-        response['Content-Disposition'] = 'attachment; filename=Reporte Inventario Productos para venta '+str(datetime.today().strftime('%Y-%m-%d'))+'.xls'
-    elif tipoProductos == "productosGasto":
-        response['Content-Disposition'] = 'attachment; filename=Reporte Inventario Productos gasto '+str(datetime.today().strftime('%Y-%m-%d'))+'.xls'
-    elif tipoProductos == "productosRenta":
-        response['Content-Disposition'] = 'attachment; filename=Reporte Inventario Productos para renta '+str(datetime.today().strftime('%Y-%m-%d'))+'.xls'
-    
-    
-    #creación de libro de excel
-    libro = xlwt.Workbook(encoding='utf-8')
-    hoja = libro.add_sheet('Productos')
-    
-    numero_fila = 0
-    estilo_fuente = xlwt.XFStyle()
-    estilo_fuente.font.bold = True
-    
-    if tipoProductos == "productosVenta":
-        columnas = ['Id','Código Producto','Nombre','SKU','Costo unitario','Existencias','Costo Total en inventario', 'Margen de ganancia', 'Costo de venta', 'Stock', 'Fecha de agregado','Sucursal']
-    elif tipoProductos == "productosGasto":
-        columnas = ['Id','Código Producto','Nombre','SKU','Costo unitario','Existencias','Costo Total en inventario', 'Stock', 'Fecha de agregado','Sucursal']
-    elif tipoProductos == "productosRenta":
-        columnas = ['Id','Código Producto','Nombre','Costo compra','Existencias','Estado de renta','Costo de renta', 'Fecha de agregado','Sucursal']
-    
-    for columna in range(len(columnas)):
-        hoja.write(numero_fila, columna, columnas[columna], estilo_fuente)
-       
-    
-    #lista de productos dependiento de la sucursal
-    if sucursalInventarioProductosVenta == "todas":
-        if tipoProductos == "productosVenta":
-            productosVenta = ProductosVenta.objects.all()
-        elif tipoProductos == "productosGasto":
-            productosVenta = ProductosGasto.objects.all()
-        elif tipoProductos == "productosRenta":
-            productosVenta = ProductosRenta.objects.all()
-        
-    else:
-        if tipoProductos == "productosVenta":
-            productosVenta = ProductosVenta.objects.filter(sucursal_id__id_sucursal = sucursalInventarioProductosVenta)
-        elif tipoProductos == "productosGasto":
-            productosVenta = ProductosGasto.objects.filter(sucursal_id__id_sucursal = sucursalInventarioProductosVenta)
-        elif tipoProductos == "productosRenta":
-            productosVenta = ProductosRenta.objects.filter(sucursal_id__id_sucursal = sucursalInventarioProductosVenta)
-    
-    sucursales = []
-    costosTotalesProductos = []
-    for producto in productosVenta:
-        sucursalProducto = producto.sucursal_id
-        consultaSucursal = Sucursales.objects.filter(id_sucursal = sucursalProducto)
-        for datoSucursal in consultaSucursal:
-            nombreSucursal = datoSucursal.nombre
-            
-        sucursales.append(nombreSucursal)
-        
-        if tipoProductos == "productosRenta":
-            jejej = True
-        else:
-            costoCompraProducto = producto.costo_compra
-            cantidadExistenteProducto = producto.cantidad
-            
-            costoTotalProducto = float(costoCompraProducto) * float(cantidadExistenteProducto)
-            costosTotalesProductos.append(costoTotalProducto)
-        
-    datosProductos = []
-    cont=0
-    for x in productosVenta:
-        cont+=1
-        if tipoProductos == "productosVenta":
-            datosProductos.append([x.id_producto, x.codigo_producto, x.nombre_producto,x.sku_producto, x.costo_compra,x.cantidad
-                               ,costosTotalesProductos[cont-1],x.margen_ganancia_producto,x.costo_venta,x.stock,x.fecha_alta, sucursales[cont-1]
-                            ])
-        elif tipoProductos == "productosGasto":
-            datosProductos.append([x.id_producto, x.codigo_producto, x.nombre_producto,x.sku_producto, x.costo_compra,x.cantidad
-                               ,costosTotalesProductos[cont-1],x.stock,x.fecha_alta, sucursales[cont-1]
-                            ])
-        elif tipoProductos == "productosRenta":
-            datosProductos.append([x.id_producto, x.codigo_producto, x.nombre_producto, x.costo_de_compra,x.cantidad
-                               ,x.estado_renta,x.costo_renta,x.fecha_alta, sucursales[cont-1]
-                            ])
-            
-        
-    estilo_fuente = xlwt.XFStyle()
-    for productito in datosProductos:
-        numero_fila+=1
-        for columna in range(len(productito)):
-            hoja.write(numero_fila, columna, str(productito[columna]), estilo_fuente)
-        
-    
-    
-    
-        
-    libro.save(response)
-    return response    
-    #creación 
-    
-    
-
-def xlInventarioCiclicoProductosVenta(request):
-    if request.method == "POST":
-        tipoProductos= request.POST['tipoProductos'] #A o I
-        sucursalInventarioProductosVenta = request.POST['sucursalInventarioProductosVenta']
-            
-    response = HttpResponse(content_type='application/ms-excel')
-    if tipoProductos == "productosVenta":
-    
-        response['Content-Disposition'] = 'attachment; filename=Reporte Inventario cíclico Productos para venta '+str(datetime.today().strftime('%Y-%m-%d'))+'.xls'
-    elif tipoProductos == "productosGasto":
-        response['Content-Disposition'] = 'attachment; filename=Reporte Inventario cíclico Productos gasto '+str(datetime.today().strftime('%Y-%m-%d'))+'.xls'
-    elif tipoProductos == "productosRenta":
-        response['Content-Disposition'] = 'attachment; filename=Reporte Inventario cíclico Productos para renta '+str(datetime.today().strftime('%Y-%m-%d'))+'.xls'
-    
-    
-    #creación de libro de excel
-    libro = xlwt.Workbook(encoding='utf-8')
-    hoja = libro.add_sheet('Productos')
-    
-    numero_fila = 0
-    estilo_fuente = xlwt.XFStyle()
-    estilo_fuente.font.bold = True
-    
-    columnas = ['Sucursal','Id','Código Producto','Nombre','SKU','Stock','Costo unitario de compra','Existencias en sistema','Cantidad Contada', 'Diferencia +/-']
-    for columna in range(len(columnas)):
-        hoja.write(numero_fila, columna, columnas[columna], estilo_fuente)
-       
-    
-    #lista de productos dependiento de la sucursal
-    if sucursalInventarioProductosVenta == "todas":
-        if tipoProductos == "productosVenta":
-            productosVenta = ProductosVenta.objects.all()
-        elif tipoProductos == "productosGasto":
-            productosVenta = ProductosGasto.objects.all()
-        elif tipoProductos == "productosRenta":
-            productosVenta = ProductosRenta.objects.all()
-    else:
-        if tipoProductos == "productosVenta":
-            productosVenta = ProductosVenta.objects.filter(sucursal_id__id_sucursal = sucursalInventarioProductosVenta)
-        elif tipoProductos == "productosGasto":
-            productosVenta = ProductosGasto.objects.filter(sucursal_id__id_sucursal = sucursalInventarioProductosVenta)
-        elif tipoProductos == "productosRenta":
-            productosVenta = ProductosRenta.objects.filter(sucursal_id__id_sucursal = sucursalInventarioProductosVenta)
-        
-    
-    sucursales = []
-    costosTotalesProductos = []
-    for producto in productosVenta:
-        sucursalProducto = producto.sucursal_id
-        consultaSucursal = Sucursales.objects.filter(id_sucursal = sucursalProducto)
-        for datoSucursal in consultaSucursal:
-            nombreSucursal = datoSucursal.nombre
-            
-        sucursales.append(nombreSucursal)
-        
-       
-        
-    datosProductos = []
-    cont=0
-    for x in productosVenta:
-        cont+=1
-        datosProductos.append([sucursales[cont-1],x.id_producto, x.codigo_producto, x.nombre_producto,x.sku_producto, x.stock,x.costo_compra,x.cantidad,"",""
-                            ])
-            
-        
-    estilo_fuente = xlwt.XFStyle()
-    for productito in datosProductos:
-        numero_fila+=1
-        for columna in range(len(productito)):
-            hoja.write(numero_fila, columna, str(productito[columna]), estilo_fuente)
-        
-    
-    
-    
-        
-    libro.save(response)
-    return response    
-    #creación 
-    
-    
-
-def informeStockBajoProductosVenta(request):
-    if request.method == "POST":
-        tipoProductos= request.POST['tipoProductos']
-        sucursalInventarioProductosVenta = request.POST['sucursalInventarioProductosVenta']
-        
-        if tipoProductos == "productosVenta":
-            if sucursalInventarioProductosVenta == "todas":
-                consultaProductosVenta = ProductosVenta.objects.all()
-            else:
-                consultaProductosVenta = ProductosVenta.objects.filter(sucursal_id__id_sucursal = sucursalInventarioProductosVenta)
-                
-        if tipoProductos == "productosGasto":
-            if sucursalInventarioProductosVenta == "todas":
-                consultaProductosVenta = ProductosGasto.objects.all()
-            else:
-                consultaProductosVenta = ProductosGasto.objects.filter(sucursal_id__id_sucursal = sucursalInventarioProductosVenta)
-                
-        if tipoProductos == "productosRenta":
-            if sucursalInventarioProductosVenta == "todas":
-                consultaProductosVenta = ProductosRenta.objects.all()
-            else:
-                consultaProductosVenta = ProductosRenta.objects.filter(sucursal_id__id_sucursal = sucursalInventarioProductosVenta)
-            
-                
-        productosBajosEnStock = []
-        for producto in consultaProductosVenta:
-            existenciaActual = producto.cantidad
-            stockActual = producto.stock
-            
-            if existenciaActual <= stockActual:
-                idProducto = producto.id_producto
-                codigoProducto = producto.codigo_producto
-                nombreProducto = producto.nombre_producto
-                skuProducto = producto.sku_producto
-                costoUnitarioProducto = producto.costo_compra
-                fechaAgregadoProducto = producto.fecha_alta
-                sucursalProducto = producto.sucursal_id
-                
-                consultaSucursal = Sucursales.objects.filter(id_sucursal = sucursalProducto)
-                for datoSucursal in consultaSucursal:
-                    nombreSucursalProducto = datoSucursal.nombre
-                    
-                productosBajosEnStock.append([idProducto,codigoProducto,nombreProducto,skuProducto,costoUnitarioProducto,stockActual,existenciaActual,fechaAgregadoProducto,
-                                              nombreSucursalProducto])
-                    
-        try:
-            #Excel.
-            response = HttpResponse(content_type='application/ms-excel')
-            response['Content-Disposition'] = 'attachment; filename=Reporte Stock Bajo Productos Venta '+str(datetime.today().strftime('%Y-%m-%d'))+'.xls'
-            
-            libro = xlwt.Workbook(encoding='utf-8')
-            hoja = libro.add_sheet('Productos')
-            
-            numero_fila = 0
-            estilo_fuente = xlwt.XFStyle()
-            estilo_fuente.font.bold = True
-            
-            columnas = ['Id','Código Producto','Nombre','SKU','Costo unitario','Stock','Existencias','Fecha de agregado','Sucursal']
-            for columna in range(len(columnas)):
-                hoja.write(numero_fila, columna, columnas[columna], estilo_fuente)
-            
-            estilo_fuente = xlwt.XFStyle()
-            for productito in productosBajosEnStock:
-                numero_fila+=1
-                for columna in range(len(productito)):
-                    hoja.write(numero_fila, columna, str(productito[columna]), estilo_fuente)
-            
-
-            libro.save(response)
-            
-            #Datos a mandar en correo.
-            
-            #datos de sucursal
-            if sucursalInventarioProductosVenta == "todas":
-                nombreSucursalCorreo = "Todas las sucursales"
-            else:
-                consultaSucursal = Sucursales.objects.filter(id_sucursal = sucursalInventarioProductosVenta)
-                for datoSucursal in consultaSucursal:
-                    nombreSucursalCorreo = datoSucursal.nombre
-                
-            #datos empleado
-            nombresEmpleado = request.session['nombresSesion']
-            
-            if tipoProductos == "productosVenta":
-                productos = "venta"
-            elif tipoProductos == "productosGasto":
-                productos = "gasto"
-                
-            
-            #Mandar correo.
-            correo = "sistemas@customco.com.mx"
-            asunto = "Costabella | Informe de Productos Venta con stock bajo."
-            plantilla = "6 Productos/Correos/correoStockPv.html"
-            html_mensaje = render_to_string(plantilla,{"nombreSucursalCorreo":nombreSucursalCorreo,"nombresEmpleado":nombresEmpleado, "productos":productos}) #Aqui va el diccionario de datos.
-            email_remitente = settings.EMAIL_HOST_USER
-            email_destino = [correo]
-            mensaje = EmailMessage(asunto, html_mensaje, email_remitente, email_destino)
-            mensaje.content_subtype = 'html'
-            #Mandar excel en el correo.
-            mensaje.attach('Reporte Stock Bajo Productos Venta '+str(datetime.today().strftime('%Y-%m-%d'))+'.xls', response.getvalue())
-            mensaje.send()
-            request.session['correoEnviado'] = "Se ha mandado el informe a tu correo electrónico!"
-            return redirect('/inventarioProductos/')
-        except:
-            request.session['correoNoEnviado'] = "Error en el proceso, avisar a Soporte!"
-            return redirect('/inventarioProductos/')
-    
-def ajusteProductosVenta(request):
-    
-    if request.method == "POST":
-        
-        sucursal = request.POST['sucursal']
-        myfile = request.FILES['archivoExcelAjusteProductosVenta']     
-        
-        '''try:'''
-       
-        data = pd.read_excel(myfile, sheet_name="Productos")  
-        
-        sucursalesProductos = data['Sucursal'].tolist()
-        idsProductosVenta = data['Id'].tolist()
-        codigosProductosVenta = data['Código Producto'].tolist()
-        nombresProductosVenta = data['Nombre'].tolist()
-        skuProductosVenta = data['SKU'].tolist()
-        stocksProductosVenta = data['Stock'].tolist()
-        costosUnitariosProductosVenta = data['Costo unitario de compra'].tolist()
-        existenciasProductosVenta = data['Existencias en sistema'].tolist()
-        cantidadContadaProductosVenta = data['Cantidad Contada'].tolist()
-        diferenciaProductosVenta = data['Diferencia +/-'].tolist()
-        
-        
-        
-        
-        
-        if sucursal == "todas":
-            consultaProductosVenta = ProductosVenta.objects.all()
-            sucursalCoincide = True
-        else:
-            sucuralDelExcel = sucursalesProductos[0] #Se saca la sucursal de un producto
-            
-            sucursalCoincide = True
-            consultaSucursalElegida = Sucursales.objects.filter(id_sucursal = sucursal)
-            for datoSucursal in consultaSucursalElegida:
-                nombreSucursal = datoSucursal.nombre
-                
-            if nombreSucursal == sucuralDelExcel:
-                consultaProductosVenta = ProductosVenta.objects.filter(sucursal_id__id_sucursal = sucursal)
-            else:
-                sucursalCoincide = False
-        
-        if sucursalCoincide:
-            for productoVenta in consultaProductosVenta:
-                idProducto = productoVenta.id_producto
-                codigoProducto = productoVenta.codigo_producto 
-                listaExcel = zip(idsProductosVenta,codigosProductosVenta,stocksProductosVenta,costosUnitariosProductosVenta,existenciasProductosVenta,cantidadContadaProductosVenta,diferenciaProductosVenta)
-                for ida, codigo, stock, costo, existencias, cantidadContada, diferencia in listaExcel:
-                    idProductoExcel = int(ida)
-                    codigoProductoExcel = str(codigo)
-                    
-                    
-                    if idProducto == idProductoExcel and codigoProducto == codigoProductoExcel:
-                        isNaN = np.isnan(cantidadContada) #Si el campo de cantidad contada es nulo
-                        
-                        if isNaN == False:
-                            
-                            
-                            stockProductoExcel = int(stock)
-                            costoProductoExcel = float(costo)
-                            existenciasProductoExcel = int(existencias)
-                            cantidadContadaProductoExcel = int(cantidadContada)
-                            diferenciaProductoExcel = str(diferencia)
-                            
-                            print(str(codigoProductoExcel)+" "+str(cantidadContadaProductoExcel))
-                        
-                            try:
-                                actualizacionProducto = ProductosVenta.objects.filter(id_producto = idProductoExcel, codigo_producto = codigoProductoExcel).update(
-                                    stock = stockProductoExcel, costo_compra = costoProductoExcel,cantidad = cantidadContadaProductoExcel)
-                                
-                                productosActualizados = True
-                                
-                            except:
-                                productosActualizados = False
-        
-                            
-        
-            if productosActualizados:
-                
-                #CORREEEEEOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO 
-                #datos de sucursal
-                if sucursal == "todas":
-                    nombreSucursalCorreo = "Todas las sucursales"
-                else:
-                    consultaSucursal = Sucursales.objects.filter(id_sucursal = sucursal)
-                    for datoSucursal in consultaSucursal:
-                        nombreSucursalCorreo = datoSucursal.nombre
-                    
-                #datos empleado
-                nombresEmpleado = request.session['nombresSesion']
-                
-                productos = "venta"
-                
-                #Mandar el excel
-                listaExcelSubido = zip(sucursalesProductos,idsProductosVenta,codigosProductosVenta,nombresProductosVenta,skuProductosVenta,stocksProductosVenta,
-                                       costosUnitariosProductosVenta,existenciasProductosVenta,cantidadContadaProductosVenta,diferenciaProductosVenta)
-                
-                listaParaGenerarExcel = []
-                for sucursalES, idES, codigoES, nombreES,skuES, stokES, costoUnitarioES, existenciasProductoES, cantidadContadaES, diferenciaProductosES in listaExcelSubido:
-                    listaParaGenerarExcel.append([sucursalES,idES,codigoES,nombreES,skuES,stokES,costoUnitarioES,existenciasProductoES,cantidadContadaES,diferenciaProductosES])
-                
-                 #Excel.
-                response = HttpResponse(content_type='application/ms-excel')
-                response['Content-Disposition'] = 'attachment; filename=Ajuste productos venta '+str(datetime.today().strftime('%Y-%m-%d'))+'.xls'
-                
-                libro = xlwt.Workbook(encoding='utf-8')
-                hoja = libro.add_sheet('Productos')
-                
-                numero_fila = 0
-                estilo_fuente = xlwt.XFStyle()
-                estilo_fuente.font.bold = True
-                
-                columnas = ['Sucursal','Id','Código Producto','Nombre','SKU','Stock','Costo unitario de compra','Exsitencias en sistema','Cantidad Contada','Diferencia +/-']
-                for columna in range(len(columnas)):
-                    hoja.write(numero_fila, columna, columnas[columna], estilo_fuente)
-                
-                estilo_fuente = xlwt.XFStyle()
-                for productito in listaParaGenerarExcel:
-                    numero_fila+=1
-                    for columna in range(len(productito)):
-                        hoja.write(numero_fila, columna, str(productito[columna]), estilo_fuente)
-                
-
-                libro.save(response)
-                
-                
-                #Mandar correo.
-                correo = "sistemas@customco.com.mx"
-                asunto = "Costabella | Ajuste de productos para venta."
-                plantilla = "6 Productos/Correos/correoAjustePv.html"
-                html_mensaje = render_to_string(plantilla,{"nombreSucursalCorreo":nombreSucursalCorreo,"nombresEmpleado":nombresEmpleado, "productos":productos}) #Aqui va el diccionario de datos.
-                email_remitente = settings.EMAIL_HOST_USER
-                email_destino = [correo]
-                mensaje = EmailMessage(asunto, html_mensaje, email_remitente, email_destino)
-                mensaje.content_subtype = 'html'
-                #Mandar excel en el correo.
-                mensaje.attach('Ajuste de productos para venta '+str(datetime.today().strftime('%Y-%m-%d'))+'.xls', response.getvalue())
-                mensaje.send()
-                
-                
-                
-                # FIN CORREEEEOOOOOOOOOOOOOOOOOOOO
-                
-                # MANDAR NOTIFICACIÓN A TELÉFONO.
-                try:
-                    tokenTelegram = keysBotCostabella.tokenBotCostabella
-                    botCostabella = telepot.Bot(tokenTelegram)
-
-                    idGrupoTelegram = keysBotCostabella.idGrupo
-
-                    if sucursal == "todas":
-                        mensajeSucursalesTotdas = True
-                    else:
-                        mensajeSucursalesTotdas = False
-
-                    date = datetime.now()
-                    hora = date.time().strftime("%H:%M")
-
-                    if mensajeSucursalesTotdas:
-                        mensaje = "Hola \U0001F44B! La empleada administradora "+nombresEmpleado+" ha realizado un ajuste de existencias de productos para venta en todas las sucursales costabella a las "+str(hora)+" horas. Favor de checar correo electrónico"
-                    else:
-                        mensaje = "Hola \U0001F44B! La empleada "+nombresEmpleado+" ha realizado un ajuste de existencias de productos para venta en la sucursal "+nombreSucursalCorreo+" a las "+str(hora)+" horas. Favor de checar correo electrónico."
-                    botCostabella.sendMessage(idGrupoTelegram,mensaje)
-
-                except:
-                    print("An exception occurred")
-                
-                    
-                request.session['productosActualizados'] = "Se han actualizado los productos para venta con el Excel subido!"
-                return redirect('/inventarioProductos/')  
-            else:  
-                request.session['errorProductosActualizados'] = "Error al actualizar los datos, intente de nuevo más tarde."
-                return redirect('/inventarioProductos/')   
-        else:
-            request.session['errorProductosActualizados'] = "La sucursal elegida no coincide con la sucursal del Excel, favor de elegir bien la sucursal."
-            return redirect('/inventarioProductos/')            
-        
-        
-            
-def ajusteProductosGasto(request):
-    
-    if request.method == "POST":
-        
-        sucursal = request.POST['sucursal']
-        myfile = request.FILES['archivoExcelAjusteProductosGasto']     
-        
-        try:
-       
-            data = pd.read_excel(myfile, sheet_name="Productos")  
-            
-            sucursalesProductos = data['Sucursal'].tolist()
-            idsProductosVenta = data['Id'].tolist()
-            codigosProductosVenta = data['Código Producto'].tolist()
-            nombresProductosVenta = data['Nombre'].tolist()
-            skuProductosVenta = data['SKU'].tolist()
-            stocksProductosVenta = data['Stock'].tolist()
-            costosUnitariosProductosVenta = data['Costo unitario de compra'].tolist()
-            existenciasProductosVenta = data['Existencias en sistema'].tolist()
-            cantidadContadaProductosVenta = data['Cantidad Contada'].tolist()
-            diferenciaProductosVenta = data['Diferencia +/-'].tolist()
-            
-            
-            
-            
-            
-            if sucursal == "todas":
-                consultaProductosGasto = ProductosGasto.objects.all()
-                sucursalCoincide = True
-            else:
-                sucuralDelExcel = sucursalesProductos[0] #Se saca la sucursal de un producto
-                
-                sucursalCoincide = True
-                consultaSucursalElegida = Sucursales.objects.filter(id_sucursal = sucursal)
-                for datoSucursal in consultaSucursalElegida:
-                    nombreSucursal = datoSucursal.nombre
-                    
-                if nombreSucursal == sucuralDelExcel:
-                    consultaProductosGasto = ProductosGasto.objects.filter(sucursal_id__id_sucursal = sucursal)
-                else:
-                    sucursalCoincide = False
-            
-            if sucursalCoincide:
-                for productoVenta in consultaProductosGasto:
-                    idProducto = productoVenta.id_producto
-                    codigoProducto = productoVenta.codigo_producto 
-                    listaExcel = zip(idsProductosVenta,codigosProductosVenta,stocksProductosVenta,costosUnitariosProductosVenta,existenciasProductosVenta,cantidadContadaProductosVenta,diferenciaProductosVenta)
-                    for ida, codigo, stock, costo, existencias, cantidadContada, diferencia in listaExcel:
-                        idProductoExcel = int(ida)
-                        codigoProductoExcel = str(codigo)
-                        
-                        
-                        if idProducto == idProductoExcel and codigoProducto == codigoProductoExcel:
-                            isNaN = np.isnan(cantidadContada) #Si el campo de cantidad contada es nulo
-                            
-                            if isNaN == False:
-                                
-                                
-                                stockProductoExcel = int(stock)
-                                costoProductoExcel = float(costo)
-                                existenciasProductoExcel = int(existencias)
-                                cantidadContadaProductoExcel = int(cantidadContada)
-                                diferenciaProductoExcel = str(diferencia)
-                                
-                                print(str(codigoProductoExcel)+" "+str(cantidadContadaProductoExcel))
-                            
-                                try:
-                                    actualizacionProducto = ProductosGasto.objects.filter(id_producto = idProductoExcel, codigo_producto = codigoProductoExcel).update(
-                                        stock = stockProductoExcel, costo_compra = costoProductoExcel,cantidad = cantidadContadaProductoExcel)
-                                    
-                                    productosActualizados = True
-                                    
-                                except:
-                                    productosActualizados = False
-            
-                                
-            
-                if productosActualizados: 
-                    
-                     #CORREEEEEOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO 
-                    #datos de sucursal
-                    if sucursal == "todas":
-                        nombreSucursalCorreo = "Todas las sucursales"
-                    else:
-                        consultaSucursal = Sucursales.objects.filter(id_sucursal = sucursal)
-                        for datoSucursal in consultaSucursal:
-                            nombreSucursalCorreo = datoSucursal.nombre
-                    
-                    #datos empleado
-                    nombresEmpleado = request.session['nombresSesion']
-                    
-                    productos = "gasto"
-            
-                    #Mandar el excel
-                    listaExcelSubido = zip(sucursalesProductos,idsProductosVenta,codigosProductosVenta,nombresProductosVenta,skuProductosVenta,stocksProductosVenta,
-                                       costosUnitariosProductosVenta,existenciasProductosVenta,cantidadContadaProductosVenta,diferenciaProductosVenta)
-
-                    listaParaGenerarExcel = []
-                    for sucursalES, idES, codigoES, nombreES,skuES, stokES, costoUnitarioES, existenciasProductoES, cantidadContadaES, diferenciaProductosES in listaExcelSubido:
-                        listaParaGenerarExcel.append([sucursalES,idES,codigoES,nombreES,skuES,stokES,costoUnitarioES,existenciasProductoES,cantidadContadaES,diferenciaProductosES])
-                    
-                    #Excel.
-                    response = HttpResponse(content_type='application/ms-excel')
-                    response['Content-Disposition'] = 'attachment; filename=Ajuste productos venta '+str(datetime.today().strftime('%Y-%m-%d'))+'.xls'
-                    
-                    libro = xlwt.Workbook(encoding='utf-8')
-                    hoja = libro.add_sheet('Productos')
-                    
-                    numero_fila = 0
-                    estilo_fuente = xlwt.XFStyle()
-                    estilo_fuente.font.bold = True
-                    
-                    columnas = ['Sucursal','Id','Código Producto','Nombre','SKU','Stock','Costo unitario de compra','Exsitencias en sistema','Cantidad Contada','Diferencia +/-']
-                    for columna in range(len(columnas)):
-                        hoja.write(numero_fila, columna, columnas[columna], estilo_fuente)
-                    
-                    estilo_fuente = xlwt.XFStyle()
-                    for productito in listaParaGenerarExcel:
-                        numero_fila+=1
-                        for columna in range(len(productito)):
-                            hoja.write(numero_fila, columna, str(productito[columna]), estilo_fuente)
-                    
-
-                    libro.save(response)
-                    
-                    #Mandar correo.
-                    correo = "sistemas@customco.com.mx"
-                    asunto = "Costabella | Ajuste de productos para venta."
-                    plantilla = "6 Productos/Correos/correoAjustePv.html"
-                    html_mensaje = render_to_string(plantilla,{"nombreSucursalCorreo":nombreSucursalCorreo,"nombresEmpleado":nombresEmpleado, "productos":productos}) #Aqui va el diccionario de datos.
-                    email_remitente = settings.EMAIL_HOST_USER
-                    email_destino = [correo]
-                    mensaje = EmailMessage(asunto, html_mensaje, email_remitente, email_destino)
-                    mensaje.content_subtype = 'html'
-                    #Mandar excel en el correo.
-                    mensaje.attach('Ajuste de productos gasto '+str(datetime.today().strftime('%Y-%m-%d'))+'.xls', response.getvalue())
-                    mensaje.send()
-                    
-                    
-                    
-                    # FIN CORREEEEOOOOOOOOOOOOOOOOOOOO
-                    try:
-                        tokenTelegram = keysBotCostabella.tokenBotCostabella
-                        botCostabella = telepot.Bot(tokenTelegram)
-
-                        idGrupoTelegram = keysBotCostabella.idGrupo
-
-                        if sucursal == "todas":
-                            mensajeSucursalesTotdas = True
-                        else:
-                            mensajeSucursalesTotdas = False
-
-                        date = datetime.now()
-                        hora = date.time().strftime("%H:%M")
-
-                        if mensajeSucursalesTotdas:
-                            mensaje = "Hola \U0001F44B! La empleada administradora "+nombresEmpleado+" ha realizado un ajuste de existencias de productos gasto en todas las sucursales costabella a las "+str(hora)+" horas. Favor de checar correo electrónico."
-                        else:
-                            mensaje = "Hola \U0001F44B! La empleada "+nombresEmpleado+" ha realizado un ajuste de existencias de productos gasto en la sucursal "+nombreSucursalCorreo+" a las "+str(hora)+" horas. Favor de chercar correo electrónico."
-                        botCostabella.sendMessage(idGrupoTelegram,mensaje)
-
-                    except:
-                        print("An exception occurred")
-
-                    # MANDAR NOTIFICACIÓN A TELÉFONO.
-                    
-                
-                               
-                    request.session['productosActualizados'] = "Se han actualizado los productos para venta con el Excel subido!"
-                    return redirect('/inventarioProductos/')  
-                else:  
-                    request.session['errorProductosActualizados'] = "Error al actualizar los datos, intente de nuevo más tarde."
-                    return redirect('/inventarioProductos/')   
-            else:
-                request.session['errorProductosActualizados'] = "La sucursal elegida no coincide con la sucursal del Excel, favor de elegir bien la sucursal."
-                return redirect('/inventarioProductos/')            
-        
-        except:
-            request.session['errorProductosActualizados'] = "Error al subir el archivo, contacte a soporte."
-            return redirect('/inventarioProductos/')
-        
-    
-
+#Listo
 def actNombreUsuario(request):
 
     if "idSesion" in request.session:
@@ -2261,7 +1454,7 @@ def actNombreUsuario(request):
         return redirect('/verEmpleados/')
     else:
         return render(request,"1 Login/login.html")
-    
+#Listo    
 def actContrasena(request):
 
     if "idSesion" in request.session:
@@ -2286,6 +1479,154 @@ def actContrasena(request):
     else:
         return render(request,"1 Login/login.html")
     
+
+
+# SUCURSALES -------------------------------------------------------------------------------------------------------------------------
+# Lista
+def altaSucursal(request):
+
+    if "idSesion" in request.session:
+
+        # Variables de sesión
+        idEmpleado = request.session['idSesion']
+        nombresEmpleado = request.session['nombresSesion']
+        idPerfil = idEmpleado
+        idConfig = idEmpleado
+    
+        tipoUsuario = request.session['tipoUsuario']
+        puestoEmpleado = request.session['puestoSesion']
+
+        # Variable para Menu
+        estaEnAltaSucursal = True
+
+        #INFORMACION de empleado para menusito
+        letra = nombresEmpleado[0]
+        
+           #notificacionRentas
+        notificacionRenta = notificacionRentas(request)
+
+        #notificacionCitas
+        notificacionCita = notificacionCitas(request)
+
+        consultaPermisos = Permisos.objects.filter(id_empleado_id__id_empleado = idEmpleado)
+
+
+        # retornar sucrusales
+        sucursales = Sucursales.objects.all()
+        if request.method == "POST":
+            nombreSucursal = request.POST['nombreSucursal']
+            telefono = request.POST['telefonoSucursal']
+            direccion = request.POST['direccionSucursal']
+            latitud = request.POST['latitud']
+            longitud = request.POST['longitud']
+       
+
+      
+
+            # Si usuario administrador..
+     
+            altaSucursal = Sucursales(nombre= nombreSucursal,
+                direccion=direccion,
+                telefono=telefono,
+                latitud = latitud,
+                longitud = longitud
+                ) #Sin sucursal porque Admin
+            altaSucursal.save()
+
+            if altaSucursal:
+                sucursalAgregado = "La sucursal "+nombreSucursal + " ha sido agregado satisfactoriamente!"
+                return render(request, "4 Sucursales/altaSucursal.html", {"consultaPermisos":consultaPermisos,"idEmpleado":idEmpleado,"idPerfil":idPerfil, "idConfig":idConfig, "nombresEmpleado":nombresEmpleado,"tipoUsuario":tipoUsuario, "letra":letra, "puestoEmpleado":puestoEmpleado,"estaEnAltaSucursal":estaEnAltaSucursal, "sucursales":sucursales, "sucursalAgregado":sucursalAgregado,"notificacionRenta":notificacionRenta, "notificacionCita":notificacionCita})
+            else:
+                sucursalNoAgregada = "Error en la base de datos, intentelo más tarde.."
+                return render(request, "4 Sucursales/altaSucursal.html", {"consultaPermisos":consultaPermisos,"idEmpleado":idEmpleado,"idPerfil":idPerfil, "idConfig":idConfig, "nombresEmpleado":nombresEmpleado,"tipoUsuario":tipoUsuario, "letra":letra, "puestoEmpleado":puestoEmpleado,"estaEnAltaSucursal":estaEnAltaSucursal, "sucursales":sucursales, "sucursalNoAgregada":sucursalNoAgregada,"notificacionRenta":notificacionRenta, "notificacionCita":notificacionCita})
+
+        return render(request, "4 Sucursales/altaSucursal.html", {"consultaPermisos":consultaPermisos,"idEmpleado":idEmpleado,"idPerfil":idPerfil, "idConfig":idConfig, "nombresEmpleado":nombresEmpleado,"tipoUsuario":tipoUsuario, "letra":letra, "puestoEmpleado":puestoEmpleado,"estaEnAltaSucursal":estaEnAltaSucursal, "sucursales":sucursales,"notificacionRenta":notificacionRenta, "notificacionCita":notificacionCita})
+    else:
+        return render(request,"1 Login/login.html")
+# Lista
+def verSucursales(request):
+
+    if "idSesion" in request.session:
+
+        # Variables de sesión
+        idEmpleado = request.session['idSesion']
+        nombresEmpleado = request.session['nombresSesion']
+        tipoUsuario = request.session['tipoUsuario']
+        puestoEmpleado = request.session['puestoSesion']
+        idPerfil = idEmpleado
+        idConfig = idEmpleado
+       
+
+        
+
+        #INFORMACION de empleado para menusito
+        letra = nombresEmpleado[0]
+        
+           #notificacionRentas
+        notificacionRenta = notificacionRentas(request)
+
+        #notificacionCitas
+        notificacionCita = notificacionCitas(request)
+
+        consultaPermisos = Permisos.objects.filter(id_empleado_id__id_empleado = idEmpleado)
+
+
+        empleadosPorSucursal = []
+        
+        empleadosTotalesPorSucursal =[]
+   
+        listaSucursales = Sucursales.objects.all()
+        cantidadSucursales = 0
+        
+       
+        
+        for sucursal in listaSucursales:
+            cantidadSucursales +=1
+            id_sucursal_una = sucursal.id_sucursal
+            sucursalInt = int(id_sucursal_una)
+            
+            empleadosEnSucursal = Empleados.objects.filter(id_sucursal_id__id_sucursal = sucursalInt)#filtro de los empleados que esten dentro de un area especifica
+            if empleadosEnSucursal:
+                empleadosDatos = []
+                for datosEmpleado in empleadosEnSucursal:
+                    idEmpleadoSucursal = datosEmpleado.id_empleado
+                    nombreEmpleadoSucursal = datosEmpleado.nombres
+                    apellidoPEmpleadoSucursal = datosEmpleado.apellido_paterno
+                    apellidoMEmpleadoSucursal = datosEmpleado.apellido_materno
+                    empleadosDatos.append([idEmpleadoSucursal,nombreEmpleadoSucursal,apellidoPEmpleadoSucursal,apellidoMEmpleadoSucursal])
+                empleadosTotalesPorSucursal.append(empleadosDatos)
+                
+                numero_empleados = 0
+                for empleado in empleadosEnSucursal:
+                    numero_empleados+=1
+                
+                empleadosPorSucursal.append(numero_empleados)
+            else:
+                empleadosTotalesPorSucursal.append("Sin empleados")
+                empleadosPorSucursal.append(0)
+
+                
+                    
+        
+            
+        lista = zip(listaSucursales,empleadosTotalesPorSucursal)
+                
+                
+       
+            
+            
+        
+        
+        
+        
+
+
+        return render(request, "4 Sucursales/verSucursales.html", {"consultaPermisos":consultaPermisos,"idEmpleado":idEmpleado,"idPerfil":idPerfil, "idConfig":idConfig, "nombresEmpleado":nombresEmpleado,"tipoUsuario":tipoUsuario, "letra":letra, "puestoEmpleado":puestoEmpleado, "lista":lista, "cantidadSucursales":cantidadSucursales,"notificacionRenta":notificacionRenta,"notificacionCita":notificacionCita})
+    else:
+        return render(request,"1 Login/login.html")
+
+# CLIENTES ---------------------------------------------------------------------------------------------------------------------
+# Lista
 def verClientes(request):
 
     if "idSesion" in request.session:
@@ -2432,7 +1773,7 @@ def verClientes(request):
         "contadorActivos":contadorActivos, "contadorBloqueados":contadorBloqueados,"listaClientesActivos":listaClientesActivos,"listaClientesBloqueados":listaClientesBloqueados,"notificacionRenta":notificacionRenta, "notificacionCita":notificacionCita,})
     else:
         return render(request,"1 Login/login.html")
-
+# Lista
 def altaCliente(request):
 
     if "idSesion" in request.session:
@@ -2499,9 +1840,7 @@ def altaCliente(request):
         return render(request, "5 Clientes/altaCliente.html", {"consultaPermisos":consultaPermisos,"idEmpleado":idEmpleado,"idPerfil":idPerfil, "idConfig":idConfig, "nombresEmpleado":nombresEmpleado,"tipoUsuario":tipoUsuario, "letra":letra, "puestoEmpleado":puestoEmpleado,"estaEnAltaEmpleado":estaEnAltaEmpleado,"notificacionRenta":notificacionRenta, "notificacionCita":notificacionCita})
     else:
         return render(request,"1 Login/login.html")
-
-
-
+# Lista
 def bloqueoCliente(request):
 
     if "idSesion" in request.session:
@@ -2520,7 +1859,7 @@ def bloqueoCliente(request):
             if actualizacionCliente:    
                 request.session['clienteActualizado'] = "El cliente " + nombre + " ha sido bloqueado satisfactoriamente!"
                 return redirect('/verClientes/')
-
+# Lista
 def activoCliente(request):
 
     if "idSesion" in request.session:
@@ -2539,6 +1878,7 @@ def activoCliente(request):
             if actualizacionCliente:    
                 request.session['clienteActualizado'] = "El cliente " + nombre + " se ha activado satisfactoriamente!"
                 return redirect('/verClientes/')
+# Lista
 def infoCliente(request):
 
     if "idSesion" in request.session:
@@ -3405,7 +2745,7 @@ def infoCliente(request):
         return redirect('/verClientes/')
     else:
         return render(request,"1 Login/login.html")
-
+# Lista
 def actTelCliente(request):
 
     if "idSesion" in request.session:
@@ -3427,6 +2767,9 @@ def actTelCliente(request):
                 return redirect('/verClientes/')      
             
 
+
+# PRODUCTOS ------------------------------------------------------------------------------------------------------------------------
+# Lista
 def altaProductos(request):
 
     if "idSesion" in request.session:
@@ -3916,10 +3259,8 @@ def altaProductos(request):
 
         return render(request, "6 Productos/altaProductos.html", {"consultaPermisos":consultaPermisos,"idEmpleado":idEmpleado,"idPerfil":idPerfil, "idConfig":idConfig, "nombresEmpleado":nombresEmpleado,"tipoUsuario":tipoUsuario, "letra":letra, "puestoEmpleado":puestoEmpleado,"estaEnAltaEmpleado":estaEnAltaEmpleado, "sucursales":sucursales,"notificacionRenta":notificacionRenta, "notificacionCita":notificacionCita})
     else:
-        return render(request,"1 Login/login.html")
-    
-    
-
+        return render(request,"1 Login/login.html")    
+# Lista
 def inventarioProductos(request):
 
     if "idSesion" in request.session:
@@ -4252,9 +3593,7 @@ def inventarioProductos(request):
             "totalesSucursalesProductosGasto":totalesSucursalesProductosGasto, "costoTotalProductosGasto":costoTotalProductosGasto, "notificacionCita":notificacionCita})
     else:
         return render(request,"1 Login/login.html")
-    
-    
-    
+# Lista
 def actualizarProductoV(request):
 
     if "idSesion" in request.session:
@@ -4275,8 +3614,7 @@ def actualizarProductoV(request):
             if actualizacionProductoVenta:    
                 request.session['productoActualizado'] = "El producto " + nombreProducto + " ha sido actualizado correctamente!"
                 return redirect('/inventarioProductos/')      
-
-            
+# Lista
 def actualizarProductoVentaCompra(request):
 
     if "idSesion" in request.session:
@@ -4334,9 +3672,7 @@ def actualizarProductoVentaCompra(request):
                     z = Zebra('ZDesigner GC420d')
                     z.output(label)
                 return redirect('/inventarioProductos/')      
-
-
-    
+# Lista
 def actualizarProductoGasto(request):
 
     if "idSesion" in request.session:
@@ -4357,9 +3693,7 @@ def actualizarProductoGasto(request):
             if actualizacionProductoGasto:    
                 request.session['productoActualizado'] = "El producto " + nombreProducto + " ha sido actualizado correctamente!"
                 return redirect('/inventarioProductos/')  
-            
-
-            
+# Lista
 def actualizarProductoGastoCompra(request):
 
     if "idSesion" in request.session:
@@ -4417,8 +3751,7 @@ def actualizarProductoGastoCompra(request):
                     z = Zebra('ZDesigner GC420d')
                     z.output(label)
                 return redirect('/inventarioProductos/')          
-    
-
+# Lista
 def actualizarProductoRenta(request):
 
     if "idSesion" in request.session:
@@ -4439,9 +3772,662 @@ def actualizarProductoRenta(request):
             if actualizacionProductoRenta:    
                 request.session['productoActualizado'] = "El producto " + nombreProducto + " ha sido actualizado correctamente!"
                 return redirect('/inventarioProductos/')  
+
+
+
+def xlInventarioProductosVenta(request):
+    if request.method == "POST":
+        tipoProductos= request.POST['tipoProductos'] #A o I
+        sucursalInventarioProductosVenta = request.POST['sucursalInventarioProductosVenta']
+            
+    response = HttpResponse(content_type='application/ms-excel')
+    if tipoProductos == "productosVenta":
+    
+        response['Content-Disposition'] = 'attachment; filename=Reporte Inventario Productos para venta '+str(datetime.today().strftime('%Y-%m-%d'))+'.xls'
+    elif tipoProductos == "productosGasto":
+        response['Content-Disposition'] = 'attachment; filename=Reporte Inventario Productos gasto '+str(datetime.today().strftime('%Y-%m-%d'))+'.xls'
+    elif tipoProductos == "productosRenta":
+        response['Content-Disposition'] = 'attachment; filename=Reporte Inventario Productos para renta '+str(datetime.today().strftime('%Y-%m-%d'))+'.xls'
+    
+    
+    #creación de libro de excel
+    libro = xlwt.Workbook(encoding='utf-8')
+    hoja = libro.add_sheet('Productos')
+    
+    numero_fila = 0
+    estilo_fuente = xlwt.XFStyle()
+    estilo_fuente.font.bold = True
+    
+    if tipoProductos == "productosVenta":
+        columnas = ['Id','Código Producto','Nombre','SKU','Costo unitario','Existencias','Costo Total en inventario', 'Margen de ganancia', 'Costo de venta', 'Stock', 'Fecha de agregado','Sucursal']
+    elif tipoProductos == "productosGasto":
+        columnas = ['Id','Código Producto','Nombre','SKU','Costo unitario','Existencias','Costo Total en inventario', 'Stock', 'Fecha de agregado','Sucursal']
+    elif tipoProductos == "productosRenta":
+        columnas = ['Id','Código Producto','Nombre','Costo compra','Existencias','Estado de renta','Costo de renta', 'Fecha de agregado','Sucursal']
+    
+    for columna in range(len(columnas)):
+        hoja.write(numero_fila, columna, columnas[columna], estilo_fuente)
+       
+    
+    #lista de productos dependiento de la sucursal
+    if sucursalInventarioProductosVenta == "todas":
+        if tipoProductos == "productosVenta":
+            productosVenta = ProductosVenta.objects.all()
+        elif tipoProductos == "productosGasto":
+            productosVenta = ProductosGasto.objects.all()
+        elif tipoProductos == "productosRenta":
+            productosVenta = ProductosRenta.objects.all()
+        
+    else:
+        if tipoProductos == "productosVenta":
+            productosVenta = ProductosVenta.objects.filter(sucursal_id__id_sucursal = sucursalInventarioProductosVenta)
+        elif tipoProductos == "productosGasto":
+            productosVenta = ProductosGasto.objects.filter(sucursal_id__id_sucursal = sucursalInventarioProductosVenta)
+        elif tipoProductos == "productosRenta":
+            productosVenta = ProductosRenta.objects.filter(sucursal_id__id_sucursal = sucursalInventarioProductosVenta)
+    
+    sucursales = []
+    costosTotalesProductos = []
+    for producto in productosVenta:
+        sucursalProducto = producto.sucursal_id
+        consultaSucursal = Sucursales.objects.filter(id_sucursal = sucursalProducto)
+        for datoSucursal in consultaSucursal:
+            nombreSucursal = datoSucursal.nombre
+            
+        sucursales.append(nombreSucursal)
+        
+        if tipoProductos == "productosRenta":
+            jejej = True
+        else:
+            costoCompraProducto = producto.costo_compra
+            cantidadExistenteProducto = producto.cantidad
+            
+            costoTotalProducto = float(costoCompraProducto) * float(cantidadExistenteProducto)
+            costosTotalesProductos.append(costoTotalProducto)
+        
+    datosProductos = []
+    cont=0
+    for x in productosVenta:
+        cont+=1
+        if tipoProductos == "productosVenta":
+            datosProductos.append([x.id_producto, x.codigo_producto, x.nombre_producto,x.sku_producto, x.costo_compra,x.cantidad
+                               ,costosTotalesProductos[cont-1],x.margen_ganancia_producto,x.costo_venta,x.stock,x.fecha_alta, sucursales[cont-1]
+                            ])
+        elif tipoProductos == "productosGasto":
+            datosProductos.append([x.id_producto, x.codigo_producto, x.nombre_producto,x.sku_producto, x.costo_compra,x.cantidad
+                               ,costosTotalesProductos[cont-1],x.stock,x.fecha_alta, sucursales[cont-1]
+                            ])
+        elif tipoProductos == "productosRenta":
+            datosProductos.append([x.id_producto, x.codigo_producto, x.nombre_producto, x.costo_de_compra,x.cantidad
+                               ,x.estado_renta,x.costo_renta,x.fecha_alta, sucursales[cont-1]
+                            ])
+            
+        
+    estilo_fuente = xlwt.XFStyle()
+    for productito in datosProductos:
+        numero_fila+=1
+        for columna in range(len(productito)):
+            hoja.write(numero_fila, columna, str(productito[columna]), estilo_fuente)
+        
+    
+    
+    
+        
+    libro.save(response)
+    return response    
+    #creación   
+
+def xlInventarioCiclicoProductosVenta(request):
+    if request.method == "POST":
+        tipoProductos= request.POST['tipoProductos'] #A o I
+        sucursalInventarioProductosVenta = request.POST['sucursalInventarioProductosVenta']
+            
+    response = HttpResponse(content_type='application/ms-excel')
+    if tipoProductos == "productosVenta":
+    
+        response['Content-Disposition'] = 'attachment; filename=Reporte Inventario cíclico Productos para venta '+str(datetime.today().strftime('%Y-%m-%d'))+'.xls'
+    elif tipoProductos == "productosGasto":
+        response['Content-Disposition'] = 'attachment; filename=Reporte Inventario cíclico Productos gasto '+str(datetime.today().strftime('%Y-%m-%d'))+'.xls'
+    elif tipoProductos == "productosRenta":
+        response['Content-Disposition'] = 'attachment; filename=Reporte Inventario cíclico Productos para renta '+str(datetime.today().strftime('%Y-%m-%d'))+'.xls'
+    
+    
+    #creación de libro de excel
+    libro = xlwt.Workbook(encoding='utf-8')
+    hoja = libro.add_sheet('Productos')
+    
+    numero_fila = 0
+    estilo_fuente = xlwt.XFStyle()
+    estilo_fuente.font.bold = True
+    
+    columnas = ['Sucursal','Id','Código Producto','Nombre','SKU','Stock','Costo unitario de compra','Existencias en sistema','Cantidad Contada', 'Diferencia +/-']
+    for columna in range(len(columnas)):
+        hoja.write(numero_fila, columna, columnas[columna], estilo_fuente)
+       
+    
+    #lista de productos dependiento de la sucursal
+    if sucursalInventarioProductosVenta == "todas":
+        if tipoProductos == "productosVenta":
+            productosVenta = ProductosVenta.objects.all()
+        elif tipoProductos == "productosGasto":
+            productosVenta = ProductosGasto.objects.all()
+        elif tipoProductos == "productosRenta":
+            productosVenta = ProductosRenta.objects.all()
+    else:
+        if tipoProductos == "productosVenta":
+            productosVenta = ProductosVenta.objects.filter(sucursal_id__id_sucursal = sucursalInventarioProductosVenta)
+        elif tipoProductos == "productosGasto":
+            productosVenta = ProductosGasto.objects.filter(sucursal_id__id_sucursal = sucursalInventarioProductosVenta)
+        elif tipoProductos == "productosRenta":
+            productosVenta = ProductosRenta.objects.filter(sucursal_id__id_sucursal = sucursalInventarioProductosVenta)
+        
+    
+    sucursales = []
+    costosTotalesProductos = []
+    for producto in productosVenta:
+        sucursalProducto = producto.sucursal_id
+        consultaSucursal = Sucursales.objects.filter(id_sucursal = sucursalProducto)
+        for datoSucursal in consultaSucursal:
+            nombreSucursal = datoSucursal.nombre
+            
+        sucursales.append(nombreSucursal)
+        
+       
+        
+    datosProductos = []
+    cont=0
+    for x in productosVenta:
+        cont+=1
+        datosProductos.append([sucursales[cont-1],x.id_producto, x.codigo_producto, x.nombre_producto,x.sku_producto, x.stock,x.costo_compra,x.cantidad,"",""
+                            ])
+            
+        
+    estilo_fuente = xlwt.XFStyle()
+    for productito in datosProductos:
+        numero_fila+=1
+        for columna in range(len(productito)):
+            hoja.write(numero_fila, columna, str(productito[columna]), estilo_fuente)
+        
+    
+    
+    
+        
+    libro.save(response)
+    return response    
+    #creación 
+    
+def informeStockBajoProductosVenta(request):
+    if request.method == "POST":
+        tipoProductos= request.POST['tipoProductos']
+        sucursalInventarioProductosVenta = request.POST['sucursalInventarioProductosVenta']
+        
+        if tipoProductos == "productosVenta":
+            if sucursalInventarioProductosVenta == "todas":
+                consultaProductosVenta = ProductosVenta.objects.all()
+            else:
+                consultaProductosVenta = ProductosVenta.objects.filter(sucursal_id__id_sucursal = sucursalInventarioProductosVenta)
+                
+        if tipoProductos == "productosGasto":
+            if sucursalInventarioProductosVenta == "todas":
+                consultaProductosVenta = ProductosGasto.objects.all()
+            else:
+                consultaProductosVenta = ProductosGasto.objects.filter(sucursal_id__id_sucursal = sucursalInventarioProductosVenta)
+                
+        if tipoProductos == "productosRenta":
+            if sucursalInventarioProductosVenta == "todas":
+                consultaProductosVenta = ProductosRenta.objects.all()
+            else:
+                consultaProductosVenta = ProductosRenta.objects.filter(sucursal_id__id_sucursal = sucursalInventarioProductosVenta)
+            
+                
+        productosBajosEnStock = []
+        for producto in consultaProductosVenta:
+            existenciaActual = producto.cantidad
+            stockActual = producto.stock
+            
+            if existenciaActual <= stockActual:
+                idProducto = producto.id_producto
+                codigoProducto = producto.codigo_producto
+                nombreProducto = producto.nombre_producto
+                skuProducto = producto.sku_producto
+                costoUnitarioProducto = producto.costo_compra
+                fechaAgregadoProducto = producto.fecha_alta
+                sucursalProducto = producto.sucursal_id
+                
+                consultaSucursal = Sucursales.objects.filter(id_sucursal = sucursalProducto)
+                for datoSucursal in consultaSucursal:
+                    nombreSucursalProducto = datoSucursal.nombre
+                    
+                productosBajosEnStock.append([idProducto,codigoProducto,nombreProducto,skuProducto,costoUnitarioProducto,stockActual,existenciaActual,fechaAgregadoProducto,
+                                              nombreSucursalProducto])
+                    
+        try:
+            #Excel.
+            response = HttpResponse(content_type='application/ms-excel')
+            response['Content-Disposition'] = 'attachment; filename=Reporte Stock Bajo Productos Venta '+str(datetime.today().strftime('%Y-%m-%d'))+'.xls'
+            
+            libro = xlwt.Workbook(encoding='utf-8')
+            hoja = libro.add_sheet('Productos')
+            
+            numero_fila = 0
+            estilo_fuente = xlwt.XFStyle()
+            estilo_fuente.font.bold = True
+            
+            columnas = ['Id','Código Producto','Nombre','SKU','Costo unitario','Stock','Existencias','Fecha de agregado','Sucursal']
+            for columna in range(len(columnas)):
+                hoja.write(numero_fila, columna, columnas[columna], estilo_fuente)
+            
+            estilo_fuente = xlwt.XFStyle()
+            for productito in productosBajosEnStock:
+                numero_fila+=1
+                for columna in range(len(productito)):
+                    hoja.write(numero_fila, columna, str(productito[columna]), estilo_fuente)
             
 
+            libro.save(response)
+            
+            #Datos a mandar en correo.
+            
+            #datos de sucursal
+            if sucursalInventarioProductosVenta == "todas":
+                nombreSucursalCorreo = "Todas las sucursales"
+            else:
+                consultaSucursal = Sucursales.objects.filter(id_sucursal = sucursalInventarioProductosVenta)
+                for datoSucursal in consultaSucursal:
+                    nombreSucursalCorreo = datoSucursal.nombre
+                
+            #datos empleado
+            nombresEmpleado = request.session['nombresSesion']
+            
+            if tipoProductos == "productosVenta":
+                productos = "venta"
+            elif tipoProductos == "productosGasto":
+                productos = "gasto"
+                
+            
+            #Mandar correo.
+            correo = "sistemas@customco.com.mx"
+            asunto = "Costabella | Informe de Productos Venta con stock bajo."
+            plantilla = "6 Productos/Correos/correoStockPv.html"
+            html_mensaje = render_to_string(plantilla,{"nombreSucursalCorreo":nombreSucursalCorreo,"nombresEmpleado":nombresEmpleado, "productos":productos}) #Aqui va el diccionario de datos.
+            email_remitente = settings.EMAIL_HOST_USER
+            email_destino = [correo]
+            mensaje = EmailMessage(asunto, html_mensaje, email_remitente, email_destino)
+            mensaje.content_subtype = 'html'
+            #Mandar excel en el correo.
+            mensaje.attach('Reporte Stock Bajo Productos Venta '+str(datetime.today().strftime('%Y-%m-%d'))+'.xls', response.getvalue())
+            mensaje.send()
+            request.session['correoEnviado'] = "Se ha mandado el informe a tu correo electrónico!"
+            return redirect('/inventarioProductos/')
+        except:
+            request.session['correoNoEnviado'] = "Error en el proceso, avisar a Soporte!"
+            return redirect('/inventarioProductos/')
+    
+def ajusteProductosVenta(request):
+    
+    if request.method == "POST":
+        
+        sucursal = request.POST['sucursal']
+        myfile = request.FILES['archivoExcelAjusteProductosVenta']     
+        
+        '''try:'''
+       
+        data = pd.read_excel(myfile, sheet_name="Productos")  
+        
+        sucursalesProductos = data['Sucursal'].tolist()
+        idsProductosVenta = data['Id'].tolist()
+        codigosProductosVenta = data['Código Producto'].tolist()
+        nombresProductosVenta = data['Nombre'].tolist()
+        skuProductosVenta = data['SKU'].tolist()
+        stocksProductosVenta = data['Stock'].tolist()
+        costosUnitariosProductosVenta = data['Costo unitario de compra'].tolist()
+        existenciasProductosVenta = data['Existencias en sistema'].tolist()
+        cantidadContadaProductosVenta = data['Cantidad Contada'].tolist()
+        diferenciaProductosVenta = data['Diferencia +/-'].tolist()
+        
+        
+        
+        
+        
+        if sucursal == "todas":
+            consultaProductosVenta = ProductosVenta.objects.all()
+            sucursalCoincide = True
+        else:
+            sucuralDelExcel = sucursalesProductos[0] #Se saca la sucursal de un producto
+            
+            sucursalCoincide = True
+            consultaSucursalElegida = Sucursales.objects.filter(id_sucursal = sucursal)
+            for datoSucursal in consultaSucursalElegida:
+                nombreSucursal = datoSucursal.nombre
+                
+            if nombreSucursal == sucuralDelExcel:
+                consultaProductosVenta = ProductosVenta.objects.filter(sucursal_id__id_sucursal = sucursal)
+            else:
+                sucursalCoincide = False
+        
+        if sucursalCoincide:
+            for productoVenta in consultaProductosVenta:
+                idProducto = productoVenta.id_producto
+                codigoProducto = productoVenta.codigo_producto 
+                listaExcel = zip(idsProductosVenta,codigosProductosVenta,stocksProductosVenta,costosUnitariosProductosVenta,existenciasProductosVenta,cantidadContadaProductosVenta,diferenciaProductosVenta)
+                for ida, codigo, stock, costo, existencias, cantidadContada, diferencia in listaExcel:
+                    idProductoExcel = int(ida)
+                    codigoProductoExcel = str(codigo)
+                    
+                    
+                    if idProducto == idProductoExcel and codigoProducto == codigoProductoExcel:
+                        isNaN = np.isnan(cantidadContada) #Si el campo de cantidad contada es nulo
+                        
+                        if isNaN == False:
+                            
+                            
+                            stockProductoExcel = int(stock)
+                            costoProductoExcel = float(costo)
+                            existenciasProductoExcel = int(existencias)
+                            cantidadContadaProductoExcel = int(cantidadContada)
+                            diferenciaProductoExcel = str(diferencia)
+                            
+                            print(str(codigoProductoExcel)+" "+str(cantidadContadaProductoExcel))
+                        
+                            try:
+                                actualizacionProducto = ProductosVenta.objects.filter(id_producto = idProductoExcel, codigo_producto = codigoProductoExcel).update(
+                                    stock = stockProductoExcel, costo_compra = costoProductoExcel,cantidad = cantidadContadaProductoExcel)
+                                
+                                productosActualizados = True
+                                
+                            except:
+                                productosActualizados = False
+        
+                            
+        
+            if productosActualizados:
+                
+                #CORREEEEEOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO 
+                #datos de sucursal
+                if sucursal == "todas":
+                    nombreSucursalCorreo = "Todas las sucursales"
+                else:
+                    consultaSucursal = Sucursales.objects.filter(id_sucursal = sucursal)
+                    for datoSucursal in consultaSucursal:
+                        nombreSucursalCorreo = datoSucursal.nombre
+                    
+                #datos empleado
+                nombresEmpleado = request.session['nombresSesion']
+                
+                productos = "venta"
+                
+                #Mandar el excel
+                listaExcelSubido = zip(sucursalesProductos,idsProductosVenta,codigosProductosVenta,nombresProductosVenta,skuProductosVenta,stocksProductosVenta,
+                                       costosUnitariosProductosVenta,existenciasProductosVenta,cantidadContadaProductosVenta,diferenciaProductosVenta)
+                
+                listaParaGenerarExcel = []
+                for sucursalES, idES, codigoES, nombreES,skuES, stokES, costoUnitarioES, existenciasProductoES, cantidadContadaES, diferenciaProductosES in listaExcelSubido:
+                    listaParaGenerarExcel.append([sucursalES,idES,codigoES,nombreES,skuES,stokES,costoUnitarioES,existenciasProductoES,cantidadContadaES,diferenciaProductosES])
+                
+                 #Excel.
+                response = HttpResponse(content_type='application/ms-excel')
+                response['Content-Disposition'] = 'attachment; filename=Ajuste productos venta '+str(datetime.today().strftime('%Y-%m-%d'))+'.xls'
+                
+                libro = xlwt.Workbook(encoding='utf-8')
+                hoja = libro.add_sheet('Productos')
+                
+                numero_fila = 0
+                estilo_fuente = xlwt.XFStyle()
+                estilo_fuente.font.bold = True
+                
+                columnas = ['Sucursal','Id','Código Producto','Nombre','SKU','Stock','Costo unitario de compra','Exsitencias en sistema','Cantidad Contada','Diferencia +/-']
+                for columna in range(len(columnas)):
+                    hoja.write(numero_fila, columna, columnas[columna], estilo_fuente)
+                
+                estilo_fuente = xlwt.XFStyle()
+                for productito in listaParaGenerarExcel:
+                    numero_fila+=1
+                    for columna in range(len(productito)):
+                        hoja.write(numero_fila, columna, str(productito[columna]), estilo_fuente)
+                
 
+                libro.save(response)
+                
+                
+                #Mandar correo.
+                correo = "sistemas@customco.com.mx"
+                asunto = "Costabella | Ajuste de productos para venta."
+                plantilla = "6 Productos/Correos/correoAjustePv.html"
+                html_mensaje = render_to_string(plantilla,{"nombreSucursalCorreo":nombreSucursalCorreo,"nombresEmpleado":nombresEmpleado, "productos":productos}) #Aqui va el diccionario de datos.
+                email_remitente = settings.EMAIL_HOST_USER
+                email_destino = [correo]
+                mensaje = EmailMessage(asunto, html_mensaje, email_remitente, email_destino)
+                mensaje.content_subtype = 'html'
+                #Mandar excel en el correo.
+                mensaje.attach('Ajuste de productos para venta '+str(datetime.today().strftime('%Y-%m-%d'))+'.xls', response.getvalue())
+                mensaje.send()
+                
+                
+                
+                # FIN CORREEEEOOOOOOOOOOOOOOOOOOOO
+                
+                # MANDAR NOTIFICACIÓN A TELÉFONO.
+                try:
+                    tokenTelegram = keysBotCostabella.tokenBotCostabella
+                    botCostabella = telepot.Bot(tokenTelegram)
+
+                    idGrupoTelegram = keysBotCostabella.idGrupo
+
+                    if sucursal == "todas":
+                        mensajeSucursalesTotdas = True
+                    else:
+                        mensajeSucursalesTotdas = False
+
+                    date = datetime.now()
+                    hora = date.time().strftime("%H:%M")
+
+                    if mensajeSucursalesTotdas:
+                        mensaje = "Hola \U0001F44B! La empleada administradora "+nombresEmpleado+" ha realizado un ajuste de existencias de productos para venta en todas las sucursales costabella a las "+str(hora)+" horas. Favor de checar correo electrónico"
+                    else:
+                        mensaje = "Hola \U0001F44B! La empleada "+nombresEmpleado+" ha realizado un ajuste de existencias de productos para venta en la sucursal "+nombreSucursalCorreo+" a las "+str(hora)+" horas. Favor de checar correo electrónico."
+                    botCostabella.sendMessage(idGrupoTelegram,mensaje)
+
+                except:
+                    print("An exception occurred")
+                
+                    
+                request.session['productosActualizados'] = "Se han actualizado los productos para venta con el Excel subido!"
+                return redirect('/inventarioProductos/')  
+            else:  
+                request.session['errorProductosActualizados'] = "Error al actualizar los datos, intente de nuevo más tarde."
+                return redirect('/inventarioProductos/')   
+        else:
+            request.session['errorProductosActualizados'] = "La sucursal elegida no coincide con la sucursal del Excel, favor de elegir bien la sucursal."
+            return redirect('/inventarioProductos/')                    
+            
+def ajusteProductosGasto(request):
+    
+    if request.method == "POST":
+        
+        sucursal = request.POST['sucursal']
+        myfile = request.FILES['archivoExcelAjusteProductosGasto']     
+        
+        try:
+       
+            data = pd.read_excel(myfile, sheet_name="Productos")  
+            
+            sucursalesProductos = data['Sucursal'].tolist()
+            idsProductosVenta = data['Id'].tolist()
+            codigosProductosVenta = data['Código Producto'].tolist()
+            nombresProductosVenta = data['Nombre'].tolist()
+            skuProductosVenta = data['SKU'].tolist()
+            stocksProductosVenta = data['Stock'].tolist()
+            costosUnitariosProductosVenta = data['Costo unitario de compra'].tolist()
+            existenciasProductosVenta = data['Existencias en sistema'].tolist()
+            cantidadContadaProductosVenta = data['Cantidad Contada'].tolist()
+            diferenciaProductosVenta = data['Diferencia +/-'].tolist()
+            
+            
+            
+            
+            
+            if sucursal == "todas":
+                consultaProductosGasto = ProductosGasto.objects.all()
+                sucursalCoincide = True
+            else:
+                sucuralDelExcel = sucursalesProductos[0] #Se saca la sucursal de un producto
+                
+                sucursalCoincide = True
+                consultaSucursalElegida = Sucursales.objects.filter(id_sucursal = sucursal)
+                for datoSucursal in consultaSucursalElegida:
+                    nombreSucursal = datoSucursal.nombre
+                    
+                if nombreSucursal == sucuralDelExcel:
+                    consultaProductosGasto = ProductosGasto.objects.filter(sucursal_id__id_sucursal = sucursal)
+                else:
+                    sucursalCoincide = False
+            
+            if sucursalCoincide:
+                for productoVenta in consultaProductosGasto:
+                    idProducto = productoVenta.id_producto
+                    codigoProducto = productoVenta.codigo_producto 
+                    listaExcel = zip(idsProductosVenta,codigosProductosVenta,stocksProductosVenta,costosUnitariosProductosVenta,existenciasProductosVenta,cantidadContadaProductosVenta,diferenciaProductosVenta)
+                    for ida, codigo, stock, costo, existencias, cantidadContada, diferencia in listaExcel:
+                        idProductoExcel = int(ida)
+                        codigoProductoExcel = str(codigo)
+                        
+                        
+                        if idProducto == idProductoExcel and codigoProducto == codigoProductoExcel:
+                            isNaN = np.isnan(cantidadContada) #Si el campo de cantidad contada es nulo
+                            
+                            if isNaN == False:
+                                
+                                
+                                stockProductoExcel = int(stock)
+                                costoProductoExcel = float(costo)
+                                existenciasProductoExcel = int(existencias)
+                                cantidadContadaProductoExcel = int(cantidadContada)
+                                diferenciaProductoExcel = str(diferencia)
+                                
+                                print(str(codigoProductoExcel)+" "+str(cantidadContadaProductoExcel))
+                            
+                                try:
+                                    actualizacionProducto = ProductosGasto.objects.filter(id_producto = idProductoExcel, codigo_producto = codigoProductoExcel).update(
+                                        stock = stockProductoExcel, costo_compra = costoProductoExcel,cantidad = cantidadContadaProductoExcel)
+                                    
+                                    productosActualizados = True
+                                    
+                                except:
+                                    productosActualizados = False
+            
+                                
+            
+                if productosActualizados: 
+                    
+                     #CORREEEEEOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO 
+                    #datos de sucursal
+                    if sucursal == "todas":
+                        nombreSucursalCorreo = "Todas las sucursales"
+                    else:
+                        consultaSucursal = Sucursales.objects.filter(id_sucursal = sucursal)
+                        for datoSucursal in consultaSucursal:
+                            nombreSucursalCorreo = datoSucursal.nombre
+                    
+                    #datos empleado
+                    nombresEmpleado = request.session['nombresSesion']
+                    
+                    productos = "gasto"
+            
+                    #Mandar el excel
+                    listaExcelSubido = zip(sucursalesProductos,idsProductosVenta,codigosProductosVenta,nombresProductosVenta,skuProductosVenta,stocksProductosVenta,
+                                       costosUnitariosProductosVenta,existenciasProductosVenta,cantidadContadaProductosVenta,diferenciaProductosVenta)
+
+                    listaParaGenerarExcel = []
+                    for sucursalES, idES, codigoES, nombreES,skuES, stokES, costoUnitarioES, existenciasProductoES, cantidadContadaES, diferenciaProductosES in listaExcelSubido:
+                        listaParaGenerarExcel.append([sucursalES,idES,codigoES,nombreES,skuES,stokES,costoUnitarioES,existenciasProductoES,cantidadContadaES,diferenciaProductosES])
+                    
+                    #Excel.
+                    response = HttpResponse(content_type='application/ms-excel')
+                    response['Content-Disposition'] = 'attachment; filename=Ajuste productos venta '+str(datetime.today().strftime('%Y-%m-%d'))+'.xls'
+                    
+                    libro = xlwt.Workbook(encoding='utf-8')
+                    hoja = libro.add_sheet('Productos')
+                    
+                    numero_fila = 0
+                    estilo_fuente = xlwt.XFStyle()
+                    estilo_fuente.font.bold = True
+                    
+                    columnas = ['Sucursal','Id','Código Producto','Nombre','SKU','Stock','Costo unitario de compra','Exsitencias en sistema','Cantidad Contada','Diferencia +/-']
+                    for columna in range(len(columnas)):
+                        hoja.write(numero_fila, columna, columnas[columna], estilo_fuente)
+                    
+                    estilo_fuente = xlwt.XFStyle()
+                    for productito in listaParaGenerarExcel:
+                        numero_fila+=1
+                        for columna in range(len(productito)):
+                            hoja.write(numero_fila, columna, str(productito[columna]), estilo_fuente)
+                    
+
+                    libro.save(response)
+                    
+                    #Mandar correo.
+                    correo = "sistemas@customco.com.mx"
+                    asunto = "Costabella | Ajuste de productos para venta."
+                    plantilla = "6 Productos/Correos/correoAjustePv.html"
+                    html_mensaje = render_to_string(plantilla,{"nombreSucursalCorreo":nombreSucursalCorreo,"nombresEmpleado":nombresEmpleado, "productos":productos}) #Aqui va el diccionario de datos.
+                    email_remitente = settings.EMAIL_HOST_USER
+                    email_destino = [correo]
+                    mensaje = EmailMessage(asunto, html_mensaje, email_remitente, email_destino)
+                    mensaje.content_subtype = 'html'
+                    #Mandar excel en el correo.
+                    mensaje.attach('Ajuste de productos gasto '+str(datetime.today().strftime('%Y-%m-%d'))+'.xls', response.getvalue())
+                    mensaje.send()
+                    
+                    
+                    
+                    # FIN CORREEEEOOOOOOOOOOOOOOOOOOOO
+                    try:
+                        tokenTelegram = keysBotCostabella.tokenBotCostabella
+                        botCostabella = telepot.Bot(tokenTelegram)
+
+                        idGrupoTelegram = keysBotCostabella.idGrupo
+
+                        if sucursal == "todas":
+                            mensajeSucursalesTotdas = True
+                        else:
+                            mensajeSucursalesTotdas = False
+
+                        date = datetime.now()
+                        hora = date.time().strftime("%H:%M")
+
+                        if mensajeSucursalesTotdas:
+                            mensaje = "Hola \U0001F44B! La empleada administradora "+nombresEmpleado+" ha realizado un ajuste de existencias de productos gasto en todas las sucursales costabella a las "+str(hora)+" horas. Favor de checar correo electrónico."
+                        else:
+                            mensaje = "Hola \U0001F44B! La empleada "+nombresEmpleado+" ha realizado un ajuste de existencias de productos gasto en la sucursal "+nombreSucursalCorreo+" a las "+str(hora)+" horas. Favor de chercar correo electrónico."
+                        botCostabella.sendMessage(idGrupoTelegram,mensaje)
+
+                    except:
+                        print("An exception occurred")
+
+                    # MANDAR NOTIFICACIÓN A TELÉFONO.
+                    
+                
+                               
+                    request.session['productosActualizados'] = "Se han actualizado los productos para venta con el Excel subido!"
+                    return redirect('/inventarioProductos/')  
+                else:  
+                    request.session['errorProductosActualizados'] = "Error al actualizar los datos, intente de nuevo más tarde."
+                    return redirect('/inventarioProductos/')   
+            else:
+                request.session['errorProductosActualizados'] = "La sucursal elegida no coincide con la sucursal del Excel, favor de elegir bien la sucursal."
+                return redirect('/inventarioProductos/')            
+        
+        except:
+            request.session['errorProductosActualizados'] = "Error al subir el archivo, contacte a soporte."
+            return redirect('/inventarioProductos/')
+        
+    
+
+
+
+
+
+# COMRAS -----------------------------------------------------------------------------------------------------------------
 def inventarioCompras(request):
 
     if "idSesion" in request.session:
@@ -4576,8 +4562,8 @@ def inventarioCompras(request):
     else:
         return render(request,"1 Login/login.html")
     
-   
 
+# CAJA -------------------------------------------------------------------------------------------------------------
 def agregarConfiguracionCaja(request):
 
     if "idSesion" in request.session:
@@ -4650,8 +4636,7 @@ def agregarConfiguracionCaja(request):
     
     else:
         return render(request,"1 Login/login.html")
-    
-    
+
 def configuracionCaja(request):
 
     if "idSesion" in request.session:
@@ -4710,7 +4695,6 @@ def configuracionCaja(request):
     
     else:
         return render(request,"1 Login/login.html")
-   
 
 def agregarMovimientoCaja(request):
 
@@ -5152,6 +5136,8 @@ def activarConfiguracionCaja(request):
         return render(request,"1 Login/login.html")
 
 
+# RENTAS --------------------------------------------------------------------------------------------------------------
+
 def altaRenta(request):
 
     if "idSesion" in request.session:
@@ -5531,7 +5517,6 @@ def rentas(request):
     else:
         return render(request,"1 Login/login.html")
     
-   
 def verCalendarioRentas(request):
 
     if "idSesion" in request.session:
@@ -5814,7 +5799,6 @@ def verCalendarioRentas(request):
     else:
         return render(request,"1 Login/login.html")
     
-
 def entregarRentaApartada(request):
 
     if "idSesion" in request.session:
@@ -6215,7 +6199,6 @@ def entregarRentaApartada(request):
                 request.session['rentaEntregada'] = "La renta número " + idRentaEntregaAcliente  +  " ha sido entregada al cliente " + datosCompletosCliente + "  correctamente!"
             return redirect('/verCalendarioRentas/') 
         
-
 def recibirRentaDevolucionCliente(request):
 
     if "idSesion" in request.session:
@@ -6679,7 +6662,6 @@ def recibirRentaDevolucionCliente(request):
     else:
         return render(request,"1 Login/login.html")
     
-
 def recibirPagoCuota(request):
 
     if "idSesion" in request.session:
@@ -7031,9 +7013,10 @@ def recibirPagoCuota(request):
     else:
         return render(request,"1 Login/login.html")
     
-        
-        
+    
 
+        
+# SERVICIOS -----------------------------------------------------------------------------------------------------------------
 def altaServicios(request):
 
     if "idSesion" in request.session:
@@ -7123,7 +7106,6 @@ def altaServicios(request):
     
     else:
         return render(request,"1 Login/login.html")
-    
     
 def inventarioServicios(request):
 
@@ -7429,7 +7411,6 @@ def inventarioServicios(request):
     else:
         return render(request,"1 Login/login.html")
 
-
 def actualizarServiciosCoporales(request):
 
     if "idSesion" in request.session:
@@ -7457,7 +7438,6 @@ def actualizarServiciosCoporales(request):
                 request.session['servicioCorporalActualizado'] = "El servicio corporal " + idServicioCEditar  +" "+  nombreEditar + " ha sido actualizado correctamente!"
             return redirect('/inventarioServicios/')
         
-
 def actualizarServiciosFaciales(request):
 
     if "idSesion" in request.session:
@@ -7485,8 +7465,6 @@ def actualizarServiciosFaciales(request):
                 request.session['servicioFacialActualizado'] = "El servicio facial " + idServicioFEditar  +" "+  nombreEditar + " ha sido actualizado correctamente!"
             return redirect('/inventarioServicios/')
         
-        
-
 def crearPaqueteServicios(request):
 
     
@@ -7828,7 +7806,6 @@ def guardarPaqueteEditadoProductosVenta(request):
     else:
         return render(request,"1 Login/login.html")
         
-
         
 def verProductoDePaqueteCorporalEditar(request):
 
@@ -18784,7 +18761,7 @@ def actualizarPermisosDescuentos(request):
     
     else:
         return render(request,"1 Login/login.html")
-              
+
 #Listo!!
 def actualizarPermisosCaja(request):
     if "idSesion" in request.session:
