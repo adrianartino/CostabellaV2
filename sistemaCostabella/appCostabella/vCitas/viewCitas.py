@@ -132,45 +132,58 @@ def agendarCita(request):
 
                     if horaProgramada in arregloHoras:
                         duracion = cita.duracionCitaMinutos
-                        """if duracion > 60:
+                        if duracion > 60:
                             indiceAQuitar = arregloHoras.index(horaProgramada)
                             indiceAQuitarTambien = indiceAQuitar+1
 
-                            if  indiceAQuitarTambien == 10:
-                                arregloHoras.remove(horaProgramada)
+                            if  indiceAQuitarTambien == 10: #Despues de las 6.. solo quita las 6
+                                #arregloHoras.remove(horaProgramada)
+                                arregloHoras[indiceAQuitar] = horaProgramada + " - Con cita" #No se quita del arreglo, solo se pone que ya hay una cita programada ahi
                             else:
                                 horaTambienAQuitar = arregloHoras[indiceAQuitarTambien]
-                                arregloHoras.remove(horaProgramada) 
-                                arregloHoras.remove(horaTambienAQuitar) 
+                                arregloHoras[indiceAQuitar] = horaProgramada + " - Con cita" #No se quita del arreglo, solo se pone que ya hay una cita programada ahi
+                                arregloHoras[indiceAQuitarTambien] = horaTambienAQuitar + " - Con cita" #No se quita del arreglo, solo se pone que ya hay una cita programada ahi
+                                #arregloHoras.remove(horaProgramada) #Quita la hora
+                                #arregloHoras.remove(horaTambienAQuitar) #Quita la siguiente hora
                         else:
-                            arregloHoras.remove(horaProgramada) 
-                        """
-                    
-                #arregloHoras45Posiciones.append(arregloHoras)
+                            #arregloHoras.remove(horaProgramada) 
+                            arregloHoras[indiceAQuitar] = horaProgramada + " - Con cita"
+                        
+                #Si no hay citas ese dia, no entra al for y el arreglo se queda igual.
+                
+                arregloHoras45Posiciones.append(arregloHoras)
+                
+                arregloHorasDiaActual = ["09:00 AM","10:00 AM","11:00 AM","12:00 PM","13:00 PM","14:00 PM","15:00 PM","16:00 PM","17:00 PM","18:00 PM"]
+                
+                consultaCitasDelDiaActual = Citas.objects.filter(fecha_pactada = today, estado_cita = "sinCanjear")
+                if consultaCitasDelDia:
+                    sinCitasPendientes = False
+                else:
+                    for cita in consultaCitasDelDiaActual:
+                        horaProgramada = cita.hora_pctada
+
+                        if horaProgramada in arregloHorasDiaActual:
+                            duracion = cita.duracionCitaMinutos
+                            if duracion > 60:
+                                indiceAQuitar = arregloHorasDiaActual.index(horaProgramada)
+                                indiceAQuitarTambien = indiceAQuitar+1
+
+                                if  indiceAQuitarTambien == 10: #Despues de las 6.. solo quita las 6
+                                    #arregloHoras.remove(horaProgramada)
+                                    arregloHorasDiaActual[indiceAQuitar] = horaProgramada + " - Con cita" #No se quita del arreglo, solo se pone que ya hay una cita programada ahi
+                                else:
+                                    horaTambienAQuitar = arregloHorasDiaActual[indiceAQuitarTambien]
+                                    arregloHorasDiaActual[indiceAQuitar] = horaProgramada + " - Con cita" #No se quita del arreglo, solo se pone que ya hay una cita programada ahi
+                                    arregloHorasDiaActual[indiceAQuitarTambien] = horaTambienAQuitar + " - Con cita" #No se quita del arreglo, solo se pone que ya hay una cita programada ahi
+                                    #arregloHoras.remove(horaProgramada) #Quita la hora
+                                    #arregloHoras.remove(horaTambienAQuitar) #Quita la siguiente hora
+                            else:
+                                #arregloHoras.remove(horaProgramada) 
+                                arregloHorasDiaActual[indiceAQuitar] = horaProgramada + " - Con cita"
+                                
             
 
             
-            consultaPrimerDia = Citas.objects.filter(fecha_pactada = today, estado_cita = "sinCanjear")
-            arregloHoras2 = ["09:00 AM","10:00 AM","11:00 AM","12:00 PM","13:00 PM","14:00 PM","15:00 PM","16:00 PM","17:00 PM","18:00 PM"]
-            for cita in consultaPrimerDia:
-                horaProgramada = cita.hora_pctada
-                """
-                if horaProgramada in arregloHoras2:
-                    duracion = cita.duracionCitaMinutos
-                    if duracion > 60:
-                        indiceAQuitar = arregloHoras2.index(horaProgramada)
-                        indiceAQuitarTambien = indiceAQuitar+1
-                        
-                        if  indiceAQuitarTambien == 10:
-                            arregloHoras2.remove(horaProgramada)
-                        else:
-                            horaTambienAQuitar = arregloHoras2[indiceAQuitarTambien]
-                            arregloHoras2.remove(horaProgramada) 
-                            arregloHoras2.remove(horaTambienAQuitar) 
-                    else:
-                        arregloHoras2.remove(horaProgramada) 
-                """
-                
 
             listaZipFechaHora = zip(arreglo45Fechas,arregloHoras45Posiciones)
 
@@ -259,9 +272,9 @@ def agendarCita(request):
 
             return render(request, "22 Citas/agendarCita.html", {"consultaPermisos":consultaPermisos,"idEmpleado":idEmpleado,"idPerfil":idPerfil, "idConfig":idConfig, "nombresEmpleado":nombresEmpleado,"tipoUsuario":tipoUsuario, "letra":letra, "puestoEmpleado":puestoEmpleado, 
                 "notificacionRenta":notificacionRenta,"tipoUsuario":tipoUsuario, "sucursalCita":sucursalCita, "nombreSucursal":nombreSucursal, 
-                "clientes":clientes, "serviciosSucursal":serviciosSucursal, "tratamientosSucursal":tratamientosSucursal, "promocionesSucursal":promocionesSucursal, "fechaLimite":fechaLimite, "sinCitasPendientes":sinCitasPendientes, "arregloHoras45Posiciones":arregloHoras45Posiciones, "arregloHoras2":arregloHoras2,
+                "clientes":clientes, "serviciosSucursal":serviciosSucursal, "tratamientosSucursal":tratamientosSucursal, "promocionesSucursal":promocionesSucursal, "fechaLimite":fechaLimite, "sinCitasPendientes":sinCitasPendientes, "arregloHoras45Posiciones":arregloHoras45Posiciones,
                 "listaZipFechaHora":listaZipFechaHora, "serviciosSucursalJS":serviciosSucursalJS, "tratamientosSucursalJS":tratamientosSucursalJS, "promocionesSucursalJS":promocionesSucursalJS, "notificacionCita":notificacionCita, "certificadosPendientes":certificadosPendientes,
-                "certificadosPendientesJS":certificadosPendientesJS, "certificadosPendientesJSDos":certificadosPendientesJSDos, "certificadosPendientesJSTres":certificadosPendientesJSTres})
+                "certificadosPendientesJS":certificadosPendientesJS, "certificadosPendientesJSDos":certificadosPendientesJSDos, "certificadosPendientesJSTres":certificadosPendientesJSTres, "arregloHorasDiaActual":arregloHorasDiaActual})
 
 
         else:           
@@ -341,7 +354,9 @@ def guardarCita(request):
                 duracion = float(duracionMaxima)
 
                 fechaPactada = request.POST['fechaAgendar']
-                horaCita = request.POST['horarioCita']
+                horaCitaJunta = request.POST['horarioCita'] #Este puede ser normal o que incluya " - Con cita"
+                horaCitaSeparada =horaCitaJunta.split(' ') #Se hace arreglo, solo se va a tomar la primera y segunda posicion
+                horaCita = horaCitaSeparada[0] + ' ' + horaCitaSeparada[1]
                 estadoCita = "sinCanjear"
                 citaVendida = "No"
 
@@ -946,7 +961,240 @@ def citas(request):
         
     else:
         return render(request,"1 Login/login.html")
-    
+
+def calendarioCitas(request):
+
+    if "idSesion" in request.session:
+
+        # Variables de sesión
+        idEmpleado = request.session['idSesion']
+        nombresEmpleado = request.session['nombresSesion']
+        tipoUsuario = request.session['tipoUsuario']
+        puestoEmpleado = request.session['puestoSesion']
+        idPerfil = idEmpleado
+        idConfig = idEmpleado
+        #INFORMACION de empleado para menusito
+        letra = nombresEmpleado[0]
+        #notificacionRentas
+        notificacionRenta = notificacionRentas(request)
+        #notificacionCitas
+        notificacionCita = notificacionCitas(request)
+
+        print(notificacionCita)
+
+        consultaPermisos = Permisos.objects.filter(id_empleado_id__id_empleado = idEmpleado)
+
+        if request.method == "POST":
+            sucursalCita = request.POST['sucursalCita']
+            consultaSucursal = Sucursales.objects.filter(id_sucursal = sucursalCita)
+            for datoSucursal in consultaSucursal:
+                nombreSucursal = datoSucursal.nombre
+
+            #Calendario citas
+
+            #Fecha mes anterior
+            fechaMesAnterior = datetime.now()-relativedelta(months=1)
+            añoAnterior = fechaMesAnterior.strftime("%Y")
+            mesAnterior = fechaMesAnterior.strftime("%m")
+            fechaMesAnterior = añoAnterior + "-"+mesAnterior+"-01"
+
+            #Fecha mes despues
+            fechaMesDespues = datetime.now()+relativedelta(months=1)
+            añoDespues = fechaMesDespues.strftime("%Y")
+            mesDespues = fechaMesDespues.strftime("%m")
+            fechaMesDespues = añoDespues + "-"+mesDespues+"-15"
+
+            citasPendientes = Citas.objects.filter(fecha_pactada__range = [fechaMesAnterior, fechaMesDespues], estado_cita = "sinCanjear")
+
+            arrayCitasPendientes = []
+
+            for citaPendiente in citasPendientes:
+                
+                #Datos de la cita
+                idCita = citaPendiente.id_cita
+                cliente = citaPendiente.cliente_id
+                empleadoRealizo = citaPendiente.empleado_realizo_id
+                tipoCita = citaPendiente.tipo_cita
+                idServTratPaq = citaPendiente.id_serv_trat_paq
+                fechaPactada = citaPendiente.fecha_pactada
+                horaPactada = citaPendiente.hora_pctada
+                comentarios = citaPendiente.comentarios
+                duracionMinutos = citaPendiente.duracionCitaMinutos
+                duracionMinutos = int(duracionMinutos)
+
+                fechaPactadaTipoDate = datetime.strftime(fechaPactada, '%Y-%m-%d')
+                #Fecha en texto
+                mesesDic = {
+                "01":'Enero',
+                "02":'Febrero',
+                "03":'Marzo',
+                "04":'Abril',
+                "05":'Mayo',
+                "06":'Junio',
+                "07":'Julio',
+                "08":'Agosto',
+                "09":'Septiembre',
+                "10":'Octubre',
+                "11":'Noviembre',
+                "12":'Diciembre'
+                }
+
+                mesPactado = datetime.strftime(fechaPactada, '%m')
+                diaPactado = datetime.strftime(fechaPactada, '%d')
+                añoPactado = datetime.strftime(fechaPactada, '%Y')
+
+                mesEnTexto = mesesDic[str(mesPactado)]
+                fechaPactadaMensaje = diaPactado + " de "+mesEnTexto+ " del " + añoPactado
+
+                #Datos del cliente
+                consultaCliente = Clientes.objects.filter(id_cliente = cliente)
+                for datoCliente in consultaCliente:
+                    nombreCliente = datoCliente.nombre_cliente
+                    apellidoPaterno = datoCliente.apellidoPaterno_cliente
+
+                nombreCompletoCliente = nombreCliente + " "+apellidoPaterno
+
+                #Datos del empleado que realizo la cita
+                consultaEmpleado = Empleados.objects.filter(id_empleado = empleadoRealizo)
+                for datoEmpleado in consultaEmpleado:
+                    nombreEmpleado = datoEmpleado.nombres
+                    apellidoEmpleado = datoEmpleado.apellido_paterno
+                
+                nombreCompletoEmpleado = nombreEmpleado +" "+apellidoEmpleado
+
+                tipoCitaTexto = ""
+                if tipoCita == "Servicio":
+                    tipoCitaTexto = "Servicio"
+                    consultaServicio = Servicios.objects.filter(id_servicio = idServTratPaq)
+                    for datoServicio in consultaServicio:
+                        nombreServTratPaq = datoServicio.nombre_servicio
+                        precioServTraPaq = datoServicio.precio_venta
+                elif tipoCita == "SesionTratamiento":
+                    tipoCitaTexto = "Sesion de tratamiento"
+                    consultaTratamiento = Tratamientos.objects.filter(id_tratamiento = idServTratPaq)
+                    for datoTratamiento in consultaTratamiento:
+                        nombreServTratPaq = datoTratamiento.nombre_tratamiento
+                        precioServTraPaq = datoTratamiento.costo_venta_tratamiento
+                elif tipoCita == "PaqueteTratamiento":
+                    tipoCitaTexto = "Paquete/Promoción de tratamiento"
+                    consultaPaqueteTratamiento = PaquetesPromocionTratamientos.objects.filter(id_paquete_tratamiento = idServTratPaq)
+                    for datoPaquete in consultaPaqueteTratamiento:
+                        nombreServTratPaq = datoPaquete.nombre_paquete
+                        precioServTraPaq = datoPaquete.precio_por_paquete
+
+                arrayCitasPendientes.append([fechaPactadaMensaje, idCita, nombreCompletoCliente, tipoCitaTexto,nombreServTratPaq, precioServTraPaq, horaPactada, duracionMinutos,fechaPactadaTipoDate])
+            
+            citasEfectuadas = Citas.objects.filter(fecha_pactada__range = [fechaMesAnterior, fechaMesDespues], estado_cita = "efectuada")
+
+            arrayCitasEfectuadas = []
+
+            for citaEfectuada in citasEfectuadas:
+                
+                #Datos de la cita
+                idCita = citaEfectuada.id_cita
+                cliente = citaEfectuada.cliente_id
+                empleadoRealizo = citaEfectuada.empleado_realizo_id
+                tipoCita = citaEfectuada.tipo_cita
+                idServTratPaq = citaEfectuada.id_serv_trat_paq
+                fechaPactada = citaEfectuada.fecha_pactada
+                horaPactada = citaEfectuada.hora_pctada
+                comentarios = citaEfectuada.comentarios
+                duracionMinutos = citaEfectuada.duracionCitaMinutos
+                duracionMinutos = int(duracionMinutos)
+
+                fechaPactadaTipoDate = datetime.strftime(fechaPactada, '%Y-%m-%d')
+                #Fecha en texto
+                mesesDic = {
+                "01":'Enero',
+                "02":'Febrero',
+                "03":'Marzo',
+                "04":'Abril',
+                "05":'Mayo',
+                "06":'Junio',
+                "07":'Julio',
+                "08":'Agosto',
+                "09":'Septiembre',
+                "10":'Octubre',
+                "11":'Noviembre',
+                "12":'Diciembre'
+                }
+
+                mesPactado = datetime.strftime(fechaPactada, '%m')
+                diaPactado = datetime.strftime(fechaPactada, '%d')
+                añoPactado = datetime.strftime(fechaPactada, '%Y')
+
+                mesEnTexto = mesesDic[str(mesPactado)]
+                fechaPactadaMensaje = diaPactado + " de "+mesEnTexto+ " del " + añoPactado
+
+                #Datos del cliente
+                consultaCliente = Clientes.objects.filter(id_cliente = cliente)
+                for datoCliente in consultaCliente:
+                    nombreCliente = datoCliente.nombre_cliente
+                    apellidoPaterno = datoCliente.apellidoPaterno_cliente
+
+                nombreCompletoCliente = nombreCliente + " "+apellidoPaterno
+
+                #Datos del empleado que realizo la cita
+                consultaEmpleado = Empleados.objects.filter(id_empleado = empleadoRealizo)
+                for datoEmpleado in consultaEmpleado:
+                    nombreEmpleado = datoEmpleado.nombres
+                    apellidoEmpleado = datoEmpleado.apellido_paterno
+                
+                nombreCompletoEmpleado = nombreEmpleado +" "+apellidoEmpleado
+
+                tipoCitaTexto = ""
+                if tipoCita == "Servicio":
+                    tipoCitaTexto = "Servicio"
+                    consultaServicio = Servicios.objects.filter(id_servicio = idServTratPaq)
+                    for datoServicio in consultaServicio:
+                        nombreServTratPaq = datoServicio.nombre_servicio
+                        precioServTraPaq = datoServicio.precio_venta
+                elif tipoCita == "SesionTratamiento":
+                    tipoCitaTexto = "Sesion de tratamiento"
+                    consultaTratamiento = Tratamientos.objects.filter(id_tratamiento = idServTratPaq)
+                    for datoTratamiento in consultaTratamiento:
+                        nombreServTratPaq = datoTratamiento.nombre_tratamiento
+                        precioServTraPaq = datoTratamiento.costo_venta_tratamiento
+                elif tipoCita == "PaqueteTratamiento":
+                    tipoCitaTexto = "Paquete/Promoción de tratamiento"
+                    consultaPaqueteTratamiento = PaquetesPromocionTratamientos.objects.filter(id_paquete_tratamiento = idServTratPaq)
+                    for datoPaquete in consultaPaqueteTratamiento:
+                        nombreServTratPaq = datoPaquete.nombre_paquete
+                        precioServTraPaq = datoPaquete.precio_por_paquete
+
+                arrayCitasEfectuadas.append([fechaPactadaMensaje, idCita, nombreCompletoCliente, tipoCitaTexto,nombreServTratPaq, precioServTraPaq, horaPactada, duracionMinutos,fechaPactadaTipoDate])
+
+
+
+                
+
+                    
+
+
+            
+
+
+            return render(request, "22 Citas/calendarioCitas.html", {"consultaPermisos":consultaPermisos,"idEmpleado":idEmpleado,"idPerfil":idPerfil, "idConfig":idConfig, "nombresEmpleado":nombresEmpleado,"tipoUsuario":tipoUsuario, "letra":letra, "puestoEmpleado":puestoEmpleado, 
+            "notificacionRenta":notificacionRenta,"notificacionCita":notificacionCita, "nombreSucursal":nombreSucursal, "arrayCitasPendientes":arrayCitasPendientes, 
+            "arrayCitasEfectuadas":arrayCitasEfectuadas})
+
+
+        else:
+            if tipoUsuario == "esAdmin":
+                sucursales = Sucursales.objects.all()
+                
+                return render(request, "22 Citas/seleccionarSucursalCitaCalendarioCitas.html", {"consultaPermisos":consultaPermisos,"idEmpleado":idEmpleado,"idPerfil":idPerfil, "idConfig":idConfig, "nombresEmpleado":nombresEmpleado,"tipoUsuario":tipoUsuario, "letra":letra, "puestoEmpleado":puestoEmpleado, 
+                "notificacionRenta":notificacionRenta,"notificacionCita":notificacionCita, "sucursales":sucursales,"tipoUsuario":tipoUsuario, "sucursales":sucursales})
+            else:
+                consultaEmpleado = Empleados.objects.filter(id_empleado = idEmpleado)
+                for datoEmpleado in consultaEmpleado:
+                    sucursalEmpleado = datoEmpleado.id_sucursal_id
+                sucursales = Sucursales.objects.filter(id_sucursal = sucursalEmpleado)
+                return render(request, "22 Citas/seleccionarSucursalCitaCalendarioCitas.html", {"consultaPermisos":consultaPermisos,"idEmpleado":idEmpleado,"idPerfil":idPerfil, "idConfig":idConfig, "nombresEmpleado":nombresEmpleado,"tipoUsuario":tipoUsuario, "letra":letra, "puestoEmpleado":puestoEmpleado, 
+                "notificacionRenta":notificacionRenta,"notificacionCita":notificacionCita, "sucursales":sucursales})
+        
+    else:
+        return render(request,"1 Login/login.html")
 
 
 def vistaVenderCita(request):
