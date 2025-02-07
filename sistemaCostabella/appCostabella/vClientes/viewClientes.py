@@ -1114,8 +1114,11 @@ def infoCliente(request):
                 #sucursal
                 idSucursal = citaCliente.sucursal_id
                 consultaSucursal = Sucursales.objects.filter(id_sucursal = idSucursal)
-                for datoSucusral in consultaSucursal:
-                    nombreSucursal = datoSucursal.nombre
+                if consultaSucursal:
+                    for datoSucursal in consultaSucursal:
+                        nombreSucursal = datoSucursal.nombre
+                else:
+                    nombreSucursal = "Sin sucursal"
                 
 
                     
