@@ -272,7 +272,7 @@ Editar Empleado | Costabella
                                     <label class="form-label" for="full-name">Tipo</label>
                                     <div class="form-control-wrap">
                                         <div class="form-control-select">
-                                            <select class="form-control" id="default-06" name="tipoUsuario">
+                                            <select class="form-control" id="selectTipoUsuario" name="tipoUsuario" onchange="validarTipoUsuario()">
                                                 {% if tipo ==  "Administrador" %}
                                                 <option value="Administrador" selected>Administrador</option>
                                                 <option value="Empleado">Empleado</option>
@@ -347,6 +347,10 @@ Editar Empleado | Costabella
                                 </div>
                             </div>
                             
+                            <div class="col-12" id="divTextoSiCambiaAEmpleado">
+                                <small class="text-danger fw-bold">Si se cambia a Empleado el tipo de usuario, se resetearan sus permisos. Se deberá de dar permisos en Panel Administrativo.</small>
+
+                            </div>
                             
                             <div class="col-12">
                                 <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
@@ -463,6 +467,29 @@ Editar Empleado | Costabella
     </div><!-- .modal-dialog -->
 </div><!-- .modal -->
 
+
+<script>
+    var selectTipoUsuario = document.getElementById("selectTipoUsuario").value;
+        
+    var divTextoSiCambiaAEmpleado = document.getElementById("divTextoSiCambiaAEmpleado");
+    
+    if(selectTipoUsuario == "Administrador"){
+        divTextoSiCambiaAEmpleado.style.display = "none";
+    }else{
+        divTextoSiCambiaAEmpleado.style.display = "block";
+    }
+
+
+    function validarTipoUsuario(){
+        var selectTipoUsuario = document.getElementById("selectTipoUsuario").value;
+
+        if(selectTipoUsuario == "Administrador"){
+            divTextoSiCambiaAEmpleado.style.display = "none";
+        }else{
+            divTextoSiCambiaAEmpleado.style.display = "block";
+        }
+    }
+</script>
 
 {% endblock %}
 

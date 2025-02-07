@@ -34,6 +34,7 @@ class Empleados (models.Model):
     fecha_baja = models.DateField(null=True)
     estado_contratacion = models.CharField(max_length=2)
     id_sucursal = models.ForeignKey(Sucursales, on_delete=models.CASCADE, null=True)
+    tipo_usuario = models.CharField(max_length=2, null=True)
 
     
     def __str__(self):

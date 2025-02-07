@@ -79,7 +79,7 @@ def altaEmpleado(request):
             fechaAlta = datetime.today().strftime("%Y-%m-%d")
 
             # Si usuario administrador..
-            if sucursal == "Todas":
+            if tipoUsuarioRecibido == "Administrador":
                 altaEmpleado = Empleados(
                     nombre_usuario=nombreUsuario,
                     contrasena=pwd,
@@ -90,6 +90,7 @@ def altaEmpleado(request):
                     puesto=puestoUsuario,
                     fecha_alta=fechaAlta,
                     estado_contratacion="A",
+                    tipo_usuario = "A" # A de Administrador
                 )  # Sin sucursal porque Admin
                 altaEmpleado.save()
             else:
@@ -103,8 +104,9 @@ def altaEmpleado(request):
                     puesto=puestoUsuario,
                     fecha_alta=fechaAlta,
                     estado_contratacion="A",
-                    id_sucursal=Sucursales.objects.get(id_sucursal=sucursal),
-                )  # Sin sucursal porque Admin
+                    id_sucursal=Sucursales.objects.get(id_sucursal=sucursal), #Con sucursal indicada
+                    tipo_usuario = "E" # E de Empleado..
+                ) 
                 altaEmpleado.save()
 
             if altaEmpleado:
@@ -1084,10 +1086,10 @@ def actInfoLaboral(request):
             for dato in consultaEmpleado:
                 nombre = dato.nombres
 
-            if idSucursalActualizado == "Todas":
+            if tipoUsuarioActualizado == "Administrador":
                 actualizarInfoLaboral = Empleados.objects.filter(
                     id_empleado=idActualizado
-                ).update(puesto=puestoActualizado, id_sucursal=None)
+                ).update(puesto=puestoActualizado, id_sucursal=None, tipo_usuario = 'A') #Se actualiza el tipo de usuario
 
                 # Darle todos los permisos..
 
@@ -1098,11 +1100,30 @@ def actInfoLaboral(request):
                     puesto=puestoActualizado,
                     id_sucursal=Sucursales.objects.get(
                         id_sucursal=idSucursalActualizado
-                    ),
+                    ),tipo_usuario = 'E' # Se actualiza el tipo de usuario... 
                 )
                 # falta notificacion
+            
+            
 
-                # Quitarle todos los permisos..
+            permiso = ""
+            if tipoUsuarioActualizado == "Administrador":
+                permiso = "Si"
+            else:
+                permiso = "No"
+            
+            #Actualizacion a todos los registros que tenga ese empleado.. 
+            actualizacionPermisosEmpleado = Permisos.objects.filter(id_empleado = idActualizado).update(
+                ver=permiso,
+                agregar=permiso,
+                editar=permiso,
+                bloquear=permiso,
+                ver_detalles=permiso,
+                activar=permiso,
+                comprar=permiso,
+                recibir_pagos=permiso
+            )
+
 
             if actualizarInfoLaboral:
                 request.session["empleadoActualizado"] = (
