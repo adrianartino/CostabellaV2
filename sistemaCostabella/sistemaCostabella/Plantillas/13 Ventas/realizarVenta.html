@@ -163,7 +163,14 @@ Realizar Venta | Costabella
                                                 <span class="tb-lead">{{producto.nombre_producto}}</span>
                                             </td>
                                             <td class="nk-tb-col"  style="white-space:nowrap!important;">
-                                                <span class="badge badge-success">$ {{producto.costo_venta}} MXN</span>
+                                                <span class="badge badge-success text-dark fw-bold">$ {{producto.costo_venta}} MXN</span>
+                                                {% if producto.descuento == "" or producto.descuento == None %}
+                                                <br>
+                                                <small class="fw-bold text-danger">Sin descuento</small>
+                                                {% else %}
+                                                <br>
+                                                <small class="fw-bold text-success">Descuento del {{producto.descuento}} %</small>
+                                                {% endif %}
                                             </td>
                                             <td class="nk-tb-col"  style="white-space:nowrap!important;">
                                                 <span class="tb-lead">$ {{producto.costo_venta_a_credito}} MXN</span>
