@@ -146,6 +146,7 @@ def agendarCita(request):
                                 #arregloHoras.remove(horaProgramada) #Quita la hora
                                 #arregloHoras.remove(horaTambienAQuitar) #Quita la siguiente hora
                         else:
+                            indiceAQuitar = arregloHoras.index(horaProgramada)
                             #arregloHoras.remove(horaProgramada) 
                             arregloHoras[indiceAQuitar] = horaProgramada + " - Con cita"
                         
