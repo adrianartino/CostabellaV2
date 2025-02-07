@@ -76,6 +76,7 @@ class ProductosVenta(models.Model):
     sku_producto = models.CharField(max_length=30,null=True)
     creado_por = models.ForeignKey(Empleados, on_delete=models.CASCADE, null=True)
     sucursal = models.ForeignKey(Sucursales, on_delete=models.CASCADE, null=True)
+    descuento = models.CharField(max_length=20, null = True)
 
     def __str__(self):
         return str (self.id_producto())

@@ -112,6 +112,7 @@ Productos | Costabella
                                 <th class="nk-tb-col"><span class="sub-text textoBlanco">Costo compra</span></th>
                                 <th class="nk-tb-col"><span class="sub-text textoBlanco">Margen ganancia</span></th>
                                 <th class="nk-tb-col"><span class="sub-text textoBlanco">Costo venta</span></th>
+                                <th class="nk-tb-col"><span class="sub-text textoBlanco">Con Descuento?</span></th>
                                 
                                 <th class="nk-tb-col"><span class="sub-text textoBlanco">Existencias</span></th>
                                 <th class="nk-tb-col"><span class="sub-text textoBlanco">Stock necesario</span></th>
@@ -164,6 +165,16 @@ Productos | Costabella
                                 </td>
                                 <td class="nk-tb-col" style="white-space:nowrap!important;">
                                     <p class="tb-amount text-orange fw-bold">${{productoVenta.costo_venta}} MXN</p>
+                                </td>
+                                <td class="nk-tb-col" style="white-space:nowrap!important;">
+                                    {% if productoVenta.descuento == "" or productoVenta.descuento == None %}
+                                    <p class="tb-amount badge badge-danger text-white">Sin descuento</p>
+                                    {% else %}
+                                    <p class="tb-amount text-success fw-bold">Con descuento</p>
+                                    <center>
+                                        <p class="badge badge-success text-dark">- {{productoVenta.descuento}} %</p>
+                                    </center>
+                                    {% endif %}
                                 </td>
                           
                          
@@ -641,7 +652,7 @@ Productos | Costabella
         <div class="modal-content">
             <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
             <div class="modal-body modal-body-lg">
-                <h3 class="title text-center ">EDITAR PRODUCTO</h3>
+                <h3 class="title text-center ">EDITAR PRODUCTO VENTA</h3>
                 <center>
                     {% if productoVentaEditar.imagen_producto %}
                     <img src="{{productoVentaEditar.imagen_producto.url}}" width="20%" alt="lap">
@@ -675,6 +686,7 @@ Productos | Costabella
                                                 <th scope="col">Cantidad en existencia</th>
                                                 <th scope="col">Costo de compra</th>
                                                 <th scope="col">Margen de ganancia</th>
+                                                <th scope="col">Descuento?</th>
                                                 <th scope="col">Costo de venta actualizado</th>
                                             </tr>
                                         </thead>
@@ -686,6 +698,27 @@ Productos | Costabella
                                                 <td>{{productoVentaEditar.cantidad}}</td>
                                                 <td> <input  type="number" class="form-control" min="0.00" max="10000.00" step="0.01" placeholder="Ingresar precio de compra"  name="costoGastoActualizado" value="{{productoVentaEditar.costo_compra}}" onkeyup="calcularPrecioVenta{{productoVentaEditar.id_producto}}()" id="costoCompra{{productoVentaEditar.id_producto}}"></td>
                                                 <td><input id="margenCompra{{productoVentaEditar.id_producto}}" type="number" min="0" max="100" step="1" class="form-control" id="default-01" placeholder="Ingresar margen de ganancia" maxlength="3"  name="margenActualizado" value="{{productoVentaEditar.margen_ganancia_producto}}" onkeyup="calcularPrecioVenta{{productoVentaEditar.id_producto}}()"></td>
+                                                <td>
+                                                    {% if productoVentaEditar.descuento == "" or productoVentaEditar.descuento == None %}
+                                                    <span class="badge badge-danger text-white">Sin descuento</span>
+                                                    <br><br>
+                                                    <select class="form-control" name="descuentoProductoVenta" id="descuentoProductoVenta{{productoVentaEditar.id_producto}}" onchange="calcularPrecioVenta{{productoVentaEditar.id_producto}}()">
+                                                        <option value="SinDescuento" {% if productoVentaEditar.descuento == "SinDescuento" %}selected{% endif %}>0 %</option>
+                                                        {% for descuento in descuentos %}
+                                                            <option value="{{ descuento }}" {% if productoVentaEditar.descuento == descuento %}selected{% endif %}>{{ descuento }} %</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    {% else %}
+                                                    <span class="badge badge-success text-white">Con descuento</span>
+                                                    <br><br>
+                                                    <select class="form-control" name="descuentoProductoVenta" id="descuentoProductoVenta{{productoVentaEditar.id_producto}}" onchange="calcularPrecioVenta{{productoVentaEditar.id_producto}}()">
+                                                        <option value="SinDescuento" {% if productoVentaEditar.descuento == "SinDescuento" %}selected{% endif %}>0 %</option>
+                                                        {% for descuento in descuentos %}
+                                                            <option value="{{ descuento }}" {% if productoVentaEditar.descuento == descuento %}selected{% endif %}>{{ descuento }} %</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    {% endif %}
+                                                </td>
                                                 <td><input id="inputCostoVenta{{productoVentaEditar.id_producto}}" type="text readonly" value="{{productoVentaEditar.costo_venta}}" style="border: none!important;" name="costoVentaActualizado"></td>
                                             </tr>
                                             
@@ -1678,6 +1711,8 @@ Productos | Costabella
     function calcularPrecioVenta{{productoVentaEditar.id_producto}}() {
         const valorCosto = document.getElementById("costoCompra{{productoVentaEditar.id_producto}}").value;
         const valorMargen = document.getElementById("margenCompra{{productoVentaEditar.id_producto}}").value;
+        const valorDescuento = document.getElementById("descuentoProductoVenta{{productoVentaEditar.id_producto}}").value;
+
         const inputCostoVenta = document.getElementById("inputCostoVenta{{productoVentaEditar.id_producto}}");
 
         margenFloat = parseFloat(valorMargen);
@@ -1690,7 +1725,16 @@ Productos | Costabella
         }
         margenIntFinal = parseFloat(margenString);
 
-        const costoVentaNuevo = valorCosto * margenIntFinal;
+        var costoVentaNuevo = valorCosto * margenIntFinal;
+
+        if(valorDescuento != 'SinDescuento'){
+            const variableDescuento = 100 - parseInt(valorDescuento);
+            const variableConPunto = "0."+variableDescuento.toString();
+            const variableDescuentoFloat = parseFloat(variableConPunto);
+
+            costoVentaNuevo = costoVentaNuevo * variableDescuentoFloat
+        }
+
         costoVentaNuevoChido =costoVentaNuevo.toFixed(2);
         inputCostoVenta.value = costoVentaNuevoChido;
         console.log(costoVentaNuevoChido);

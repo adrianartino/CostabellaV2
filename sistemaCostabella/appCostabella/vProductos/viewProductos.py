@@ -769,6 +769,10 @@ def inventarioProductos(request):
             totalesSucursalesProductosGasto.append([idSucursal,nombreSucursal,numeroProductosGasto,costoTotalProductosGastoPorSucursal])
             costoTotalProductosGasto = costoTotalProductosGasto + costoTotalProductosGastoPorSucursal
         
+        
+        descuentos = ["5", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55", "60", "65", "70", "75", "80", "85", "90", "95"]
+        
+        
         if "productoActualizado" in request.session:
             productoActualizado = request.session['productoActualizado']
             del request.session['productoActualizado']
@@ -782,7 +786,8 @@ def inventarioProductos(request):
             "listaProductosGasto2":listaProductosGasto2, "listaProductosGastoEditar":listaProductosGastoEditar, "listaProductosGastoComprar":listaProductosGastoComprar, "productoActualizado":productoActualizado,"listaProductosRentaEditar":listaProductosRentaEditar,"notificacionRenta":notificacionRenta, "listaSucursales":listaSucursales,
             "totalesSucursalesProductosVenta":totalesSucursalesProductosVenta, "costoTotalProductosVenta":costoTotalProductosVenta,
             "totalesSucursalesProductosRenta":totalesSucursalesProductosRenta, "costoTotalProductosRenta":costoTotalProductosRenta,
-            "totalesSucursalesProductosGasto":totalesSucursalesProductosGasto, "costoTotalProductosGasto":costoTotalProductosGasto, "notificacionCita":notificacionCita})
+            "totalesSucursalesProductosGasto":totalesSucursalesProductosGasto, "costoTotalProductosGasto":costoTotalProductosGasto, "notificacionCita":notificacionCita,
+            "descuentos":descuentos})
         
         if "productosActualizados" in request.session:
             productosActualizados = request.session['productosActualizados']
@@ -797,7 +802,8 @@ def inventarioProductos(request):
             "listaProductosGasto2":listaProductosGasto2, "listaProductosGastoEditar":listaProductosGastoEditar,"listaProductosGastoComprar":listaProductosGastoComprar,"listaProductosRentaEditar":listaProductosRentaEditar, "notificacionRenta":notificacionRenta, "listaSucursales":listaSucursales, "productosActualizados":productosActualizados,
             "totalesSucursalesProductosVenta":totalesSucursalesProductosVenta, "costoTotalProductosVenta":costoTotalProductosVenta,
             "totalesSucursalesProductosRenta":totalesSucursalesProductosRenta, "costoTotalProductosRenta":costoTotalProductosRenta,
-            "totalesSucursalesProductosGasto":totalesSucursalesProductosGasto, "costoTotalProductosGasto":costoTotalProductosGasto, "notificacionCita":notificacionCita})
+            "totalesSucursalesProductosGasto":totalesSucursalesProductosGasto, "costoTotalProductosGasto":costoTotalProductosGasto, "notificacionCita":notificacionCita,
+            "descuentos":descuentos})
         
         if "errorProductosActualizados" in request.session:
             errorProductosActualizados = request.session['errorProductosActualizados']
@@ -812,7 +818,8 @@ def inventarioProductos(request):
             "listaProductosGasto2":listaProductosGasto2, "listaProductosGastoEditar":listaProductosGastoEditar,"listaProductosGastoComprar":listaProductosGastoComprar,"listaProductosRentaEditar":listaProductosRentaEditar, "notificacionRenta":notificacionRenta, "listaSucursales":listaSucursales, "errorProductosActualizados":errorProductosActualizados,
             "totalesSucursalesProductosVenta":totalesSucursalesProductosVenta, "costoTotalProductosVenta":costoTotalProductosVenta,
             "totalesSucursalesProductosRenta":totalesSucursalesProductosRenta, "costoTotalProductosRenta":costoTotalProductosRenta,
-            "totalesSucursalesProductosGasto":totalesSucursalesProductosGasto, "costoTotalProductosGasto":costoTotalProductosGasto, "notificacionCita":notificacionCita})
+            "totalesSucursalesProductosGasto":totalesSucursalesProductosGasto, "costoTotalProductosGasto":costoTotalProductosGasto, "notificacionCita":notificacionCita,
+            "descuentos":descuentos})
         
         if "correoEnviado" in request.session:
             correoEnviado = request.session['correoEnviado']
@@ -827,7 +834,8 @@ def inventarioProductos(request):
             "listaProductosGasto2":listaProductosGasto2, "listaProductosGastoEditar":listaProductosGastoEditar,"listaProductosGastoComprar":listaProductosGastoComprar,"listaProductosRentaEditar":listaProductosRentaEditar,"notificacionRenta":notificacionRenta, "listaSucursales":listaSucursales, "correoEnviado":correoEnviado,
             "totalesSucursalesProductosVenta":totalesSucursalesProductosVenta, "costoTotalProductosVenta":costoTotalProductosVenta,
             "totalesSucursalesProductosRenta":totalesSucursalesProductosRenta, "costoTotalProductosRenta":costoTotalProductosRenta,
-            "totalesSucursalesProductosGasto":totalesSucursalesProductosGasto, "costoTotalProductosGasto":costoTotalProductosGasto, "notificacionCita":notificacionCita})
+            "totalesSucursalesProductosGasto":totalesSucursalesProductosGasto, "costoTotalProductosGasto":costoTotalProductosGasto, "notificacionCita":notificacionCita,
+            "descuentos":descuentos})
         
         if "correoNoEnviado" in request.session:
             correoNoEnviado = request.session['correoNoEnviado']
@@ -842,7 +850,8 @@ def inventarioProductos(request):
             "listaProductosGasto2":listaProductosGasto2, "listaProductosGastoEditar":listaProductosGastoEditar,"listaProductosGastoComprar":listaProductosGastoComprar,"listaProductosRentaEditar":listaProductosRentaEditar, "notificacionRenta":notificacionRenta, "listaSucursales":listaSucursales, "correoNoEnviado":correoNoEnviado,
             "totalesSucursalesProductosVenta":totalesSucursalesProductosVenta, "costoTotalProductosVenta":costoTotalProductosVenta,
             "totalesSucursalesProductosRenta":totalesSucursalesProductosRenta, "costoTotalProductosRenta":costoTotalProductosRenta,
-            "totalesSucursalesProductosGasto":totalesSucursalesProductosGasto, "costoTotalProductosGasto":costoTotalProductosGasto, "notificacionCita":notificacionCita})
+            "totalesSucursalesProductosGasto":totalesSucursalesProductosGasto, "costoTotalProductosGasto":costoTotalProductosGasto, "notificacionCita":notificacionCita,
+            "descuentos":descuentos})
         
         
         
@@ -856,7 +865,8 @@ def inventarioProductos(request):
         "listaProductosGasto2":listaProductosGasto2, "listaProductosGastoEditar":listaProductosGastoEditar,"listaProductosGastoComprar":listaProductosGastoComprar,"listaProductosRentaEditar":listaProductosRentaEditar, "notificacionRenta":notificacionRenta, "listaSucursales":listaSucursales,
         "totalesSucursalesProductosVenta":totalesSucursalesProductosVenta, "costoTotalProductosVenta":costoTotalProductosVenta,
         "totalesSucursalesProductosRenta":totalesSucursalesProductosRenta, "costoTotalProductosRenta":costoTotalProductosRenta,
-            "totalesSucursalesProductosGasto":totalesSucursalesProductosGasto, "costoTotalProductosGasto":costoTotalProductosGasto, "notificacionCita":notificacionCita})
+            "totalesSucursalesProductosGasto":totalesSucursalesProductosGasto, "costoTotalProductosGasto":costoTotalProductosGasto, "notificacionCita":notificacionCita,
+            "descuentos":descuentos})
     else:
         return render(request,"1 Login/login.html")
 
@@ -869,13 +879,14 @@ def actualizarProductoV(request):
             costoGastoActualizado = request.POST['costoGastoActualizado']
             margenActualizado = request.POST['margenActualizado']
             costoVentaActualizado = request.POST['costoVentaActualizado']
+            descuentoProductoVenta = request.POST["descuentoProductoVenta"]
             
             consultaProducto = ProductosVenta.objects.filter(id_producto = idProductoVentaEditar)
             
             for dato in consultaProducto:
                 nombreProducto = dato.nombre_producto
             
-            actualizacionProductoVenta = ProductosVenta.objects.filter(id_producto = idProductoVentaEditar).update(costo_compra = costoGastoActualizado, margen_ganancia_producto = margenActualizado, costo_venta = costoVentaActualizado)
+            actualizacionProductoVenta = ProductosVenta.objects.filter(id_producto = idProductoVentaEditar).update(costo_compra = costoGastoActualizado, margen_ganancia_producto = margenActualizado, costo_venta = costoVentaActualizado, descuento = descuentoProductoVenta)
             
             if actualizacionProductoVenta:    
                 request.session['productoActualizado'] = "El producto " + nombreProducto + " ha sido actualizado correctamente!"
